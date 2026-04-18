@@ -72,6 +72,12 @@
       line-height: 1.6;
     }
 
+    /* Force le respect de l'attribut HTML5 [hidden] face aux sélecteurs #id
+       qui imposent un display (ex : #accueil { display: flex }).
+       Permet de piloter la visibilité depuis le JS via element.hidden = true/false
+       au lieu de manipuler element.style.display (cf. règle clean code R4). */
+    [hidden] { display: none !important; }
+
     /* ══════════════════════════════════════════════
        ACCUEIL — PYRAMIDE
     ══════════════════════════════════════════════ */
@@ -3227,17 +3233,13 @@ CM.App = (function() {
   function _montrerAccueil(mode) {
     var pyramide = document.getElementById('accueil');
     var portes   = document.getElementById('accueil-portes');
-    if (mode === 'portes') {
-      pyramide.style.display = 'none';
-      portes.hidden = false;
-    } else {
-      portes.hidden = true;
-      pyramide.style.display = 'flex';
-    }
+    var afficherPortes = (mode === 'portes');
+    pyramide.hidden = afficherPortes;
+    portes.hidden   = !afficherPortes;
   }
 
   function _cacherAccueils() {
-    document.getElementById('accueil').style.display = 'none';
+    document.getElementById('accueil').hidden = true;
     document.getElementById('accueil-portes').hidden = true;
   }
 
