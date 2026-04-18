@@ -3617,6 +3617,277 @@ CM.Composants = (function() {
 </script>
 
 
+<!-- ══ MODULE : CM.VuePorteProbleme — Contrôleur de la vue "par mon problème" ══
+     Stepper 1 → 2 → 3 (Niveau → Problème → Indicateurs).
+
+     Responsabilités :
+     - Gérer l'état local du parcours (étape courante + sélections).
+     - Orchestrer CM.DiagnosticProbleme (logique) et CM.Composants (rendu carte).
+     - Respecter les escape hatches (Nielsen Norman) : le retour accueil et
+       le retour à une étape antérieure sont toujours accessibles.
+
+     Ne contient AUCUNE règle métier (matrice, légitimité, filtrage) :
+     déléguée à CM.DiagnosticProbleme. Le rendu des cartes indicateurs est
+     délégué à CM.Composants.htmlCarte → cohérence visuelle garantie avec
+     le reste de l'outil. -->
+<script>
+CM.VuePorteProbleme = (function() {
+  'use strict';
+
+  /* ─── État interne ──────────────────────────────────────────────
+     Volontairement minimal : étape courante + sélections utilisateur.
+     Le domaine (opérationnel) est réservé pour l'extension future. */
+  var etat = { etape: 1, niveau: null, probleme: null, domaine: null };
+
+  /* Ids des zones DOM — centralisés pour éviter les chaînes magiques. */
+  var ID_STEPPER = 'porte-probleme-stepper';
+  var ID_ETAPES  = 'porte-probleme-etapes';
+  var ID_VUE     = 'vue-porte-probleme';
+
+  /* ─── API publique ────────────────────────────────────────────── */
+
+  // Exemple : CM.VuePorteProbleme.ouvrir() → masque les accueils + affiche la vue
+  function ouvrir() {
+    _cacherAccueils();
+    var vue = document.getElementById(ID_VUE);
+    if (vue) vue.hidden = false;
+    _reinitialiserEtat();
+    _rendre();
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  // Exemple : retourAccueil() → cache la vue et rebascule sur l'accueil préféré
+  function retourAccueil() {
+    var vue = document.getElementById(ID_VUE);
+    if (vue) vue.hidden = true;
+    _reinitialiserEtat();
+    var mode = CM.Preferences.lire('accueil', 'pyramide');
+    CM.App.afficherAccueil(mode);
+  }
+
+  function setNiveau(niveauId) {
+    etat.niveau = niveauId;
+    etat.etape = 2;
+    _rendre();
+    _scrollEnBas();
+  }
+
+  function setProbleme(problemeId) {
+    etat.probleme = problemeId;
+    etat.etape = 3;
+    _rendre();
+    _scrollEnBas();
+  }
+
+  // Exemple : retourA(2) → revient à l'étape 2 en effaçant les choix ultérieurs
+  function retourA(numEtape) {
+    etat.etape = numEtape;
+    if (numEtape <= 2) etat.probleme = null;
+    if (numEtape <= 1) etat.niveau = null;
+    _rendre();
+  }
+
+  function reset() {
+    _reinitialiserEtat();
+    _rendre();
+  }
+
+  /* ─── Rendu (pas de logique métier ici) ───────────────────────── */
+  function _rendre() {
+    _rendreStepper();
+    _rendreEtapes();
+  }
+
+  function _rendreStepper() {
+    var zone = document.getElementById(ID_STEPPER);
+    if (!zone) return;
+    var steps = [
+      { num:1, defaut:'Mon niveau',     valeur: _labelNiveau()   },
+      { num:2, defaut:'Mon problème',   valeur: _labelProbleme() },
+      { num:3, defaut:'Mes indicateurs', valeur: null }
+    ];
+    var html = '<div class="stepper">';
+    for (var i = 0; i < steps.length; i++) {
+      var s = steps[i];
+      var estActif = s.num === etat.etape;
+      var estFait  = s.num < etat.etape;
+      var classe   = estActif ? 'actif' : (estFait ? 'fait' : '');
+      var contenu  = s.valeur
+        ? '<span class="step-num">' + s.num + '.</span>'
+          + '<span class="step-icone">' + s.valeur.icone + '</span>'
+          + '<span class="step-valeur">' + s.valeur.label + '</span>'
+        : '<span class="step-num">' + s.num + '.</span> ' + s.defaut;
+      if (estFait) {
+        html += '<button type="button" class="step ' + classe + '"'
+              + ' onclick="CM.VuePorteProbleme.retourA(' + s.num + ')"'
+              + ' aria-label="Revenir à l\'étape ' + s.num + '">'
+              + contenu + '</button>';
+      } else {
+        html += '<div class="step ' + classe + '"'
+              + ' aria-current="' + (estActif ? 'step' : 'false') + '">'
+              + contenu + '</div>';
+      }
+      if (i < steps.length - 1) html += '<span class="step-fleche" aria-hidden="true">→</span>';
+    }
+    html += '</div>';
+    zone.innerHTML = html;
+  }
+
+  function _rendreEtapes() {
+    var zone = document.getElementById(ID_ETAPES);
+    if (!zone) return;
+    var html = '';
+    if (etat.etape === 1) html = _etapeNiveau();
+    else if (etat.etape === 2) html = _etapeProbleme();
+    else if (etat.etape === 3) html = _etapeResultats();
+    zone.innerHTML = html;
+  }
+
+  /* ─── Étape 1 : choix du niveau de pilotage ─── */
+  function _etapeNiveau() {
+    var niveaux = CM.DiagnosticProbleme.niveauxTous();
+    var html = '<div class="carte-etape">'
+      + '<div class="q-numero">Étape 1</div>'
+      + '<div class="q-texte">Quel est votre niveau de pilotage ?</div>'
+      + '<div class="q-aide">Ce choix conditionne tout le reste&nbsp;: on ne vous '
+      + 'proposera que les problèmes et indicateurs <strong>légitimes à votre '
+      + 'étage</strong>. Principe anti-micromanagement hérité de Drucker et du Lean.</div>'
+      + '<div class="options-grille">';
+    for (var i = 0; i < niveaux.length; i++) {
+      var n = niveaux[i];
+      html += '<button type="button" class="option-btn"'
+        + ' onclick="CM.VuePorteProbleme.setNiveau(\'' + n.id + '\')">'
+        + '<span class="option-icone" aria-hidden="true">' + n.icone + '</span>'
+        + '<span><span class="option-label">' + n.label + '</span>'
+        + '<span class="option-sous">' + n.sous + '</span></span>'
+        + '</button>';
+    }
+    html += '</div></div>';
+    return html;
+  }
+
+  /* ─── Étape 2 : choix du problème (filtré par matrice) ─── */
+  function _etapeProbleme() {
+    var n = CM.DiagnosticProbleme.niveauInfo(etat.niveau);
+    var problemesLegitimes = CM.DiagnosticProbleme.problemesPourNiveau(etat.niveau);
+    if (!n) return '<div class="message-vide">Niveau inconnu.</div>';
+    var html = '<div class="carte-etape">'
+      + '<div class="encart-posture"><strong>Posture ' + n.label + ' :</strong> '
+      + n.posture + '</div>'
+      + '<div class="q-numero">Étape 2</div>'
+      + '<div class="q-texte">Quel problème cherchez-vous à éclairer ?</div>'
+      + '<div class="q-aide">' + problemesLegitimes.length
+      + ' familles sont pertinentes pour votre niveau. Les autres relèvent d\'un '
+      + 'étage différent (elles n\'apparaissent pas ici <em>volontairement</em>).</div>'
+      + '<div class="options-grille">';
+    for (var i = 0; i < problemesLegitimes.length; i++) {
+      var p = problemesLegitimes[i];
+      html += '<button type="button" class="option-btn"'
+        + ' onclick="CM.VuePorteProbleme.setProbleme(\'' + p.id + '\')">'
+        + '<span class="option-icone" aria-hidden="true">' + p.icone + '</span>'
+        + '<span><span class="option-label">' + p.label + '</span>'
+        + '<span class="option-sous">' + p.sous + '</span></span>'
+        + '</button>';
+    }
+    html += '</div></div>';
+    return html;
+  }
+
+  /* ─── Étape 3 : résultats + zone de délégation ─── */
+  function _etapeResultats() {
+    var ctx = { niveau: etat.niveau, probleme: etat.probleme, domaine: etat.domaine };
+    var recos     = CM.DiagnosticProbleme.recommander(ctx);
+    var aDeleguer = CM.DiagnosticProbleme.aDeleguerPour(ctx);
+    var n         = CM.DiagnosticProbleme.niveauInfo(etat.niveau);
+    var p         = CM.DiagnosticProbleme.problemeInfo(etat.probleme);
+
+    var html = '<div class="carte-etape">';
+    html += '<div class="resultat-titre">✅ Indicateurs recommandés pour votre niveau '
+          + '(' + recos.length + ')</div>';
+    if (recos.length === 0) {
+      html += '<div class="message-vide">Aucun indicateur de la famille «&nbsp;'
+            + (p ? p.label : etat.probleme) + '&nbsp;» n\'est défini pour le niveau '
+            + (n ? n.label : etat.niveau) + ' dans le référentiel actuel.</div>';
+    } else {
+      html += '<div class="grille-cartes">';
+      for (var i = 0; i < recos.length; i++) {
+        html += CM.Composants.htmlCarte(recos[i], '#1a237e', true, false);
+      }
+      html += '</div>';
+    }
+
+    if (aDeleguer.length > 0) {
+      html += _htmlZoneDelegation(aDeleguer);
+    }
+
+    html += '<button type="button" class="bouton-recommencer"'
+          + ' onclick="CM.VuePorteProbleme.reset()">↻ Recommencer</button>';
+    html += '</div>';
+    return html;
+  }
+
+  /* Zone de délégation : indicateurs qui éclairent le problème mais relèvent
+     d'un autre niveau. Rappel à la posture, limitée à 6 entrées pour éviter
+     la surcharge. */
+  function _htmlZoneDelegation(aDeleguer) {
+    var html = '<div class="encart-delegation">'
+      + '<h4>🔽 Zone de délégation — ces indicateurs ne sont pas à votre niveau</h4>'
+      + '<p>Ils éclairent aussi ce problème, mais ils appartiennent à un autre étage. '
+      + '<strong>Votre rôle n\'est pas de les piloter vous-même</strong>, mais de '
+      + 'vous assurer qu\'ils sont regardés par la bonne personne.</p>'
+      + '<ul>';
+    var max = Math.min(aDeleguer.length, 6);
+    for (var i = 0; i < max; i++) {
+      var ind  = aDeleguer[i];
+      var dest = CM.DiagnosticProbleme.niveauInfo(ind.niveau);
+      html += '<li><strong>' + ind.type + '</strong> · ' + ind.nom
+            + '<span class="delegue">→ ' + (dest ? dest.label : ind.niveau) + '</span></li>';
+    }
+    html += '</ul></div>';
+    return html;
+  }
+
+  /* ─── Helpers internes ─── */
+  function _labelNiveau() {
+    if (!etat.niveau) return null;
+    var n = CM.DiagnosticProbleme.niveauInfo(etat.niveau);
+    return n ? { icone: n.icone, label: n.label } : null;
+  }
+  function _labelProbleme() {
+    if (!etat.probleme) return null;
+    var p = CM.DiagnosticProbleme.problemeInfo(etat.probleme);
+    return p ? { icone: p.icone, label: p.label } : null;
+  }
+
+  function _reinitialiserEtat() {
+    etat = { etape: 1, niveau: null, probleme: null, domaine: null };
+  }
+
+  function _cacherAccueils() {
+    var a = document.getElementById('accueil');
+    var b = document.getElementById('accueil-portes');
+    if (a) a.hidden = true;
+    if (b) b.hidden = true;
+  }
+
+  function _scrollEnBas() {
+    try {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    } catch (e) { /* navigateurs anciens : ignorer */ }
+  }
+
+  return {
+    ouvrir:        ouvrir,
+    retourAccueil: retourAccueil,
+    setNiveau:     setNiveau,
+    setProbleme:   setProbleme,
+    retourA:       retourA,
+    reset:         reset
+  };
+})();
+</script>
+
+
 <!-- ══ MODULE : CM.App — Etat, navigation et rendu des 4 vues ══ -->
 <script>
 CM.App = (function() {
