@@ -1151,9 +1151,15 @@
       color: var(--texte-2); font-weight: 800; margin-bottom: 0.9rem;
     }
     #vue-porte-probleme .message-vide {
-      padding: 1.1rem; background: var(--fond); border-radius: 10px;
-      color: var(--texte-2); font-size: 0.88rem; text-align: center;
+      padding: 1.1rem 1.25rem; background: var(--fond); border-radius: 10px;
+      color: var(--texte); font-size: 0.88rem; line-height: 1.55;
     }
+    #vue-porte-probleme .message-vide p {
+      margin: 0 0 0.65rem; text-align: left;
+    }
+    #vue-porte-probleme .message-vide p:last-child { margin-bottom: 0; }
+    #vue-porte-probleme .message-vide .message-vide-chapeau { color: var(--texte); font-weight: 600; }
+    #vue-porte-probleme .message-vide .message-vide-appel { font-style: italic; color: var(--texte-2); }
 
     /* ── Zone de délégation (indicateurs à confier au bon niveau) ─ */
     #vue-porte-probleme .encart-delegation {
@@ -3832,9 +3838,7 @@ CM.VuePorteProbleme = (function() {
     html += '<div class="resultat-titre">✅ Indicateurs recommandés pour votre niveau '
           + '(' + recos.length + ')</div>';
     if (recos.length === 0) {
-      html += '<div class="message-vide">Aucun indicateur de la famille «&nbsp;'
-            + (p ? p.label : etat.probleme) + '&nbsp;» n\'est défini pour le niveau '
-            + (n ? n.label : etat.niveau) + ' dans le référentiel actuel.</div>';
+      html += _htmlMessageVide(n, p, aDeleguer);
     } else {
       html += '<div class="grille-cartes">';
       for (var i = 0; i < recos.length; i++) {
@@ -3851,6 +3855,58 @@ CM.VuePorteProbleme = (function() {
           + ' onclick="CM.VuePorteProbleme.reset()">↻ Recommencer</button>';
     html += '</div>';
     return html;
+  }
+
+  /* Message pédagogique pour les couples (niveau, problème) sans indicateur
+     fiable dans le référentiel. La posture défendue par le cadre est qu'une
+     "paire creuse" est rarement un trou à combler à tout prix : c'est plus
+     souvent le signe qu'il faut déléguer, remonter, ou aller voir le terrain.
+     Contenu volontairement isolé dans une fonction dédiée — il évoluera quand
+     on cherchera à enrichir le référentiel par d'autres métriques. */
+  // Exemple : _htmlMessageVide({label:'Stratégique'}, {label:'Flux'}, []) → '<div class="message-vide">…</div>'
+  function _htmlMessageVide(n, p, aDeleguer) {
+    var nomNiveau   = n ? n.label : etat.niveau;
+    var nomProbleme = p ? p.label : etat.probleme;
+    var html = '<div class="message-vide">';
+    html += '<p class="message-vide-chapeau">Aucun indicateur fiable n\'est défini '
+          + 'pour le couple «&nbsp;' + nomProbleme + '&nbsp;» × «&nbsp;' + nomNiveau
+          + '&nbsp;» dans le cadre actuel.</p>';
+    html += '<p>' + _suggestionAdaptative(etat.niveau, aDeleguer) + '</p>';
+    html += '<p class="message-vide-appel">Si vous pensez qu\'un indicateur '
+          + 'devrait exister ici, c\'est une piste d\'enrichissement du '
+          + 'référentiel à explorer collectivement.</p>';
+    html += '</div>';
+    return html;
+  }
+
+  /* Suggestion adaptée au niveau courant pour orienter l'utilisateur vers la
+     bonne posture quand aucun indicateur n'est recommandé. Le couple
+     (niveau, présence de la zone de délégation) suffit à décider du message —
+     pas besoin de cartographier chaque problème. */
+  // Exemple : _suggestionAdaptative('strategique', []) → 'À ce niveau, observer en direct…'
+  function _suggestionAdaptative(niveauId, aDeleguer) {
+    if (aDeleguer && aDeleguer.length > 0) {
+      return 'C\'est souvent un signal sain : la zone de délégation ci-dessous '
+           + 'montre quels niveaux portent ce sujet dans le référentiel. Le bon '
+           + 'réflexe est plus souvent de s\'assurer que la bonne personne le '
+           + 'regarde que de mesurer soi-même.';
+    }
+    if (niveauId === 'strategique' || niveauId === 'tactique') {
+      return 'À ce niveau, observer en direct ce type de sujet expose au '
+           + 'micromanagement. Déléguer plus bas (programme ou opérationnel) '
+           + 'ou aller voir le terrain (Gemba) est généralement plus juste '
+           + 'que de forger un nouvel indicateur.';
+    }
+    if (niveauId === 'operationnel') {
+      return 'Remonter la question au niveau programme ou tactique, ou la '
+           + 'mettre en discussion avec l\'équipe, est souvent plus juste que '
+           + 'de la mesurer soi-même.';
+    }
+    /* programme — position intermédiaire, deux directions possibles */
+    return 'Selon la nature du sujet : déléguer plus bas (opérationnel) ou '
+         + 'remonter au tactique. Engager la conversation avec les bonnes '
+         + 'personnes éclaire généralement mieux que de créer un indicateur '
+         + 'supplémentaire.';
   }
 
   /* Zone de délégation : indicateurs qui éclairent le problème mais relèvent
