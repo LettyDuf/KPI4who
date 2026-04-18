@@ -1371,6 +1371,57 @@ CM.Gemba = (function() {
 })();
 </script>
 
+<!-- ══ MODULE : CM.Html — Utilitaires HTML (echappement, troncature sure) ══ -->
+<script>
+CM.Html = (function() {
+  'use strict';
+
+  // Echappe les caracteres HTML dangereux. A utiliser quand on injecte
+  // du contenu utilisateur ou de donnees non maitrisees dans innerHTML.
+  function escape(texte) {
+    if (texte === null || texte === undefined) return '';
+    var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;' };
+    return String(texte).replace(/[&<>"']/g, function(c) { return map[c]; });
+  }
+
+  // Tronque une chaine pouvant contenir du HTML inline : retire les
+  // balises, decode les entites courantes, puis coupe sur maxLength
+  // caracteres VISIBLES (pas HTML). Coupe au mot precedent pour eviter
+  // un mot tronque, ajoute une ellipse si necessaire.
+  //
+  // POURQUOI : substring() applique a une chaine contenant du HTML peut
+  // couper au milieu d'une balise et produire un DOM casse. Ce helper
+  // garantit un apercu de texte sur, prevu pour les cartes resumees.
+  // Le HTML enrichi (strong, term-def, etc.) doit etre conserve dans la
+  // fiche detaillee, pas dans la carte.
+  function tronquerTexte(htmlMixte, maxLength) {
+    if (htmlMixte === null || htmlMixte === undefined || maxLength < 1) return '';
+    var texte = String(htmlMixte)
+      .replace(/<[^>]*>/g, '')      // retire balises HTML
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#x27;|&#39;/g, "'")
+      .replace(/&mdash;/g, '—')
+      .replace(/&ndash;/g, '–')
+      .replace(/\s+/g, ' ')         // normalise espaces multiples
+      .trim();
+    if (texte.length > maxLength) {
+      // Coupe au mot precedent pour eviter "...reflète la cad"
+      return texte.substring(0, maxLength).replace(/\s+\S*$/, '') + '…';
+    }
+    return texte;
+  }
+
+  return {
+    escape: escape,
+    tronquerTexte: tronquerTexte
+  };
+})();
+</script>
+
 <!-- ══ MODULE : CM.Referentiel — Stockage et requete des indicateurs ══ -->
 <script>
 CM.Referentiel = (function() {
@@ -2440,7 +2491,10 @@ CM.Composants = (function() {
     // Le TYPE est deja porte par l'icone (fond colore) et le chip de titre. Evite la collision chromatique
     // ex. FLUX (#e65100) qui etait identique a la couleur "precaution".
     var bord = fib.couleur;
-    var def  = ind.definition.length > 95 ? ind.definition.substring(0, 95) + '…' : ind.definition;
+    // Apercu de la definition : texte PUR tronque proprement.
+    // Le HTML enrichi (strong, term-def) reste dans la fiche detaillee.
+    // Evite le bug de DOM casse par coupure au milieu d'une balise.
+    var def  = CM.Html.tronquerTexte(ind.definition, 95);
     return '<div class="carte-ind' + (prioritaire ? ' prioritaire' : '') + (contexte ? ' contexte' : '') + '"'
       + ' style="border-color:' + (prioritaire ? bord : 'var(--bordure)') + '"'
       + ' onclick="CM.Composants.ouvrirTiroir(\'' + ind.id + '\')"'
