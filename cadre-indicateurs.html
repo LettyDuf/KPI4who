@@ -972,6 +972,28 @@
     }
 
     /* ══════════════════════════════════════════════
+       ACCUEIL PYRAMIDE — pied discret (lien vers vue alternative)
+       Hérite de la palette sombre du fond pyramide (cohérence avec .portes-pied).
+    ══════════════════════════════════════════════ */
+    .accueil-pied {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+    .accueil-pied a {
+      color: rgba(255,255,255,0.72);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(255,255,255,0.32);
+      padding-bottom: 1px;
+      transition: color 0.18s ease, border-bottom-color 0.18s ease;
+    }
+    .accueil-pied a:hover,
+    .accueil-pied a:focus-visible {
+      color: white;
+      border-bottom-color: white;
+    }
+
+    /* ══════════════════════════════════════════════
        RESPONSIVE
     ══════════════════════════════════════════════ */
     @media (max-width: 730px) {
@@ -1175,6 +1197,10 @@
   </div><!-- /pyramide -->
 
   <p class="note-bas">Selectionnez votre niveau ou domaine pour acceder aux indicateurs pertinents</p>
+
+  <div class="accueil-pied">
+    <a href="#portes" onclick="event.preventDefault();CM.App.basculerAccueil('portes');" data-action="aller-portes">Essayer la vue par 4 portes &rarr;</a>
+  </div>
 </div><!-- /accueil -->
 
 
@@ -1200,7 +1226,7 @@
   <div class="portes-grille" role="navigation" aria-label="Portes d'entrée">
 
     <!-- Porte 1 — par mon niveau (la seule active dans ce squelette) -->
-    <button type="button" class="porte-carte" data-porte="niveau" aria-label="Entrer par mon niveau — disponible">
+    <button type="button" class="porte-carte" data-porte="niveau" onclick="CM.App.afficherAccueil('pyramide');" aria-label="Entrer par mon niveau — disponible">
       <span class="porte-statut">Disponible</span>
       <span class="porte-icone" aria-hidden="true">🏛️</span>
       <span class="porte-titre">Par mon niveau</span>
@@ -1240,7 +1266,7 @@
   <div class="portes-pied">
     <a href="#lexique" data-action="ouvrir-lexique">Lexique des termes</a>
     <a href="#lire-fiche" data-action="ouvrir-aide">Comment lire une fiche indicateur&nbsp;?</a>
-    <a href="#retour-pyramide" data-action="retour-pyramide">Revenir à la pyramide classique</a>
+    <a href="#pyramide" onclick="event.preventDefault();CM.App.basculerAccueil('pyramide');" data-action="retour-pyramide">Revenir à la pyramide classique</a>
   </div>
 </div><!-- /accueil-portes -->
 
@@ -3186,6 +3212,35 @@ CM.App = (function() {
   var reponses  = {};
   var maturiteActive = 'debutant';
 
+  /* ─── Accueil : pyramide ↔ 4 portes ─── */
+  // Exemple : CM.App.basculerAccueil('portes') → persiste la préférence + change la vue
+  function basculerAccueil(mode) {
+    CM.Preferences.ecrire('accueil', mode);
+    _montrerAccueil(mode);
+  }
+
+  // Exemple : CM.App.afficherAccueil('pyramide') → change la vue sans toucher la préférence
+  function afficherAccueil(mode) {
+    _montrerAccueil(mode);
+  }
+
+  function _montrerAccueil(mode) {
+    var pyramide = document.getElementById('accueil');
+    var portes   = document.getElementById('accueil-portes');
+    if (mode === 'portes') {
+      pyramide.style.display = 'none';
+      portes.hidden = false;
+    } else {
+      portes.hidden = true;
+      pyramide.style.display = 'flex';
+    }
+  }
+
+  function _cacherAccueils() {
+    document.getElementById('accueil').style.display = 'none';
+    document.getElementById('accueil-portes').hidden = true;
+  }
+
   /* ─── Navigation ─── */
   function entrer(niveau, branche, domaine, elClic) {
     /* Flash visuel 120ms, puis transition */
@@ -3205,7 +3260,8 @@ CM.App = (function() {
   function retourAccueil() {
     contexte = null;
     reponses = {};
-    document.getElementById('accueil').style.display = 'flex';
+    var mode = CM.Preferences.lire('accueil', 'pyramide');
+    _montrerAccueil(mode);
     document.getElementById('app').classList.remove('actif');
     /* Remettre le premier onglet actif */
     var onglets = document.querySelectorAll('.onglet');
@@ -3250,7 +3306,7 @@ CM.App = (function() {
   }
 
   function _afficherApp() {
-    document.getElementById('accueil').style.display = 'none';
+    _cacherAccueils();
     document.getElementById('app').classList.add('actif');
     _basculerVue('tableau-bord');
     /* Badge contexte */
@@ -3532,7 +3588,8 @@ CM.App = (function() {
 
   /* ─── Initialisation ─── */
   function init() {
-    document.getElementById('accueil').style.display = 'flex';
+    var mode = CM.Preferences.lire('accueil', 'pyramide');
+    _montrerAccueil(mode);
     document.getElementById('app').classList.remove('actif');
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') CM.Composants.fermerTiroir();
@@ -3547,6 +3604,8 @@ CM.App = (function() {
     changerMaturite:      changerMaturite,
     repondre:             repondre,
     reinitQuestionnaire:  reinitQuestionnaire,
+    basculerAccueil:      basculerAccueil,
+    afficherAccueil:      afficherAccueil,
     init:                 init
   };
 })();
