@@ -1462,6 +1462,205 @@ CM.Referentiel = (function() {
 </script>
 
 
+<!-- ══ MODULE : CM.IndicateursMeta — Tagging multi-axes (problèmes + cadres) ══
+     Enrichissement séparé des fiches : open/closed principle.
+     Permet aux vues "par problème", "par cadre" et "par maturité" de filtrer
+     le référentiel sans jamais modifier les fiches indicateurs elles-mêmes. -->
+<script>
+CM.IndicateursMeta = (function() {
+  'use strict';
+
+  /* ── Vocabulaire fermé des familles de problèmes ──
+     Règle : toute nouvelle valeur doit être ajoutée ici AVANT d'être utilisée
+     dans un mapping, sinon valider() la signalera. */
+  var TAGS = {
+    delais:     { label:'Délais & prévisibilité',         icone:'⏱️' },
+    qualite:    { label:'Qualité & stabilité',             icone:'🎯' },
+    flux:       { label:'Flux & goulots',                  icone:'🌊' },
+    valeur:     { label:'Valeur & rentabilité',            icone:'💰' },
+    humain:     { label:'Engagement & humain',             icone:'👥' },
+    alignement: { label:'Alignement stratégique',          icone:'🧭' },
+    risque:     { label:'Risque, sécurité & conformité',   icone:'🛡️' }
+  };
+
+  /* ── Vocabulaire fermé des cadres de travail ──
+     'generique' = indicateur non lié à un framework particulier (comptable,
+     RH, marketing classiques). Utilisé pour éviter un champ vide. */
+  var CADRES = {
+    dora:      { label:'DORA / DevOps',            icone:'🚀' },
+    lean:      { label:'Lean / Six Sigma',         icone:'♻️' },
+    okr:       { label:'OKR',                      icone:'🎯' },
+    mbo:       { label:'MBO (Drucker)',            icone:'📐' },
+    scrum:     { label:'Scrum',                    icone:'🏉' },
+    kanban:    { label:'Kanban',                   icone:'🗂️' },
+    safe:      { label:'SAFe',                     icone:'🏗️' },
+    itil:      { label:'ITIL',                     icone:'🛠️' },
+    bsc:       { label:'Balanced Scorecard',       icone:'⚖️' },
+    generique: { label:'Indicateur générique',     icone:'🧩' }
+  };
+
+  /* ── Mapping id → { tags, cadres } ──
+     Convention : un indicateur peut porter plusieurs tags (problèmes qu'il
+     éclaire) et plusieurs cadres (frameworks qui le revendiquent). */
+  var META = {
+    /* Stratégique */
+    's1': { tags:['valeur'],                     cadres:['bsc','generique'] },
+    's2': { tags:['valeur','qualite'],           cadres:['generique'] },
+    's3': { tags:['valeur'],                     cadres:['bsc','generique'] },
+    's4': { tags:['alignement','valeur'],        cadres:['okr','mbo'] },
+    's5': { tags:['valeur','alignement'],        cadres:['bsc','generique'] },
+
+    /* Portefeuille (ancien id "tactique") */
+    't1': { tags:['valeur'],                     cadres:['safe','generique'] },
+    't2': { tags:['delais','valeur'],            cadres:['lean','safe'] },
+    't3': { tags:['alignement'],                 cadres:['okr','mbo'] },
+    't4': { tags:['flux'],                       cadres:['lean','kanban','safe'] },
+    't5': { tags:['delais'],                     cadres:['safe','generique'] },
+    'x3': { tags:['flux','humain'],              cadres:['generique'] },
+
+    /* Programme */
+    'p1': { tags:['delais','alignement'],        cadres:['safe','generique'] },
+    'p2': { tags:['valeur'],                     cadres:['safe','generique'] },
+    'p3': { tags:['risque'],                     cadres:['safe','itil','generique'] },
+    'p4': { tags:['humain','alignement'],        cadres:['safe','generique'] },
+    'p5': { tags:['flux','valeur'],              cadres:['lean','safe','kanban'] },
+
+    /* Équipes — DORA / livraison logicielle */
+    'o1': { tags:['flux','delais'],              cadres:['dora'] },
+    'o2': { tags:['delais','flux'],              cadres:['dora','lean'] },
+    'o3': { tags:['qualite','risque'],           cadres:['dora'] },
+    'o4': { tags:['qualite','risque'],           cadres:['dora','itil'] },
+    'o5': { tags:['flux','delais'],              cadres:['lean','kanban','dora'] },
+    'o6': { tags:['flux'],                       cadres:['lean','kanban','scrum'] },
+    'o7': { tags:['flux'],                       cadres:['kanban','lean'] },
+    'o8': { tags:['qualite'],                    cadres:['lean','generique'] },
+    'o9': { tags:['alignement'],                 cadres:['okr','mbo'] },
+
+    /* Équipes — TI / Dev */
+    'ti-d1': { tags:['qualite','risque'],        cadres:['lean','generique'] },
+    'ti-d2': { tags:['delais','flux'],           cadres:['scrum'] },
+    'ti-d3': { tags:['qualite'],                 cadres:['dora','lean'] },
+    'ti-d4': { tags:['flux','delais'],           cadres:['dora','lean'] },
+
+    /* Équipes — TI / Pipeline CI/CD */
+    'ti-p1': { tags:['qualite','risque'],        cadres:['dora','itil'] },
+    'ti-p2': { tags:['flux','delais'],           cadres:['dora','lean'] },
+    'ti-p3': { tags:['qualite','flux'],          cadres:['dora'] },
+    'ti-p4': { tags:['delais','flux'],           cadres:['dora','lean'] },
+    'ti-p5': { tags:['qualite','risque'],        cadres:['dora','generique'] },
+
+    /* Équipes — TI / Ops / support */
+    'ti-o1': { tags:['qualite','risque'],        cadres:['itil','generique'] },
+    'ti-o2': { tags:['qualite','humain'],        cadres:['itil','generique'] },
+    'ti-o3': { tags:['qualite','delais'],        cadres:['itil','generique'] },
+    'ti-o4': { tags:['qualite','risque'],        cadres:['itil','lean'] },
+    'ti-o5': { tags:['valeur','flux'],           cadres:['itil','lean'] },
+
+    /* Équipes — TI / Sécurité */
+    'ti-s1': { tags:['risque'],                  cadres:['itil','generique'] },
+    'ti-s2': { tags:['risque','qualite'],        cadres:['dora','itil'] },
+    'ti-s3': { tags:['risque'],                  cadres:['itil','generique'] },
+    'ti-s4': { tags:['qualite','risque'],        cadres:['lean','generique'] },
+    'ti-s5': { tags:['risque'],                  cadres:['generique'] },
+
+    /* Équipes — agile générique */
+    'x1': { tags:['flux'],                       cadres:['scrum'] },
+    'x2': { tags:['delais','flux'],              cadres:['scrum'] },
+    'x4': { tags:['humain'],                     cadres:['scrum','generique'] },
+    'x5': { tags:['flux','valeur'],              cadres:['scrum','generique'] },
+
+    /* Équipes — Commercial */
+    'af-c1': { tags:['valeur'],                  cadres:['generique'] },
+    'af-c2': { tags:['delais','flux'],           cadres:['lean','generique'] },
+    'af-c3': { tags:['valeur'],                  cadres:['generique'] },
+    'af-c4': { tags:['valeur','alignement'],     cadres:['mbo','generique'] },
+    'af-c5': { tags:['flux','valeur'],           cadres:['generique'] },
+
+    /* Équipes — Marketing */
+    'af-m1': { tags:['valeur'],                  cadres:['generique'] },
+    'af-m2': { tags:['valeur'],                  cadres:['generique'] },
+    'af-m3': { tags:['flux','valeur'],           cadres:['lean','generique'] },
+    'af-m4': { tags:['valeur'],                  cadres:['generique'] },
+    'af-m5': { tags:['valeur'],                  cadres:['generique'] },
+
+    /* Équipes — Finance */
+    'af-f1': { tags:['delais','valeur'],         cadres:['lean','generique'] },
+    'af-f2': { tags:['qualite','valeur'],        cadres:['generique'] },
+    'af-f3': { tags:['delais','flux'],           cadres:['lean','generique'] },
+    'af-f4': { tags:['risque'],                  cadres:['generique'] },
+
+    /* Équipes — RH */
+    'af-r1': { tags:['humain'],                  cadres:['generique'] },
+    'af-r2': { tags:['delais','flux'],           cadres:['lean','generique'] },
+    'af-r3': { tags:['humain','risque'],         cadres:['generique'] },
+    'af-r4': { tags:['humain','qualite'],        cadres:['generique'] },
+
+    /* Équipes — Opérations / Industrie */
+    'af-op1': { tags:['flux','qualite'],         cadres:['lean'] },
+    'af-op2': { tags:['qualite'],                cadres:['lean'] },
+    'af-op3': { tags:['delais','qualite'],       cadres:['lean'] },
+    'af-op4': { tags:['flux','valeur'],          cadres:['lean'] },
+
+    /* Équipes — Service Client */
+    'af-sc1': { tags:['qualite','humain'],       cadres:['itil','generique'] },
+    'af-sc2': { tags:['qualite','humain'],       cadres:['itil','generique'] },
+    'af-sc3': { tags:['qualite','humain'],       cadres:['lean','itil'] },
+    'af-sc4': { tags:['qualite','delais'],       cadres:['itil','generique'] },
+    'af-sc5': { tags:['delais'],                 cadres:['itil','lean'] }
+  };
+
+  /* ── API publique ── */
+  function pour(id) {
+    return META[id] || { tags:[], cadres:[] };
+  }
+  function tagsDe(id) { return pour(id).tags || []; }
+  function cadresDe(id) { return pour(id).cadres || []; }
+
+  function infoTag(id) {
+    var t = TAGS[id];
+    return t ? { id:id, label:t.label, icone:t.icone } : null;
+  }
+  function infoCadre(id) {
+    var c = CADRES[id];
+    return c ? { id:id, label:c.label, icone:c.icone } : null;
+  }
+
+  function tousLesTags() {
+    return Object.keys(TAGS).map(function(k) {
+      return { id:k, label:TAGS[k].label, icone:TAGS[k].icone };
+    });
+  }
+  function tousLesCadres() {
+    return Object.keys(CADRES).map(function(k) {
+      return { id:k, label:CADRES[k].label, icone:CADRES[k].icone };
+    });
+  }
+
+  /* Sanity check développeur : renvoie la liste des ids présents dans le
+     référentiel mais absents du mapping META (à appeler au DOMContentLoaded
+     en mode debug). */
+  function valider(referentielIds) {
+    var manquants = [];
+    for (var i = 0; i < referentielIds.length; i++) {
+      if (!META[referentielIds[i]]) manquants.push(referentielIds[i]);
+    }
+    return manquants;
+  }
+
+  return {
+    pour: pour,
+    tagsDe: tagsDe,
+    cadresDe: cadresDe,
+    infoTag: infoTag,
+    infoCadre: infoCadre,
+    tousLesTags: tousLesTags,
+    tousLesCadres: tousLesCadres,
+    valider: valider
+  };
+})();
+</script>
+
+
 <!-- ══ DATA : Indicateurs Strategiques (s1–s5) ══ -->
 <script>
 CM.Referentiel.ajouter([
