@@ -822,6 +822,156 @@
     .term-def:hover::before, .term-def:focus::before { opacity: 1; }
 
     /* ══════════════════════════════════════════════
+       ACCUEIL — 4 PORTES (squelette inerte, future page d'entrée)
+       Reste invisible tant que CM.App ne l'active pas via un futur basculeur.
+       Tokens réutilisés : palette niv-1/2/3 + accent, ombres, rayon.
+    ══════════════════════════════════════════════ */
+    #accueil-portes {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 4rem 1.5rem 3rem;
+      background: linear-gradient(145deg, #0d1b4f 0%, #1a237e 55%, #283593 100%);
+      color: white;
+      position: relative;
+    }
+    .portes-intro {
+      text-align: center;
+      max-width: 720px;
+      margin-bottom: 2.5rem;
+    }
+    .portes-intro h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.6rem;
+    }
+    .portes-intro p {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #c5cae9;
+      margin-bottom: 0.85rem;
+    }
+    .portes-intro .portes-baseline {
+      display: inline-block;
+      padding: 0.4rem 0.9rem;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      color: #e8eaf6;
+    }
+    .portes-grille {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.1rem;
+      width: 100%;
+      max-width: 1080px;
+    }
+    .porte-carte {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      padding: 1.6rem 1.4rem 1.5rem;
+      background: var(--fond-2);
+      color: var(--texte);
+      border-radius: var(--rayon);
+      border: 1px solid var(--bordure);
+      border-top: 4px solid var(--niv-2-moyen);
+      box-shadow: var(--ombre);
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+      transition: var(--trans);
+      min-width: 0;
+    }
+    .porte-carte:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--ombre-forte);
+      border-top-color: var(--accent);
+    }
+    .porte-carte:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+    }
+    .porte-carte[aria-disabled="true"] {
+      cursor: not-allowed;
+      opacity: 0.62;
+      filter: grayscale(0.2);
+    }
+    .porte-carte[aria-disabled="true"]:hover {
+      transform: none;
+      box-shadow: var(--ombre);
+      border-top-color: var(--niv-2-moyen);
+    }
+    .porte-icone {
+      font-size: 2rem;
+      line-height: 1;
+    }
+    .porte-titre {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--niv-1);
+      letter-spacing: -0.2px;
+      line-height: 1.25;
+    }
+    .porte-soustitre {
+      font-size: 0.88rem;
+      color: var(--texte-2);
+      line-height: 1.5;
+      flex: 1;
+    }
+    .porte-exemple {
+      font-size: 0.78rem;
+      color: var(--niv-3);
+      background: var(--niv-3-clair);
+      padding: 0.5rem 0.7rem;
+      border-radius: 8px;
+      line-height: 1.45;
+      font-style: italic;
+    }
+    .porte-statut {
+      align-self: flex-start;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 0.18rem 0.55rem;
+      border-radius: 5px;
+      background: var(--niv-2-clair);
+      color: var(--niv-2);
+    }
+    .porte-statut.bientot {
+      background: #fff3e0;
+      color: var(--accent);
+    }
+    .portes-pied {
+      margin-top: 2.25rem;
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      font-size: 0.85rem;
+    }
+    .portes-pied a {
+      color: #c5cae9;
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(197,202,233,0.4);
+      padding-bottom: 1px;
+      transition: color 0.18s ease;
+    }
+    .portes-pied a:hover { color: white; border-bottom-color: white; }
+    @media (max-width: 540px) {
+      .portes-intro h1 { font-size: 1.6rem; }
+      #accueil-portes  { padding: 2.5rem 1rem 2rem; }
+      .porte-carte     { padding: 1.3rem 1.1rem 1.2rem; }
+    }
+
+    /* ══════════════════════════════════════════════
        RESPONSIVE
     ══════════════════════════════════════════════ */
     @media (max-width: 730px) {
@@ -1026,6 +1176,73 @@
 
   <p class="note-bas">Selectionnez votre niveau ou domaine pour acceder aux indicateurs pertinents</p>
 </div><!-- /accueil -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     ACCUEIL — 4 PORTES (squelette inerte)
+
+     Future page d'entrée. Masquée par défaut (attribut [hidden]).
+     Sera activable ultérieurement via un basculeur dans CM.App.
+     Les quatre portes mènent respectivement à :
+       1. la pyramide (vue actuelle)   — par mon niveau
+       2. vue-par-probleme              — par mon problème  (à créer)
+       3. vue-par-cadre                 — par mon cadre     (à créer)
+       4. vue-par-maturite              — par ma maturité   (à créer)
+═══════════════════════════════════════════════════════ -->
+<div id="accueil-portes" hidden>
+
+  <div class="portes-intro">
+    <h1>Par où veux-tu entrer&nbsp;?</h1>
+    <p>Choisis la porte qui correspond à ta situation du moment. Toutes mènent au même référentiel&nbsp;— mais chaque porte le lit sous un angle différent.</p>
+    <span class="portes-baseline">Regarder peu, mais juste · 75 indicateurs · 4 entrées</span>
+  </div>
+
+  <div class="portes-grille" role="navigation" aria-label="Portes d'entrée">
+
+    <!-- Porte 1 — par mon niveau (la seule active dans ce squelette) -->
+    <button type="button" class="porte-carte" data-porte="niveau" aria-label="Entrer par mon niveau — disponible">
+      <span class="porte-statut">Disponible</span>
+      <span class="porte-icone" aria-hidden="true">🏛️</span>
+      <span class="porte-titre">Par mon niveau</span>
+      <span class="porte-soustitre">Je connais mon étage dans l'organisation&nbsp;: direction, portefeuille, programme ou équipe. Je veux voir ce qui se regarde à mon niveau.</span>
+      <span class="porte-exemple">« Je suis responsable d'un portefeuille d'initiatives, que dois-je piloter&nbsp;? »</span>
+    </button>
+
+    <!-- Porte 2 — par mon problème -->
+    <button type="button" class="porte-carte" data-porte="probleme" aria-disabled="true" aria-label="Entrer par mon problème — bientôt disponible">
+      <span class="porte-statut bientot">Bientôt</span>
+      <span class="porte-icone" aria-hidden="true">🎯</span>
+      <span class="porte-titre">Par mon problème</span>
+      <span class="porte-soustitre">J'ai une douleur précise&nbsp;: délais qui dérivent, qualité qui régresse, flux bloqué, alignement perdu. Je veux les métriques qui éclairent ce problème.</span>
+      <span class="porte-exemple">« Mes livraisons sont systématiquement en retard&nbsp;— par où regarder&nbsp;? »</span>
+    </button>
+
+    <!-- Porte 3 — par mon cadre -->
+    <button type="button" class="porte-carte" data-porte="cadre" aria-disabled="true" aria-label="Entrer par mon cadre — bientôt disponible">
+      <span class="porte-statut bientot">Bientôt</span>
+      <span class="porte-icone" aria-hidden="true">📐</span>
+      <span class="porte-titre">Par mon cadre</span>
+      <span class="porte-soustitre">Mon équipe travaille avec un framework précis&nbsp;: DORA, Lean Six Sigma, OKR, Scrum, Kanban, SAFe, ITIL… Je veux les indicateurs que ce cadre revendique.</span>
+      <span class="porte-exemple">« Je démarre une transformation DORA&nbsp;— quels 4 indicateurs mettre en place&nbsp;? »</span>
+    </button>
+
+    <!-- Porte 4 — par ma maturité -->
+    <button type="button" class="porte-carte" data-porte="maturite" aria-disabled="true" aria-label="Entrer par ma maturité — bientôt disponible">
+      <span class="porte-statut bientot">Bientôt</span>
+      <span class="porte-icone" aria-hidden="true">🌱</span>
+      <span class="porte-titre">Par ma maturité</span>
+      <span class="porte-soustitre">Je sais où j'en suis dans ma progression&nbsp;: débutant, intermédiaire ou avancé. Je veux des indicateurs adaptés à mon niveau de maîtrise de la mesure.</span>
+      <span class="porte-exemple">« On démarre tout juste&nbsp;— quels indicateurs ne pas risquer encore&nbsp;? »</span>
+    </button>
+
+  </div>
+
+  <div class="portes-pied">
+    <a href="#lexique" data-action="ouvrir-lexique">Lexique des termes</a>
+    <a href="#lire-fiche" data-action="ouvrir-aide">Comment lire une fiche indicateur&nbsp;?</a>
+    <a href="#retour-pyramide" data-action="retour-pyramide">Revenir à la pyramide classique</a>
+  </div>
+</div><!-- /accueil-portes -->
 
 
 <!-- ══════════════════════════════════════════════════════
