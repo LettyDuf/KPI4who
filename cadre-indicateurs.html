@@ -3669,14 +3669,14 @@ CM.VuePorteProbleme = (function() {
     etat.niveau = niveauId;
     etat.etape = 2;
     _rendre();
-    _scrollEnBas();
+    _scrollEnHaut();
   }
 
   function setProbleme(problemeId) {
     etat.probleme = problemeId;
     etat.etape = 3;
     _rendre();
-    _scrollEnBas();
+    _scrollEnHaut();
   }
 
   // Exemple : retourA(2) → revient à l'étape 2 en effaçant les choix ultérieurs
@@ -3870,10 +3870,12 @@ CM.VuePorteProbleme = (function() {
     if (b) b.hidden = true;
   }
 
-  function _scrollEnBas() {
-    try {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    } catch (e) { /* navigateurs anciens : ignorer */ }
+  /* Après chaque transition d'étape, ramener l'utilisateur en haut du parcours
+     (stepper actualisé + début de la nouvelle étape visibles simultanément).
+     Évite l'effet "je me retrouve au pied de la page sans savoir où regarder". */
+  function _scrollEnHaut() {
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    catch (e) { /* navigateurs anciens : ignorer */ }
   }
 
   return {
