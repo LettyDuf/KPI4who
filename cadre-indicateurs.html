@@ -3170,7 +3170,7 @@ CM.Referentiel.ajouter([
     frequence:'Continue — revue quotidienne',
     exemple_ent:'Delai de premiere réponse email : 4h en moyenne. SLA client : 8h. Chat : 45 secondes. Objectif email : 2h via le tri automatise.',
     exemple_eq:'Un long délai de premiere réponse est la premiere cause de frustration client, avant meme la qualité de la resolution.',
-    risque:'Optimiser le délai de premiere réponse avec des réponses automatisees generiques peut frustrer davantage si elles ne repondent pas au probleme.',
+    risque:'Optimiser le délai de première réponse avec des réponses automatisées génériques peut frustrer davantage si elles ne répondent pas au problème.',
     roles:['chef-equipe','membre-equipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
     branche:'affaires', domaine:'service-client'
   }
@@ -3980,7 +3980,7 @@ CM.App = (function() {
 
   /* ─── Etat ─── */
   var contexte  = null;  /* { niveau, branche, domaine } */
-  var réponses  = {};
+  var reponses  = {};
   var maturiteActive = 'debutant';
 
   /* ─── Accueil : pyramide ↔ 4 portes ─── */
@@ -4017,7 +4017,7 @@ CM.App = (function() {
     }
     setTimeout(function() {
       contexte = { niveau: niveau, branche: branche || null, domaine: domaine || null };
-      réponses = {};
+      reponses = {};
       maturiteActive = 'debutant';
       _afficherApp();
       _rendreTout();
@@ -4026,7 +4026,7 @@ CM.App = (function() {
 
   function retourAccueil() {
     contexte = null;
-    réponses = {};
+    reponses = {};
     var mode = CM.Preferences.lire('accueil', 'pyramide');
     _montrerAccueil(mode);
     document.getElementById('app').classList.remove('actif');
@@ -4061,7 +4061,7 @@ CM.App = (function() {
   }
 
   function reinitQuestionnaire() {
-    réponses = {};
+    reponses = {};
     _rendreQuestionnaire();
   }
 
@@ -4369,7 +4369,7 @@ CM.App = (function() {
     retourAccueil:        retourAccueil,
     changerVue:           changerVue,
     changerMaturite:      changerMaturite,
-    repondre:             répondre,
+    repondre:             repondre,
     reinitQuestionnaire:  reinitQuestionnaire,
     basculerAccueil:      basculerAccueil,
     afficherAccueil:      afficherAccueil,
