@@ -3602,146 +3602,186 @@ CM.Composants = (function() {
     'risque':     'faible'
   };
 
-  // rendreFicheHtml(ind) : construit le HTML complet d'une fiche-indicateur.
+  /* ── Sous-fonctions de rendu, une par section de fiche ──
+   * Chaque fonction est pure : entrée = valeurs métier, sortie = fragment HTML string.
+   * Elles sont composées par rendreFicheHtml() ci-dessous.
+   * Le découpage suit la structure visible à l'écran : un fragment = une section du tiroir.
+   */
+
+  // En-tête : chip du type + nom de l'indicateur avec son icône.
+  function rendreEnteteFiche(ind, couleurType, libelleType) {
+    return '<div class="fi-header">'
+         +   '<div class="fi-chip-ligne">'
+         +     '<span class="fi-chip" style="background:' + couleurType + '">' + ind.type + '</span>'
+         +     '<span class="fi-chip-label">' + libelleType + '</span>'
+         +   '</div>'
+         +   '<h2 class="fi-nom">' + ind.icone + ' ' + ind.nom + '</h2>'
+         + '</div>';
+  }
+
+  // Cadre de lecture : triptyque Niveau / Maturité min. / Fiabilité avec leurs visuels (strates, pastilles, jauge).
+  function rendreCadreLecture(nivLibelleCourt, positionKey, matLabelCourt, matKey, fibLabelCourt, fiabKey) {
+    return '<div class="fi-cadre">'
+         +   '<div class="fi-cadre-item">'
+         +     '<span class="fi-cadre-label">Niveau</span>'
+         +     '<span class="fi-cadre-valeur">'
+         +       '<span class="fi-strates" data-position="' + positionKey + '" aria-hidden="true"><i></i><i></i><i></i><i></i></span>'
+         +       nivLibelleCourt
+         +     '</span>'
+         +   '</div>'
+         +   '<div class="fi-cadre-item">'
+         +     '<span class="fi-cadre-label">Maturité min.</span>'
+         +     '<span class="fi-cadre-valeur">'
+         +       '<span class="fi-pastilles" data-niveau="' + matKey + '" aria-hidden="true"><i></i><i></i><i></i></span>'
+         +       matLabelCourt
+         +     '</span>'
+         +   '</div>'
+         +   '<div class="fi-cadre-item" data-niveau="' + fiabKey + '">'
+         +     '<span class="fi-cadre-label">Fiabilité</span>'
+         +     '<span class="fi-cadre-valeur">'
+         +       '<span class="fi-jauge" aria-hidden="true"><i></i><i></i><i></i></span>'
+         +       fibLabelCourt
+         +     '</span>'
+         +   '</div>'
+         + '</div>';
+  }
+
+  // Définition : bloc principal "Ce que mesure l'indicateur".
+  function rendreDefinition(ind) {
+    return '<div class="fi-bloc-principal">'
+         +   '<h3>Ce que mesure l\'indicateur</h3>'
+         +   '<p>' + ind.definition + '</p>'
+         + '</div>';
+  }
+
+  // Objectif : à quoi sert l'indicateur.
+  function rendreObjectif(ind) {
+    return '<div class="fi-bloc-inline">'
+         +   '<h4>Objectif</h4>'
+         +   '<p>' + ind.objectif + '</p>'
+         + '</div>';
+  }
+
+  // Fréquence de mesure recommandée.
+  function rendreFrequence(ind) {
+    return '<div class="fi-bloc-inline">'
+         +   '<h4>🕐 Fréquence de mesure</h4>'
+         +   '<p>' + ind.frequence + '</p>'
+         + '</div>';
+  }
+
+  // Exemples concrets : double colonne Entreprise / Équipe.
+  function rendreExemples(ind) {
+    return '<div class="fi-bloc-inline">'
+         +   '<h4>Exemples concrets</h4>'
+         +   '<div class="fi-exemples">'
+         +     '<div class="fi-exemple fi-exemple-entreprise">'
+         +       '<div class="fi-exemple-entete">'
+         +         '<div class="fi-exemple-icone">🏢</div>'
+         +         '<span class="fi-exemple-label">Entreprise</span>'
+         +       '</div>'
+         +       '<div class="fi-exemple-texte">' + ind.exemple_ent + '</div>'
+         +     '</div>'
+         +     '<div class="fi-exemple fi-exemple-equipe">'
+         +       '<div class="fi-exemple-entete">'
+         +         '<div class="fi-exemple-icone">👥</div>'
+         +         '<span class="fi-exemple-label">Équipe</span>'
+         +       '</div>'
+         +       '<div class="fi-exemple-texte">' + ind.exemple_eq + '</div>'
+         +     '</div>'
+         +   '</div>'
+         + '</div>';
+  }
+
+  // Point de vigilance : risques d'abus, anti-patterns, mauvaise interprétation.
+  function rendreVigilance(ind) {
+    return '<div class="fi-vigilance">'
+         +   '<h3>'
+         +     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+         +       '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>'
+         +       '<line x1="12" y1="9" x2="12" y2="13"/>'
+         +       '<line x1="12" y1="17" x2="12.01" y2="17"/>'
+         +     '</svg>'
+         +     'Point de vigilance'
+         +   '</h3>'
+         +   '<p>' + ind.risque + '</p>'
+         + '</div>';
+  }
+
+  // Alternative recommandée : optionnelle, affichée uniquement si ind.alt est renseigné.
+  // Retourne '' si pas d'alternative.
+  function rendreAlternative(ind) {
+    if (!ind.alt) return '';
+    return '<div class="fi-bloc-inline" style="margin-top:0.9rem">'
+         +   '<h4>💡 Alternative recommandée</h4>'
+         +   '<p>' + ind.alt + '</p>'
+         + '</div>';
+  }
+
+  // Contexte Fiabilité : description longue de la fiabilité (niveau de maturité de la donnée).
+  function rendreContexteFiabilite(fib) {
+    return '<div class="fi-bloc-inline" style="margin-top:1.2rem">'
+         +   '<h4>' + fib.icone + ' Fiabilité &mdash; ' + fib.label + '</h4>'
+         +   '<p>' + fib.desc + '</p>'
+         + '</div>';
+  }
+
+  // Contexte Maturité : description longue de la maturité minimale requise.
+  function rendreContexteMaturite(mat) {
+    return '<div class="fi-bloc-inline">'
+         +   '<h4>' + mat.icone + ' Maturité recommandée &mdash; ' + mat.label + '</h4>'
+         +   '<p>' + mat.desc + '</p>'
+         + '</div>';
+  }
+
+  // Domaine : badge coloré (optionnel, affiché si ind.domaine est défini dans CM.Domaine).
+  // Retourne '' si pas de domaine ou si CM.Domaine absent.
+  function rendreDomaine(ind) {
+    if (!(ind.domaine && CM.Domaine && CM.Domaine.DOMAINES && CM.Domaine.DOMAINES[ind.domaine])) return '';
+    var d = CM.Domaine.DOMAINES[ind.domaine];
+    return '<div class="fi-bloc-inline">'
+         +   '<h4>Domaine</h4>'
+         +   '<p><span style="display:inline-flex;align-items:center;gap:0.4rem;background:' + d.couleur + ';color:white;padding:0.25rem 0.75rem;border-radius:20px;font-size:var(--fs-sm);font-weight:600;">' + d.icone + ' ' + d.libelle + '</span></p>'
+         + '</div>';
+  }
+
+  // rendreFicheHtml(ind) : orchestrateur — construit le HTML complet d'une fiche-indicateur.
   // Fonction pure : pas d'accès au DOM, pas d'effet de bord. Entrée = objet indicateur, sortie = string HTML.
+  // Responsabilité : calculer les dérivés (libellés courts, clés normalisées, etc.) et composer les sections.
+  // Le rendu proprement dit est délégué aux sous-fonctions rendreXxx() ci-dessus.
   // Exemple : rendreFicheHtml(CM.Referentiel.chercher('p5')) → '<div class="fi-header">…</div>…'
   function rendreFicheHtml(ind) {
     var cfg = CM.Config;
-    var c   = cfg.TYPES_COULEURS[ind.type] || '#546e7a';
+    var couleurType = cfg.TYPES_COULEURS[ind.type] || '#546e7a';
+    var libelleType = cfg.TYPES_LIBELLES[ind.type];
     var fib = cfg.FIABILITE[ind.fiabilite || 'fiable'];
     var mat = cfg.MATURITE[ind.maturite_min || 'debutant'];
 
-    /* Trouver l'objet niveau */
+    /* Trouver l'objet niveau et calculer le libellé court */
     var nivObj = null;
     for (var i = 0; i < cfg.NIVEAUX.length; i++) {
       if (cfg.NIVEAUX[i].niveauData === ind.niveau) { nivObj = cfg.NIVEAUX[i]; break; }
     }
     var nivLibelle = nivObj ? nivObj.libelle : ind.niveau;
     var nivLibelleCourt = nivLibelle.replace(/^Niveau\s+/i, '');
+    var matLabelCourt = mat.label.replace(/^Équipe\s+/i, '');
     var positionKey = NIVEAU_VERS_POSITION[ind.niveau] || 'equipe';
     var fiabKey = FIABILITE_VERS_NIVEAU[ind.fiabilite || 'fiable'] || 'haute';
     var matKey = ind.maturite_min || 'debutant';
 
-    var html = '';
-
-    /* ── En-tête : chip type + nom ── */
-    html += '<div class="fi-header">';
-    html +=   '<div class="fi-chip-ligne">';
-    html +=     '<span class="fi-chip" style="background:' + c + '">' + ind.type + '</span>';
-    html +=     '<span class="fi-chip-label">' + cfg.TYPES_LIBELLES[ind.type] + '</span>';
-    html +=   '</div>';
-    html +=   '<h2 class="fi-nom">' + ind.icone + ' ' + ind.nom + '</h2>';
-    html += '</div>';
-
-    /* ── Cadre de lecture : Niveau / Maturité / Fiabilité ── */
-    html += '<div class="fi-cadre">';
-    html +=   '<div class="fi-cadre-item">';
-    html +=     '<span class="fi-cadre-label">Niveau</span>';
-    html +=     '<span class="fi-cadre-valeur">';
-    html +=       '<span class="fi-strates" data-position="' + positionKey + '" aria-hidden="true"><i></i><i></i><i></i><i></i></span>';
-    html +=       nivLibelleCourt;
-    html +=     '</span>';
-    html +=   '</div>';
-    html +=   '<div class="fi-cadre-item">';
-    html +=     '<span class="fi-cadre-label">Maturité min.</span>';
-    html +=     '<span class="fi-cadre-valeur">';
-    html +=       '<span class="fi-pastilles" data-niveau="' + matKey + '" aria-hidden="true"><i></i><i></i><i></i></span>';
-    html +=       mat.label.replace(/^Équipe\s+/i, '');
-    html +=     '</span>';
-    html +=   '</div>';
-    html +=   '<div class="fi-cadre-item" data-niveau="' + fiabKey + '">';
-    html +=     '<span class="fi-cadre-label">Fiabilité</span>';
-    html +=     '<span class="fi-cadre-valeur">';
-    html +=       '<span class="fi-jauge" aria-hidden="true"><i></i><i></i><i></i></span>';
-    html +=       fib.label_court;
-    html +=     '</span>';
-    html +=   '</div>';
-    html += '</div>';
-
-    /* ── Définition : bloc principal ── */
-    html += '<div class="fi-bloc-principal">';
-    html +=   '<h3>Ce que mesure l\'indicateur</h3>';
-    html +=   '<p>' + ind.definition + '</p>';
-    html += '</div>';
-
-    /* ── Objectif ── */
-    html += '<div class="fi-bloc-inline">';
-    html +=   '<h4>Objectif</h4>';
-    html +=   '<p>' + ind.objectif + '</p>';
-    html += '</div>';
-
-    /* ── Fréquence ── */
-    html += '<div class="fi-bloc-inline">';
-    html +=   '<h4>🕐 Fréquence de mesure</h4>';
-    html +=   '<p>' + ind.frequence + '</p>';
-    html += '</div>';
-
-    /* ── Exemples concrets ── */
-    html += '<div class="fi-bloc-inline">';
-    html +=   '<h4>Exemples concrets</h4>';
-    html +=   '<div class="fi-exemples">';
-    html +=     '<div class="fi-exemple fi-exemple-entreprise">';
-    html +=       '<div class="fi-exemple-entete">';
-    html +=         '<div class="fi-exemple-icone">🏢</div>';
-    html +=         '<span class="fi-exemple-label">Entreprise</span>';
-    html +=       '</div>';
-    html +=       '<div class="fi-exemple-texte">' + ind.exemple_ent + '</div>';
-    html +=     '</div>';
-    html +=     '<div class="fi-exemple fi-exemple-equipe">';
-    html +=       '<div class="fi-exemple-entete">';
-    html +=         '<div class="fi-exemple-icone">👥</div>';
-    html +=         '<span class="fi-exemple-label">Équipe</span>';
-    html +=       '</div>';
-    html +=       '<div class="fi-exemple-texte">' + ind.exemple_eq + '</div>';
-    html +=     '</div>';
-    html +=   '</div>';
-    html += '</div>';
-
-    /* ── Vigilance ── */
-    html += '<div class="fi-vigilance">';
-    html +=   '<h3>';
-    html +=     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
-    html +=       '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>';
-    html +=       '<line x1="12" y1="9" x2="12" y2="13"/>';
-    html +=       '<line x1="12" y1="17" x2="12.01" y2="17"/>';
-    html +=     '</svg>';
-    html +=     'Point de vigilance';
-    html +=   '</h3>';
-    html +=   '<p>' + ind.risque + '</p>';
-    html += '</div>';
-
-    /* ── Alternative recommandée (si fiabilité à risque) ── */
-    if (ind.alt) {
-      html += '<div class="fi-bloc-inline" style="margin-top:0.9rem">';
-      html +=   '<h4>💡 Alternative recommandée</h4>';
-      html +=   '<p>' + ind.alt + '</p>';
-      html += '</div>';
-    }
-
-    /* ── Contexte : description longue Fiabilité + Maturité ── */
-    html += '<div class="fi-bloc-inline" style="margin-top:1.2rem">';
-    html +=   '<h4>' + fib.icone + ' Fiabilité &mdash; ' + fib.label + '</h4>';
-    html +=   '<p>' + fib.desc + '</p>';
-    html += '</div>';
-
-    html += '<div class="fi-bloc-inline">';
-    html +=   '<h4>' + mat.icone + ' Maturité recommandée &mdash; ' + mat.label + '</h4>';
-    html +=   '<p>' + mat.desc + '</p>';
-    html += '</div>';
-
-    /* ── Domaine (si présent) ── */
-    if (ind.domaine && CM.Domaine && CM.Domaine.DOMAINES && CM.Domaine.DOMAINES[ind.domaine]) {
-      var d = CM.Domaine.DOMAINES[ind.domaine];
-      html += '<div class="fi-bloc-inline">';
-      html +=   '<h4>Domaine</h4>';
-      html +=   '<p><span style="display:inline-flex;align-items:center;gap:0.4rem;background:' + d.couleur + ';color:white;padding:0.25rem 0.75rem;border-radius:20px;font-size:var(--fs-sm);font-weight:600;">' + d.icone + ' ' + d.libelle + '</span></p>';
-      html += '</div>';
-    }
-
-    /* ── Encart Terrain (Gemba) — triptyque contextualisé au type d'indicateur ── */
-    html += CM.Gemba.htmlEncartFiche(ind.type);
-
-    return html;
+    /* Composition des sections dans l'ordre d'affichage du tiroir */
+    return rendreEnteteFiche(ind, couleurType, libelleType)
+         + rendreCadreLecture(nivLibelleCourt, positionKey, matLabelCourt, matKey, fib.label_court, fiabKey)
+         + rendreDefinition(ind)
+         + rendreObjectif(ind)
+         + rendreFrequence(ind)
+         + rendreExemples(ind)
+         + rendreVigilance(ind)
+         + rendreAlternative(ind)
+         + rendreContexteFiabilite(fib)
+         + rendreContexteMaturite(mat)
+         + rendreDomaine(ind)
+         + CM.Gemba.htmlEncartFiche(ind.type); /* Encart Terrain — triptyque contextualisé au type */
   }
 
   // ouvrirTiroir(id) : orchestration — récupère la donnée, délègue le rendu HTML, ouvre le tiroir, gère le focus.
