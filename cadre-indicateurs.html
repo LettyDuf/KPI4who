@@ -434,7 +434,7 @@
     }
     .chip-essentiel { font-size: 0.68rem; background: #fff3e0; color: var(--accent); border-radius: 10px; padding: 0.12rem 0.5rem; font-weight: 800; }
     .chip-contexte  { font-size: 0.68rem; background: var(--fond); color: var(--texte-2); border-radius: 10px; padding: 0.12rem 0.5rem; font-weight: 700; }
-    .grille-cartes { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 0.9rem; }
+    .grille-cartes { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(280px, 22vw, 340px), 1fr)); gap: 0.9rem; }
     .carte-ind {
       border-radius: 12px; border: 1.5px solid var(--bordure);
       background: var(--fond-2); cursor: pointer;
@@ -837,7 +837,7 @@
     }
     @media (max-width: 520px) {
       /* Bascule en 1 colonne uniquement pour les très petits écrans (vrai mobile portrait).
-         Au-dessus, la grille auto-fill avec minmax(215px, 1fr) gère 2+ colonnes naturellement. */
+         Au-dessus, la grille auto-fill avec minmax(clamp(280px, 22vw, 340px), 1fr) gère 2+ colonnes naturellement. */
       .grille-cartes { grid-template-columns: 1fr; }
     }
   </style>
