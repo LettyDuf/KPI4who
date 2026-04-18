@@ -2991,6 +2991,191 @@ CM.Domaine = (function() {
 })();
 </script>
 
+
+<!-- ══ MODULE : CM.DiagnosticProbleme — Matrice anti-micromanagement ══
+     Service de domaine pur : applique la matrice de légitimité niveau ↔ problème
+     et sélectionne les indicateurs pertinents via CM.IndicateursMeta.tagsDe().
+
+     Design :
+     - Vocabulaire INTERNE = vocabulaire DATA des indicateurs (ind.niveau) :
+       'strategique', 'tactique', 'programme', 'operationnel'.
+       Cohérent avec la posture Drucker/Lean (niveau de pilotage, pas boîte d'org).
+     - Extensibilité : le nœud opérationnel accepte un domaine optionnel
+       (contexte.domaine). Aujourd'hui null ; demain 'dev', 'devops', etc.
+     - Open/closed : ajouter un niveau ou un problème = ajouter une entrée dans
+       NIVEAUX / MATRICE_PERTINENCE / DELEGATION. Aucun code à modifier ailleurs.
+     - Zéro DOM, zéro état, 100% testable. -->
+<script>
+CM.DiagnosticProbleme = (function() {
+  'use strict';
+
+  /* ─── Vocabulaire fermé des niveaux de pilotage ──────────────────
+     Les ids correspondent au champ ind.niveau du référentiel (source de vérité).
+     posture : rappel Gemba affiché à l'étape 2, ancre anti-micromanagement. */
+  var NIVEAUX = [
+    {
+      id:       'strategique',
+      icone:    '🏛️',
+      label:    'Stratégique',
+      sous:     'Direction, horizon 1 à 3 ans',
+      posture:  'Vous pilotez les résultats consolidés, pas l\'exécution. ' +
+                'Votre rôle : fixer le cap et tenir les grands équilibres.'
+    },
+    {
+      id:       'tactique',
+      icone:    '📊',
+      label:    'Tactique',
+      sous:     'Portefeuille, arbitrage 3 à 12 mois',
+      posture:  'Vous arbitrez entre initiatives et surveillez la santé macro. ' +
+                'Laissez le détail aux programmes.'
+    },
+    {
+      id:       'programme',
+      icone:    '🗂️',
+      label:    'Programme / Projet',
+      sous:     'Coordination, horizon 1 à 6 mois',
+      posture:  'Vous coordonnez la livraison de valeur. Vous regardez le flux ' +
+                'global, pas chaque sprint.'
+    },
+    {
+      id:       'operationnel',
+      icone:    '⚙️',
+      label:    'Opérationnel',
+      sous:     'Équipes, livraison hebdomadaire',
+      posture:  'Vous pilotez votre flux et votre qualité. Focus sur ce que ' +
+                'l\'équipe contrôle directement.'
+    }
+  ];
+
+  /* ─── Vocabulaire fermé des familles de problèmes ───────────────
+     Aligné sur CM.IndicateursMeta.TAGS : c'est la même taxonomie, exposée ici
+     avec un sous-titre orienté "douleur ressentie" (registre utilisateur).
+     Si un tag est ajouté à IndicateursMeta, il doit être ajouté ici aussi. */
+  var PROBLEMES = [
+    { id:'delais',     icone:'⏱️', label:'Délais & prévisibilité',
+      sous:'Retards, dates ratées, lead time qui s\'allonge' },
+    { id:'qualite',    icone:'🎯', label:'Qualité & stabilité',
+      sous:'Bugs en prod, incidents, rework, régressions' },
+    { id:'flux',       icone:'🌊', label:'Flux & goulots',
+      sous:'WIP qui explose, transferts bloqués, files d\'attente' },
+    { id:'valeur',     icone:'💰', label:'Valeur & rentabilité',
+      sous:'ROI flou, priorités confuses, doute sur l\'impact business' },
+    { id:'humain',     icone:'👥', label:'Engagement & humain',
+      sous:'Turnover, démotivation, tensions, perte de sens' },
+    { id:'alignement', icone:'🧭', label:'Alignement stratégique',
+      sous:'Équipes désynchro avec la stratégie, OKRs non atteints' },
+    { id:'risque',     icone:'🛡️', label:'Risque, sécurité & conformité',
+      sous:'Vulnérabilités, non-conformités, dépendances critiques' }
+  ];
+
+  /* ─── Matrice anti-micromanagement ──────────────────────────────
+     Pour chaque niveau, la liste des problèmes LÉGITIMES à y piloter.
+     Les absents sont VOLONTAIREMENT exclus : ils relèvent d'un autre étage.
+     Fondement : posture Drucker (MBO) + Lean (subsidiarité du pilotage).
+     Modifiable sans toucher à la logique : data-driven. */
+  var MATRICE_PERTINENCE = {
+    strategique:  ['valeur', 'alignement', 'humain', 'risque'],
+    tactique:     ['valeur', 'alignement', 'humain', 'risque', 'delais'],
+    programme:    ['alignement', 'delais', 'flux', 'qualite', 'valeur', 'humain'],
+    operationnel: ['delais', 'qualite', 'flux', 'humain', 'risque']
+  };
+
+  /* ─── Carte de délégation ────────────────────────────────────────
+     Quand un problème n'est pas légitime à mon niveau, vers qui déléguer ?
+     Utilisé à titre pédagogique si l'utilisateur force un choix non légitime
+     (aujourd'hui impossible via l'UI, mais reste exposé pour l'extensibilité). */
+  var DELEGATION = {
+    strategique:  { delais:'programme', qualite:'programme', flux:'programme' },
+    tactique:     { qualite:'programme', flux:'programme' },
+    programme:    { risque:'operationnel' },
+    operationnel: { valeur:'programme', alignement:'tactique' }
+  };
+
+  /* ─── API publique ─────────────────────────────────────────────── */
+
+  // Exemple : niveauxTous() → [{id:'strategique',...}, {id:'tactique',...}, ...]
+  function niveauxTous() { return NIVEAUX.slice(); }
+
+  // Exemple : niveauInfo('tactique') → {id:'tactique', icone:'📊', label:'Tactique', ...}
+  function niveauInfo(id) {
+    for (var i = 0; i < NIVEAUX.length; i++) {
+      if (NIVEAUX[i].id === id) return NIVEAUX[i];
+    }
+    return null;
+  }
+
+  // Exemple : problemesPourNiveau('tactique') → [{id:'valeur',...}, {id:'alignement',...}, ...]
+  function problemesPourNiveau(niveauId) {
+    var ids = MATRICE_PERTINENCE[niveauId] || [];
+    return PROBLEMES.filter(function(p) { return ids.indexOf(p.id) !== -1; });
+  }
+
+  // Exemple : problemeInfo('flux') → {id:'flux', icone:'🌊', label:'Flux & goulots', ...}
+  function problemeInfo(id) {
+    for (var i = 0; i < PROBLEMES.length; i++) {
+      if (PROBLEMES[i].id === id) return PROBLEMES[i];
+    }
+    return null;
+  }
+
+  /* Indicateurs recommandés pour un couple (niveau, problème).
+     Critères : ind.niveau === ctx.niveau ET ctx.probleme ∈ tags(ind).
+     Le domaine (ctx.domaine, optionnel) filtre au niveau opérationnel uniquement.
+     Limite à 5 pour éviter la surcharge cognitive (règle "moins = mieux"). */
+  // Exemple : recommander({niveau:'operationnel', probleme:'flux'}) → [ind, ind, ...]
+  function recommander(ctx) {
+    if (!ctx || !ctx.niveau || !ctx.probleme) return [];
+    var tous = CM.Referentiel.tous();
+    var resultats = [];
+    for (var i = 0; i < tous.length && resultats.length < 5; i++) {
+      if (_estPertinent(tous[i], ctx)) resultats.push(tous[i]);
+    }
+    return resultats;
+  }
+
+  /* Indicateurs qui éclairent le problème mais relèvent d'un autre niveau.
+     Sert à montrer la "zone de délégation" — rappel à la posture. */
+  // Exemple : aDeleguerPour({niveau:'strategique', probleme:'valeur'}) → [ind, ind, ...]
+  function aDeleguerPour(ctx) {
+    if (!ctx || !ctx.niveau || !ctx.probleme) return [];
+    var tous = CM.Referentiel.tous();
+    return tous.filter(function(ind) {
+      var tags = CM.IndicateursMeta.tagsDe(ind.id);
+      return tags.indexOf(ctx.probleme) !== -1 && ind.niveau !== ctx.niveau;
+    });
+  }
+
+  /* Niveau de destination suggéré pour un problème non légitime au niveau courant.
+     Renvoie null si le couple est déjà légitime (pas de délégation à proposer). */
+  // Exemple : delegationPour('strategique', 'flux') → 'programme'
+  function delegationPour(niveauId, problemeId) {
+    var carte = DELEGATION[niveauId];
+    return carte && carte[problemeId] ? carte[problemeId] : null;
+  }
+
+  /* ─── Internes ─────────────────────────────────────────────────── */
+  function _estPertinent(ind, ctx) {
+    if (ind.niveau !== ctx.niveau) return false;
+    if (ctx.niveau === 'operationnel' && ctx.domaine) {
+      if (ind.domaine && ind.domaine !== ctx.domaine) return false;
+    }
+    var tags = CM.IndicateursMeta.tagsDe(ind.id);
+    return tags.indexOf(ctx.probleme) !== -1;
+  }
+
+  return {
+    niveauxTous:         niveauxTous,
+    niveauInfo:          niveauInfo,
+    problemesPourNiveau: problemesPourNiveau,
+    problemeInfo:        problemeInfo,
+    recommander:         recommander,
+    aDeleguerPour:       aDeleguerPour,
+    delegationPour:      delegationPour
+  };
+})();
+</script>
+
+
 <!-- ══ MODULE : CM.Composants — Rendu HTML des cartes et du tiroir ══ -->
 <script>
 CM.Composants = (function() {
