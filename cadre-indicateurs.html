@@ -1127,6 +1127,15 @@
       font-size: 0.78rem; color: var(--texte-2);
       margin-top: 0.25rem; line-height: 1.4;
     }
+    /* Signale visuellement qu'un acronyme a une définition accessible au survol.
+       Pattern HTML standard (<abbr>), conforme WCAG : le title reste lu par les
+       lecteurs d'écran et s'affiche en tooltip natif sur desktop/tablette. */
+    #vue-porte-probleme abbr[title] {
+      text-decoration: underline dotted;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+      cursor: help;
+    }
 
     /* ── Encart posture (rappel Gemba en étape 2) ────────────────── */
     #vue-porte-probleme .encart-posture {
@@ -3266,20 +3275,22 @@ CM.DiagnosticProbleme = (function() {
   /* ─── Vocabulaire fermé des familles de problèmes ───────────────
      Aligné sur CM.IndicateursMeta.TAGS : c'est la même taxonomie, exposée ici
      avec un sous-titre orienté "douleur ressentie" (registre utilisateur).
-     Si un tag est ajouté à IndicateursMeta, il doit être ajouté ici aussi. */
+     Règle rédactionnelle : français clair d'abord. Les acronymes usuels
+     (WIP, OKR) sont conservés sous forme <abbr> pour que l'utilisateur
+     curieux voie l'explication au survol, sans alourdir la lecture. */
   var PROBLEMES = [
     { id:'delais',     icone:'⏱️', label:'Délais & prévisibilité',
-      sous:'Retards, dates ratées, lead time qui s\'allonge' },
+      sous:'Retards, dates ratées, délai de livraison qui s\'allonge' },
     { id:'qualite',    icone:'🎯', label:'Qualité & stabilité',
-      sous:'Bugs en prod, incidents, rework, régressions' },
+      sous:'Bugs en production, incidents, reprises et corrections, régressions' },
     { id:'flux',       icone:'🌊', label:'Flux & goulots',
-      sous:'WIP qui explose, transferts bloqués, files d\'attente' },
+      sous:'Trop de travail en cours simultané (<abbr title="Work In Progress : nombre d\'items en cours dans le flux">WIP</abbr>), transferts bloqués, files d\'attente' },
     { id:'valeur',     icone:'💰', label:'Valeur & rentabilité',
-      sous:'ROI flou, priorités confuses, doute sur l\'impact business' },
+      sous:'Retour sur investissement flou, priorités confuses, doute sur l\'impact business' },
     { id:'humain',     icone:'👥', label:'Engagement & humain',
-      sous:'Turnover, démotivation, tensions, perte de sens' },
+      sous:'Départs et turnover, démotivation, tensions, perte de sens' },
     { id:'alignement', icone:'🧭', label:'Alignement stratégique',
-      sous:'Équipes désynchro avec la stratégie, OKRs non atteints' },
+      sous:'Équipes désynchronisées de la stratégie, objectifs trimestriels (<abbr title="Objectives and Key Results : méthode de pilotage par objectifs mesurables">OKR</abbr>) non atteints' },
     { id:'risque',     icone:'🛡️', label:'Risque, sécurité & conformité',
       sous:'Vulnérabilités, non-conformités, dépendances critiques' }
   ];
