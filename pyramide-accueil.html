@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadre de Metriques — Accueil</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, 'Segoe UI', system-ui, 'Helvetica Neue', sans-serif;
+      background: linear-gradient(145deg, #0d1b4f 0%, #1a237e 55%, #283593 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ── Intro ── */
+    .intro {
+      text-align: center;
+      color: white;
+      margin-bottom: 1.5rem;
+      max-width: 580px;
+    }
+    .intro h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 0.4rem; }
+    .intro p  { font-size: 0.88rem; opacity: 0.68; line-height: 1.55; }
+    .intro-chip {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px; padding: 0.26rem 0.8rem;
+      font-size: 0.7rem; color: rgba(255,255,255,0.72);
+      margin-top: 0.65rem;
+    }
+
+    /* ══════════════════════════════════════
+       PYRAMIDE — 4 niveaux
+    ══════════════════════════════════════ */
+    .pyramide {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+    }
+
+    /* Bandes des niveaux 1, 2, 3 (boutons cliquables) */
+    .bande {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.18s, box-shadow 0.2s;
+      color: white;
+      font-family: inherit;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+    }
+    .bande:hover, .bande:focus-visible {
+      background: rgba(255,255,255,0.16);
+      border-color: rgba(255,255,255,0.38);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.28);
+      outline: none;
+    }
+    .bande.actif {
+      background: rgba(255,255,255,0.22);
+      border-color: rgba(255,255,255,0.55);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.32);
+    }
+
+    /* Largeurs progressives — les 4 etages de la pyramide */
+    .bande-1 { width: 250px; }   /* Strategique  — sommet */
+    .bande-2 { width: 390px; }   /* Portefeuille */
+    .bande-3 { width: 530px; }   /* Programme    */
+    /* Bande 4 = niv3-container (split TI / Affaires) : 690px */
+
+    .b-icone { font-size: 1.75rem; flex-shrink: 0; }
+    .b-corps { flex: 1; min-width: 0; }
+    .b-nom   { font-size: 0.94rem; font-weight: 700; margin-bottom: 0.15rem; }
+    .b-desc  { font-size: 0.73rem; opacity: 0.65; line-height: 1.35; }
+    .b-chip  {
+      display: inline-block; margin-top: 0.45rem;
+      background: rgba(255,255,255,0.13); border-radius: 20px;
+      padding: 0.1rem 0.52rem; font-size: 0.61rem; font-weight: 600; letter-spacing: 0.3px;
+    }
+    .b-fleche {
+      font-size: 0.9rem; opacity: 0.4; flex-shrink: 0;
+      transition: opacity 0.18s, transform 0.18s;
+    }
+    .bande:hover .b-fleche, .bande.actif .b-fleche { opacity: 0.85; transform: translateX(3px); }
+
+    /* ══════════════════════════════════════
+       NIVEAU 4 : equipes (split TI | Affaires)
+       4 domaines TI  +  6 domaines Affaires
+       Nombre determine par pertinence, pas symetrie
+    ══════════════════════════════════════ */
+    .niv4-container {
+      width: 690px;
+      display: flex;
+      gap: 6px;
+      align-items: stretch;
+    }
+
+    /* Carte de branche */
+    .carte-branche {
+      flex: 1;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .carte-ti  { border-top: 3px solid rgba(80,210,195,0.5); }
+    .carte-aff { border-top: 3px solid rgba(255,160,80,0.5); }
+
+    .branche-entete {
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .branche-ico  { font-size: 1.5rem; flex-shrink: 0; }
+    .branche-nom  { font-size: 0.88rem; font-weight: 700; color: white; }
+    .branche-desc { font-size: 0.68rem; color: rgba(255,255,255,0.58); line-height: 1.3; margin-top: 0.1rem; }
+
+    /* Grille des sous-domaines */
+    .grille-sous {
+      display: grid;
+      gap: 0.35rem;
+    }
+    /* TI : 4 domaines — 2 colonnes, 2 lignes */
+    .grille-ti  { grid-template-columns: 1fr 1fr; }
+    /* Affaires : 6 domaines — 2 colonnes, 3 lignes */
+    .grille-aff { grid-template-columns: 1fr 1fr; }
+
+    .btn-sous {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 8px;
+      padding: 0.45rem 0.5rem;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.69rem;
+      font-weight: 600;
+      color: white;
+      line-height: 1.3;
+      transition: background 0.15s, border-color 0.15s, transform 0.13s;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      justify-content: center;
+      text-align: center;
+    }
+    .btn-sous:hover {
+      background: rgba(255,255,255,0.16);
+      border-color: rgba(255,255,255,0.3);
+      transform: translateY(-1px);
+    }
+    .btn-sous-ti.actif  {
+      background: rgba(80,210,195,0.22);
+      border-color: rgba(80,210,195,0.6);
+    }
+    .btn-sous-aff.actif {
+      background: rgba(255,160,80,0.22);
+      border-color: rgba(255,160,80,0.6);
+    }
+    .s-ico { font-size: 0.9rem; }
+
+    /* Note explicative sous les domaines */
+    .note-domaine {
+      font-size: 0.62rem;
+      color: rgba(255,255,255,0.35);
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    /* Feedback visuel bref au clic avant navigation */
+    .btn-sous.flash, .bande.flash {
+      background: rgba(255,255,255,0.32) !important;
+      border-color: rgba(255,255,255,0.7) !important;
+    }
+
+    /* Note bas de page */
+    .note-bas {
+      margin-top: 1rem;
+      font-size: 0.63rem;
+      color: rgba(255,255,255,0.26);
+      text-align: center;
+      max-width: 520px;
+      transition: color 0.3s;
+    }
+
+    /* Responsive */
+    @media (max-width: 730px) {
+      .bande-1, .bande-2, .bande-3,
+      .niv4-container, .zone-cta { width: 100%; }
+      .niv4-container { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="intro">
+    <h1>Cadre de Metriques</h1>
+    <p>Selectionnez votre niveau organisationnel et votre domaine pour acceder aux indicateurs adaptes a votre contexte.</p>
+    <span class="intro-chip">4 niveaux hierarchiques &middot; 2 branches operationnelles &middot; 10 domaines specialises</span>
+  </div>
+
+  <div class="pyramide">
+
+    <!-- ── Niveau 1 : Strategique ── -->
+    <button class="bande bande-1" id="btn-strat"
+      onclick="choisirNiveau('strategique', this)">
+      <span class="b-icone">🏛️</span>
+      <div class="b-corps">
+        <div class="b-nom">Strategique</div>
+        <div class="b-desc">Direction, Board &amp; Gouvernance</div>
+        <span class="b-chip">IGO &middot; ORC &middot; II</span>
+      </div>
+      <span class="b-fleche">&#8250;</span>
+    </button>
+
+    <!-- ── Niveau 2 : Portefeuille ── -->
+    <button class="bande bande-2" id="btn-port"
+      onclick="choisirNiveau('portefeuille', this)">
+      <span class="b-icone">📊</span>
+      <div class="b-corps">
+        <div class="b-nom">Portefeuille</div>
+        <div class="b-desc">Arbitrage investissements &amp; allocation des ressources</div>
+        <span class="b-chip">ICP &middot; ORC &middot; ROI &middot; Risques</span>
+      </div>
+      <span class="b-fleche">&#8250;</span>
+    </button>
+
+    <!-- ── Niveau 3 : Programme & Projet ── -->
+    <button class="bande bande-3" id="btn-prog"
+      onclick="choisirNiveau('programme', this)">
+      <span class="b-icone">🗂️</span>
+      <div class="b-corps">
+        <div class="b-nom">Programme &amp; Projet</div>
+        <div class="b-desc">Coordination multi-equipes, livraison d'initiatives</div>
+        <span class="b-chip">ICP &middot; FLUX &middot; ICC &middot; Avancement</span>
+      </div>
+      <span class="b-fleche">&#8250;</span>
+    </button>
+
+    <!-- ── Niveau 4 : Equipes (split TI | Affaires) ── -->
+    <div class="niv4-container">
+
+      <!-- CARTE TI — 4 domaines distincts par profil de metriques -->
+      <div class="carte-branche carte-ti">
+        <div class="branche-entete">
+          <span class="branche-ico">💻</span>
+          <div>
+            <div class="branche-nom">Equipes TI</div>
+            <div class="branche-desc">DORA &middot; FLUX &middot; Fiabilite &middot; Securite</div>
+          </div>
+        </div>
+        <div class="grille-sous grille-ti">
+          <!--
+            4 domaines — chacun a un profil de metriques fondamentalement different :
+            Dev = livraison (DORA delivery)
+            Plateforme = enablement (CI/CD, pipeline)
+            Ops & Support = stabilite (SLA, MTTR, incidents)
+            Securite = protection (MTTD, vulnerabilites)
+          -->
+          <button class="btn-sous btn-sous-ti" data-id="dev"
+            onclick="choisirSous(event,'ti','dev','Developpement')">
+            <span class="s-ico">🏗️</span> Developpement
+          </button>
+          <button class="btn-sous btn-sous-ti" data-id="plateforme"
+            onclick="choisirSous(event,'ti','plateforme','Plateforme & DevOps')">
+            <span class="s-ico">🚀</span> Plateforme &amp; DevOps
+          </button>
+          <button class="btn-sous btn-sous-ti" data-id="ops-support"
+            onclick="choisirSous(event,'ti','ops-support','Operations & Support')">
+            <span class="s-ico">🔧</span> Operations &amp; Support
+          </button>
+          <button class="btn-sous btn-sous-ti" data-id="securite"
+            onclick="choisirSous(event,'ti','securite','Securite')">
+            <span class="s-ico">🛡️</span> Securite
+          </button>
+        </div>
+        <div class="note-domaine">
+          Developpement inclut Produit numerique<br>
+          Operations inclut Infrastructure &amp; Run
+        </div>
+      </div>
+
+      <!-- CARTE AFFAIRES — 6 domaines fonctionnels distincts -->
+      <div class="carte-branche carte-aff">
+        <div class="branche-entete">
+          <span class="branche-ico">🏢</span>
+          <div>
+            <div class="branche-nom">Equipes Affaires</div>
+            <div class="branche-desc">ICP &middot; ICC &middot; ORC metier &middot; Flux</div>
+          </div>
+        </div>
+        <div class="grille-sous grille-aff">
+          <button class="btn-sous btn-sous-aff" data-id="commercial"
+            onclick="choisirSous(event,'affaires','commercial','Commercial')">
+            <span class="s-ico">📈</span> Commercial
+          </button>
+          <button class="btn-sous btn-sous-aff" data-id="marketing"
+            onclick="choisirSous(event,'affaires','marketing','Marketing')">
+            <span class="s-ico">📣</span> Marketing
+          </button>
+          <button class="btn-sous btn-sous-aff" data-id="finance"
+            onclick="choisirSous(event,'affaires','finance','Finance')">
+            <span class="s-ico">💰</span> Finance
+          </button>
+          <button class="btn-sous btn-sous-aff" data-id="rh"
+            onclick="choisirSous(event,'affaires','rh','Ressources humaines')">
+            <span class="s-ico">👥</span> RH
+          </button>
+          <button class="btn-sous btn-sous-aff" data-id="operations"
+            onclick="choisirSous(event,'affaires','operations','Operations')">
+            <span class="s-ico">🔩</span> Operations
+          </button>
+          <button class="btn-sous btn-sous-aff" data-id="service-client"
+            onclick="choisirSous(event,'affaires','service-client','Service client')">
+            <span class="s-ico">🎯</span> Serv. client
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /niv4-container -->
+  </div><!-- /pyramide -->
+
+  <p class="note-bas" id="note-bas">
+    Prototype &mdash; connexion vers cadre-indicateurs.html a venir
+  </p>
+
+  <script>
+    var noteBas = document.getElementById('note-bas');
+
+    // Navigation directe — appele immediatement a chaque clic
+    function naviguer(el, params) {
+      // Flash visuel bref (120ms) pour confirmer le clic
+      el.classList.add('flash');
+      setTimeout(function() {
+        el.classList.remove('flash');
+        // Navigation vers l'outil avec les parametres de contexte
+        // En production : window.location.href = 'cadre-indicateurs.html?' + params;
+        // Prototype : feedback dans la note
+        noteBas.textContent = '\u2192 Ouverture : ' + decodeURIComponent(params.replace(/&/g,' | ').replace(/=/g,': '));
+        noteBas.style.color = 'rgba(150,255,180,0.85)';
+        setTimeout(function() {
+          noteBas.textContent = 'Prototype \u2014 connexion vers cadre-indicateurs.html a venir';
+          noteBas.style.color = '';
+        }, 2500);
+      }, 120);
+    }
+
+    // Niveaux 1-2-3 (Strategique, Portefeuille, Programme)
+    function choisirNiveau(niveau, el) {
+      naviguer(el, 'niveau=' + niveau);
+    }
+
+    // Sous-domaines TI (4) ou Affaires (6) — navigation immediate
+    function choisirSous(evt, branche, id, label) {
+      evt.stopPropagation();
+      var el = evt.currentTarget;
+      naviguer(el, 'niveau=equipes&branche=' + branche + '&domaine=' + id);
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Métriques — Rôles & Méthodes</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0d1117;color:#e2e8f0;min-height:100vh;font-size:14px}
+
+/* ── HEADER ── */
+.header{text-align:center;padding:28px 16px 20px;background:linear-gradient(180deg,#111827 0%,#0d1117 100%)}
+.header h1{font-size:1.6rem;font-weight:800;color:#f8fafc;letter-spacing:-0.5px}
+.header p{font-size:0.875rem;color:#94a3b8;margin-top:8px}
+
+/* ── STICKY FILTER BAR ── */
+.filters-bar{position:sticky;top:0;z-index:100;background:#0f1724;border-bottom:1px solid #1e2d45;padding:10px 16px;box-shadow:0 2px 16px rgba(0,0,0,.55)}
+.filter-row{display:flex;align-items:center;gap:7px;flex-wrap:nowrap;overflow-x:auto;padding:3px 0;scrollbar-width:none}
+.filter-row::-webkit-scrollbar{display:none}
+.filter-row+.filter-row{margin-top:7px}
+.flabel{font-size:0.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.8px;white-space:nowrap;flex-shrink:0;min-width:58px}
+.rpill{display:flex;align-items:center;gap:4px;padding:6px 11px;border-radius:999px;border:1.5px solid #2d3f5a;background:transparent;color:#94a3b8;font-size:0.78rem;font-weight:600;cursor:pointer;transition:all .18s;user-select:none;flex-shrink:0;white-space:nowrap}
+.rpill:hover{border-color:#4f6480;color:#cbd5e1;background:rgba(255,255,255,.05)}
+.rpill.active{color:#fff;border-color:transparent}
+.lvl-num{font-size:0.6rem;font-weight:800;opacity:.65}
+.rpill[data-role="dev"].active{background:#1d4ed8}
+.rpill[data-role="techlead"].active{background:#059669}
+.rpill[data-role="manager"].active{background:#7c3aed}
+.rpill[data-role="director"].active{background:#b45309}
+.rpill[data-role="vp"].active{background:#4338ca}
+.rpill[data-role="cto"].active{background:#b91c1c}
+.rpill[data-role="board"].active{background:#374151;border-color:#4b5563}
+.mpill{display:flex;align-items:center;gap:4px;padding:5px 11px;border-radius:999px;border:1.5px solid #2d3f5a;background:transparent;color:#94a3b8;font-size:0.76rem;font-weight:600;cursor:pointer;transition:all .18s;user-select:none;flex-shrink:0;white-space:nowrap}
+.mpill:hover{border-color:#4f6480;color:#cbd5e1;background:rgba(255,255,255,.05)}
+.mpill.active{color:#fff;border-color:transparent}
+.mpill[data-method="waterfall"].active{background:#0c4a6e}
+.mpill[data-method="scrum"].active{background:#14532d}
+.mpill[data-method="kanban"].active{background:#713f12}
+.mpill[data-method="devops"].active{background:#1e3a5f}
+.mpill[data-method="safe"].active{background:#3b0764}
+.mpill[data-method="shapeup"].active{background:#881337}
+.mpill[data-method="okr"].active{background:#064e3b}
+.clear-btn{padding:4px 10px;border-radius:6px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#f87171;font-size:0.7rem;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s}
+.clear-btn:hover{background:rgba(239,68,68,.22)}
+.filter-status{margin-top:7px;font-size:0.78rem;color:#94a3b8;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.status-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:999px;background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);color:#a5b4fc;font-size:0.72rem;font-weight:700}
+.status-count{font-weight:700;color:#e2e8f0}
+
+/* ── CONSEIL BANNER ── */
+.conseil-banner{display:none;max-width:1040px;margin:16px auto 0;padding:0 16px;animation:slideIn .25s ease}
+.conseil-banner.visible{display:block}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.conseil-inner{border-radius:12px;padding:16px 20px;border-left:4px solid}
+.conseil-title{font-size:0.88rem;font-weight:700;margin-bottom:6px}
+.conseil-text{font-size:0.84rem;line-height:1.7;color:#cbd5e1}
+.conseil-anti{margin-top:10px;padding:10px 14px;border-radius:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);font-size:0.81rem;color:#fca5a5;line-height:1.6}
+
+/* ── ONBOARDING ── */
+.onboarding{max-width:620px;margin:44px auto;padding:0 16px;text-align:center;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.onboard-icon{font-size:3rem;margin-bottom:14px}
+.onboarding h2{font-size:1.25rem;font-weight:700;color:#f8fafc;margin-bottom:10px}
+.onboarding>p{font-size:0.88rem;color:#94a3b8;line-height:1.7;margin-bottom:22px}
+.onboard-steps{display:flex;flex-direction:column;gap:10px;text-align:left;background:#161b27;border:1px solid #1e2d45;border-radius:12px;padding:18px 20px}
+.onboard-step{display:flex;align-items:flex-start;gap:10px;font-size:0.84rem;color:#cbd5e1;line-height:1.55}
+.onboard-step strong{color:#f1f5f9}
+
+/* ── CONTENT WRAPPER ── */
+.content-wrapper{max-width:1040px;margin:0 auto;padding:0 16px 60px}
+
+/* ── SECTION BANDS ── */
+.section-band{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:12px;margin:24px 0 14px}
+.band-ent{background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.18)}
+.band-port{background:rgba(14,165,233,.07);border:1px solid rgba(14,165,233,.18)}
+.band-team{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.18)}
+.band-icon{font-size:1.5rem;flex-shrink:0}
+.band-text{flex:1}
+.band-title{font-size:0.95rem;font-weight:700;color:#f1f5f9}
+.band-sub{font-size:0.77rem;color:#94a3b8;margin-top:2px}
+.band-count{font-size:0.75rem;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap;flex-shrink:0}
+.band-ent .band-count{background:rgba(99,102,241,.2);color:#a5b4fc}
+.band-port .band-count{background:rgba(14,165,233,.2);color:#7dd3fc}
+.band-team .band-count{background:rgba(34,197,94,.2);color:#86efac}
+
+/* ── METRICS GRID ── */
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:8px}
+
+/* ── METRIC CARD ── */
+.mcard{background:#161b27;border:1.5px solid #1e2d45;border-radius:12px;padding:16px 16px 12px;cursor:pointer;transition:all .2s;position:relative;display:flex;flex-direction:column;gap:0}
+.mcard:hover{background:#1c2540;border-color:#2d4a6a;transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.45)}
+.mcard:hover .card-cta{opacity:1}
+.mcard.dimmed{opacity:.15;pointer-events:none;transform:none!important;box-shadow:none!important}
+.mcard.highlighted{border-color:var(--hl-color,#4f83cc);box-shadow:0 0 0 1.5px var(--hl-color,#4f83cc),0 4px 16px rgba(0,0,0,.3)}
+.mcard.mm-warn{border-left:3px solid #ef4444!important}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:7px}
+.card-type{font-size:0.7rem;font-weight:700;letter-spacing:0.8px;text-transform:uppercase}
+.level-tag{font-size:0.63rem;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap;flex-shrink:0;margin-top:1px}
+.lt-ent{background:rgba(99,102,241,.2);color:#a5b4fc}
+.lt-port{background:rgba(14,165,233,.2);color:#7dd3fc}
+.lt-team{background:rgba(34,197,94,.2);color:#86efac}
+.card-name{font-size:0.93rem;font-weight:700;color:#f1f5f9;margin-bottom:5px;line-height:1.35}
+.card-desc{font-size:0.8rem;color:#94a3b8;line-height:1.5;flex:1}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;min-height:22px;gap:8px}
+.method-dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.mdot{width:9px;height:9px;border-radius:50%;flex-shrink:0;position:relative;cursor:default}
+.mdot::after{content:attr(title);display:none;position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:#1e2d45;color:#e2e8f0;font-size:0.68rem;font-weight:600;padding:3px 7px;border-radius:5px;white-space:nowrap;pointer-events:none;z-index:10;border:1px solid #2d3f5a}
+.mdot:hover::after{display:block}
+.mdot-waterfall{background:#67e8f9}
+.mdot-scrum{background:#86efac}
+.mdot-kanban{background:#fde047}
+.mdot-devops{background:#a5b4fc}
+.mdot-safe{background:#d8b4fe}
+.mdot-shapeup{background:#fca5a5}
+.mdot-okr{background:#6ee7b7}
+.freq-badge{display:none;font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(34,197,94,.15);color:#86efac;border:1px solid rgba(34,197,94,.25);white-space:nowrap}
+.freq-badge.mm{background:rgba(239,68,68,.15);color:#fca5a5;border-color:rgba(239,68,68,.25)}
+.freq-badge.visible{display:block}
+.card-cta{font-size:0.7rem;color:#475569;display:flex;align-items:center;gap:3px;opacity:0;transition:opacity .2s;margin-top:6px;padding-top:6px;border-top:1px solid #1e2d45}
+
+/* ── MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:1000;align-items:center;justify-content:center;padding:12px}
+.overlay.open{display:flex}
+.modal{background:#131a28;border:1px solid #1e2d45;border-radius:18px;max-width:640px;width:100%;max-height:94vh;display:flex;flex-direction:column;overflow:hidden;animation:pop .22s ease}
+@keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.mh{padding:20px 24px 0;border-bottom:1px solid #1a2d44;flex-shrink:0}
+.mh-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.mbadge{display:inline-block;font-size:0.7rem;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;padding:4px 10px;border-radius:6px;margin-bottom:7px}
+.mh h2{font-size:1.15rem;font-weight:800;color:#f8fafc;line-height:1.3}
+.mh .msub{font-size:0.82rem;color:#94a3b8;margin-top:4px;font-style:italic}
+.mclose{background:rgba(255,255,255,.07);border:1px solid #2d3f5a;color:#94a3b8;padding:7px 14px;border-radius:8px;cursor:pointer;font-size:0.82rem;font-weight:600;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.mclose:hover{background:rgba(255,255,255,.14);color:#f1f5f9}
+.modal-tabs{display:flex;gap:3px;margin:14px 0 0;overflow-x:auto;scrollbar-width:none}
+.modal-tabs::-webkit-scrollbar{display:none}
+.mtab{padding:9px 16px;border-radius:10px 10px 0 0;border:1.5px solid transparent;background:transparent;color:#64748b;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.mtab:hover{color:#94a3b8;background:rgba(255,255,255,.04)}
+.mtab.active{background:#1a2d44;border-color:#2d4a6a;border-bottom-color:#1a2d44;color:#e2e8f0}
+.mb{overflow-y:auto;padding:20px 24px 24px;flex:1}
+.mb::-webkit-scrollbar{width:4px}
+.mb::-webkit-scrollbar-thumb{background:#1e3a5f;border-radius:4px}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.ms{margin-bottom:18px}
+.ms-label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.9px;color:#64748b;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.ms-text{font-size:0.84rem;color:#94a3b8;line-height:1.7}
+.ms-text strong{color:#e2e8f0}
+.formula{background:#0a101e;border:1px solid #1e3a5f;border-radius:10px;padding:14px 16px;font-size:0.8rem;color:#7dd3fc;font-family:'Courier New',monospace;line-height:1.75;white-space:pre-wrap;margin-top:8px}
+.impact-box{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:9px;padding:12px 14px;font-size:0.84rem;color:#86efac;line-height:1.6}
+.warn-box{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.22);border-radius:9px;padding:12px 14px;font-size:0.84rem;color:#fca5a5;line-height:1.6}
+.plist{display:flex;flex-direction:column;gap:6px}
+.pitem{display:flex;gap:8px;font-size:0.82rem;color:#94a3b8;line-height:1.5;padding:3px 0}
+.pitem::before{content:"✓";color:#22c55e;font-weight:700;flex-shrink:0;margin-top:1px}
+.divider{height:1px;background:#1a2d44;margin:16px 0}
+
+/* ── ROLE CARDS (tab visibilité) ── */
+.role-cards{display:flex;flex-direction:column;gap:8px}
+.role-card{border-radius:10px;border:1px solid;border-left-width:3px;padding:12px 14px}
+.role-card.rc-ok{background:rgba(34,197,94,.05);border-color:rgba(34,197,94,.18);border-left-color:#22c55e}
+.role-card.rc-warn{background:rgba(245,158,11,.05);border-color:rgba(245,158,11,.18);border-left-color:#f59e0b}
+.role-card.rc-bad{background:rgba(239,68,68,.05);border-color:rgba(239,68,68,.18);border-left-color:#ef4444}
+.role-card.rc-no{background:rgba(30,45,69,.3);border-color:#1e2d45;border-left-color:#334155;opacity:.65}
+.rc-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.rc-role-name{font-size:0.85rem;font-weight:700;color:#f1f5f9;flex:1}
+.rc-vis{font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:5px}
+.rc-vis.yes{background:rgba(34,197,94,.15);color:#86efac}
+.rc-vis.no{background:rgba(71,85,105,.15);color:#64748b}
+.rc-body{display:flex;flex-direction:column;gap:4px}
+.rc-freq{font-size:0.78rem;color:#7dd3fc;display:flex;align-items:center;gap:5px}
+.rc-why{font-size:0.78rem;color:#94a3b8;line-height:1.5}
+.rc-mm{font-size:0.76rem;font-weight:700;display:flex;align-items:center;gap:4px;margin-top:3px}
+.rc-mm.ok{color:#22c55e}.rc-mm.warn{color:#f59e0b}.rc-mm.bad{color:#ef4444}
+.mm-rule-box{margin-top:14px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.22);border-radius:9px;padding:12px 14px;font-size:0.82rem;color:#fca5a5;line-height:1.6}
+
+/* method table */
+.methtable{width:100%;border-collapse:separate;border-spacing:0 5px}
+.methtable th{font-size:0.7rem;font-weight:700;text-transform:uppercase;color:#64748b;padding:4px 10px;text-align:left;letter-spacing:0.6px}
+.methtable td{padding:9px 10px;font-size:0.82rem;background:#0f172a;border-top:1px solid #1a2d44;border-bottom:1px solid #1a2d44;vertical-align:top}
+.methtable td:first-child{border-left:1px solid #1a2d44;border-radius:8px 0 0 8px}
+.methtable td:last-child{border-right:1px solid #1a2d44;border-radius:0 8px 8px 0}
+.meth-badge{display:inline-block;font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.mtag-waterfall{background:rgba(14,116,144,.25);color:#67e8f9}
+.mtag-scrum{background:rgba(34,197,94,.18);color:#86efac}
+.mtag-kanban{background:rgba(234,179,8,.18);color:#fde047}
+.mtag-devops{background:rgba(99,102,241,.2);color:#a5b4fc}
+.mtag-safe{background:rgba(168,85,247,.2);color:#d8b4fe}
+.mtag-shapeup{background:rgba(239,68,68,.18);color:#fca5a5}
+.mtag-okr{background:rgba(16,185,129,.2);color:#6ee7b7}
+.rel-high{color:#22c55e;font-weight:700}.rel-med{color:#f59e0b}.rel-low{color:#64748b}
+
+/* no results */
+.no-results{text-align:center;padding:48px 20px;color:#64748b;font-size:0.88rem}
+.no-results span{font-size:2.5rem;display:block;margin-bottom:12px}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:#0d1117}
+::-webkit-scrollbar-thumb{background:#1e3a5f;border-radius:4px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🎯 Métriques — Rôles &amp; Méthodes</h1>
+  <p>Filtrez par rôle hiérarchique ou méthodologie · Cliquez sur une carte pour apprendre</p>
+</div>
+
+<div class="filters-bar">
+  <div class="filter-row">
+    <span class="flabel">👤 Rôle</span>
+    <button class="rpill" data-role="dev" onclick="toggleRole('dev')"><span class="lvl-num">1</span> 💻 Dev</button>
+    <button class="rpill" data-role="techlead" onclick="toggleRole('techlead')"><span class="lvl-num">2</span> 🔧 Tech Lead</button>
+    <button class="rpill" data-role="manager" onclick="toggleRole('manager')"><span class="lvl-num">3</span> 📋 Manager</button>
+    <button class="rpill" data-role="director" onclick="toggleRole('director')"><span class="lvl-num">4</span> 🎯 Director</button>
+    <button class="rpill" data-role="vp" onclick="toggleRole('vp')"><span class="lvl-num">5</span> 📊 VP</button>
+    <button class="rpill" data-role="cto" onclick="toggleRole('cto')"><span class="lvl-num">6</span> ⚙️ CTO</button>
+    <button class="rpill" data-role="board" onclick="toggleRole('board')"><span class="lvl-num">7</span> 🏛️ Board</button>
+    <button class="clear-btn" id="btn-clear-role" style="display:none" onclick="clearRole()">✕</button>
+  </div>
+  <div class="filter-row">
+    <span class="flabel">⚙️ Méthode</span>
+    <button class="mpill" data-method="waterfall" onclick="toggleMethod('waterfall')">🏗️ Waterfall</button>
+    <button class="mpill" data-method="scrum" onclick="toggleMethod('scrum')">🔄 Scrum</button>
+    <button class="mpill" data-method="kanban" onclick="toggleMethod('kanban')">📌 Kanban</button>
+    <button class="mpill" data-method="devops" onclick="toggleMethod('devops')">🚀 DevOps</button>
+    <button class="mpill" data-method="safe" onclick="toggleMethod('safe')">🏢 SAFe</button>
+    <button class="mpill" data-method="shapeup" onclick="toggleMethod('shapeup')">🎨 Shape Up</button>
+    <button class="mpill" data-method="okr" onclick="toggleMethod('okr')">🎯 OKR</button>
+    <button class="clear-btn" id="btn-clear-method" style="display:none" onclick="clearMethod()">✕</button>
+  </div>
+  <div class="filter-status" id="filter-status" style="display:none"></div>
+</div>
+
+<div class="conseil-banner" id="conseil-banner"><div class="conseil-inner" id="conseil-inner"></div></div>
+
+<div class="onboarding" id="onboarding">
+  <div class="onboard-icon">🎯</div>
+  <h2>Bienvenue dans l'explorateur de métriques</h2>
+  <p>Identifiez les métriques pertinentes selon votre rôle et méthode de travail — et évitez le micromanagement.</p>
+  <div class="onboard-steps">
+    <div class="onboard-step"><span>1️⃣</span><span>Sélectionnez votre <strong>rôle</strong> dans la barre ci-dessus pour voir uniquement les métriques qui vous concernent</span></div>
+    <div class="onboard-step"><span>2️⃣</span><span>Affinez avec votre <strong>méthodologie</strong> (Scrum, Kanban, DevOps…)</span></div>
+    <div class="onboard-step"><span>3️⃣</span><span><strong>Cliquez sur n'importe quelle carte</strong> pour apprendre à calculer, interpréter et éviter les pièges</span></div>
+  </div>
+</div>
+
+<div class="content-wrapper" id="grid-wrapper"></div>
+
+<div class="overlay" id="overlay" onclick="closeOverlay(event)">
+  <div class="modal">
+    <div class="mh">
+      <div class="mh-top">
+        <div>
+          <div class="mbadge" id="m-badge"></div>
+          <h2 id="m-title"></h2>
+          <div class="msub" id="m-sub"></div>
+        </div>
+        <button class="mclose" onclick="closeModal()">✕ Fermer</button>
+      </div>
+      <div class="modal-tabs">
+        <button class="mtab active" onclick="showTab('definition',this)">📖 Définition &amp; Calcul</button>
+        <button class="mtab" onclick="showTab('roles',this)">👤 Visibilité par rôle</button>
+        <button class="mtab" onclick="showTab('methods',this)">⚙️ Par méthodologie</button>
+      </div>
+    </div>
+    <div class="mb">
+      <div id="tab-definition" class="tab-content active"></div>
+      <div id="tab-roles" class="tab-content"></div>
+      <div id="tab-methods" class="tab-content"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ROLES={
+  dev:     {label:'💻 Développeur / Membre équipe',color:'#1d4ed8',short:'Développeur'},
+  techlead:{label:'🔧 Tech Lead / Scrum Master',   color:'#059669',short:'Tech Lead'},
+  manager: {label:'📋 Engineering Manager',         color:'#7c3aed',short:'Eng Manager'},
+  director:{label:'🎯 Director / Head of',          color:'#b45309',short:'Director'},
+  vp:      {label:'📊 VP Engineering',              color:'#4338ca',short:'VP Eng'},
+  cto:     {label:'⚙️ CTO / C-Level',              color:'#b91c1c',short:'CTO'},
+  board:   {label:'🏛️ Board / CODIR',              color:'#374151',short:'Board'}
+};
+const METHODS={
+  waterfall:{label:'🏗️ Waterfall/PMI',cls:'mtag-waterfall',dot:'mdot-waterfall'},
+  scrum:    {label:'🔄 Agile/Scrum',  cls:'mtag-scrum',    dot:'mdot-scrum'},
+  kanban:   {label:'📌 Lean/Kanban',  cls:'mtag-kanban',   dot:'mdot-kanban'},
+  devops:   {label:'🚀 DevOps/SRE',   cls:'mtag-devops',   dot:'mdot-devops'},
+  safe:     {label:'🏢 SAFe',         cls:'mtag-safe',     dot:'mdot-safe'},
+  shapeup:  {label:'🎨 Shape Up',     cls:'mtag-shapeup',  dot:'mdot-shapeup'},
+  okr:      {label:'🎯 OKR-driven',   cls:'mtag-okr',      dot:'mdot-okr'}
+};
+const ROLE_CONSEIL={
+  dev:{color:'#1d4ed8',border:'#1e40af',
+    title:'💻 Métriques pour un Développeur / Membre d\'équipe',
+    text:'Les développeurs consultent des métriques d\'autodiagnostic — leur propre cycle time, le statut de leurs PR, la couverture de leurs tests. Ces métriques leur appartiennent et servent à s\'améliorer, pas à être évalués. Elles ne remontent pas au manager.',
+    anti:'⚠️ Anti-micromanagement : si votre manager consulte régulièrement vos commits individuels, le nombre de lignes de code produites ou votre vélocité personnelle — c\'est du micromanagement. Ces données appartiennent à l\'individu pour son propre progrès.'},
+  techlead:{color:'#059669',border:'#065f46',
+    title:'🔧 Métriques pour un Tech Lead / Scrum Master',
+    text:'Le Tech Lead consomme des métriques d\'équipe pour faciliter le flux et lever les blocages — pas pour évaluer les individus. Sprint goal completion, PR review time collectif, cycle time d\'équipe. Sa mission : fluidifier, pas surveiller.',
+    anti:'⚠️ Anti-micromanagement : un Tech Lead qui compare les vélocités individuelles entre développeurs ou qui reporte des métriques individuelles au manager applique Goodhart\'s Law — la métrique devient l\'objectif et perd sa valeur diagnostique.'},
+  manager:{color:'#7c3aed',border:'#6d28d9',
+    title:'📋 Métriques pour un Engineering Manager',
+    text:'L\'Engineering Manager voit la santé collective de son équipe sur un horizon de 4 à 8 semaines. Il utilise les 4 métriques DORA comme signal de maturité DevOps, le Team Health comme leading indicator d\'engagement, et le sprint goal rate comme indicateur de prédictabilité.',
+    anti:'⚠️ Anti-micromanagement : un Engineering Manager qui surveille la vélocité sprint d\'une équipe pour "améliorer la performance" ou qui compare des membres individuellement sort de son rôle. Son niveau d\'abstraction approprié est l\'équipe, jamais l\'individu.'},
+  director:{color:'#b45309',border:'#92400e',
+    title:'🎯 Métriques pour un Director / Head of Engineering',
+    text:'Le Director voit les tendances sur plusieurs équipes et identifie les patterns structurels sur un horizon mensuel/trimestriel. DORA agrégé multi-équipes, allocation capacité features vs dette, cognitive load des équipes (Team Topologies), tendances MTTR.',
+    anti:'⚠️ Anti-micromanagement : un Director qui demande des rapports de sprint d\'une équipe spécifique, ou qui regarde les burndowns individuels, plonge deux niveaux en dessous de son altitude appropriée. Règle des deux niveaux : ne jamais consulter régulièrement des métriques à plus d\'un niveau en dessous de soi.'},
+  vp:{color:'#4338ca',border:'#3730a3',
+    title:'📊 Métriques pour un VP Engineering',
+    text:'Le VP Engineering voit la performance du portefeuille technologique sur un horizon trimestriel. Il traduit la performance technique en langage business : delivery predictability, engineering ROI, DORA tier moyen des équipes, flow metrics systémiques, rétention des talents.',
+    anti:'⚠️ Anti-micromanagement : un VP qui regarde la vélocité d\'une équipe spécifique, compare les sprints entre équipes, ou demande des rapports sur des tickets individuels génère de la compétition toxique et de l\'inflation de story points. Son périmètre est le portefeuille, pas les équipes.'},
+  cto:{color:'#b91c1c',border:'#991b1b',
+    title:'⚙️ Métriques pour un CTO / C-Level',
+    text:'Le CTO lit la technologie comme un levier stratégique sur un horizon semestriel. Innovation rate, time-to-market vs concurrence, risk exposure technologique, DORA cluster de l\'organisation, SPACE framework (developer experience). Il traduit la tech pour le Board.',
+    anti:'⚠️ Anti-micromanagement : un CTO qui demande des rapports hebdomadaires sur les sprints ou qui vérifie le deployment frequency d\'une équipe précise génère de l\'anxiété organisationnelle. Son niveau : la direction stratégique de la technologie, pas les opérations d\'équipe.'},
+  board:{color:'#374151',border:'#1f2937',
+    title:'🏛️ Métriques pour le Board / CODIR',
+    text:'Le Board ne consulte jamais de métriques d\'équipe. Il voit uniquement comment la technologie crée ou protège la valeur business sur un horizon annuel/semestriel. ROI technologique global, taux de livraison des engagements stratégiques, cost of incidents, % budget innovation vs maintenance.',
+    anti:'⚠️ Anti-micromanagement : si un membre du Board demande des métriques DORA d\'une équipe, des rapports de vélocité ou des burndowns — c\'est un signal de dysfonction de gouvernance. Ces demandes révèlent un manque de confiance dans le management intermédiaire qui doit être adressé en amont.'}
+};
+
+const METRICS=[
+{id:'kgi',level:'ent',levelLabel:'Entreprise',lt:'lt-ent',type:'KGI',typeColor:'#a5b4fc',name:'Key Goal Indicators',desc:'Objectifs globaux pluriannuels — la boussole stratégique',methods:['okr','safe'],
+  objectif:'Traduire la mission de l\'entreprise en objectifs mesurables à horizon 2–3 ans. Inspirés du MBO de Drucker : déléguer les objectifs, pas les moyens.',
+  calcul:'Définis en atelier stratégique Board/CODIR. Pas de formule unique.',
+  formulaExample:'Ex : Part de marché EU SaaS ≥ 25% d\'ici 2027\nEx : NPS global ≥ 60 sur 3 ans consécutifs\nEx : 0 incident de sécurité critique sur 24 mois\n\nCritères SMART : Spécifique, Mesurable, Atteignable, Réaliste, Temporel\nLimiter à 3–5 KGIs maximum pour l\'entreprise entière',
+  forces:'Aligne toute l\'organisation. Réduit les conflits de priorité. Donne un sens au travail quotidien de chaque collaborateur.',
+  impact:'Les entreprises avec des KGIs clairs ont 2× plus de chances d\'aligner leur stratégie à l\'exécution. Chaque OKR trimestriel doit contribuer à au moins un KGI.',
+  pratiques:['Limiter à 3–5 KGIs maximum pour l\'entreprise','Réviser annuellement — pas plus souvent','Communiquer avec le contexte et le "pourquoi" à tous les niveaux','Relier explicitement aux OKRs trimestriels','Ne jamais lier les KGIs aux évaluations individuelles de performance'],
+  warning:'Un KGI trop vague ("être le meilleur") ou trop nombreux (>7) perd son pouvoir d\'alignement. Un bon KGI doit faire débat — sinon il est trop consensuel pour changer quoi que ce soit.',
+  roles:{dev:{see:false,freq:'',why:'Trop macro — doit cependant être communiqué pour donner du sens',mm:'ok',mmNote:''},techlead:{see:false,freq:'',why:'Connaître les KGIs pour aligner les OKRs d\'équipe',mm:'ok',mmNote:''},manager:{see:false,freq:'',why:'Référence pour les OKRs d\'équipe — pas de consultation opérationnelle',mm:'ok',mmNote:''},director:{see:true,freq:'Semestriel',why:'Valide l\'alignement programme-stratégie',mm:'ok',mmNote:'Niveau approprié'},vp:{see:true,freq:'Semestriel',why:'Traduit les KGIs en roadmap technologique',mm:'ok',mmNote:'Niveau approprié'},cto:{see:true,freq:'Annuel',why:'Co-construit les KGIs tech avec le Board',mm:'ok',mmNote:'Niveau core'},board:{see:true,freq:'Annuel',why:'Valide et arbitre les KGIs de l\'organisation',mm:'ok',mmNote:'Niveau core'}},
+  methodsDetail:{waterfall:{rel:'high',note:'Jalons pluriannuels = base du planning Waterfall'},scrum:{rel:'med',note:'Utiles comme horizon stratégique des OKRs de programme'},kanban:{rel:'low',note:'Peu pertinent opérationnellement'},devops:{rel:'low',note:'Les KGIs guident la direction, pas le delivery daily'},safe:{rel:'high',note:'Portfolio SAFe : les KGIs alimentent les Epics stratégiques'},shapeup:{rel:'med',note:'Alimentent la Betting Table et les appetite decisions'},okr:{rel:'high',note:'Les KGIs sont le niveau supérieur de la cascade OKR'}}},
+
+{id:'arr',level:'ent',levelLabel:'Entreprise',lt:'lt-ent',type:'KPI Financier',typeColor:'#a5b4fc',name:'ARR / MRR / EBITDA',desc:'Revenus récurrents annuels/mensuels et rentabilité opérationnelle',methods:['waterfall','okr'],
+  objectif:'Mesurer la santé financière et la croissance d\'une entreprise à abonnement. ARR = Annual Recurring Revenue, MRR = Monthly Recurring Revenue, EBITDA = rentabilité opérationnelle.',
+  calcul:'Formules fondamentales SaaS :',
+  formulaExample:'ARR = MRR × 12\nMRR = Σ(abonnements actifs × prix mensuel)\n\nNRR (Net Revenue Retention) = (MRR début + expansions – churns) / MRR début × 100\nCible NRR : > 110% (best-in-class > 120%)\n\nEBITDA = Résultat net + Intérêts + Impôts + D&A\nLTV/CAC ratio idéal ≥ 3\nCAC Payback Period cible ≤ 18 mois',
+  forces:'ARR permet de prévoir le cash flow avec précision. NRR révèle si les clients existants génèrent plus de valeur au fil du temps. EBITDA neutralise les effets comptables pour comparer la rentabilité.',
+  impact:'Un NRR > 110% signifie que l\'entreprise croît même sans nouveaux clients. Un NRR < 90% avec un ARR fort = croissance coûteuse et non durable.',
+  pratiques:['Suivre le MRR en 5 composantes : new, expansion, reactivation, contraction, churn','Ne jamais inclure les revenus one-shot dans l\'ARR','Calculer le CAC séparément pour chaque canal d\'acquisition','Alerter dès que le MRR Churn dépasse 2%/mois','Réviser le calcul du LTV si le modèle pricing change'],
+  warning:'Piège : comptabiliser des revenus one-shot ou des prépaiements annuels comme ARR récurrent. Cela donne une image fausse de la croissance et induit en erreur les investisseurs.',
+  roles:{dev:{see:false,freq:'',why:'Pas pertinent opérationnellement',mm:'ok',mmNote:''},techlead:{see:false,freq:'',why:'Connaissance de contexte uniquement',mm:'ok',mmNote:''},manager:{see:false,freq:'',why:'Connaissance de contexte pour aligner les OKRs',mm:'ok',mmNote:''},director:{see:true,freq:'Trimestriel',why:'Traduit en allocations budget équipes',mm:'ok',mmNote:'Lecture agrégée'},vp:{see:true,freq:'Mensuel',why:'Aligne la roadmap tech sur les objectifs de revenus',mm:'ok',mmNote:'Niveau approprié'},cto:{see:true,freq:'Mensuel',why:'Dialogue avec CFO sur l\'engineering ROI',mm:'ok',mmNote:'Niveau core'},board:{see:true,freq:'Mensuel',why:'KPI de gouvernance financière fondamental',mm:'ok',mmNote:'Niveau core'}},
+  methodsDetail:{waterfall:{rel:'high',note:'Reporting financier sur jalons du projet'},scrum:{rel:'low',note:'Peu pertinent au niveau sprint'},kanban:{rel:'low',note:'Peu pertinent au niveau flux'},devops:{rel:'low',note:'Indirectement lié via coût des incidents'},safe:{rel:'med',note:'Alimentent les Epic Financial Benefits dans SAFe Portfolio'},shapeup:{rel:'low',note:'Non utilisé dans le cadre Shape Up'},okr:{rel:'high',note:'KR typique au niveau entreprise dans un cadre OKR'}}},
+
+{id:'nps',level:'ent',levelLabel:'Entreprise',lt:'lt-ent',type:'KPI Client',typeColor:'#a5b4fc',name:'NPS / Churn / CAC',desc:'Fidélité client, taux d\'attrition et coût d\'acquisition',methods:['okr','safe'],
+  objectif:'NPS mesure la probabilité de recommandation (loyauté). Churn = % clients ou revenus perdus. CAC = coût moyen pour acquérir un nouveau client.',
+  calcul:'Formules :',formulaExample:'NPS = % Promoteurs (9–10) – % Détracteurs (0–6)\nScore de –100 à +100. > 50 = excellent, > 30 = bon\n\nChurn Rate = Clients perdus / Clients début période × 100\nCible : < 2%/mois pour SaaS B2B\n\nCAC = (Dépenses Sales + Marketing) / Nouveaux clients\nLTV = ARPU / Churn mensuel\nLTV/CAC ≥ 3 = modèle viable',
+  forces:'NPS prédit la croissance organique. Churn est l\'ennemi numéro 1 des SaaS. LTV/CAC mesure la viabilité économique du modèle d\'acquisition.',
+  impact:'Un NPS > 50 corrèle avec une croissance organique 2× plus rapide. Réduire le churn de 1% peut augmenter la valeur de l\'entreprise de 10–15%.',
+  pratiques:['Segmenter le NPS par type de client (PME vs Enterprise) — le global masque tout','Suivre le MRR Churn (valeur), pas seulement le logo churn (nombre)','Faire des exit interviews systématiques sur tous les churns','Calculer le CAC par canal pour identifier les plus rentables','Surveiller le NPS post-onboarding séparément du NPS global'],
+  warning:'Piège NPS : un score global de 40 peut cacher des PME enchantées et des clients Enterprise qui churntent. Toujours segmenter. Et mesurer les verbatims qualitatifs — le score seul ne dit pas quoi faire.',
+  roles:{dev:{see:false,freq:'',why:'Connaissance de contexte business utile',mm:'ok',mmNote:''},techlead:{see:false,freq:'',why:'Utile pour aligner les efforts qualité',mm:'ok',mmNote:''},manager:{see:true,freq:'Mensuel',why:'Le NPS technique doit informer les priorités équipe',mm:'ok',mmNote:'Agrégé — pas par client'},director:{see:true,freq:'Mensuel',why:'Signal qualité produit et dette technique',mm:'ok',mmNote:'Niveau approprié'},vp:{see:true,freq:'Mensuel',why:'Priorisation roadmap et arbitrages investissement',mm:'ok',mmNote:'Niveau approprié'},cto:{see:true,freq:'Mensuel',why:'Impact tech sur satisfaction client',mm:'ok',mmNote:'Niveau core'},board:{see:true,freq:'Trimestriel',why:'Indicateur de valeur créée pour les clients',mm:'ok',mmNote:'Niveau core'}},
+  methodsDetail:{waterfall:{rel:'med',note:'KPI de fin de projet / jalon de livraison'},scrum:{rel:'med',note:'Peut alimenter la définition de "Done" et les user stories'},kanban:{rel:'low',note:'Peu pertinent au niveau flux quotidien'},devops:{rel:'med',note:'Lié à la qualité du service et aux incidents'},safe:{rel:'high',note:'Business Value et Customer Satisfaction dans SAFe'},shapeup:{rel:'med',note:'Influence les décisions de la Betting Table'},okr:{rel:'high',note:'KR client typique au niveau entreprise'}}},
+
+{id:'okr_ent',level:'ent',levelLabel:'Entreprise',lt:'lt-ent',type:'OKR',typeColor:'#d8b4fe',name:'OKR — Objectives & Key Results',desc:'Objectifs ambitieux + résultats mesurables — rythme trimestriel',methods:['scrum','safe','okr','shapeup'],
+  objectif:'Aligner toute l\'organisation sur des objectifs ambitieux et mesurables. O = direction inspirante (qualitatif). KRs = 3–5 résultats qui prouvent l\'atteinte (quantitatifs).',
+  calcul:'Structure et scoring :',formulaExample:'O : [Verbe] + [Résultat] + [Impact visé]\n  Ex : Devenir la référence cybersécurité pour les PME EU\n\nKR1 : [Métrique] ≥ [cible] d\'ici [date]\n  Ex : NPS Sécurité ≥ 55 en Q2\nKR2 : 3 partenariats ANSSI certifiés signés\nKR3 : ARR sécurité 2M€\n\nScore : 0.0–0.4 = échec · 0.5–0.7 = succès · 0.8–1.0 = trop facile\nCible idéale : 0.6–0.7 (John Doerr)',
+  forces:'Crée un alignement stratégie–exécution transparent. Favorise l\'ambition (moonshots). Rythme trimestriel = agilité stratégique. Visible de tous niveaux.',
+  impact:'Les entreprises avec des OKRs bien implémentés reportent 30–40% d\'amélioration de l\'alignement organisationnel. Google, Spotify, Netflix l\'utilisent à tous les niveaux.',
+  pratiques:['Limiter à 3–5 OKRs par niveau par trimestre','60–70% d\'atteinte = succès — les objectifs doivent être tendus','Transparence totale : OKRs visibles de toute l\'entreprise','Check-in hebdomadaire asynchrone (5 min), review mensuelle approfondie','Ne JAMAIS lier les OKRs aux évaluations de performance individuelles'],
+  warning:'Piège fatal : transformer les KRs en listes de tâches. Un KR mesure un RÉSULTAT, jamais une activité. "Lancer 5 campagnes" est une tâche. "Générer 200 leads qualifiés" est un résultat.',
+  roles:{dev:{see:true,freq:'Trimestriel',why:'Connaître les OKRs de son équipe pour aligner son travail',mm:'ok',mmNote:'Consultation trimestrielle normale'},techlead:{see:true,freq:'Hebdomadaire',why:'Check-in et alignement du sprint sur les OKRs',mm:'ok',mmNote:'Niveau approprié'},manager:{see:true,freq:'Hebdomadaire',why:'Pilote les OKRs d\'équipe, reporte vers le programme',mm:'ok',mmNote:'Niveau core'},director:{see:true,freq:'Mensuel',why:'Vérifie l\'alignement OKRs équipes → programme',mm:'ok',mmNote:'Niveau approprié'},vp:{see:true,freq:'Mensuel',why:'OKRs de VP Engineering alignés sur les OKRs entreprise',mm:'ok',mmNote:'Niveau core'},cto:{see:true,freq:'Mensuel',why:'OKRs tech alimentent la stratégie globale',mm:'ok',mmNote:'Niveau core'},board:{see:true,freq:'Trimestriel',why:'Validation et scoring des OKRs entreprise',mm:'ok',mmNote:'Niveau approprié'}},
+  methodsDetail:{waterfall:{rel:'low',note:'Les OKRs sont itératifs — peu compatibles avec le Waterfall rigide'},scrum:{rel:'high',note:'Les Sprint Goals se dérivent directement des OKRs d\'équipe'},kanban:{rel:'med',note:'Les OKRs fournissent la direction du flux Kanban'},devops:{rel:'med',note:'Les OKRs de fiabilité alimentent les SLOs'},safe:{rel:'high',note:'Les PI Objectives SAFe sont l\'équivalent des OKRs à l\'échelle ART'},shapeup:{rel:'med',note:'Les OKRs alimentent les décisions de la Betting Table'},okr:{rel:'high',note:'C\'est le cadre lui-même — niveau fondamental'}}},
+
+{id:'enps',level:'ent',levelLabel:'Entreprise',lt:'lt-ent',type:'KBI',typeColor:'#7dd3fc',name:'eNPS / Employee Engagement',desc:'Engagement et bien-être des collaborateurs — leading indicator RH',methods:['scrum','kanban','okr','safe'],
+  objectif:'Mesurer dans quelle mesure les employés recommanderaient leur entreprise comme lieu de travail. Leading indicator fort : un eNPS qui chute annonce une augmentation du turnover 3–6 mois plus tard.',
+  calcul:'Même méthode que le NPS client :',formulaExample:'Question : "Sur 10, recommanderiez-vous notre entreprise comme lieu de travail ?"\n\neNPS = % Promoteurs (9–10) – % Détracteurs (0–6)\n\nRepères :\n> 50 = excellent · 30–50 = bon · 10–30 = acceptable · < 10 = alarme\n\nRétention = (Employés fin période / Employés début) × 100\nTaux d\'absentéisme = (Jours absents / Jours travaillables) × 100',
+  forces:'Prédicteur de turnover et de productivité. 1 question + verbatims = signal fort. Leading indicator : agir avant que les KPIs se dégradent. Comparaison sectorielle possible.',
+  impact:'Équipes avec engagement élevé : +21% productivité, –59% turnover (Gallup). Un eNPS > 30 dans une équipe DevOps corrèle avec de meilleures métriques DORA.',
+  pratiques:['Mesurer trimestriellement (pulse survey) — pas seulement annuellement','Analyser les verbatims : le score seul ne dit pas quoi faire','Segmenter par équipe, ancienneté, rôle pour identifier les zones à risque','Agir visiblement sur les retours — sinon perte de confiance','Compléter avec des 1:1 réguliers entre managers et équipes'],
+  warning:'Piège : mesurer sans agir. Un eNPS en baisse ignoré envoie un message dévastateur : "votre avis ne compte pas". Cela accélère le départ des meilleurs éléments (qui ont le plus d\'options).',
+  roles:{dev:{see:false,freq:'Participe',why:'Contribue à la mesure — résultats agrégés uniquement',mm:'ok',mmNote:''},techlead:{see:true,freq:'Trimestriel',why:'Signal de santé de son équipe immédiate',mm:'ok',mmNote:'Niveau approprié'},manager:{see:true,freq:'Trimestriel',why:'Leading indicator de burnout et de turnover',mm:'ok',mmNote:'Niveau core — doit agir'},director:{see:true,freq:'Trimestriel',why:'Comparaison inter-équipes pour identifier les zones à risque',mm:'ok',mmNote:'Agrégé — pas individuel'},vp:{see:true,freq:'Trimestriel',why:'Signal culture engineering pour le recrutement et la rétention',mm:'ok',mmNote:'Niveau approprié'},cto:{see:true,freq:'Semestriel',why:'SPACE framework — developer experience comme attracteur talent',mm:'ok',mmNote:'Niveau approprié'},board:{see:false,freq:'',why:'Trop opérationnel pour ce niveau — sauf si turnover critique',mm:'ok',mmNote:''}},
+  methodsDetail:{waterfall:{rel:'med',note:'Pertinent pour les projets longs sur le moral des équipes'},scrum:{rel:'high',note:'Complément au Team Health Check en Scrum'},kanban:{rel:'high',note:'Mesure le bien-être dans les équipes en flux continu'},devops:{rel:'high',note:'SPACE framework inclut satisfaction et bien-être'},safe:{rel:'high',note:'Business Agility SAFe inclut la satisfaction des équipes'},shapeup:{rel:'med',note:'Le Cooldown est conçu pour préserver le bien-être'},okr:{rel:'med',note:'Peut être un KR d\'un OKR culture/talent'}}},
+
+{id:'roi',level:'port',levelLabel:'Portefeuille',lt:'lt-port',type:'KPI Business',typeColor:'#7dd3fc',name:'ROI des Initiatives',desc:'Retour sur investissement de chaque programme ou projet',methods:['waterfall','safe','okr'],
+  objectif:'Justifier et prioriser les investissements dans le portefeuille de projets. Permet de comparer des initiatives très différentes et de stopper les projets zombies (actifs mais sans valeur).',
+  calcul:'Formules :',formulaExample:'ROI = (Bénéfices nets – Coûts) / Coûts × 100\n\nPayback Period = Investissement initial / Cash flow annuel\n\nEx : Projet A\n  Coût total : 200k€\n  Gain annuel : 120k€\n  ROI an 1 = (120k – 200k) / 200k = –40%\n  ROI an 2 = (240k – 200k) / 200k = +20%\n  Payback = 200k / 120k = 1.67 ans\n\nEngineering ROI = Valeur business livrée / Coût engineering',
+  forces:'Langage universel du Board. Compare des projets hétérogènes. Discipline les équipes à articuler la valeur business avant de demander des ressources.',
+  impact:'Les portefeuilles pilotés par ROI allouent 30% mieux leurs ressources. Stopper 1 projet zombie libère en moyenne 20% de capacité équipe (McKinsey).',
+  pratiques:['Calculer ROI avant ET après chaque initiative (réel vs prévu)','Inclure les coûts cachés : formation, migration, maintenance longue durée','Prioriser les quick wins pour financer les paris long terme','Réviser le business case à mi-parcours — stopper si non viable','Ne jamais embarquer une initiative sans business case chiffré minimum'],
+  warning:'Piège : le ROI quantifiable masque la valeur stratégique non mesurable (ex : expérimentation d\'une nouvelle technologie). Utiliser une matrice Valeur × Effort avec une composante qualitative.',
+  roles:{dev:{see:false,freq:'',why:'Pas pertinent à ce niveau',mm:'ok',mmNote:''},techlead:{see:false,freq:'',why:'Contexte utile pour comprendre les priorités',mm:'ok',mmNote:''},manager:{see:true,freq:'Trimestriel',why:'Aligne les efforts équipe sur les initiatives à valeur',mm:'ok',mmNote:'Agrégé — niveau approprié'},director:{see:true,freq:'Mensuel',why:'Arbitre les initiatives du portefeuille',mm:'ok',mmNote:'Niveau core'},vp:{see:true,freq:'Mensuel',why:'Engineering ROI pour le dialogue avec CFO',mm:'ok',mmNote:'Niveau core'},cto:{see:true,freq:'Trimestriel',why:'ROI technologique global pour le Board',mm:'ok',mmNote:'Niveau core'},board:{see:true,freq:'Trimestriel',why:'Gouvernance financière des investissements tech',mm:'ok',mmNote:'Niveau core'}},
+  methodsDetail:{waterfall:{rel:'high',note:'EVM (Earned Value Management) inclut le ROI comme métrique centrale'},scrum:{rel:'med',note:'Business value des stories et des releases'},kanban:{rel:'low',note:'Peu pertinent au niveau flux quotidien'},devops:{rel:'low',note:'Indirectement via le coût des incidents évités'},safe:{rel:'high',note:'Business Case et Lean Business Case dans SAFe Portfolio'},shapeup:{rel:'high',note:'L\'Appetite (budget temps) est une forme de ROI implicite'},okr:{rel:'med',note:'Peut être un KR d\'un OKR financier'}}},
+
+{id:'wip',level:'port',levelLabel:'Portefeuille',lt:'lt-port',type:'Lean',typeColor:'#fde047',name:'WIP — Work In Progress (Portefeuille)',desc:'Nombre d\'initiatives actives simultanément — Little\'s Law appliquée',methods:['kanban','safe','scrum'],
+  objectif:'Limiter le nombre d\'initiatives en parallèle pour améliorer le débit. Contre-intuitif mais prouvé : moins d\'initiatives = plus de valeur livrée. La dispersion des ressources est l\'ennemi du throughput.',
+  calcul:'Little\'s Law :',formulaExample:'Little\'s Law : Lead Time = WIP / Throughput\n\nEx :\n  WIP = 10 initiatives · Throughput = 2/mois → Lead Time = 5 mois\n  WIP = 6 initiatives · Throughput = 2/mois → Lead Time = 3 mois (–40%)\n\nCost of Multitasking (Gerald Weinberg) :\n  1 projet  = 100% de temps disponible\n  2 projets = 80% chacun (20% perdu en context switching)\n  3 projets = 75% chacun\n  5 projets = 50% chacun !\n\nWIP portefeuille recommandé : ≤ (nb équipes × 2)',
+  forces:'Réduit le Lead Time sans augmenter les ressources. Améliore la qualité (moins de context switching). Visualise les goulots. Réduit les projets zombies.',
+  impact:'Réduire le WIP de 40% réduit le Lead Time de 30–50% dans la plupart des organisations. Le context switching coûte 20–40% de productivité par développeur.',
+  pratiques:['Définir et afficher un WIP limit explicite pour le portefeuille','Finir avant de commencer (Stop Starting, Start Finishing)','Réviser le WIP en réunion mensuelle de portfolio','Rendre visibles les projets zombies (actifs depuis > 2× leur durée prévue)','Mettre en pause, pas en arrêt — conserver le contexte'],
+  warning:'Piège : réduire le WIP crée des conflits de priorité. Il faut un processus décisionnel clair sur ce qu\'on arrête ou met en pause. Sans ce processus, la limite WIP sera ignorée.',
+  roles:{dev:{see:false,freq:'',why:'Pas pertinent à ce niveau',mm:'ok',mmNote:''},techlead:{see:false,freq:'',why:'Contexte pour comprendre la capacité du portefeuille',mm:'ok',mmNote:''},manager:{see:true,freq:'Mensuel',why:'Comprendre pourquoi l\'équipe est mobilisée sur X priorités',mm:'ok',mmNote:'Agrégé — niveau approprié'},director:{see:true,freq:'Mensuel',why:'Alerte si WIP portefeuille > seuil — risque de dispersion',mm:'ok',mmNote:'Niveau core'},vp:{see:true,freq:'Mensuel',why:'Décision d\'arrêt ou de mise en pause des initiatives',mm:'ok',mmNote:'Niveau core'},cto:{see:true,freq:'Trimestriel',why:'Vision systémique de la charge organisationnelle',mm:'ok',mmNote:'Niveau approprié'},board:{see:false,freq:'',why:'Trop opérationnel — sauf alerte critique de dispersion',mm:'ok',mmNote:''}},
+  methodsDetail:{waterfall:{rel:'low',note:'Le Waterfall planifie en séquentiel — WIP peu utile'},scrum:{rel:'med',note:'WIP au niveau sprint est géré via les story points et la capacité'},kanban:{rel:'high',note:'Le WIP limit est le principe fondateur du Kanban'},devops:{rel:'med',note:'WIP des fonctionnalités en pipeline déploiement'},safe:{rel:'high',note:'Portfolio WIP dans le Kanban de Portfolio SAFe'},shapeup:{rel:'high',note:'L\'Appetite limite implicitement le WIP par cycle'},okr:{rel:'low',note:'Non directement lié aux OKRs'}}},
+
+{id:'portfolio_lt',level:'port',levelLabel:'Portefeuille',lt:'lt-port',type:'Flow Metric',typeColor:'#7dd3fc',name:'Portfolio Lead Time',desc:'Temps d\'une idée métier jusqu\'à la mise en production',methods:['kanban','safe','okr'],
+  objectif:'Mesurer la réactivité stratégique : combien de temps faut-il pour qu\'une idée validée devienne de la valeur réelle pour les clients ? C\'est le Lead Time Lean appliqué au niveau portefeuille.',
+  calcul:'Décomposition par phases :',formulaExample:'Portfolio Lead Time = Date production – Date validation idée\n\nDécomposition :\n  1. Idéation → Validation métier\n  2. Validation → Équipe affectée\n  3. Équipe affectée → Développement démarré\n  4. Développement → Tests\n  5. Tests → Production\n\nRévélateur : souvent 40–60% du Lead Time est en amont du développement\n  (idéation, priorisation, validation) — invisible sans cette décomposition\n\nObjectif : identifier et attaquer les top 3 goulots',
+  forces:'Révèle les goulots organisationnels invisibles (pas seulement techniques). Permet de benchmarker la réactivité stratégique. Aligne les discussions Board sur des faits.',
+  impact:'Réduire le Portfolio Lead Time de 30% permet d\'itérer plus vite sur le marché. Les entreprises tech leaders ont un Lead Time portefeuille 5–10× plus court que la moyenne de leur secteur.',
+  pratiques:['Visualiser avec un Value Stream Map du portefeuille entier','Identifier et attaquer les top 3 goulots en priorité','Viser une réduction de 20%/an plutôt qu\'une révolution','Mesurer séparément les phases business et tech','Utiliser des outils de portfolio management dédiés'],
+  warning:'Piège : se focaliser sur la phase développement (visible) en oubliant la phase amont (idéation, priorisation, validation) qui représente souvent 40–60% du Lead Time total.',
+  roles:{dev:{see:false,freq:'',why:'Pas pertinent à ce niveau',mm:'ok',mmNote:''},techlead:{see:false,freq:'',why:'Peut contribuer à la phase technique de la mesure',mm:'ok',mmNote:''},manager:{see:true,freq:'Mensuel',why:'Comprendre où se bloquent les initiatives avant son équipe',mm:'ok',mmNote:'Agrégé'},director:{see:true,freq:'Mensuel',why:'Identifier les goulots systémiques inter-équipes',mm:'ok',mmNote:'Niveau core'},vp:{see:true,freq:'Mensuel',why:'Signal de réactivité pour les discussions business',mm:'ok',mmNote:'Niveau core'},cto:{see:true,freq:'Trimestriel',why:'Time-to-market comme indicateur compétitif',mm:'ok',mmNote:'Niveau core'},board:{see:true,freq:'Semestriel',why:'Réactivité stratégique vs concurrence',mm:'ok',mmNote:'Très agrégé'}},
+  methodsDetail:{waterfall:{rel:'med',note:'Correspond au Planning global du projet Waterfall'},scrum:{rel:'med',note:'Du Backlog Refinement au sprint review'},kanban:{rel:'high',note:'Lead Time est la métrique centrale du Kanban'},devops:{rel:'high',note:'Lié au Lead Time for Changes DORA au niveau pipeline'},safe:{rel:'high',note:'PI Planning duration et Release Train frequency dans SAFe'},shapeup:{rel:'high',note:'L\'Appetite définit le Lead Time acceptable par cycle'},okr:{rel:'med',note:'Peut être un KR d\'un OKR de performance organisationnelle'}}},
+
+{id:'deploy_freq',level:'team',levelLabel:'Équipe',lt:'lt-team',type:'DORA 🚀',typeColor:'#86efac',name:'Deployment Frequency',desc:'Fréquence de déploiement en production — maturité DevOps',methods:['devops','scrum','kanban'],
+  objectif:'Mesurer la capacité à livrer de petits changements fréquemment et en toute sécurité. Étude DORA sur 32 000 professionnels : les équipes élites déploient 973× plus souvent que les équipes low-performers.',
+  calcul:'Niveaux DORA 2024 :',formulaExample:'Niveaux DORA 2024 :\n🏆 Elite  : Plusieurs fois par jour\n✅ High   : Entre 1×/semaine et 1×/jour\n⚠️ Medium : Entre 1×/mois et 1×/semaine\n🔴 Low    : Moins d\'une fois par mois\n\nMesure : CI/CD pipeline logs, outils DORA dédiés\n(Jellyfish, LinearB, Faros, Swarmia)\n\nObjectif de progression : doubler la fréquence en 6 mois',
+  forces:'Corrèle fortement avec la performance globale. Les petits déploiements fréquents sont plus sûrs que les gros releases. Réduit le blast radius des incidents.',
+  impact:'Les équipes élites ont 2× moins de burnout et 50% plus de satisfaction que les équipes low. Des déploiements fréquents réduisent le risque d\'intégration continue.',
+  pratiques:['Implémenter une pipeline CI/CD 100% automatisée','Feature flags pour déployer sans activer (dark launching)','Trunk-based development : branches courtes (< 1 jour)','Tests automatisés couvrant ≥ 80% du code critique','Zéro déploiement manuel — tout doit être scriptable'],
+  warning:'Piège : augmenter la fréquence sans améliorer la qualité des tests. Des déploiements fréquents avec un CFR élevé génèrent plus d\'incidents, pas moins. Ces 4 métriques DORA s\'optimisent ensemble.',
+  roles:{dev:{see:true,freq:'Quotidien',why:'Feedback immédiat sur la santé du pipeline — propre contribution',mm:'ok',mmNote:'Leading indicator personnel'},techlead:{see:true,freq:'Quotidien',why:'Identifier les blocages dans la pipeline CI/CD de l\'équipe',mm:'ok',mmNote:'Niveau core pour facilitation'},manager:{see:true,freq:'Hebdomadaire',why:'Signal de maturité DevOps de l\'équipe (DORA tier)',mm:'ok',mmNote:'Tendance, pas valeur ponctuelle'},director:{see:true,freq:'Mensuel',why:'Comparaison multi-équipes — identifier les outliers',mm:'ok',mmNote:'Agrégé multi-équipes'},vp:{see:true,freq:'Mensuel',why:'% d\'équipes en DORA tier elite/high',mm:'warn',mmNote:'⚠️ Si par équipe précise hebdo = micromanagement'},cto:{see:true,freq:'Trimestriel',why:'DORA cluster de l\'organisation pour benchmark',mm:'warn',mmNote:'⚠️ Niveau agrégé uniquement'},board:{see:false,freq:'',why:'Trop opérationnel — sauf si lié à un incident contractuel',mm:'bad',mmNote:'🚫 Si demandé = signal de dysfonction de gouvernance'}},
+  methodsDetail:{waterfall:{rel:'low',note:'Le Waterfall n\'est pas conçu pour le déploiement fréquent'},scrum:{rel:'high',note:'L\'objectif Scrum est de livrer à chaque sprint — deployment freq = proxy'},kanban:{rel:'high',note:'Le flux continu Kanban cible des déploiements le plus fréquents possible'},devops:{rel:'high',note:'Métrique DORA fondamentale — pilier du DevOps Research'},safe:{rel:'high',note:'Continuous Delivery Pipeline dans SAFe'},shapeup:{rel:'low',note:'Shape Up vise à livrer à la fin du cycle (6 sem) — pas en continu'},okr:{rel:'med',note:'Peut être un KR d\'un OKR d\'accélération du delivery'}}},
+
+{id:'lead_time',level:'team',levelLabel:'Équipe',lt:'lt-team',type:'DORA 🚀',typeColor:'#86efac',name:'Lead Time for Changes',desc:'Temps entre le premier commit de code et la mise en production',methods:['devops','scrum','kanban'],
+  objectif:'Mesurer la fluidité du pipeline de delivery logiciel. Un Lead Time court = itérations rapides, réponse aux besoins du marché, et incidents résolus plus vite.',
+  calcul:'Décomposition et niveaux :',formulaExample:'Lead Time = Date déploiement – Date premier commit\n\nNiveaux DORA 2024 :\n🏆 Elite  : Moins d\'une heure\n✅ High   : Entre 1 heure et 1 jour\n⚠️ Medium : Entre 1 jour et 1 semaine\n🔴 Low    : Plus d\'une semaine\n\nDécomposition :\n  Coding time  : commit → PR ouverte\n  Review time  : PR ouverte → approuvée\n  Merge time   : approuvée → merge\n  Deploy time  : merge → production',
+  forces:'Révèle les goulots cachés du pipeline. Permet des itérations rapides. Corrèle avec la satisfaction équipe et client.',
+  impact:'Réduire le Lead Time de 50% = doubler la capacité d\'itération produit. Les équipes < 1 jour répondent 5× plus vite aux incidents de prod.',
+  pratiques:['Automatiser 100% des checks CI (linting, tests, security)','Convention de review : ≤ 24h pour toute PR','Limiter la taille des PRs à < 400 lignes','Éviter les environments staging instables','Mesurer et afficher le Lead Time par phase dans le dashboard équipe'],
+  warning:'Piège : confondre Lead Time for Changes (commit → prod, mesure tech) et Portfolio Lead Time (idée → prod, mesure organisationnelle). Ce sont deux dimensions différentes.',
+  roles:{dev:{see:true,freq:'Par PR',why:'Feedback immédiat sur sa contribution personnelle au flux',mm:'ok',mmNote:'Autodiagnostic'},techlead:{see:true,freq:'Quotidien',why:'Identifier les PRs bloquées et les goulots de review',mm:'ok',mmNote:'Facilitation — niveau core'},manager:{see:true,freq:'Hebdomadaire',why:'Tendance du Lead Time de l\'équipe sur 4 semaines',mm:'ok',mmNote:'Niveau approprié'},director:{see:true,freq:'Mensuel',why:'Lead Time agrégé multi-équipes — identifier les patterns',mm:'ok',mmNote:'Agrégé — niveau approprié'},vp:{see:true,freq:'Mensuel',why:'Signal de compétitivité du delivery tech',mm:'warn',mmNote:'⚠️ Par équipe spécifique = micromanagement'},cto:{see:true,freq:'Trimestriel',why:'Benchmark DORA de l\'organisation',mm:'warn',mmNote:'Agrégé uniquement'},board:{see:false,freq:'',why:'Trop opérationnel',mm:'bad',mmNote:'🚫 Hors périmètre Board'}},
+  methodsDetail:{waterfall:{rel:'low',note:'Peu pertinent dans un contexte de release périodique'},scrum:{rel:'high',note:'Sprint velocity et vitesse de mise en prod à chaque sprint'},kanban:{rel:'high',note:'Métrique centrale du Kanban — même concept'},devops:{rel:'high',note:'2e métrique DORA fondamentale'},safe:{rel:'high',note:'Team-level delivery performance dans SAFe'},shapeup:{rel:'med',note:'L\'Appetite encadre le Lead Time acceptable'},okr:{rel:'med',note:'Peut être un KR d\'un OKR de performance delivery'}}},
+
+{id:'cfr',level:'team',levelLabel:'Équipe',lt:'lt-team',type:'DORA 🚀',typeColor:'#86efac',name:'Change Failure Rate',desc:'% de déploiements causant un incident, rollback ou hotfix',methods:['devops','scrum'],
+  objectif:'Mesurer la stabilité du pipeline de delivery. Un CFR élevé = l\'équipe livre régulièrement de la valeur négative (problèmes) en même temps que des features.',
+  calcul:'Formule et niveaux :',formulaExample:'CFR = (Déploiements causant incident / Total déploiements) × 100\n\nNiveaux DORA 2024 :\n🏆 Elite  : 0–5%\n✅ High   : 5–10%\n⚠️ Medium : 10–15%\n🔴 Low    : > 15–30%\n\nQu\'est-ce qui compte comme "failure" ?\n  ✓ Rollback requis\n  ✓ Hotfix d\'urgence (< 1h après déploiement)\n  ✓ Incident P1 ou P2 causé par le changement',
+  forces:'Révèle la qualité réelle du pipeline. Identifie les patterns (même type de changement, même équipe, même heure). Prédicteur de stabilité du service.',
+  impact:'Chaque incident P1 coûte 5 000–50 000€ (temps ingénieur, impact client, réputation). Réduire le CFR de 10% à 5% peut diviser par 2 le coût opérationnel des incidents.',
+  pratiques:['Tests automatisés couvrant les paths critiques en CI','Feature flags pour activation graduelle (canary releases)','Blameless post-mortem après chaque incident','Monitoring et alerting en production pour détecter les régressions rapidement','Tests de charge avant les gros déploiements'],
+  warning:'Piège fatal : réduire le CFR en déployant moins souvent. Si vous déployez 1×/mois pour un CFR de 2%, c\'est un faux positif. Moins d\'opportunités d\'échouer ≠ amélioration. Les 4 DORA se lisent ensemble.',
+  roles:{dev:{see:true,freq:'Par incident',why:'Apprendre de chaque failure — blameless culture',mm:'ok',mmNote:'Feedback personnel'},techlead:{see:true,freq:'Hebdomadaire',why:'Identifier les patterns de failures dans l\'équipe',mm:'ok',mmNote:'Facilitation — niveau core'},manager:{see:true,freq:'Hebdomadaire',why:'Signal qualité — détecter une dégradation systémique',mm:'ok',mmNote:'Niveau approprié'},director:{see:true,freq:'Mensuel',why:'CFR agrégé — identifier les équipes avec des problèmes qualité',mm:'ok',mmNote:'Agrégé — niveau approprié'},vp:{see:true,freq:'Mensuel',why:'% équipes en tier DORA sur la stabilité',mm:'warn',mmNote:'⚠️ Par équipe précise = micromanagement potentiel'},cto:{see:true,freq:'Trimestriel',why:'Stabilité globale de la plateforme pour le Board',mm:'warn',mmNote:'Très agrégé uniquement'},board:{see:false,freq:'',why:'Trop opérationnel',mm:'bad',mmNote:'🚫 Hors périmètre — sauf incident majeur avec impact contractuel'}},
+  methodsDetail:{waterfall:{rel:'low',note:'Les releases Waterfall sont trop rares pour mesurer le CFR'},scrum:{rel:'med',note:'Qualité des releases à chaque sprint'},kanban:{rel:'high',note:'Mesure de la qualité du flux continu'},devops:{rel:'high',note:'3e métrique DORA fondamentale'},safe:{rel:'high',note:'Quality metrics dans les ART SAFe'},shapeup:{rel:'low',note:'La livraison en fin de cycle rend le CFR moins visible'},okr:{rel:'med',note:'KR de qualité/stabilité dans un OKR DevOps'}}},
+
+{id:'mttr',level:'team',levelLabel:'Équipe',lt:'lt-team',type:'DORA 🚀',typeColor:'#86efac',name:'MTTR — Mean Time To Restore',desc:'Temps moyen pour restaurer le service après un incident',methods:['devops'],
+  objectif:'Mesurer la résilience opérationnelle. MTTR court = détection rapide + résolution efficace = impact minimal sur les utilisateurs. Se décompose en MTTD + MTTA + MTTF + MTTV.',
+  calcul:'Décomposition et niveaux :',formulaExample:'MTTR = Durée totale d\'indisponibilité / Nombre d\'incidents\n\nNiveaux DORA 2024 :\n🏆 Elite  : Moins d\'une heure\n✅ High   : Entre 1 heure et 1 jour\n⚠️ Medium : Entre 1 jour et 1 semaine\n🔴 Low    : Plus d\'une semaine\n\nDécomposition :\n  MTTD : Mean Time To Detect (détection)\n  MTTA : Mean Time To Assign (attribution)\n  MTTF : Mean Time To Fix (résolution)\n  MTTV : Mean Time To Verify (validation)',
+  forces:'Mesure directement l\'impact sur les clients. Révèle la maturité de l\'observabilité, des runbooks et de l\'organisation des astreintes.',
+  impact:'Chaque minute de downtime d\'un service critique coûte 1 000–10 000€ selon l\'industrie (Gartner). MTTR < 1h vs > 1 semaine = différence entre SLA respecté et pénalité contractuelle.',
+  pratiques:['Monitoring complet : logs, metrics, traces (observabilité 3 piliers)','Runbooks clairs et à jour pour les incidents récurrents','Chaos engineering drills pour tester la résilience avant les incidents réels','Automatiser les rollbacks (si métriques dégradées → rollback auto)','Post-mortem blameless systématique pour prévenir les récidives'],
+  warning:'Piège : optimiser le MTTR en évitant de signaler les incidents. Si votre MTTR est excellent mais que les utilisateurs reportent des problèmes non détectés, c\'est votre MTTD qui est cassé.',
+  roles:{dev:{see:true,freq:'Par incident',why:'Comprendre l\'impact de ses changements — culture blameless',mm:'ok',mmNote:''},techlead:{see:true,freq:'Par incident + Hebdo',why:'Orchestrer la résolution, identifier les patterns récurrents',mm:'ok',mmNote:'Niveau core'},manager:{see:true,freq:'Hebdomadaire',why:'Signal de résilience de l\'équipe — alerte si MTTR en hausse',mm:'ok',mmNote:'Tendance 4 semaines'},director:{see:true,freq:'Mensuel',why:'Impact des incidents sur les SLA contractuels',mm:'ok',mmNote:'Agrégé'},vp:{see:true,freq:'Mensuel',why:'Résilience globale de la plateforme',mm:'warn',mmNote:'⚠️ Par équipe précise = micromanagement'},cto:{see:true,freq:'Mensuel',why:'Indicateur de fiabilité pour le Board',mm:'ok',mmNote:'Niveau core'},board:{see:true,freq:'Trimestriel',why:'Impact financier et contractuel des incidents majeurs uniquement',mm:'ok',mmNote:'P1 uniquement — très agrégé'}},
+  methodsDetail:{waterfall:{rel:'low',note:'Peu pertinent dans un contexte projet Waterfall'},scrum:{rel:'med',note:'Incidents traités en dehors des sprints normalement'},kanban:{rel:'high',note:'Les bugs et incidents sont des types de flux en Kanban'},devops:{rel:'high',note:'4e métrique DORA fondamentale — pilier de la résilience SRE'},safe:{rel:'high',note:'Operational excellence dans SAFe'},shapeup:{rel:'low',note:'Non spécifiquement adressé dans Shape Up'},okr:{rel:'med',note:'KR de fiabilité dans un OKR SRE/ops'}}},
+
+{id:'cycle_time',level:'team',levelLabel:'Équipe',lt:'lt-team',type:'Lean ⚡',typeColor:'#fde047',name:'Cycle Time',desc:'Temps de travail actif sur une tâche — hors temps d\'attente',methods:['kanban','scrum','devops'],
+  objectif:'Mesurer uniquement le temps de travail effectif (contrairement au Lead Time qui inclut l\'attente). Permet de distinguer : problème d\'exécution (Cycle Time long) vs problème organisationnel (Lead Time long).',
+  calcul:'Distinction fondamentale :',formulaExample:'Lead Time  = Date fin – Date création (inclut attente)\nCycle Time = Date fin – Date début réel du travail\n\nFlow Efficiency = (Cycle Time / Lead Time) × 100\n\nEx :\n  Ticket créé le lundi\n  Développement démarré le mercredi (2j d\'attente)\n  Terminé le vendredi (2j de travail actif)\n\n  Lead Time  = 4 jours\n  Cycle Time = 2 jours\n  Flow Efficiency = 50%\n\nMoyenne industrie IT : Flow Efficiency ≈ 15–25%\n(75–85% du temps = ATTENTE !)',
+  forces:'Révèle la différence entre problème d\'exécution et problème organisationnel. Guide les efforts d\'amélioration vers les vrais goulots. Actionnable immédiatement.',
+  impact:'En identifiant et supprimant les temps d\'attente, les équipes peuvent diviser leur Lead Time par 2–4× sans changer le processus de développement.',
+  pratiques:['Visualiser avec un CFD (Cumulative Flow Diagram) ou Kanban board','Identifier les colonnes "En attente de review", "Bloqué" comme sources d\'attente','Définir des WIP limits par colonne pour réduire les queues','Mesurer séparément par type de travail (feature, bug, tech debt)','Partager le percentile 85 (P85) — plus représentatif que la moyenne'],
+  warning:'Piège : réduire le Cycle Time en supprimant des étapes qualité (reviews, tests). Le bon levier est de réduire les attentes, pas de bâcler l\'exécution.',
+  roles:{dev:{see:true,freq:'Par tâche',why:'Autodiagnostic : comprendre son propre flux de travail',mm:'ok',mmNote:'Autodiagnostic — appartient à l\'individu'},techlead:{see:true,freq:'Hebdomadaire',why:'Identifier les goulots dans le processus de l\'équipe',mm:'ok',mmNote:'Facilitation — niveau core'},manager:{see:true,freq:'Hebdomadaire',why:'Signal de friction dans le workflow de l\'équipe',mm:'ok',mmNote:'Tendance d\'équipe — niveau approprié'},director:{see:true,freq:'Mensuel',why:'Flow efficiency systémique multi-équipes',mm:'ok',mmNote:'Agrégé — niveau approprié'},vp:{see:false,freq:'',why:'Trop opérationnel pour ce niveau — utiliser Flow Efficiency agrégée',mm:'warn',mmNote:'⚠️ Consulter par équipe = micromanagement'},cto:{see:false,freq:'',why:'Utiliser le Portfolio Lead Time à ce niveau',mm:'bad',mmNote:'🚫 Hors périmètre CTO'},board:{see:false,freq:'',why:'Trop opérationnel',mm:'bad',mmNote:'🚫 Hors périmètre Board'}},
+  methodsDetail:{waterfall:{rel:'low',note:'Peu pertinent — le Waterfall ne mesure pas le flux tâche par tâche'},scrum:{rel:'high',note:'Complément précieux à la vélocité pour mesurer le flux interne'},kanban:{rel:'high',note:'Avec le Lead Time, c\'est la métrique principale du Kanban'},devops:{rel:'med',note:'Lié au Lead Time for Changes DORA'},safe:{rel:'med',note:'Team-level flow metrics dans SAFe'},shapeup:{rel:'low',note:'Non utilisé explicitement dans Shape Up'},okr:{rel:'low',note:'Rarement utilisé comme KR — trop opérationnel'}}},
+
+{id:'velocity',level:'team',levelLabel:'Équipe',lt:'lt-team',type:'Agile',typeColor:'#a5b4fc',name:'Vélocité / Story Points',desc:'Quantité de travail livrée par sprint — outil de planification (pas de performance)',methods:['scrum','safe'],
+  objectif:'Mesurer la capacité de livraison de l\'équipe par sprint pour planifier les futures itérations. OUTIL DE PLANIFICATION, pas indicateur de performance individuelle ou comparative.',
+  calcul:'Story Points et Vélocité :',formulaExample:'Story Points = estimation relative de complexité\n(Fibonacci : 1, 2, 3, 5, 8, 13, 21...)\n\nVélocité = Σ(Story Points terminés) sur 1 sprint\nVélocité moyenne = Moyenne des 3–6 derniers sprints\n\nEx : Sprints : 38, 44, 41, 43 pts\n  Vélocité moyenne = 41.5 pts/sprint\n  Capacité Q2 (6 sprints) ≈ 249 pts\n\nStabilité = (Écart-type / Moyenne) × 100 → objectif < 20%',
+  forces:'Permet la planification fiable à moyen terme. Révèle les perturbations de capacité. Outil de dialogue équipe/PO pour la priorisation et les trade-offs.',
+  impact:'Une vélocité stable (faible variance) permet des engagements fiables. L\'instabilité révèle souvent des dettes techniques ou des processus défaillants.',
+  pratiques:['Utiliser pour la planification, JAMAIS pour comparer des équipes entre elles','Recalibrer si la définition de "terminé" change','Préférer le Throughput (items/sprint) pour les équipes matures','Surveiller la tendance plutôt que le chiffre absolu','Investiguer si la variance dépasse 25% sur 3 sprints consécutifs'],
+  warning:'Piège MAJEUR : comparer la vélocité entre équipes, ou l\'utiliser pour évaluer les performances individuelles. Presser sur la vélocité pousse à l\'inflation des points de story (Goodhart\'s Law).',
+  roles:{dev:{see:true,freq:'Par sprint',why:'Participe à l\'estimation — comprend la capacité collective',mm:'ok',mmNote:'Contribution active'},techlead:{see:true,freq:'Par sprint',why:'Planning du sprint et prévision de la release',mm:'ok',mmNote:'Outil de planification — niveau core'},manager:{see:true,freq:'Par sprint',why:'Tendance de stabilité — signal de perturbations de capacité',mm:'ok',mmNote:'Tendance uniquement — jamais valeur absolue'},director:{see:false,freq:'',why:'Trop granulaire — utiliser le Delivery Predictability agrégé',mm:'warn',mmNote:'⚠️ Consulter = signal de micromanagement'},vp:{see:false,freq:'',why:'Hors périmètre — son niveau : Delivery Predictability portefeuille',mm:'bad',mmNote:'🚫 Comparer les vélocités entre équipes = toxique'},cto:{see:false,freq:'',why:'Hors périmètre CTO',mm:'bad',mmNote:'🚫 Demander des rapports de vélocité = mauvaise altitude'},board:{see:false,freq:'',why:'Hors périmètre Board',mm:'bad',mmNote:'🚫 Signal de dysfonction de gouvernance si demandé'}},
+  methodsDetail:{waterfall:{rel:'low',note:'Non compatible — le Waterfall mesure les jalons, pas les sprints'},scrum:{rel:'high',note:'Métrique centrale de la planification Scrum'},kanban:{rel:'low',note:'Le Kanban utilise le Throughput, pas la vélocité en points'},devops:{rel:'low',note:'Peu pertinent pour DevOps'},safe:{rel:'high',note:'Team Iteration Velocity dans SAFe — agrégé en ART Velocity'},shapeup:{rel:'low',note:'Shape Up n\'utilise pas de points — seulement des cycles et de l\'appetite'},okr:{rel:'low',note:'Rarement utilisé comme KR — trop interne'}}},
+
+{id:'team_health',level:'team',levelLabel:'Équipe',lt:'lt-team',type:'KBI 💛',typeColor:'#fde047',name:'Team Health Check',desc:'Bien-être et efficacité perçus par l\'équipe elle-même — 11 dimensions',methods:['scrum','kanban','safe','okr'],
+  objectif:'Évaluer la santé globale de l\'équipe selon ses propres membres. Leading indicator fort : un score Team Health en baisse précède une dégradation des métriques DORA de 1–2 trimestres.',
+  calcul:'Modèle Spotify (le plus utilisé) :',formulaExample:'11 dimensions évaluées de 🔴 à 🟢 :\n  1. Valeur livrée (Easy to release)\n  2. Collaboration (Suitable process)\n  3. Qualité du code (Tech quality)\n  4. Vitesse (Speed)\n  5. Mission (Mission)\n  6. Fun (Fun)\n  7. Apprentissage (Learning)\n  8. Support (Support)\n  9. Autonomie (Pawns vs Players)\n  10. Clarté des priorités (Clear priorities)\n  11. Confiance (Trust)\n\nScore = % de cartes vertes\nCible : > 70% vert · Alarme : > 30% rouge\nRythme : toutes les 6–10 semaines',
+  forces:'Identifie les problèmes avant qu\'ils impactent la performance. Donne la parole à l\'équipe. Crée un espace sécurisé pour des problèmes systémiques invisibles autrement.',
+  impact:'Équipes avec Team Health élevé : –40% turnover, –30% incidents, meilleures métriques DORA (Atlassian 2023). Leading indicator 1–2 trimestres avant la dégradation visible.',
+  pratiques:['Toutes les 6–10 semaines maximum — pas trop souvent pour rester sincère','Anonymiser les réponses pour obtenir de la franchise','Le manager N+1 ne doit PAS être présent pendant l\'exercice','Toujours conclure avec des actions sur les 2 dimensions les plus dégradées','Tracker l\'évolution dans le temps — la tendance compte plus que le score ponctuel'],
+  warning:'Piège : utiliser les résultats pour évaluer ou comparer les équipes. Cela détruira la sécurité psychologique et les réponses deviendront ce que les gens croient devoir répondre, pas ce qu\'ils pensent vraiment.',
+  roles:{dev:{see:true,freq:'Participe',why:'Acteur principal — sa voix compte dans la mesure',mm:'ok',mmNote:'Résultats agrégés uniquement'},techlead:{see:true,freq:'Toutes 6–10 sem',why:'Identifier les signaux faibles avant qu\'ils deviennent des crises',mm:'ok',mmNote:'Niveau core — doit agir'},manager:{see:true,freq:'Toutes 6–10 sem',why:'Leading indicator de burnout, de turnover, de perte de qualité',mm:'ok',mmNote:'Résultats agrégés — niveau core'},director:{see:true,freq:'Trimestriel',why:'Comparaison inter-équipes pour identifier les zones à risque',mm:'ok',mmNote:'Agrégé — score global uniquement'},vp:{see:false,freq:'',why:'Trop granulaire — sauf si signal d\'alarme rouge systémique',mm:'warn',mmNote:'⚠️ Consulter par équipe = micromanagement'},cto:{see:false,freq:'',why:'Utiliser l\'eNPS global et le SPACE framework à ce niveau',mm:'warn',mmNote:'⚠️ Hors altitude CTO'},board:{see:false,freq:'',why:'Trop opérationnel',mm:'bad',mmNote:'🚫 Hors périmètre Board'}},
+  methodsDetail:{waterfall:{rel:'low',note:'Les équipes Waterfall long terme peuvent en bénéficier mais ce n\'est pas natif'},scrum:{rel:'high',note:'Idéal en complément de la retrospective Scrum'},kanban:{rel:'high',note:'Mesure du bien-être dans les équipes en flux continu'},devops:{rel:'high',note:'SPACE framework inclut satisfaction et bien-être comme piliers'},safe:{rel:'high',note:'Business Agility inclut la santé des équipes dans SAFe'},shapeup:{rel:'med',note:'Peut être réalisé pendant le Cooldown'},okr:{rel:'med',note:'Peut alimenter un OKR culture/engagement'}}},
+
+{id:'code_coverage',level:'team',levelLabel:'Équipe',lt:'lt-team',type:'Qualité',typeColor:'#86efac',name:'Code Coverage & Tech Debt',desc:'% du code couvert par des tests automatisés + ratio de dette technique',methods:['scrum','devops','kanban'],
+  objectif:'Mesurer la proportion de code protégée par des tests automatisés et quantifier la dette technique. Plus la couverture est haute, plus l\'équipe peut déployer fréquemment avec confiance.',
+  calcul:'Types et outils :',formulaExample:'Line Coverage = Lignes exécutées / Total lignes × 100\nBranch Coverage = Branches testées / Total branches × 100\n\nOutils : Istanbul (JS), pytest-cov (Python),\n         JaCoCo (Java), Coverlet (.NET), SonarQube\n\nCibles :\n  Coverage global     ≥ 80%\n  Code critique/core  ≥ 90%\n  Code legacy         ≥ 60%\n\nTech Debt Ratio (SonarQube) :\n= Temps correction / Temps développement total\n  < 5%  = sain · 5–10% = acceptable · > 10% = alarme\n\n20% du temps sprint recommandé pour rembourser la dette',
+  forces:'Filet de sécurité pour les refactorisations. Permet des déploiements fréquents avec confiance. Détecte les régressions automatiquement. Corrèle directement avec un CFR plus faible.',
+  impact:'Équipes > 80% coverage : CFR 40% plus faible. Le coût de correction d\'un bug en prod est 100× supérieur à sa détection en développement (IBM Research).',
+  pratiques:['Intégrer le coverage dans la CI et bloquer si < seuil défini','Prioriser le coverage des chemins critiques (paiement, auth, data)','Ne pas viser 100% — le ROI marginal au-delà de 85–90% est faible','Compléter avec du mutation testing pour valider la qualité des tests','Allouer 20% du temps sprint au remboursement de la dette technique'],
+  warning:'Piège : un coverage de 95% avec des tests qui n\'assertent rien d\'utile. Le coverage mesure la quantité de tests, pas leur qualité. Combiner avec le CFR et le defect rate pour valider.',
+  roles:{dev:{see:true,freq:'Par commit',why:'Feedback immédiat sur la qualité de son code',mm:'ok',mmNote:'Outil d\'autodiagnostic — niveau core'},techlead:{see:true,freq:'Par sprint',why:'Maintenir le niveau de couverture et suivre la dette technique',mm:'ok',mmNote:'Niveau core'},manager:{see:true,freq:'Mensuel',why:'Signal de dette technique accumulée — impact futur sur le CFR',mm:'ok',mmNote:'Tendance mensuelle — niveau approprié'},director:{see:true,freq:'Trimestriel',why:'Budget alloué au remboursement de la dette technique',mm:'ok',mmNote:'Agrégé — décision d\'allocation budget'},vp:{see:false,freq:'',why:'Trop granulaire — sauf si dette critique bloque la stratégie',mm:'warn',mmNote:'⚠️ Hors altitude VP Engineering'},cto:{see:false,freq:'',why:'Utiliser le Technology Risk Exposure à ce niveau',mm:'warn',mmNote:'⚠️ Hors altitude CTO'},board:{see:false,freq:'',why:'Trop opérationnel',mm:'bad',mmNote:'🚫 Hors périmètre Board'}},
+  methodsDetail:{waterfall:{rel:'med',note:'Important en phase de test et recette dans un projet Waterfall'},scrum:{rel:'high',note:'Fait partie de la Definition of Done en Scrum'},kanban:{rel:'high',note:'Qualité continue dans les équipes Kanban de maintenance'},devops:{rel:'high',note:'Gate de la pipeline CI/CD — prérequis au déploiement'},safe:{rel:'med',note:'Built-in Quality practices dans SAFe'},shapeup:{rel:'med',note:'La qualité est attendue — pas de gate formel dans Shape Up'},okr:{rel:'low',note:'Rarement un KR — plutôt un indicateur opérationnel'}}},
+
+{id:'sla',level:'team',levelLabel:'Équipe',lt:'lt-team',type:'KPI Ops',typeColor:'#86efac',name:'SLA / SLO / SLI — Uptime',desc:'SLA = engagement client · SLO = objectif interne · SLI = mesure réelle',methods:['devops','waterfall','okr'],
+  objectif:'Définir et mesurer la disponibilité et fiabilité du service. SLI = mesure brute (ex : 99.92% uptime). SLO = objectif interne plus strict. SLA = engagement contractuel client avec pénalités.',
+  calcul:'Les 3 niveaux + Error Budget :',formulaExample:'SLI = Mesure brute (ex : uptime = 99.92%)\nSLO = Objectif interne (ex : 99.9%) — plus strict que le SLA\nSLA = Engagement client (ex : 99.5%) — avec pénalités\n\nTraduction uptime :\n  99%    = 87.6h/an d\'indisponibilité\n  99.9%  =  8.7h/an (~43 min/mois)\n  99.99% = 52 min/an (~4.3 min/mois)\n\nError Budget = 1 – SLO\n  SLO 99.9% → Error Budget = 43 min/mois\n  > 50% restant : livrer agressivement\n  < 20% restant : freeze features, focus stabilité',
+  forces:'Crée une conversation factuelle sur la fiabilité. L\'Error Budget aligne équipe produit et ops. Donne un langage commun avec les clients. Prévient les disputes contractuelles.',
+  impact:'Un SLA de 99% peut bloquer des contrats enterprise (certaines industries exigent ≥ 99.9%). L\'Error Budget force un équilibre sain entre innovation et stabilité.',
+  pratiques:['Définir SLIs, SLOs ET SLAs explicitement et les documenter','Utiliser l\'Error Budget comme signal : si épuisé = freeze features','Surveiller en temps réel avec dashboards accessibles à toute l\'équipe','Définir les pénalités contractuelles AVANT de signer le contrat','Réviser les SLOs annuellement selon l\'évolution des capacités techniques'],
+  warning:'Piège : viser 100% de disponibilité. C\'est impossible, ruineux en coût, et tue l\'innovation (peur de déployer). Les meilleures équipes définissent un Error Budget et l\'utilisent intelligemment pour innover.',
+  roles:{dev:{see:true,freq:'Par incident',why:'Comprendre l\'impact de ses changements sur le service',mm:'ok',mmNote:''},techlead:{see:true,freq:'Hebdomadaire',why:'Error Budget restant — décision de déploiement',mm:'ok',mmNote:'Niveau core'},manager:{see:true,freq:'Hebdomadaire',why:'Signal de fiabilité du service livré aux clients',mm:'ok',mmNote:'Niveau approprié'},director:{see:true,freq:'Mensuel',why:'SLA tenus ou non — impact contractuel et commercial',mm:'ok',mmNote:'Agrégé — niveau approprié'},vp:{see:true,freq:'Mensuel',why:'Fiabilité globale de la plateforme — argument commercial',mm:'ok',mmNote:'Niveau core'},cto:{see:true,freq:'Mensuel',why:'Risque contractuel et réputation client pour le Board',mm:'ok',mmNote:'Niveau core'},board:{see:true,freq:'Trimestriel',why:'Incidents avec impact financier ou contractuel uniquement',mm:'ok',mmNote:'P1 uniquement — agrégé'}},
+  methodsDetail:{waterfall:{rel:'med',note:'SLAs contractuels définis en début de projet Waterfall'},scrum:{rel:'med',note:'Définition de la fiabilité attendue du produit livré'},kanban:{rel:'med',note:'Pertinent pour les équipes de support/maintenance en flux continu'},devops:{rel:'high',note:'SLI/SLO/SLA + Error Budget sont le cœur de la pratique SRE'},safe:{rel:'high',note:'Operational Excellence et reliability dans SAFe'},shapeup:{rel:'low',note:'Non spécifiquement adressé dans Shape Up'},okr:{rel:'high',note:'SLO est souvent un KR dans un OKR de fiabilité/ops'}}}
+];
+
+// ── STATE ──
+let activeRole=null, activeMethod=null, currentMetric=null;
+
+function toggleRole(r){
+  activeRole=activeRole===r?null:r;
+  document.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===activeRole));
+  document.getElementById('btn-clear-role').style.display=activeRole?'block':'none';
+  render();
+}
+function clearRole(){
+  activeRole=null;
+  document.querySelectorAll('[data-role]').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-clear-role').style.display='none';
+  render();
+}
+function toggleMethod(m){
+  activeMethod=activeMethod===m?null:m;
+  document.querySelectorAll('[data-method]').forEach(b=>b.classList.toggle('active',b.dataset.method===activeMethod));
+  document.getElementById('btn-clear-method').style.display=activeMethod?'block':'none';
+  render();
+}
+function clearMethod(){
+  activeMethod=null;
+  document.querySelectorAll('[data-method]').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-clear-method').style.display='none';
+  render();
+}
+
+function render(){
+  const hasFilter=activeRole||activeMethod;
+
+  // onboarding
+  document.getElementById('onboarding').style.display=hasFilter?'none':'block';
+
+  // conseil banner
+  const banner=document.getElementById('conseil-banner');
+  const inner=document.getElementById('conseil-inner');
+  if(activeRole&&ROLE_CONSEIL[activeRole]){
+    const c=ROLE_CONSEIL[activeRole];
+    inner.style.borderLeftColor=c.border;
+    inner.style.background=c.color+'18';
+    inner.innerHTML=`<div class="conseil-title" style="color:${c.color}">${c.title}</div><div class="conseil-text">${c.text}</div><div class="conseil-anti">${c.anti}</div>`;
+    banner.classList.add('visible');
+  } else { banner.classList.remove('visible'); }
+
+  // filter status
+  const statusEl=document.getElementById('filter-status');
+  if(hasFilter){
+    let chips='';
+    if(activeRole)chips+=`<span class="status-chip">👤 ${ROLES[activeRole].short}</span>`;
+    if(activeMethod)chips+=`<span class="status-chip">⚙️ ${METHODS[activeMethod].label}</span>`;
+    statusEl.style.display='flex';
+    statusEl.innerHTML=chips+`<span id="visible-count" style="color:#94a3b8"></span>`;
+  } else { statusEl.style.display='none'; }
+
+  const levels=[
+    {key:'ent', bandClass:'band-ent', icon:'🏢', title:'Niveau Entreprise — Board / Direction', sub:'Vision stratégique · KGI · OKR · KPI · KBI'},
+    {key:'port',bandClass:'band-port',icon:'📁', title:'Niveau Portefeuille / Programme',       sub:'Priorisation · Allocation ressources · Flow metrics'},
+    {key:'team',bandClass:'band-team',icon:'👥', title:'Niveau Équipe — DevOps / Agile / Produit',sub:'Delivery · DORA · Lean · Qualité · Bien-être'}
+  ];
+
+  const wrapper=document.getElementById('grid-wrapper');
+  wrapper.innerHTML='';
+  let totalVisible=0;
+
+  levels.forEach(lv=>{
+    let metrics=METRICS.filter(m=>m.level===lv.key);
+    if(activeMethod) metrics=metrics.filter(m=>m.methods.includes(activeMethod));
+    if(!hasFilter||metrics.length>0){
+      // count visible for this level
+      let lvVisible=0;
+      metrics.forEach(m=>{
+        if(!activeRole||(m.roles[activeRole]&&m.roles[activeRole].see)) lvVisible++;
+      });
+
+      const band=document.createElement('div');
+      band.className=`section-band ${lv.bandClass}`;
+      band.innerHTML=`<div class="band-icon">${lv.icon}</div><div class="band-text"><div class="band-title">${lv.title}</div><div class="band-sub">${lv.sub}</div></div><div class="band-count">${hasFilter?lvVisible+' visible':metrics.length+' métriques'}</div>`;
+      wrapper.appendChild(band);
+
+      const grid=document.createElement('div');
+      grid.className='metrics-grid';
+
+      metrics.forEach(m=>{
+        const card=document.createElement('div');
+        card.className='mcard';
+
+        let dimmed=false,highlighted=false,freqText='',freqMM=false,hlColor='#4f83cc';
+        if(activeRole){
+          const rv=m.roles[activeRole];
+          if(!rv||!rv.see){ dimmed=true; }
+          else {
+            highlighted=true;
+            freqText=rv.freq;
+            freqMM=(rv.mm==='warn'||rv.mm==='bad');
+            hlColor=m.level==='ent'?'#6366f1':m.level==='port'?'#0ea5e9':'#22c55e';
+          }
+        }
+
+        card.classList.toggle('dimmed',dimmed);
+        if(highlighted){card.classList.add('highlighted');card.style.setProperty('--hl-color',hlColor);}
+        if(freqMM&&highlighted)card.classList.add('mm-warn');
+        if(!dimmed)totalVisible++;
+
+        const dots=m.methods.map(mth=>`<span class="mdot ${METHODS[mth]?.dot||''}" title="${METHODS[mth]?.label||mth}"></span>`).join('');
+        const freq=freqText?`<div class="freq-badge visible ${freqMM?'mm':''}">${freqMM?'⚠️ ':''} ${freqText}</div>`:'';
+
+        card.innerHTML=`
+          <div class="card-top">
+            <div class="card-type" style="color:${m.typeColor}">${m.type}</div>
+            <span class="level-tag ${m.lt}">${m.levelLabel}</span>
+          </div>
+          <div class="card-name">${m.name}</div>
+          <div class="card-desc">${m.desc}</div>
+          <div class="card-footer">
+            <div class="method-dots">${dots}</div>
+            ${freq}
+          </div>
+          <div class="card-cta">👆 Cliquer pour en savoir plus</div>
+        `;
+        card.onclick=()=>openModal(m.id);
+        grid.appendChild(card);
+      });
+
+      wrapper.appendChild(grid);
+    }
+  });
+
+  // update count
+  if(hasFilter){
+    const countEl=document.getElementById('visible-count');
+    if(countEl)countEl.innerHTML=`<span class="status-count">${totalVisible} métrique${totalVisible>1?'s':''} pertinente${totalVisible>1?'s':''}</span>`;
+  }
+
+  if(totalVisible===0&&hasFilter){
+    const nr=document.createElement('div');nr.className='no-results';
+    nr.innerHTML='<span>🔍</span>Aucune métrique ne correspond à cette combinaison.<br>Essayez un autre rôle ou une autre méthodologie.';
+    wrapper.appendChild(nr);
+  }
+}
+
+// ── MODAL ──
+function openModal(id){
+  currentMetric=METRICS.find(m=>m.id===id);
+  if(!currentMetric)return;
+  const m=currentMetric;
+  document.getElementById('m-badge').textContent=m.type+' — '+m.levelLabel;
+  document.getElementById('m-badge').style.background=m.typeColor+'28';
+  document.getElementById('m-badge').style.color=m.typeColor;
+  document.getElementById('m-title').textContent=m.name;
+  document.getElementById('m-sub').textContent=m.desc;
+
+  // tab definition
+  const practices=m.pratiques.map(p=>`<div class="pitem">${p}</div>`).join('');
+  document.getElementById('tab-definition').innerHTML=`
+    <div class="ms"><div class="ms-label">🎯 Objectif</div><div class="ms-text">${m.objectif}</div></div>
+    <div class="divider"></div>
+    <div class="ms"><div class="ms-label">📐 Comment calculer</div><div class="ms-text">${m.calcul}</div><div class="formula">${m.formulaExample}</div></div>
+    <div class="divider"></div>
+    <div class="ms"><div class="ms-label">💪 Forces &amp; atouts</div><div class="ms-text">${m.forces}</div></div>
+    <div class="ms"><div class="ms-label">📈 Impact attendu</div><div class="impact-box">${m.impact}</div></div>
+    <div class="divider"></div>
+    <div class="ms"><div class="ms-label">✅ Bonnes pratiques</div><div class="plist">${practices}</div></div>
+    <div class="ms"><div class="ms-label">⚠️ Pièges à éviter</div><div class="warn-box">${m.warning}</div></div>
+  `;
+
+  // tab roles — card layout
+  const roleCards=Object.entries(m.roles).map(([rk,rv])=>{
+    const rl=ROLES[rk];
+    let cardClass='rc-no';
+    if(rv.see&&rv.mm==='ok') cardClass='rc-ok';
+    else if(rv.see&&rv.mm==='warn') cardClass='rc-warn';
+    else if(rv.mm==='bad') cardClass='rc-bad';
+    const visLabel=rv.see?`<span class="rc-vis yes">✓ Pertinent</span>`:`<span class="rc-vis no">— Non pertinent</span>`;
+    const mmText=rv.mm==='ok'?'✓ Niveau adapté':rv.mm==='warn'?'⚠️ Risque micromanagement':'🚫 Micromanagement';
+    const mmClass=rv.mm;
+    const noteText=rv.mmNote||mmText;
+    return `<div class="role-card ${cardClass}">
+      <div class="rc-header">
+        <div class="rc-role-name">${rl.label}</div>
+        ${visLabel}
+      </div>
+      <div class="rc-body">
+        ${rv.freq?`<div class="rc-freq">📅 <strong>${rv.freq}</strong></div>`:''}
+        <div class="rc-why">${rv.why}</div>
+        <div class="rc-mm ${mmClass}">${noteText}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('tab-roles').innerHTML=`
+    <div class="ms-text" style="margin-bottom:12px;font-size:0.82rem">La <strong>fréquence</strong> indique la cadence de consultation idéale. Le <strong>niveau de contrôle</strong> alerte sur les risques de micromanagement.</div>
+    <div class="role-cards">${roleCards}</div>
+    <div class="mm-rule-box"><strong>Règle des deux niveaux :</strong> Un manager ne devrait jamais consulter régulièrement des métriques situées à plus d\'un niveau en dessous de lui. Ignorer cette règle est le premier signe de micromanagement.</div>
+  `;
+
+  // tab methods
+  const allMethods=['waterfall','scrum','kanban','devops','safe','shapeup','okr'];
+  const methRows=allMethods.map(mth=>{
+    const md=m.methodsDetail[mth];const ml=METHODS[mth];
+    if(!md)return'';
+    const relClass=md.rel==='high'?'rel-high':md.rel==='med'?'rel-med':'rel-low';
+    const relIcon=md.rel==='high'?'⭐⭐⭐ Essentielle':md.rel==='med'?'⭐⭐ Utile':'⭐ Marginale';
+    const op=m.methods.includes(mth)?'1':'.45';
+    return `<tr style="opacity:${op}"><td><span class="meth-badge ${ml.cls}">${ml.label}</span></td><td class="${relClass}">${relIcon}</td><td style="font-size:0.78rem;color:#94a3b8">${md.note}</td></tr>`;
+  }).join('');
+
+  document.getElementById('tab-methods').innerHTML=`
+    <div class="ms-text" style="margin-bottom:12px;font-size:0.82rem">Pertinence de cette métrique selon votre méthodologie. Les lignes en opacité réduite = faible pertinence.</div>
+    <table class="methtable">
+      <thead><tr><th>Méthodologie</th><th>Pertinence</th><th>Contexte d\'utilisation</th></tr></thead>
+      <tbody>${methRows}</tbody>
+    </table>
+  `;
+
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-definition').classList.add('active');
+  document.querySelector('.mtab').classList.add('active');
+  document.getElementById('overlay').classList.add('open');
+}
+
+function showTab(name,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+function closeOverlay(e){if(e.target.id==='overlay')closeModal();}
+function closeModal(){document.getElementById('overlay').classList.remove('open');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+render();
+</script>
+</body>
+</html>

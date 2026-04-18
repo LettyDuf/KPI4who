@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brouillon V2 — Arbre de décision par niveau &amp; problème</title>
+<style>
+  :root {
+    --niv-1: #1a237e; --niv-1-clair: #e8eaf6; --niv-1-moyen: #3949ab;
+    --niv-2: #01579b; --niv-2-clair: #e1f5fe; --niv-2-moyen: #0288d1;
+    --niv-3: #004d40; --niv-3-clair: #e0f2f1; --niv-3-moyen: #00897b;
+    --accent: #e65100; --alerte: #c62828;
+    --fond: #f5f6fa; --fond-2: #ffffff;
+    --texte: #1a1a2e; --texte-2: #607d8b; --bordure: #e0e4eb;
+    --ombre: 0 2px 12px rgba(26,35,126,0.08);
+    --rayon: 14px; --trans: 0.22s ease;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    background: var(--fond); color: var(--texte);
+    font-size: 15px; line-height: 1.6; min-height: 100vh;
+  }
+  .bandeau-brouillon {
+    background: linear-gradient(90deg, #e65100, #ff9800);
+    color: white; text-align: center; padding: 0.6rem 1rem;
+    font-size: 0.82rem; font-weight: 600;
+  }
+  .bandeau-brouillon strong { font-weight: 800; }
+  .conteneur { max-width: 980px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  .entete h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.35rem; }
+  .entete p  { font-size: 0.92rem; color: var(--texte-2); max-width: 780px; line-height: 1.55; }
+
+  /* Stepper visuel */
+  .stepper {
+    display: flex; align-items: center; gap: 0.4rem;
+    margin: 1.5rem 0 1.25rem; flex-wrap: wrap;
+  }
+  .step {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    padding: 0.5rem 0.95rem; border-radius: 20px;
+    font-size: 0.82rem; font-weight: 600;
+    background: var(--fond-2); color: var(--texte-2);
+    border: 1.5px solid var(--bordure);
+    transition: var(--trans);
+    font-family: inherit;
+  }
+  .step.actif  { background: var(--niv-2); color: white; border-color: var(--niv-2); }
+  .step.fait   {
+    background: var(--niv-3-clair); color: var(--niv-3); border-color: var(--niv-3-moyen);
+    cursor: pointer;
+  }
+  .step.fait:hover {
+    background: var(--niv-3-moyen); color: white; border-color: var(--niv-3);
+    transform: translateY(-1px); box-shadow: var(--ombre);
+  }
+  .step.fait:focus-visible {
+    outline: 2px solid var(--niv-3-moyen); outline-offset: 2px;
+  }
+  .step-num     { font-weight: 800; opacity: 0.75; }
+  .step-valeur  { font-weight: 700; }
+  .step-icone   { font-size: 0.95rem; }
+  .step-fleche  { color: var(--texte-2); font-size: 1rem; }
+
+  /* Carte étape */
+  .carte-etape {
+    background: var(--fond-2); border-radius: var(--rayon);
+    padding: 1.75rem; box-shadow: var(--ombre);
+    margin-bottom: 1rem;
+    animation: apparition 0.35s ease;
+  }
+  @keyframes apparition {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-numero { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.9px;
+              color: var(--texte-2); font-weight: 800; }
+  .q-texte { font-size: 1.08rem; font-weight: 700; margin: 0.4rem 0 0.35rem; }
+  .q-aide  { font-size: 0.85rem; color: var(--texte-2); margin-bottom: 1rem; }
+
+  .options-grille {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.65rem;
+  }
+  .option-btn {
+    padding: 0.95rem 1rem; border: 2px solid var(--bordure); border-radius: 12px;
+    background: var(--fond); cursor: pointer; text-align: left;
+    transition: var(--trans); color: var(--texte); font-family: inherit;
+    display: flex; gap: 0.7rem; align-items: flex-start;
+  }
+  .option-btn:hover { border-color: var(--niv-2-moyen); transform: translateY(-1px); box-shadow: var(--ombre); }
+  .option-btn.sel { border-color: var(--niv-2); background: var(--niv-2-clair); }
+  .option-icone { font-size: 1.4rem; flex-shrink: 0; }
+  .option-label { font-size: 0.92rem; font-weight: 700; line-height: 1.25; }
+  .option-sous  { font-size: 0.78rem; color: var(--texte-2); margin-top: 0.25rem; line-height: 1.4; }
+  .option-btn.sel .option-label { color: var(--niv-2); }
+
+  /* Résultats */
+  .resultat-titre {
+    font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--texte-2); font-weight: 800; margin-bottom: 0.9rem;
+  }
+  .grille-cartes {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.85rem;
+  }
+  .carte-ind {
+    background: var(--fond); border-radius: 12px; border-left: 4px solid var(--niv-2);
+    padding: 1rem; display: flex; flex-direction: column; gap: 0.55rem;
+  }
+  .carte-type-ligne { display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap; }
+  .carte-type-chip {
+    font-size: 0.62rem; font-weight: 800; padding: 0.14rem 0.45rem;
+    border-radius: 5px; color: white; background: var(--niv-2);
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .carte-nom { font-size: 0.95rem; font-weight: 700; line-height: 1.3; }
+  .carte-def { font-size: 0.82rem; color: var(--texte-2); line-height: 1.5; }
+
+  /* Encart délégation */
+  .encart-delegation {
+    background: #fff8f0; border-left: 4px solid var(--accent);
+    padding: 1rem 1.15rem; border-radius: 0 10px 10px 0;
+    margin-top: 1.3rem; font-size: 0.86rem; line-height: 1.6;
+  }
+  .encart-delegation h4 {
+    font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--accent); font-weight: 800; margin-bottom: 0.55rem;
+  }
+  .encart-delegation ul { list-style: none; padding: 0; margin: 0.5rem 0 0; }
+  .encart-delegation li { padding: 0.3rem 0; border-bottom: 1px dashed #f3d9b8; }
+  .encart-delegation li:last-child { border-bottom: none; }
+  .encart-delegation .delegue {
+    font-size: 0.72rem; font-weight: 700; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.4px; margin-left: 0.4rem;
+  }
+
+  /* Encart posture */
+  .encart-posture {
+    background: var(--niv-3-clair); border-left: 4px solid var(--niv-3-moyen);
+    padding: 0.85rem 1.1rem; border-radius: 0 10px 10px 0;
+    margin-top: 1rem; font-size: 0.85rem; line-height: 1.55; color: var(--niv-3);
+  }
+  .encart-posture strong { font-weight: 800; }
+
+  .bouton-reset {
+    margin-top: 1rem; padding: 0.6rem 1.3rem; background: var(--niv-1);
+    color: white; border: none; border-radius: 10px; cursor: pointer;
+    font-size: 0.86rem; font-weight: 700; font-family: inherit;
+  }
+  .bouton-reset:hover { background: var(--niv-1-moyen); }
+
+  .message-vide {
+    padding: 1.1rem; background: var(--fond); border-radius: 10px;
+    color: var(--texte-2); font-size: 0.88rem; text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="bandeau-brouillon">
+  <strong>BROUILLON V2</strong> · Arbre de décision progressif · Niveau = filtre amont anti-micromanagement
+</div>
+
+<div class="conteneur">
+  <div class="entete">
+    <h1>Choisir mes indicateurs — par mon rôle, puis par mon problème</h1>
+    <p>Le niveau hiérarchique est la <strong>première question</strong> : il détermine quels problèmes
+       sont légitimes à votre étage. Puis vous choisissez la famille de problème, et l'outil révèle les
+       <strong>seuls indicateurs pertinents pour votre niveau</strong>. Les autres indicateurs sont affichés
+       en zone de délégation — comme un rappel à la posture.</p>
+  </div>
+
+  <div id="zone-stepper"></div>
+  <div id="zone-etapes"></div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   NIVEAUX HIÉRARCHIQUES — avec posture attendue
+   ══════════════════════════════════════════════════════════════ */
+var NIVEAUX = [
+  { id:'strategique',  icone:'🏛️', label:'Stratégique',
+    sous:'Direction, horizon 1 à 3 ans',
+    posture:'Vous pilotez les résultats consolidés, pas l\'exécution. Votre rôle : fixer le cap et tenir les grands équilibres.' },
+  { id:'tactique',     icone:'📊', label:'Portefeuille',
+    sous:'Arbitrage, horizon 3 à 12 mois',
+    posture:'Vous arbitrez entre initiatives et surveillez la santé macro. Laissez le détail aux programmes.' },
+  { id:'programme',    icone:'🗂️', label:'Programme / Projet',
+    sous:'Coordination, horizon 1 à 6 mois',
+    posture:'Vous coordonnez la livraison de valeur. Vous regardez le flux global, pas chaque sprint.' },
+  { id:'operationnel', icone:'⚙️', label:'Équipes',
+    sous:'Livraison, horizon hebdomadaire',
+    posture:'Vous pilotez votre flux et votre qualité. Focus sur ce que l\'équipe contrôle directement.' }
+];
+
+/* ══════════════════════════════════════════════════════════════
+   FAMILLES DE PROBLÈMES
+   ══════════════════════════════════════════════════════════════ */
+var PROBLEMES = [
+  { id:'delais',     icone:'⏱️', label:'Délais & prévisibilité',
+    sous:'Retards, dates ratées, lead time qui s\'allonge' },
+  { id:'qualite',    icone:'🎯', label:'Qualité & stabilité',
+    sous:'Bugs en prod, incidents, rework, régressions' },
+  { id:'flux',       icone:'🌊', label:'Flux & goulots',
+    sous:'WIP qui explose, transferts bloqués, files d\'attente' },
+  { id:'valeur',     icone:'💰', label:'Valeur & rentabilité',
+    sous:'ROI flou, priorités confuses, doute sur l\'impact business' },
+  { id:'humain',     icone:'👥', label:'Engagement & humain',
+    sous:'Turnover, démotivation, tensions, perte de sens' },
+  { id:'alignement', icone:'🧭', label:'Alignement stratégique',
+    sous:'Équipes désynchro avec la stratégie, OKRs non atteints' },
+  { id:'risque',     icone:'🛡️', label:'Risque, sécurité & conformité',
+    sous:'Vulnérabilités, non-conformités, dépendances critiques' }
+];
+
+/* ══════════════════════════════════════════════════════════════
+   MATRICE ANTI-MICROMANAGEMENT
+   Problèmes légitimes pour chaque niveau. Les absents sont VOLONTAIREMENT
+   exclus (à déléguer au niveau inférieur).
+   ══════════════════════════════════════════════════════════════ */
+var MATRICE_PERTINENCE = {
+  strategique:  ['valeur', 'alignement', 'humain', 'risque'],
+  tactique:     ['valeur', 'alignement', 'humain', 'risque', 'delais'],
+  programme:    ['alignement', 'delais', 'flux', 'qualite', 'valeur', 'humain'],
+  operationnel: ['delais', 'qualite', 'flux', 'humain', 'risque']
+};
+
+/* À qui on délègue un problème quand il n'est pas légitime à mon niveau */
+var DELEGATION = {
+  strategique:  { delais:'programme', qualite:'programme', flux:'programme' },
+  tactique:     { qualite:'programme', flux:'programme' },
+  programme:    { risque:'operationnel' },
+  operationnel: { valeur:'programme', alignement:'tactique' }
+};
+
+/* ══════════════════════════════════════════════════════════════
+   RÉFÉRENTIEL INDICATEURS — avec niveauxPertinents
+   (20 exemples — dans l'outil réel, les 90 indicateurs sont taggés)
+   ══════════════════════════════════════════════════════════════ */
+var INDICATEURS = [
+  { code:'DORA-01', nom:'Lead Time for Changes', type:'DORA',
+    def:'Temps entre le commit et le déploiement en production.',
+    tags:['delais','flux'], niveauxPertinents:['operationnel'] },
+  { code:'DORA-02', nom:'Deployment Frequency', type:'DORA',
+    def:'Fréquence à laquelle on déploie du code en production.',
+    tags:['flux','delais'], niveauxPertinents:['operationnel'] },
+  { code:'DORA-03', nom:'Change Failure Rate', type:'DORA',
+    def:'% de déploiements qui causent un incident ou un rollback.',
+    tags:['qualite','risque'], niveauxPertinents:['operationnel','programme'] },
+  { code:'DORA-04', nom:'Mean Time To Restore (MTTR)', type:'DORA',
+    def:'Temps moyen pour rétablir le service après un incident.',
+    tags:['qualite','risque'], niveauxPertinents:['operationnel','programme'] },
+  { code:'FLUX-01', nom:'Work In Progress (WIP)', type:'FLUX',
+    def:'Nombre d\'items en cours simultanément dans le flux.',
+    tags:['flux','delais'], niveauxPertinents:['operationnel'] },
+  { code:'FLUX-02', nom:'Throughput / Débit', type:'FLUX',
+    def:'Nombre d\'items livrés par période.',
+    tags:['flux'], niveauxPertinents:['operationnel','programme'] },
+  { code:'FLUX-03', nom:'Cycle Time', type:'FLUX',
+    def:'Temps entre le début du travail et sa livraison.',
+    tags:['delais','flux'], niveauxPertinents:['operationnel','programme'] },
+  { code:'ICP-01',  nom:'Taux de défauts en production', type:'ICP',
+    def:'Nombre de défauts remontés par les utilisateurs finaux par période.',
+    tags:['qualite'], niveauxPertinents:['operationnel','programme'] },
+  { code:'ICP-02',  nom:'Couverture de tests automatisés', type:'ICP',
+    def:'% du code couvert par des tests automatisés.',
+    tags:['qualite'], niveauxPertinents:['operationnel'] },
+  { code:'ICC-01',  nom:'eNPS — score d\'engagement', type:'ICC',
+    def:'Propension des collaborateurs à recommander l\'entreprise.',
+    tags:['humain'], niveauxPertinents:['strategique','tactique'] },
+  { code:'ICC-02',  nom:'Participation active aux rétrospectives', type:'ICC',
+    def:'Part des membres qui participent activement aux rétros.',
+    tags:['humain','alignement'], niveauxPertinents:['operationnel'] },
+  { code:'ICC-03',  nom:'Turnover des talents clés', type:'ICC',
+    def:'Taux de départ volontaire parmi les profils critiques.',
+    tags:['humain','risque'], niveauxPertinents:['strategique','tactique'] },
+  { code:'IGO-01',  nom:'Marge opérationnelle', type:'IGO',
+    def:'Rentabilité nette de l\'activité.',
+    tags:['valeur'], niveauxPertinents:['strategique'] },
+  { code:'IGO-02',  nom:'% de revenus sur nouvelles offres', type:'IGO',
+    def:'Part du CA issu de produits lancés dans les 24 derniers mois.',
+    tags:['valeur','alignement'], niveauxPertinents:['strategique','tactique'] },
+  { code:'ICP-10',  nom:'NPS client', type:'ICP',
+    def:'Propension des clients à recommander le produit.',
+    tags:['valeur','qualite'], niveauxPertinents:['strategique','tactique','programme'] },
+  { code:'ORC-01',  nom:'Atteinte des Key Results trimestriels', type:'ORC',
+    def:'% des KR atteints au seuil ambitieux (0.7+).',
+    tags:['alignement','valeur'], niveauxPertinents:['strategique','tactique','programme'] },
+  { code:'ORC-02',  nom:'Alignement OKR équipe ↔ entreprise', type:'ORC',
+    def:'% des KR équipe contribuant explicitement à un KR corporate.',
+    tags:['alignement'], niveauxPertinents:['tactique','programme'] },
+  { code:'II-01',   nom:'Vulnérabilités critiques ouvertes', type:'II',
+    def:'Nombre de CVE critiques non corrigées au-delà du SLA.',
+    tags:['risque','qualite'], niveauxPertinents:['tactique','operationnel'] },
+  { code:'II-02',   nom:'Taux de conformité réglementaire', type:'II',
+    def:'% des exigences réglementaires couvertes par des contrôles validés.',
+    tags:['risque'], niveauxPertinents:['strategique','tactique'] },
+  { code:'ICP-20',  nom:'Engagement produit (DAU/MAU)', type:'ICP',
+    def:'Ratio utilisateurs actifs quotidiens / mensuels — indique l\'adhérence.',
+    tags:['valeur'], niveauxPertinents:['tactique','programme'] }
+];
+
+
+/* ══════════════════════════════════════════════════════════════
+   DOMAINE : Diagnostic (pur, testable, zéro DOM)
+   Rôle : appliquer la matrice anti-micromanagement et recommander
+          les indicateurs pertinents pour un couple (niveau, problème).
+   ══════════════════════════════════════════════════════════════ */
+var Diagnostic = (function() {
+
+  function problemesPourNiveau(niveauId) {
+    var ids = MATRICE_PERTINENCE[niveauId] || [];
+    return PROBLEMES.filter(function(p) { return ids.indexOf(p.id) !== -1; });
+  }
+
+  function estPertinent(ind, ctx) {
+    var tagOk   = ind.tags.indexOf(ctx.probleme) !== -1;
+    var nivOk   = ind.niveauxPertinents.indexOf(ctx.niveau) !== -1;
+    return tagOk && nivOk;
+  }
+
+  function recommander(ctx) {
+    return INDICATEURS.filter(function(ind) { return estPertinent(ind, ctx); }).slice(0, 5);
+  }
+
+  /* Indicateurs liés au problème mais hors niveau → à déléguer */
+  function aDeleguerPour(ctx) {
+    return INDICATEURS.filter(function(ind) {
+      return ind.tags.indexOf(ctx.probleme) !== -1
+          && ind.niveauxPertinents.indexOf(ctx.niveau) === -1;
+    });
+  }
+
+  return {
+    problemesPourNiveau: problemesPourNiveau,
+    recommander: recommander,
+    aDeleguerPour: aDeleguerPour
+  };
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   VUE : Rendu HTML uniquement (aucune règle métier)
+   État : étape progressive 1 → 2 → 3
+   ══════════════════════════════════════════════════════════════ */
+var Vue = (function() {
+  var etat = { etape: 1, niveau: null, probleme: null };
+
+  function rendre() {
+    rendreStepper();
+    rendreEtapes();
+  }
+
+  function rendreStepper() {
+    var zone = document.getElementById('zone-stepper');
+    var steps = [
+      { num:1, defaut:'Mon niveau',     valeur: labelNiveau()   },
+      { num:2, defaut:'Mon problème',   valeur: labelProbleme() },
+      { num:3, defaut:'Mes indicateurs', valeur: null }
+    ];
+    var html = '<div class="stepper" role="navigation" aria-label="Étapes">';
+    steps.forEach(function(s, i) {
+      var estActif = s.num === etat.etape;
+      var estFait  = s.num < etat.etape;
+      var classe   = estActif ? 'actif' : (estFait ? 'fait' : '');
+      var contenu  = s.valeur
+        ? '<span class="step-num">' + s.num + '.</span>'
+          + '<span class="step-icone">' + s.valeur.icone + '</span>'
+          + '<span class="step-valeur">' + s.valeur.label + '</span>'
+        : '<span class="step-num">' + s.num + '.</span> ' + s.defaut;
+      if (estFait) {
+        html += '<button type="button" class="step ' + classe + '"'
+              + ' onclick="Vue.retourA(' + s.num + ')"'
+              + ' aria-label="Revenir à l\'étape ' + s.num + '">'
+              + contenu + '</button>';
+      } else {
+        html += '<div class="step ' + classe + '" aria-current="' + (estActif ? 'step' : 'false') + '">'
+              + contenu + '</div>';
+      }
+      if (i < steps.length - 1) html += '<span class="step-fleche" aria-hidden="true">→</span>';
+    });
+    html += '</div>';
+    zone.innerHTML = html;
+  }
+
+  function labelNiveau() {
+    if (!etat.niveau) return null;
+    var n = NIVEAUX.filter(function(x) { return x.id === etat.niveau; })[0];
+    return n ? { icone:n.icone, label:n.label } : null;
+  }
+  function labelProbleme() {
+    if (!etat.probleme) return null;
+    var p = PROBLEMES.filter(function(x) { return x.id === etat.probleme; })[0];
+    return p ? { icone:p.icone, label:p.label } : null;
+  }
+
+  function rendreEtapes() {
+    var zone = document.getElementById('zone-etapes');
+    var html = '';
+    if (etat.etape >= 1) html += etapeNiveau();
+    if (etat.etape >= 2) html += etapeProbleme();
+    if (etat.etape >= 3) html += etapeResultats();
+    zone.innerHTML = html;
+  }
+
+  /* ─── Étape 1 : choix du niveau ─── */
+  function etapeNiveau() {
+    if (etat.etape > 1) return '';
+    var html = '<div class="carte-etape">'
+      + '<div class="q-numero">Étape 1</div>'
+      + '<div class="q-texte">Quel est votre niveau de responsabilité ?</div>'
+      + '<div class="q-aide">Ce choix conditionne tout le reste : on ne vous proposera que les problèmes et indicateurs <strong>légitimes à votre étage</strong>. Principe anti-micromanagement.</div>'
+      + '<div class="options-grille">';
+    NIVEAUX.forEach(function(n) {
+      html += '<button class="option-btn" onclick="Vue.setNiveau(\'' + n.id + '\')">'
+        + '<span class="option-icone">' + n.icone + '</span>'
+        + '<span><span class="option-label">' + n.label + '</span>'
+        + '<div class="option-sous">' + n.sous + '</div></span>'
+        + '</button>';
+    });
+    html += '</div></div>';
+    return html;
+  }
+
+  /* ─── Étape 2 : choix du problème (filtré par matrice) ─── */
+  function etapeProbleme() {
+    if (etat.etape > 2) return '';
+    var n = NIVEAUX.filter(function(x) { return x.id === etat.niveau; })[0];
+    var problemesLegitimes = Diagnostic.problemesPourNiveau(etat.niveau);
+    var html = '<div class="carte-etape">'
+      + '<div class="encart-posture"><strong>Posture ' + n.label + ' :</strong> ' + n.posture + '</div>'
+      + '<div class="q-numero" style="margin-top:1rem">Étape 2</div>'
+      + '<div class="q-texte">Quel problème cherchez-vous à éclairer ?</div>'
+      + '<div class="q-aide">' + problemesLegitimes.length + ' familles sont pertinentes pour votre niveau. Les autres relèvent d\'un niveau différent (elles n\'apparaissent pas ici volontairement).</div>'
+      + '<div class="options-grille">';
+    problemesLegitimes.forEach(function(p) {
+      html += '<button class="option-btn" onclick="Vue.setProbleme(\'' + p.id + '\')">'
+        + '<span class="option-icone">' + p.icone + '</span>'
+        + '<span><span class="option-label">' + p.label + '</span>'
+        + '<div class="option-sous">' + p.sous + '</div></span>'
+        + '</button>';
+    });
+    html += '</div></div>';
+    return html;
+  }
+
+  /* ─── Étape 3 : résultats + zone de délégation ─── */
+  function etapeResultats() {
+    var recos = Diagnostic.recommander(etat);
+    var aDeleguer = Diagnostic.aDeleguerPour(etat);
+    var html = '<div class="carte-etape">';
+    html += '<div class="resultat-titre">✅ Indicateurs recommandés pour votre niveau (' + recos.length + ')</div>';
+    if (recos.length === 0) {
+      html += '<div class="message-vide">Aucun indicateur de cette famille n\'est défini pour votre niveau dans cet échantillon.</div>';
+    } else {
+      html += '<div class="grille-cartes">';
+      recos.forEach(function(ind) { html += htmlCarte(ind); });
+      html += '</div>';
+    }
+
+    if (aDeleguer.length > 0) {
+      html += '<div class="encart-delegation">';
+      html += '<h4>🔽 Zone de délégation — ces indicateurs ne sont pas à votre niveau</h4>';
+      html += '<p style="font-size:0.85rem;margin-bottom:0.5rem">Ils éclairent aussi ce problème, mais ils appartiennent à un autre étage. <strong>Votre rôle n\'est pas de les piloter vous-même</strong>, mais de vous assurer qu\'ils sont regardés par la bonne personne.</p>';
+      html += '<ul>';
+      aDeleguer.slice(0, 6).forEach(function(ind) {
+        var dest = ind.niveauxPertinents[0];
+        var destLab = NIVEAUX.filter(function(n) { return n.id === dest; })[0];
+        html += '<li><strong>' + ind.type + '</strong> · ' + ind.nom
+          + '<span class="delegue">→ ' + (destLab ? destLab.label : dest) + '</span></li>';
+      });
+      html += '</ul></div>';
+    }
+
+    html += '<button class="bouton-reset" onclick="Vue.reset()">Recommencer</button>';
+    html += '</div>';
+    return html;
+  }
+
+  function htmlCarte(ind) {
+    return '<div class="carte-ind">'
+      + '<div class="carte-type-ligne"><span class="carte-type-chip">' + ind.type + '</span></div>'
+      + '<div class="carte-nom">' + ind.nom + '</div>'
+      + '<div class="carte-def">' + ind.def + '</div>'
+      + '</div>';
+  }
+
+  /* ─── Contrôleur ─── */
+  return {
+    init: function() { rendre(); },
+    setNiveau: function(id)   { etat.niveau = id; etat.etape = 2; rendre(); window.scrollTo({ top: document.body.scrollHeight, behavior:'smooth' }); },
+    setProbleme: function(id) { etat.probleme = id; etat.etape = 3; rendre(); window.scrollTo({ top: document.body.scrollHeight, behavior:'smooth' }); },
+    retourA: function(step)   { etat.etape = step; if (step <= 2) etat.probleme = null; if (step <= 1) etat.niveau = null; rendre(); },
+    reset: function() { etat = { etape:1, niveau:null, probleme:null }; rendre(); }
+  };
+})();
+
+document.addEventListener('DOMContentLoaded', Vue.init);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# Système de versioning manuel devenu redondant avec git
+.versions/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+*~
+
+# Brouillons temporaires éventuels
+*.tmp
+*.bak

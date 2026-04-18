@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype v2 — Fiche indicateur refondue</title>
+<style>
+  /* ══════════════════════════════════════════════════════════════════════
+     PROTOTYPE V2 — Corrections après audit UX
+     - Échelle typo ratio 1.25 (Major Third)
+     - Cadre de lecture en haut (Niveau · Maturité · Fiabilité + jauge)
+     - Icône vigilance calmée (16px, ambre profond)
+     - Différenciation non-typographique (couleur + casing + position)
+     ══════════════════════════════════════════════════════════════════════ */
+
+  :root {
+    /* Palette */
+    --indigo-fonce: #1a237e;
+    --indigo-moyen: #3949ab;
+    --ambre: #FFD180;
+    --ambre-profond: #b7791f;
+    --ambre-texte: #6b4a00;
+    --ambre-fond: #fffaf0;
+    --ambre-doux-debut: #fff8e7;
+    --ambre-doux-fin: #fffaf0;
+    --ambre-bord: #f3e3b8;
+
+    --carte-fond: #ffffff;
+    --carte-fond-2: #f8f9fc;
+    --carte-bord: #e5e9f2;
+    --texte-primaire: #1c2033;
+    --texte-secondaire: #6b7280;
+    --texte-tertiaire: #9ca3af;
+
+    /* ÉCHELLE TYPOGRAPHIQUE — ratio 1.25 (Major Third) */
+    --fs-meta:  0.75rem;    /* 12px — meta uniquement, jamais pour du corps */
+    --fs-sm:    0.875rem;   /* 14px — légendes, intra-card */
+    --fs-base:  1rem;       /* 16px — corps de lecture, h4 secondaires */
+    --fs-h3:    1.25rem;    /* 20px — titre principal de section */
+    --fs-h2:    1.5rem;     /* 24px — pull / chapeau */
+    --fs-h1:    1.75rem;    /* 28px — nom de l'indicateur */
+
+    --fw-normal: 400;
+    --fw-medium: 500;
+    --fw-semi: 600;
+    --fw-bold: 700;
+
+    --lh-tight: 1.2;
+    --lh-normal: 1.5;
+    --lh-relaxed: 1.55;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(180deg, #0f1442 0%, #1a237e 100%);
+    color: white;
+    min-height: 100vh;
+    padding: 2.5rem 1.5rem 4rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .proto-entete {
+    max-width: 1280px;
+    margin: 0 auto 2.5rem;
+    text-align: center;
+  }
+  .proto-entete h1 {
+    font-size: var(--fs-h1);
+    font-weight: var(--fw-bold);
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.5px;
+    line-height: var(--lh-tight);
+  }
+  .proto-entete p {
+    font-size: var(--fs-base);
+    color: rgba(255,255,255,0.82);
+    max-width: 780px;
+    margin: 0 auto;
+    line-height: var(--lh-relaxed);
+  }
+  .proto-entete .legende {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1.2rem;
+    font-size: var(--fs-sm);
+    color: rgba(255,255,255,0.7);
+  }
+  .proto-entete .legende span { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .proto-entete .legende .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .changements-listes {
+    max-width: 1280px;
+    margin: 0 auto 2rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  @media (max-width: 900px) { .changements-listes { grid-template-columns: 1fr; } }
+  .changement {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+  }
+  .changement-titre {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--ambre);
+    margin-bottom: 0.3rem;
+  }
+  .changement-desc {
+    font-size: var(--fs-sm);
+    color: rgba(255,255,255,0.78);
+    line-height: var(--lh-normal);
+  }
+
+  /* Layout split */
+  .split {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  @media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
+
+  .colonne {
+    background: var(--carte-fond);
+    color: var(--texte-primaire);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .colonne-titre {
+    padding: 1rem 1.5rem;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--carte-bord);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .colonne-avant .colonne-titre { background: #fef3e0; color: #8b5a00; }
+  .colonne-apres .colonne-titre { background: #e8f5e9; color: #1b5e20; }
+  .colonne-titre .pastille { width: 10px; height: 10px; border-radius: 50%; }
+  .colonne-avant .pastille { background: #f59e0b; }
+  .colonne-apres .pastille { background: #10b981; }
+
+  /* ══════════════════════════════════════════════════════════
+     VERSION AVANT (inchangée pour référence)
+     ══════════════════════════════════════════════════════════ */
+  .fiche-avant { padding: 1.4rem 1.5rem 1.6rem; }
+  .fiche-avant .tiroir-entete { padding-bottom: 1rem; border-bottom: 1px solid var(--carte-bord); margin-bottom: 1.2rem; }
+  .fiche-avant .tiroir-type-ligne { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+  .fiche-avant .tiroir-type-chip { font-size: 0.68rem; font-weight: 800; padding: 0.18rem 0.6rem; border-radius: 6px; color: white; background: #5e35b1; }
+  .fiche-avant .tiroir-type-label { font-size: 0.75rem; color: var(--texte-secondaire); }
+  .fiche-avant .tiroir-nom { font-size: 1.3rem; font-weight: 800; line-height: 1.2; }
+  .fiche-avant .sec-detail { margin-bottom: 1.4rem; }
+  .fiche-avant .sec-titre { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.9px; color: var(--texte-secondaire); font-weight: 800; margin-bottom: 0.55rem; }
+  .fiche-avant .sec-contenu { font-size: 0.88rem; line-height: 1.6; color: var(--texte-primaire); }
+  .fiche-avant .exemples-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+  .fiche-avant .exemple-bloc { background: var(--carte-fond-2); border-radius: 10px; padding: 0.85rem; }
+  .fiche-avant .exemple-etiquette { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800; color: var(--texte-secondaire); margin-bottom: 0.4rem; }
+  .fiche-avant .exemple-texte { font-size: 0.83rem; line-height: 1.45; }
+  .fiche-avant .risque-bloc { background: #fff8f0; border-left: 4px solid #f59e0b; border-radius: 0 8px 8px 0; padding: 0.85rem 1rem; font-size: 0.86rem; line-height: 1.55; color: #5d2e00; }
+  .fiche-avant .badge-fiabilite { display: inline-flex; align-items: center; gap: 0.28rem; font-size: 0.64rem; font-weight: 800; padding: 0.16rem 0.52rem; border-radius: 20px; color: white; background: #2e7d32; text-transform: uppercase; }
+
+  /* ══════════════════════════════════════════════════════════
+     VERSION APRÈS v2 — ÉCHELLE 1.25 + CADRE DE LECTURE + ICÔNE CALME
+     ══════════════════════════════════════════════════════════ */
+  .fi { padding: 1.5rem 1.4rem 2rem; }
+
+  /* ── En-tête : identité de l'indicateur ── */
+  .fi-header {
+    padding-bottom: 1rem;
+    margin-bottom: 1.1rem;
+    border-bottom: 1px solid var(--carte-bord);
+  }
+  .fi-chip-ligne {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    background: #f3f1fb;
+    border: 1px solid #e3def5;
+    padding: 0.3rem 0.75rem 0.3rem 0.5rem;
+    border-radius: 999px;
+    margin-bottom: 0.85rem;
+  }
+  .fi-chip {
+    font-size: var(--fs-meta);
+    font-weight: var(--fw-bold);
+    padding: 0.12rem 0.5rem;
+    border-radius: 5px;
+    color: white;
+    background: #5e35b1;
+    letter-spacing: 0.4px;
+  }
+  .fi-chip-label {
+    font-size: var(--fs-sm);
+    color: #4a3d80;
+    font-weight: var(--fw-medium);
+  }
+  .fi-nom {
+    font-size: var(--fs-h1);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-tight);
+    color: var(--texte-primaire);
+    margin: 0;
+    letter-spacing: -0.5px;
+  }
+  .fi-question {
+    font-size: var(--fs-base);
+    color: var(--texte-secondaire);
+    line-height: var(--lh-normal);
+    margin: 0.5rem 0 0;
+    font-style: italic;
+  }
+
+  /* ── Cadre de lecture : bandeau ambre doux en HAUT ── */
+  .fi-cadre {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.75rem;
+    padding: 0.95rem 1rem;
+    background: linear-gradient(180deg, var(--ambre-doux-debut) 0%, var(--ambre-doux-fin) 100%);
+    border: 1px solid var(--ambre-bord);
+    border-radius: 12px;
+    margin-bottom: 1.35rem;
+  }
+  @media (max-width: 520px) { .fi-cadre { grid-template-columns: 1fr; gap: 0.55rem; } }
+
+  .fi-cadre-item { min-width: 0; }
+  .fi-cadre-label {
+    display: block;
+    font-size: var(--fs-meta);
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: #8b6f2a;
+    font-weight: var(--fw-semi);
+    margin-bottom: 0.3rem;
+  }
+  .fi-cadre-valeur {
+    font-size: var(--fs-base);
+    font-weight: var(--fw-semi);
+    color: var(--texte-primaire);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    line-height: var(--lh-tight);
+  }
+
+  /* Jauge 3 segments pour la fiabilité */
+  .fi-jauge {
+    display: inline-flex;
+    gap: 2px;
+  }
+  .fi-jauge i {
+    display: block;
+    width: 6px;
+    height: 12px;
+    border-radius: 1px;
+    background: #e5e9f2;
+  }
+  .fi-cadre-item[data-niveau="haute"] .fi-jauge i { background: #2e7d32; }
+  .fi-cadre-item[data-niveau="moyenne"] .fi-jauge i:nth-child(-n+2) { background: #f59e0b; }
+  .fi-cadre-item[data-niveau="moyenne"] .fi-jauge i:nth-child(3) { background: #e5e9f2; }
+  .fi-cadre-item[data-niveau="faible"] .fi-jauge i:nth-child(1) { background: #c62828; }
+  .fi-cadre-item[data-niveau="faible"] .fi-jauge i:nth-child(n+2) { background: #e5e9f2; }
+
+  /* ── Blocs de contenu : principal vs inline ── */
+  .fi-bloc-principal {
+    background: var(--carte-fond-2);
+    border: 1px solid var(--carte-bord);
+    border-radius: 12px;
+    padding: 1.1rem 1.2rem 1.15rem;
+    margin-bottom: 1rem;
+  }
+  .fi-bloc-principal h3 {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-semi);
+    color: var(--texte-primaire);
+    margin: 0 0 0.6rem;
+    letter-spacing: -0.2px;
+    line-height: var(--lh-tight);
+  }
+  .fi-bloc-principal p {
+    font-size: var(--fs-base);
+    line-height: var(--lh-relaxed);
+    color: var(--texte-primaire);
+    margin: 0;
+  }
+
+  /* Blocs inline (objectif, fréquence) — différenciation par COULEUR AMBRE + MAJ espacées, pas par taille */
+  .fi-bloc-inline {
+    padding: 0 0.15rem;
+    margin-bottom: 1rem;
+  }
+  .fi-bloc-inline h4 {
+    font-size: var(--fs-meta);
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+    color: var(--ambre-profond);
+    margin: 0 0 0.35rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .fi-bloc-inline h4 svg {
+    width: 12px;
+    height: 12px;
+    color: var(--ambre-profond);
+    flex-shrink: 0;
+  }
+  .fi-bloc-inline p {
+    font-size: var(--fs-base);
+    line-height: var(--lh-relaxed);
+    color: var(--texte-primaire);
+    margin: 0;
+  }
+
+  /* Duo Entreprise/Équipe dans le bloc Exemples */
+  .fi-exemples {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 0.15rem;
+  }
+  @media (max-width: 640px) { .fi-exemples { grid-template-columns: 1fr; } }
+  .fi-exemple {
+    background: white;
+    border: 1px solid var(--carte-bord);
+    border-radius: 10px;
+    padding: 0.85rem 0.95rem;
+  }
+  .fi-exemple-entete {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .fi-exemple-icone {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+  .fi-exemple-entreprise .fi-exemple-icone { background: #e3f2fd; color: #0d47a1; }
+  .fi-exemple-equipe    .fi-exemple-icone { background: #f3e5f5; color: #4a148c; }
+  .fi-exemple-label {
+    font-size: var(--fs-meta);
+    font-weight: var(--fw-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--texte-secondaire);
+  }
+  .fi-exemple-texte {
+    font-size: var(--fs-sm);
+    line-height: var(--lh-relaxed);
+    color: var(--texte-primaire);
+  }
+
+  /* ── Point de vigilance : encart ambre CALMÉ ── */
+  .fi-vigilance {
+    background: var(--ambre-fond);
+    border-left: 2px solid var(--ambre-profond);
+    border-radius: 0 10px 10px 0;
+    padding: 0.95rem 1.1rem;
+    margin-top: 0.5rem;
+  }
+  .fi-vigilance h3 {
+    font-size: var(--fs-base);
+    font-weight: var(--fw-semi);
+    color: var(--ambre-texte);
+    margin: 0 0 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    line-height: var(--lh-tight);
+  }
+  .fi-vigilance h3 svg {
+    width: 16px;   /* 1.0× cap-height du titre 16px */
+    height: 16px;
+    color: var(--ambre-profond);
+    flex-shrink: 0;
+  }
+  .fi-vigilance p {
+    font-size: var(--fs-sm);
+    line-height: var(--lh-relaxed);
+    color: var(--ambre-texte);
+    margin: 0;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     INFOBULLES (term-def) — pédagogie du jargon
+     ══════════════════════════════════════════════════════════ */
+  .term-def {
+    position: relative;
+    border-bottom: 1.5px dotted #5e35b1;
+    cursor: help;
+    color: #4a148c;
+    font-weight: var(--fw-medium);
+  }
+  .term-def:hover, .term-def:focus { outline: none; }
+  .term-def::after {
+    content: attr(data-def);
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 8px);
+    transform: translateX(-50%);
+    width: 260px;
+    background: #1c2033;
+    color: white;
+    padding: 0.65rem 0.85rem;
+    border-radius: 8px;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-normal);
+    line-height: var(--lh-normal);
+    text-transform: none;
+    letter-spacing: 0;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 10;
+    text-align: left;
+  }
+  .term-def::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 2px);
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #1c2033;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    z-index: 10;
+  }
+  .term-def:hover::after, .term-def:focus::after,
+  .term-def:hover::before, .term-def:focus::before { opacity: 1; }
+
+  /* ══════════════════════════════════════════════════════════
+     RÉFÉRENCE DU SYSTÈME TYPOGRAPHIQUE v2
+     ══════════════════════════════════════════════════════════ */
+  .typo-systeme {
+    max-width: 1280px;
+    margin: 3rem auto 0;
+    background: white;
+    color: var(--texte-primaire);
+    border-radius: 16px;
+    padding: 2rem 2.25rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  }
+  .typo-systeme h2 {
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-bold);
+    margin: 0 0 0.75rem;
+    color: var(--texte-primaire);
+    letter-spacing: -0.3px;
+  }
+  .typo-systeme .intro {
+    font-size: var(--fs-base);
+    line-height: var(--lh-relaxed);
+    color: var(--texte-secondaire);
+    margin: 0 0 1.75rem;
+  }
+  .typo-grille {
+    display: grid;
+    grid-template-columns: 110px 110px 1fr 1.5fr;
+    gap: 0.5rem 1.25rem;
+    align-items: baseline;
+  }
+  .typo-grille > div {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--carte-bord);
+  }
+  .typo-grille .th {
+    font-size: var(--fs-meta);
+    font-weight: var(--fw-bold);
+    color: var(--texte-secondaire);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 2px solid var(--carte-bord);
+  }
+  .typo-grille .nom { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: var(--fs-sm); color: #5e35b1; font-weight: var(--fw-semi); }
+  .typo-grille .taille { font-size: var(--fs-sm); color: var(--texte-secondaire); font-family: ui-monospace, Menlo, Consolas, monospace; }
+  .typo-grille .exemple { color: var(--texte-primaire); font-weight: var(--fw-semi); }
+  .typo-grille .usage { font-size: var(--fs-sm); color: var(--texte-secondaire); line-height: var(--lh-normal); }
+
+  .typo-grille .ex-meta { font-size: var(--fs-meta); text-transform: uppercase; letter-spacing: 1px; }
+  .typo-grille .ex-sm { font-size: var(--fs-sm); font-weight: var(--fw-normal); }
+  .typo-grille .ex-base { font-size: var(--fs-base); font-weight: var(--fw-normal); }
+  .typo-grille .ex-h3 { font-size: var(--fs-h3); font-weight: var(--fw-semi); }
+  .typo-grille .ex-h2 { font-size: var(--fs-h2); font-weight: var(--fw-bold); }
+  .typo-grille .ex-h1 { font-size: var(--fs-h1); font-weight: var(--fw-bold); letter-spacing: -0.5px; }
+
+  .typo-principes {
+    margin-top: 2rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--carte-bord);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.25rem;
+  }
+  @media (max-width: 900px) { .typo-principes { grid-template-columns: 1fr; } }
+  .typo-principe {
+    background: var(--carte-fond-2);
+    border-radius: 10px;
+    padding: 1rem 1.15rem;
+  }
+  .typo-principe h4 {
+    font-size: var(--fs-base);
+    font-weight: var(--fw-semi);
+    margin: 0 0 0.4rem;
+    color: var(--texte-primaire);
+  }
+  .typo-principe p {
+    font-size: var(--fs-sm);
+    line-height: var(--lh-normal);
+    color: var(--texte-secondaire);
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="proto-entete">
+  <h1>Prototype v2 — Fiche refondue après audit</h1>
+  <p>Trois corrections clés appliquées à la fiche indicateur : une vraie échelle typographique (ratio 1.25), un cadre de lecture pédagogique en haut avec jauge de fiabilité, une icône de vigilance calmée au bon ratio visuel.</p>
+  <div class="legende">
+    <span><span class="dot" style="background:#f59e0b"></span> Version actuelle</span>
+    <span><span class="dot" style="background:#10b981"></span> Version refondue</span>
+  </div>
+</div>
+
+<div class="changements-listes">
+  <div class="changement">
+    <div class="changement-titre">1. Échelle typo 1.25</div>
+    <div class="changement-desc">Marches perceptibles entre chaque niveau : 28 → 20 → 16 px. Les titres sont enfin plus grands que leur corps. Les sous-sections sont marquées par <strong>couleur ambre + MAJ espacées</strong>, pas par taille.</div>
+  </div>
+  <div class="changement">
+    <div class="changement-titre">2. Cadre de lecture en haut</div>
+    <div class="changement-desc">Niveau · Maturité · Fiabilité remontent juste sous le titre, en bandeau ambre doux. La fiabilité a une <strong>jauge 3 barres</strong> pour lecture instantanée. Ce sont des balises de confiance, plus des tags enterrés.</div>
+  </div>
+  <div class="changement">
+    <div class="changement-titre">3. Vigilance calmée</div>
+    <div class="changement-desc">Icône passée de 24px triangle-alerte à <strong>16px ampoule ambre profond</strong>, stroke fin, fond plus pâle, bordure 2px. Ton de coaching, plus d'alarme.</div>
+  </div>
+</div>
+
+<div class="split">
+
+  <!-- ═══════════════════ COLONNE AVANT ═══════════════════ -->
+  <div class="colonne colonne-avant">
+    <div class="colonne-titre"><span class="pastille"></span>Avant — version actuelle</div>
+    <div class="fiche-avant">
+
+      <div class="tiroir-entete">
+        <div class="tiroir-type-ligne">
+          <span class="tiroir-type-chip">DORA</span>
+          <span class="tiroir-type-label">Métrique DevOps de delivery</span>
+        </div>
+        <div class="tiroir-nom">🚀 Fréquence de déploiement</div>
+      </div>
+
+      <div class="sec-detail">
+        <div class="sec-titre">Definition</div>
+        <div class="sec-contenu">Nombre de mises en production réalisées par unité de temps. Mesure le débit de livraison de l'équipe.</div>
+      </div>
+
+      <div class="sec-detail">
+        <div class="sec-titre">Objectif strategique ou operationnel</div>
+        <div class="sec-contenu">Évaluer la capacité de l'équipe à livrer de la valeur en continu, et la maturité DevOps de l'organisation.</div>
+      </div>
+
+      <div class="sec-detail">
+        <div class="sec-titre">🕐 Frequence de mesure</div>
+        <div class="sec-contenu">Hebdomadaire (moyenne glissante sur 4 semaines)</div>
+      </div>
+
+      <div class="sec-detail">
+        <div class="sec-titre">Exemples concrets</div>
+        <div class="exemples-duo">
+          <div class="exemple-bloc">
+            <div class="exemple-etiquette">🏢 Entreprise / Direction</div>
+            <div class="exemple-texte">Une direction technique agrège la fréquence sur l'ensemble du portefeuille produit pour suivre l'évolution de la maturité DevOps d'année en année.</div>
+          </div>
+          <div class="exemple-bloc">
+            <div class="exemple-etiquette">👥 Equipe</div>
+            <div class="exemple-texte">Une équipe Scrum vise 1 à 3 déploiements par jour pour valider qu'elle livre de la valeur en continu, sans gros lots risqués.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-detail">
+        <div class="sec-titre">⚠️ Risque d'abus ou d'interpretation erronee</div>
+        <div class="risque-bloc">Un déploiement vide (refacto invisible) ne vaut pas un déploiement apportant une fonctionnalité. Coupler cet indicateur avec la valeur perçue client pour éviter de déployer pour déployer.</div>
+      </div>
+
+      <div class="sec-detail">
+        <div class="sec-titre">Fiabilite de l'indicateur</div>
+        <div><span class="badge-fiabilite">✓ Fiable</span></div>
+      </div>
+
+      <div class="sec-detail">
+        <div class="sec-titre">Niveau de maturite recommande</div>
+        <div class="sec-contenu"><strong>Intermédiaire</strong> — l'équipe maîtrise son pipeline CI/CD et ses tests automatisés.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════ COLONNE APRÈS v2 ═══════════════════ -->
+  <div class="colonne colonne-apres">
+    <div class="colonne-titre"><span class="pastille"></span>Après v2 — fiche refondue</div>
+    <div class="fi">
+
+      <!-- ── En-tête : identité ── -->
+      <header class="fi-header">
+        <div class="fi-chip-ligne">
+          <span class="fi-chip">
+            <span class="term-def" tabindex="0" data-def="DORA (DevOps Research and Assessment) : quatre métriques de référence du delivery logiciel, issues des recherches de Google. Elles mesurent la vitesse (Fréquence de déploiement, Lead Time) et la stabilité (Taux d'échec, Temps de rétablissement).">DORA</span>
+          </span>
+          <span class="fi-chip-label">Métrique de <span class="term-def" tabindex="0" data-def="Le delivery désigne la capacité d'une équipe à livrer régulièrement et en sécurité le logiciel en production, plutôt que de le garder en développement.">delivery</span> DevOps</span>
+        </div>
+        <h1 class="fi-nom">Fréquence de déploiement</h1>
+        <p class="fi-question">À quelle cadence l'équipe met-elle du code en production ?</p>
+      </header>
+
+      <!-- ── Cadre de lecture : les 3 balises pédagogiques ── -->
+      <section class="fi-cadre" aria-label="Cadre de lecture">
+        <div class="fi-cadre-item">
+          <span class="fi-cadre-label">Niveau</span>
+          <span class="fi-cadre-valeur">Équipe</span>
+        </div>
+        <div class="fi-cadre-item">
+          <span class="fi-cadre-label">Maturité requise</span>
+          <span class="fi-cadre-valeur">Intermédiaire</span>
+        </div>
+        <div class="fi-cadre-item" data-niveau="haute">
+          <span class="fi-cadre-label">Fiabilité</span>
+          <span class="fi-cadre-valeur">
+            <span class="fi-jauge" aria-hidden="true"><i></i><i></i><i></i></span>
+            Haute
+          </span>
+        </div>
+      </section>
+
+      <!-- ── Bloc principal : Définition ── -->
+      <section class="fi-bloc-principal">
+        <h3>Définition</h3>
+        <p>Nombre de mises en production réalisées par unité de temps. Mesure le <span class="term-def" tabindex="0" data-def="Le débit (throughput) désigne le volume de travail livré sur une période donnée. Vue 'combien', à distinguer du 'combien de temps' (lead time).">débit de livraison</span> de l'équipe.</p>
+      </section>
+
+      <!-- ── Blocs inline : Objectif + Fréquence ── -->
+      <section class="fi-bloc-inline">
+        <h4>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          Objectif
+        </h4>
+        <p>Évaluer la capacité de l'équipe à livrer de la valeur en continu, et la maturité DevOps de l'organisation.</p>
+      </section>
+
+      <section class="fi-bloc-inline">
+        <h4>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Fréquence de mesure
+        </h4>
+        <p>Hebdomadaire, en moyenne glissante sur 4 semaines.</p>
+      </section>
+
+      <!-- ── Bloc principal : Exemples ── -->
+      <section class="fi-bloc-principal">
+        <h3>Exemples concrets</h3>
+        <div class="fi-exemples">
+          <div class="fi-exemple fi-exemple-entreprise">
+            <div class="fi-exemple-entete">
+              <div class="fi-exemple-icone">🏢</div>
+              <div class="fi-exemple-label">Niveau entreprise</div>
+            </div>
+            <div class="fi-exemple-texte">Une direction technique agrège la fréquence sur l'ensemble du portefeuille produit pour suivre l'évolution de la maturité DevOps d'année en année.</div>
+          </div>
+          <div class="fi-exemple fi-exemple-equipe">
+            <div class="fi-exemple-entete">
+              <div class="fi-exemple-icone">👥</div>
+              <div class="fi-exemple-label">Niveau équipe</div>
+            </div>
+            <div class="fi-exemple-texte">Une équipe <span class="term-def" tabindex="0" data-def="Scrum est un cadre de travail agile où l'équipe livre des incréments de valeur à intervalles courts et réguliers (sprints).">Scrum</span> vise 1 à 3 déploiements par jour pour valider qu'elle livre de la valeur en continu, sans gros lots risqués.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Point de vigilance : encart ambre CALMÉ ── -->
+      <aside class="fi-vigilance">
+        <h3>
+          <!-- Icône ampoule : ton de coaching, pas d'alerte -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.5.5 1 1.5 1 2.5h6c0-1 .5-2 1-2.5A6 6 0 0 0 12 3z"/></svg>
+          Point de vigilance
+        </h3>
+        <p>Un déploiement vide (refacto invisible) ne vaut pas un déploiement apportant une fonctionnalité. Coupler cet indicateur avec la valeur perçue client pour éviter de déployer pour déployer.</p>
+      </aside>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════ SYSTÈME TYPOGRAPHIQUE v2 ═══════════════════ -->
+<div class="typo-systeme">
+  <h2>Système typographique — ratio 1.25 (Major Third)</h2>
+  <p class="intro">Six tailles avec un ratio de 1.25 entre chaque marche — seuil minimum pour qu'une hiérarchie soit perçue par l'œil. Un titre est <strong>toujours plus grand ET plus lourd</strong> que son corps. Les sous-sections utilisent la <strong>couleur + MAJUSCULES espacées</strong> pour marquer leur statut, pas une taille réduite.</p>
+
+  <div class="typo-grille">
+    <div class="th">Nom</div>
+    <div class="th">Taille</div>
+    <div class="th">Aperçu</div>
+    <div class="th">Usage</div>
+
+    <div class="nom">--fs-h1</div>
+    <div class="taille">1.75rem · 28px</div>
+    <div class="exemple ex-h1">Fréquence de déploiement</div>
+    <div class="usage">Nom de l'indicateur. Un seul par fiche.</div>
+
+    <div class="nom">--fs-h2</div>
+    <div class="taille">1.5rem · 24px</div>
+    <div class="exemple ex-h2">Titre de modal</div>
+    <div class="usage">Titre de modal, chapeau, pull-quote.</div>
+
+    <div class="nom">--fs-h3</div>
+    <div class="taille">1.25rem · 20px</div>
+    <div class="exemple ex-h3">Définition</div>
+    <div class="usage">Titre de section principale (Définition, Exemples).</div>
+
+    <div class="nom">--fs-base</div>
+    <div class="taille">1rem · 16px</div>
+    <div class="exemple ex-base">Corps de texte pour toute lecture prolongée, y compris les paragraphes de définition.</div>
+    <div class="usage">Corps de lecture. H4 secondaires (avec couleur + MAJ).</div>
+
+    <div class="nom">--fs-sm</div>
+    <div class="taille">0.875rem · 14px</div>
+    <div class="exemple ex-sm">Textes d'exemples, légendes, intra-card</div>
+    <div class="usage">Texte intra-card. Légendes, infobulles.</div>
+
+    <div class="nom">--fs-meta</div>
+    <div class="taille">0.75rem · 12px</div>
+    <div class="exemple ex-meta">FIABILITÉ · MATURITÉ · NIVEAU</div>
+    <div class="usage">Étiquettes MAJ espacées uniquement. Jamais pour du corps.</div>
+  </div>
+
+  <div class="typo-principes">
+    <div class="typo-principe">
+      <h4>Marche perceptible entre niveaux</h4>
+      <p>Ratio 1.25 entre chaque taille : la différence entre un titre et son corps est sensible immédiatement, sans effort de lecture. Abandon des tailles intermédiaires type 0.88rem ou 0.92rem.</p>
+    </div>
+    <div class="typo-principe">
+      <h4>Différenciation non-typographique</h4>
+      <p>Dans un espace contraint (480px), on ne multiplie pas les tailles. Les sous-sections se distinguent par <strong>couleur</strong> (ambre profond), <strong>casing</strong> (MAJ espacées) et <strong>position</strong> (inline vs encadré).</p>
+    </div>
+    <div class="typo-principe">
+      <h4>Icônes au ratio de la cap-height</h4>
+      <p>Une icône ne fait jamais plus de 1.2× la taille de sa cap-height voisine. Icône 16px à côté d'un titre 16px. Stroke fin (1.5 à 1.75) pour un ton de coaching, pas d'alarme.</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,3033 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadre Intégré des Indicateurs de Performance</title>
+  <style>
+    /* ══════════════════════════════════════════════
+       VARIABLES GLOBALES
+    ══════════════════════════════════════════════ */
+    :root {
+      --niv-1:        #1a237e;
+      --niv-1-clair:  #e8eaf6;
+      --niv-1-moyen:  #3949ab;
+      --niv-2:        #01579b;
+      --niv-2-clair:  #e1f5fe;
+      --niv-2-moyen:  #0288d1;
+      --niv-3:        #004d40;
+      --niv-3-clair:  #e0f2f1;
+      --niv-3-moyen:  #00897b;
+      --accent:       #e65100;
+      --fond:         #f5f6fa;
+      --fond-2:       #ffffff;
+      --texte:        #1a1a2e;
+      --texte-2:      #607d8b;
+      --bordure:      #e0e4eb;
+      --ombre:        0 2px 12px rgba(26,35,126,0.08);
+      --ombre-forte:  0 8px 32px rgba(26,35,126,0.14);
+      --rayon:        14px;
+      --trans:        0.22s ease;
+
+      /* ── Tokens fiche-indicateur v3 (grammaire visuelle + typo) ── */
+      --ambre:            #FFD180;
+      --ambre-profond:    #b7791f;
+      --ambre-texte:      #6b4a00;
+      --ambre-fond:       #fffaf0;
+      --ambre-doux-debut: #fff8e7;
+      --ambre-doux-fin:   #fffaf0;
+      --ambre-bord:       #f3e3b8;
+
+      --carte-fond:     #ffffff;
+      --carte-fond-2:   #f8f9fc;
+      --carte-bord:     #e5e9f2;
+      --texte-primaire: #1c2033;
+      --texte-secondaire: #6b7280;
+      --texte-tertiaire:  #9ca3af;
+
+      /* Échelle typographique — ratio 1.25 (Major Third) */
+      --fs-meta: 0.75rem;   /* 12px — meta uniquement */
+      --fs-sm:   0.875rem;  /* 14px — légendes, intra-card */
+      --fs-base: 1rem;      /* 16px — corps de lecture */
+      --fs-h3:   1.25rem;   /* 20px — titre principal de section */
+      --fs-h2:   1.5rem;    /* 24px — pull / chapeau */
+      --fs-h1:   1.75rem;   /* 28px — nom de l'indicateur */
+
+      --fw-normal: 400;
+      --fw-medium: 500;
+      --fw-semi:   600;
+      --fw-bold:   700;
+
+      --lh-tight:   1.2;
+      --lh-normal:  1.5;
+      --lh-relaxed: 1.55;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, 'Segoe UI', system-ui, 'Helvetica Neue', sans-serif;
+      background: var(--fond);
+      color: var(--texte);
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ══════════════════════════════════════════════
+       ACCUEIL — PYRAMIDE
+    ══════════════════════════════════════════════ */
+    #accueil {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 1.5rem;
+      background: linear-gradient(145deg, #0d1b4f 0%, #1a237e 55%, #283593 100%);
+      position: relative;
+    }
+    .accueil-intro {
+      text-align: center;
+      color: white;
+      margin-bottom: 2rem;
+      max-width: 600px;
+    }
+    .accueil-intro h1 { font-size: 1.85rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.75rem; }
+    .accueil-intro p  {
+      font-size: 1.45rem;
+      font-weight: 400;
+      font-style: italic;
+      color: #FFD180;
+      line-height: 1.45;
+      margin: 0 auto 1rem;
+      max-width: 540px;
+      letter-spacing: 0.2px;
+      text-shadow: 0 1px 12px rgba(255, 180, 80, 0.25);
+    }
+    .intro-chip {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px; padding: 0.3rem 0.9rem;
+      font-size: 0.72rem; color: rgba(255,255,255,0.78);
+      margin-top: 0.75rem;
+    }
+    /* Bouton "À propos" discret en haut à droite */
+    .apropos-btn {
+      position: absolute; top: 1.25rem; right: 1.5rem;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.85);
+      padding: 0.4rem 0.9rem; border-radius: 20px;
+      font-size: 0.78rem; cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      font-family: inherit;
+    }
+    .apropos-btn:hover, .apropos-btn:focus {
+      background: rgba(255,255,255,0.18); color: white; outline: none;
+    }
+    /* Overlay À propos */
+    .apropos-overlay {
+      position: fixed; inset: 0;
+      background: rgba(5,10,30,0.82);
+      backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 1000; padding: 1.5rem;
+    }
+    .apropos-overlay.is-open { display: flex; }
+    .apropos-modal {
+      background: linear-gradient(160deg, #1a237e 0%, #283593 100%);
+      color: white;
+      max-width: 960px; width: 100%;
+      max-height: 88vh; overflow-y: auto;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 14px;
+      padding: 2rem 2.25rem 2.25rem;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .apropos-modal h2 {
+      font-size: 1.55rem; font-weight: 700;
+      margin: 0 0 0.35rem; letter-spacing: -0.3px;
+    }
+    .apropos-modal .sous-titre {
+      font-size: 0.95rem; font-style: italic;
+      color: #FFD180;
+      margin: 0 0 1.4rem;
+      opacity: 0.9;
+    }
+    /* Grille 2x2 des sections */
+    .apropos-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 0.4rem;
+    }
+    .apropos-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 1.35rem 1.45rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .apropos-card:hover {
+      border-color: rgba(255, 209, 128, 0.35);
+      background: rgba(255,255,255,0.06);
+    }
+    .apropos-card-icon {
+      width: 30px; height: 30px;
+      color: #FFD180;
+      margin-bottom: 0.85rem;
+      flex-shrink: 0;
+      opacity: 0.95;
+    }
+    @media (max-width: 760px) {
+      .apropos-grid { grid-template-columns: 1fr; gap: 14px; }
+      .apropos-modal { padding: 1.5rem 1.4rem 1.6rem; }
+    }
+    .apropos-modal h3 {
+      font-size: 1.2rem; font-weight: 700;
+      margin: 0 0 0.85rem;
+      color: #FFD180;
+      letter-spacing: -0.1px;
+      text-transform: none;
+      position: relative;
+      padding-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+    .apropos-modal h3::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 32px; height: 2.5px;
+      background: #FFD180;
+      border-radius: 2px;
+      opacity: 0.9;
+    }
+    .apropos-modal p {
+      font-size: 0.98rem; line-height: 1.65;
+      margin: 0 0 0.75rem;
+      color: rgba(255,255,255,0.96);
+    }
+    .apropos-card p:last-child { margin-bottom: 0; }
+    .apropos-modal p strong {
+      color: white; font-weight: 600;
+    }
+    .apropos-modal p em {
+      font-style: italic; color: white;
+    }
+    /* Punchline : voix d'appui discrète, en retrait */
+    .apropos-modal .punchline {
+      padding: 0.35rem 0 0.35rem 0.95rem;
+      margin: 1.1rem 0 1.3rem;
+      border-left: 2px solid rgba(255, 209, 128, 0.42);
+      font-style: italic;
+      font-size: 0.94rem;
+      font-weight: 400;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.64);
+      letter-spacing: 0.1px;
+    }
+    /* Liste des sources — style propre sans puces */
+    .apropos-modal .sources {
+      list-style: none; padding: 0;
+      margin: 0.5rem 0 0.75rem;
+    }
+    .apropos-modal .sources li {
+      padding: 0.35rem 0;
+      font-size: 0.98rem; line-height: 1.5;
+      color: rgba(255,255,255,0.9);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .apropos-modal .sources li:last-child { border-bottom: none; }
+    .apropos-modal .sources li strong {
+      color: #FFD180; font-weight: 600;
+      margin-right: 0.4rem;
+    }
+    .apropos-close {
+      position: absolute; top: 0.9rem; right: 1rem;
+      background: transparent; border: none;
+      color: rgba(255,255,255,0.7);
+      font-size: 1.5rem; cursor: pointer; line-height: 1;
+      padding: 0.25rem 0.5rem; border-radius: 6px;
+    }
+    .apropos-close:hover, .apropos-close:focus {
+      color: white; background: rgba(255,255,255,0.1); outline: none;
+    }
+    /* Encart Gemba — voix d'appui contextuelle, discrète */
+    .gemba-band {
+      margin-top: 1.4rem;
+      padding: 0.85rem 1.05rem;
+      background: rgba(255, 209, 128, 0.04);
+      border: 1px solid rgba(255, 209, 128, 0.24);
+      border-radius: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+    }
+    .gemba-band-icon {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      color: #FFD180;
+      margin-top: 1px;
+      opacity: 0.88;
+    }
+    .gemba-band-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .gemba-band-label {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.9px;
+      text-transform: uppercase;
+      color: #FFD180;
+      margin-bottom: 0.25rem;
+      opacity: 0.92;
+    }
+    .gemba-band-text {
+      font-size: 0.86rem;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.78);
+      font-style: italic;
+    }
+    /* Pyramide */
+    .pyramide { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; }
+    .bande {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.18s, box-shadow 0.2s;
+      color: white;
+      font-family: inherit;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+    }
+    .bande:hover, .bande:focus-visible {
+      background: rgba(255,255,255,0.16);
+      border-color: rgba(255,255,255,0.38);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.28);
+      outline: none;
+    }
+    .bande.flash { background: rgba(255,255,255,0.32) !important; border-color: rgba(255,255,255,0.7) !important; }
+
+    /* Largeurs progressives + couleur de niveau par border-top (même pattern que le niveau 4) */
+    .bande-1 { width: 250px; border-top: 3px solid rgba(180,188,255,0.80); } /* Indigo clair — Stratégique */
+    .bande-2 { width: 390px; border-top: 3px solid rgba(100,181,246,0.80); } /* Bleu clair  — Portefeuille  */
+    .bande-3 { width: 530px; border-top: 3px solid rgba(102,210,130,0.80); } /* Vert clair  — Programme    */
+
+    /* Typographie des bandes niveaux 1-3 — tailles augmentées */
+    .b-icone { font-size: 2rem;    flex-shrink: 0; }
+    .b-corps { flex: 1; min-width: 0; }
+    .b-nom   { font-size: 1.02rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .b-desc  { font-size: 0.83rem; opacity: 0.72; line-height: 1.4; }
+    .b-chip  {
+      display: inline-block; margin-top: 0.5rem;
+      background: rgba(255,255,255,0.13); border-radius: 20px;
+      padding: 0.15rem 0.6rem; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.3px;
+    }
+    .b-fleche { font-size: 1rem; opacity: 0.4; flex-shrink: 0; transition: opacity 0.18s, transform 0.18s; }
+    .bande:hover .b-fleche { opacity: 0.85; transform: translateX(3px); }
+
+    /* Niveau 4 — split TI / Affaires */
+    .niv4-container { width: 690px; display: flex; gap: 6px; align-items: stretch; }
+    .carte-branche {
+      flex: 1;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+      display: flex; flex-direction: column; gap: 0.6rem;
+    }
+    .carte-ti  { border-top: 3px solid rgba(80,210,195,0.65); }  /* Turquoise — TI      */
+    .carte-aff { border-top: 3px solid rgba(255,160,80,0.65);  } /* Orange    — Affaires */
+    .branche-entete { display: flex; align-items: center; gap: 0.6rem; }
+    .branche-ico  { font-size: 1.75rem; flex-shrink: 0; }
+    .branche-nom  { font-size: 0.95rem; font-weight: 700; color: white; }
+    .branche-desc { font-size: 0.76rem; color: rgba(255,255,255,0.65); line-height: 1.35; margin-top: 0.1rem; }
+    .grille-sous { display: grid; gap: 0.35rem; }
+    .grille-ti  { grid-template-columns: 1fr 1fr; }
+    .grille-aff { grid-template-columns: 1fr 1fr; }
+    .btn-sous {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 8px;
+      padding: 0.55rem 0.6rem;
+      cursor: pointer; font-family: inherit;
+      font-size: 0.80rem; font-weight: 600;
+      color: white; line-height: 1.3;
+      transition: background 0.15s, border-color 0.15s, transform 0.13s;
+      display: flex; align-items: center; gap: 0.35rem; justify-content: center; text-align: center;
+    }
+    .btn-sous:hover { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.3); transform: translateY(-1px); }
+    .btn-sous.flash { background: rgba(255,255,255,0.32) !important; border-color: rgba(255,255,255,0.7) !important; }
+    .s-ico { font-size: 1rem; }
+    .note-domaine { font-size: 0.70rem; color: rgba(255,255,255,0.40); text-align: center; line-height: 1.4; }
+    .note-bas { margin-top: 1rem; font-size: 0.72rem; color: rgba(255,255,255,0.32); text-align: center; }
+
+    /* ══════════════════════════════════════════════
+       APPLICATION — EN-TÊTE
+    ══════════════════════════════════════════════ */
+    #app { display: none; min-height: 100vh; flex-direction: column; }
+    #app.actif { display: flex; }
+    .en-tete {
+      background: var(--fond-2);
+      border-bottom: 1px solid var(--bordure);
+      padding: 0 1.75rem;
+      display: flex; align-items: center; gap: 1.25rem;
+      height: 58px;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .logo { font-weight: 800; font-size: 0.92rem; color: var(--niv-1); letter-spacing: -0.3px; }
+    .badge-contexte {
+      padding: 0.28rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.78rem; font-weight: 700;
+      color: white; white-space: nowrap;
+    }
+    .onglets { display: flex; gap: 0.2rem; margin-left: auto; }
+    .onglet {
+      padding: 0.38rem 0.95rem;
+      border: none; background: none; border-radius: 8px;
+      cursor: pointer; font-size: 0.86rem;
+      color: var(--texte-2); font-weight: 500;
+      transition: var(--trans); font-family: inherit;
+    }
+    .onglet:hover { background: var(--fond); color: var(--texte); }
+    .onglet.actif { background: var(--niv-1-clair); color: var(--niv-1); font-weight: 700; }
+    .btn-changer {
+      padding: 0.32rem 0.85rem;
+      border: 1px solid var(--bordure); background: var(--fond);
+      border-radius: 8px; cursor: pointer;
+      font-size: 0.8rem; color: var(--texte-2);
+      transition: var(--trans); font-family: inherit;
+    }
+    .btn-changer:hover { border-color: var(--niv-1); color: var(--niv-1); }
+    .contenu { flex: 1; padding: 2rem 1.75rem; max-width: 1240px; margin: 0 auto; width: 100%; }
+    .vue { display: none; }
+    .vue.active { display: block; }
+
+    /* ══════════════════════════════════════════════
+       TABLEAU DE BORD
+    ══════════════════════════════════════════════ */
+    .tableau-bord { display: flex; flex-direction: column; gap: 1.5rem; }
+    .bandeau-role {
+      border-radius: var(--rayon); padding: 1.1rem 1.4rem;
+      display: flex; align-items: center; gap: 0.85rem;
+      color: white; font-size: 0.88rem; line-height: 1.5;
+    }
+    .bandeau-role strong { display: block; font-size: 1rem; margin-bottom: 0.2rem; }
+    .panneau { background: var(--fond-2); border-radius: var(--rayon); padding: 1.4rem 1.5rem; box-shadow: var(--ombre); }
+    .panneau-titre {
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.9px;
+      color: var(--texte-2); font-weight: 700; margin-bottom: 1.1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .chip-essentiel { font-size: 0.68rem; background: #fff3e0; color: var(--accent); border-radius: 10px; padding: 0.12rem 0.5rem; font-weight: 800; }
+    .chip-contexte  { font-size: 0.68rem; background: var(--fond); color: var(--texte-2); border-radius: 10px; padding: 0.12rem 0.5rem; font-weight: 700; }
+    .grille-cartes { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 0.9rem; }
+    .carte-ind {
+      border-radius: 12px; border: 1.5px solid var(--bordure);
+      background: var(--fond-2); cursor: pointer;
+      transition: var(--trans); overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .carte-ind:hover { box-shadow: var(--ombre-forte); transform: translateY(-2px); }
+    .carte-ind:focus-visible { outline: 2px solid var(--niv-2); outline-offset: 2px; }
+    .carte-ind.prioritaire { border-width: 2px; }
+    .carte-ind.contexte { opacity: 0.72; }
+    .carte-en-tete { padding: 1rem; display: flex; align-items: flex-start; gap: 0.7rem; }
+    .carte-icone { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .carte-type { font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+    .carte-nom  { font-size: 0.92rem; font-weight: 600; line-height: 1.3; margin-top: 0.12rem; }
+    .carte-corps { padding: 0.6rem 1rem 0.85rem; border-top: 1px solid var(--bordure); flex: 1; }
+    .carte-def { font-size: 0.81rem; color: var(--texte-2); line-height: 1.5; }
+    .carte-meta-bas { display: flex; align-items: center; justify-content: space-between; margin-top: 0.55rem; flex-wrap: wrap; gap: 0.3rem; }
+    .carte-freq { margin-top: 0.55rem; font-size: 0.74rem; color: var(--texte-2); }
+    .carte-pied { padding: 0.6rem 1rem; border-top: 1px solid var(--bordure); display: flex; justify-content: flex-end; }
+    .btn-detail { font-size: 0.78rem; color: var(--texte-2); background: none; border: none; cursor: pointer; border-radius: 6px; padding: 0.28rem 0.5rem; transition: var(--trans); font-family: inherit; }
+    .btn-detail:hover { background: var(--fond); color: var(--texte); }
+
+    /* ══════════════════════════════════════════════
+       CASCADE STRATÉGIQUE
+    ══════════════════════════════════════════════ */
+    .legende { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.9rem 1.1rem; background: var(--fond-2); border-radius: var(--rayon); box-shadow: var(--ombre); margin-bottom: 1.25rem; }
+    .legende-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--texte-2); }
+    .legende-badge { font-size: 0.62rem; font-weight: 800; padding: 0.14rem 0.45rem; border-radius: 6px; color: white; }
+    .noeud-cascade { border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre); transition: var(--trans); }
+    .noeud-en-tete { display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1.4rem; color: white; }
+    .noeud-icone { font-size: 1.5rem; }
+    .noeud-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.8; }
+    .noeud-titre { font-size: 1.05rem; font-weight: 700; }
+    .noeud-desc  { font-size: 0.78rem; opacity: 0.75; margin-top: 0.1rem; }
+    .chip-mon-niv { margin-left: auto; padding: 0.22rem 0.7rem; background: rgba(255,255,255,0.22); border-radius: 20px; font-size: 0.72rem; font-weight: 700; white-space: nowrap; }
+    .noeud-corps { background: var(--fond-2); padding: 1.1rem 1.4rem; }
+    .grille-puces { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.65rem; }
+    .puce { display: flex; align-items: flex-start; gap: 0.55rem; padding: 0.75rem 0.85rem; border-radius: 10px; border: 1.5px solid var(--bordure); background: var(--fond); cursor: pointer; transition: var(--trans); font-family: inherit; text-align: left; }
+    .puce:hover { border-color: currentColor; transform: translateY(-1px); box-shadow: var(--ombre); }
+    .puce-badge { font-size: 0.62rem; font-weight: 800; padding: 0.14rem 0.42rem; border-radius: 5px; color: white; flex-shrink: 0; margin-top: 2px; }
+    .puce-nom { font-size: 0.83rem; font-weight: 500; line-height: 1.3; }
+    .fleche-lien { text-align: center; padding: 0.4rem 0; font-size: 1.4rem; color: var(--texte-2); }
+
+    /* ══════════════════════════════════════════════
+       QUESTIONNAIRE
+    ══════════════════════════════════════════════ */
+    .questionnaire-enveloppe { max-width: 740px; background: var(--fond-2); border-radius: var(--rayon); padding: 2rem; box-shadow: var(--ombre); }
+    .questionnaire-intro { margin-bottom: 1.75rem; }
+    .questionnaire-intro h2 { font-size: 1.15rem; font-weight: 800; margin-bottom: 0.4rem; }
+    .questionnaire-intro p  { font-size: 0.86rem; color: var(--texte-2); line-height: 1.6; }
+    .barre-infos { display: flex; justify-content: space-between; font-size: 0.76rem; color: var(--texte-2); margin-bottom: 0.4rem; }
+    .barre-fond { height: 5px; background: var(--bordure); border-radius: 3px; overflow: hidden; }
+    .barre-remplie { height: 100%; border-radius: 3px; transition: width 0.4s ease; background: linear-gradient(90deg, var(--niv-1-moyen), var(--niv-2-moyen)); }
+    .barre-prog-enveloppe { margin-bottom: 2rem; }
+    .bloc-question { margin-bottom: 2rem; }
+    .q-numero { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.9px; color: var(--texte-2); font-weight: 800; }
+    .q-texte  { font-size: 1rem; font-weight: 700; margin: 0.45rem 0 0.9rem; }
+    .options-grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 0.55rem; }
+    .option-btn { padding: 0.75rem 0.9rem; border: 2px solid var(--bordure); border-radius: 10px; background: var(--fond); cursor: pointer; font-size: 0.86rem; text-align: left; transition: var(--trans); color: var(--texte); font-family: inherit; line-height: 1.3; }
+    .option-btn:hover { border-color: var(--niv-2-moyen); color: var(--niv-2); }
+    .option-btn.sel { border-color: var(--niv-2); background: var(--niv-2-clair); color: var(--niv-2); font-weight: 700; }
+    .option-sous { font-size: 0.75rem; color: var(--texte-2); margin-top: 0.22rem; }
+    .option-btn.sel .option-sous { color: var(--niv-2); opacity: 0.8; }
+    .resultat-zone { background: var(--fond); border-radius: var(--rayon); padding: 1.4rem; margin-top: 1.5rem; }
+    .resultat-titre { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.8px; color: var(--texte-2); font-weight: 800; margin-bottom: 1rem; }
+    .conseil-zone { margin-top: 1.25rem; padding: 0.9rem 1rem; background: var(--fond-2); border-radius: 10px; border-left: 4px solid var(--niv-2); font-size: 0.85rem; line-height: 1.6; }
+    .btn-principal { display: inline-block; margin-top: 1rem; padding: 0.7rem 1.8rem; background: var(--niv-1); color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 700; transition: var(--trans); font-family: inherit; }
+    .btn-principal:hover { background: var(--niv-1-moyen); transform: translateY(-1px); }
+
+    /* ══════════════════════════════════════════════
+       TIROIR DÉTAIL
+    ══════════════════════════════════════════════ */
+    .fond-tiroir { position: fixed; inset: 0; background: rgba(10,15,40,0.42); z-index: 200; display: none; backdrop-filter: blur(4px); }
+    .fond-tiroir.ouvert { display: block; }
+    .tiroir { position: fixed; top: 0; right: -640px; bottom: 0; width: 600px; max-width: 96vw; background: var(--fond-2); box-shadow: -4px 0 40px rgba(26,35,126,0.15); z-index: 201; transition: right 0.3s ease; overflow-y: auto; display: flex; flex-direction: column; }
+    .tiroir.ouvert { right: 0; }
+    .tiroir-entete { padding: 1.4rem 1.5rem; position: sticky; top: 0; background: var(--fond-2); border-bottom: 1px solid var(--bordure); z-index: 1; }
+    .btn-fermer { position: absolute; top: 1rem; right: 1rem; background: var(--fond); border: none; border-radius: 50%; width: 34px; height: 34px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; color: var(--texte-2); transition: var(--trans); font-family: inherit; }
+    .btn-fermer:hover { background: var(--bordure); color: var(--texte); }
+    .tiroir-type-ligne { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .tiroir-type-chip { font-size: 0.68rem; font-weight: 800; padding: 0.18rem 0.6rem; border-radius: 6px; color: white; }
+    .tiroir-type-label { font-size: 0.75rem; color: var(--texte-2); }
+    .tiroir-nom { font-size: 1.3rem; font-weight: 800; line-height: 1.2; padding-right: 2.8rem; }
+    .tiroir-corps { padding: 1.4rem 1.5rem; flex: 1; }
+    .sec-detail { margin-bottom: 1.4rem; }
+    .sec-titre { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.9px; color: var(--texte-2); font-weight: 800; margin-bottom: 0.55rem; }
+    .sec-contenu { font-size: 0.88rem; line-height: 1.6; color: var(--texte); }
+    .exemples-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+    .exemple-bloc { background: var(--fond); border-radius: 10px; padding: 0.85rem; }
+    .exemple-etiquette { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 800; color: var(--texte-2); margin-bottom: 0.4rem; }
+    .exemple-texte { font-size: 0.83rem; line-height: 1.45; }
+    .risque-bloc { background: #fff8f0; border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; padding: 0.85rem 1rem; font-size: 0.86rem; line-height: 1.55; color: #5d2e00; }
+    .roles-chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+    .chip-role { background: var(--fond); border: 1px solid var(--bordure); border-radius: 20px; padding: 0.2rem 0.7rem; font-size: 0.76rem; }
+    .encart-alt { background: #f3e5f5; border-left: 4px solid #7b1fa2; border-radius: 0 8px 8px 0; padding: 0.75rem 1rem; font-size: 0.83rem; line-height: 1.55; color: #4a148c; margin-top: 0.85rem; }
+
+    /* ══════════════════════════════════════════════
+       FIABILITÉ & MATURITÉ
+    ══════════════════════════════════════════════ */
+    .badge-fiabilite { display: inline-flex; align-items: center; gap: 0.28rem; font-size: 0.64rem; font-weight: 800; padding: 0.16rem 0.52rem; border-radius: 20px; color: white; white-space: nowrap; flex-shrink: 0; }
+    .badge-maturite { font-size: 0.72rem; color: var(--texte-2); display: flex; align-items: center; gap: 0.25rem; }
+    .maturite-selecteur { display: flex; gap: 0.65rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .btn-maturite { display: flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.2rem; border: 2px solid var(--bordure); border-radius: 12px; background: var(--fond-2); cursor: pointer; transition: var(--trans); font-family: inherit; font-size: 0.88rem; font-weight: 600; color: var(--texte-2); }
+    .btn-maturite:hover { border-color: var(--texte-2); color: var(--texte); }
+    .btn-maturite.actif { border-color: var(--niv-2); background: var(--niv-2-clair); color: var(--niv-2); }
+    .encart-maturite { background: var(--fond-2); border-radius: var(--rayon); padding: 1.1rem 1.4rem; margin-bottom: 1.4rem; box-shadow: var(--ombre); font-size: 0.88rem; line-height: 1.6; border-left: 4px solid var(--niv-2); }
+    .legende-fiabilite { display: flex; flex-wrap: wrap; gap: 0.55rem; padding: 0.85rem 1.1rem; background: var(--fond-2); border-radius: var(--rayon); box-shadow: var(--ombre); margin-bottom: 1.4rem; }
+    .fib-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--texte-2); }
+    .section-fiabilite { margin-bottom: 1.75rem; }
+    .titre-fiabilite { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.9px; font-weight: 800; margin-bottom: 0.9rem; display: flex; align-items: center; gap: 0.6rem; }
+
+    /* ══════════════════════════════════════════════
+       FICHE INDICATEUR v3 — Rendu du tiroir détail
+       Grammaire visuelle partagée : Niveau (strates),
+       Maturité (pastilles), Fiabilité (barres verticales)
+    ══════════════════════════════════════════════ */
+    .fi { padding-top: 0.2rem; }
+    /* espace en haut pour ne pas coller le chip au bord; le padding latéral vient de .tiroir-corps */
+    .tiroir-corps.fi { padding: 1.5rem 1.5rem 2rem; }
+
+    /* En-tête : identité de l'indicateur */
+    .fi-header { padding-bottom: 1rem; margin-bottom: 1.1rem; border-bottom: 1px solid var(--carte-bord); padding-right: 2.75rem; }
+    .fi-chip-ligne {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: #f5f3ff; border: 1px solid #ddd6fe;
+      padding: 0.35rem 0.8rem 0.35rem 0.45rem;
+      border-radius: 999px; margin-bottom: 0.95rem;
+    }
+    .fi-chip {
+      font-size: var(--fs-meta); font-weight: var(--fw-bold);
+      padding: 0.22rem 0.55rem; border-radius: 6px;
+      color: #ffffff; background: #4c1d95;
+      letter-spacing: 0.6px; line-height: 1;
+    }
+    /* term-def dans le chip : hériter de la couleur du chip */
+    .fi-chip .term-def {
+      color: inherit; font-weight: inherit;
+      border-bottom-color: rgba(255, 255, 255, 0.55);
+    }
+    .fi-chip-label {
+      font-size: var(--fs-sm); color: #1c2033; font-weight: var(--fw-medium);
+    }
+    .fi-nom {
+      font-size: var(--fs-h1); font-weight: var(--fw-bold);
+      line-height: var(--lh-tight); color: var(--texte-primaire);
+      margin: 0; letter-spacing: -0.5px;
+    }
+    .fi-question {
+      font-size: var(--fs-base); color: var(--texte-secondaire);
+      line-height: var(--lh-normal); margin: 0.5rem 0 0;
+      font-style: italic;
+    }
+
+    /* Cadre de lecture : bandeau ambre doux Niveau / Maturité / Fiabilité */
+    .fi-cadre {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0;
+      padding: 1.1rem 0;
+      background: linear-gradient(180deg, var(--ambre-doux-debut) 0%, var(--ambre-doux-fin) 100%);
+      border: 1px solid var(--ambre-bord); border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+    .fi-cadre-item {
+      min-width: 0; padding: 0 1.1rem;
+      border-right: 1px solid rgba(183, 121, 31, 0.22);
+      display: flex; flex-direction: column; gap: 0.5rem;
+    }
+    .fi-cadre-item:last-child { border-right: none; }
+    .fi-cadre-label {
+      display: block; font-size: var(--fs-meta);
+      text-transform: uppercase; letter-spacing: 0.8px;
+      color: #8b6f2a; font-weight: var(--fw-semi);
+    }
+    .fi-cadre-valeur {
+      font-size: var(--fs-base); font-weight: var(--fw-semi);
+      color: var(--texte-primaire);
+      display: inline-flex; align-items: center; gap: 0.55rem;
+      line-height: var(--lh-tight);
+    }
+    @media (max-width: 520px) {
+      .fi-cadre { grid-template-columns: 1fr; padding: 0.4rem 0; }
+      .fi-cadre-item { border-right: none !important; border-bottom: 1px solid rgba(183, 121, 31, 0.18); padding: 0.8rem 1rem !important; }
+      .fi-cadre-item:last-child { border-bottom: none; }
+    }
+
+    /* [1] NIVEAU — 4 strates horizontales empilées (couleur indigo : hiérarchie organisationnelle) */
+    .fi-strates {
+      display: inline-flex; flex-direction: column; gap: 2px;
+      vertical-align: middle; padding: 1px 0;
+    }
+    .fi-strates i {
+      display: block; width: 16px; height: 3px;
+      border-radius: 1.5px; background: #d6dae5;
+    }
+    .fi-strates[data-position="strategique"]  i:nth-child(1),
+    .fi-strates[data-position="portefeuille"] i:nth-child(2),
+    .fi-strates[data-position="programme"]    i:nth-child(3),
+    .fi-strates[data-position="equipe"]       i:nth-child(4) {
+      background: #3949ab;                   /* indigo — hiérarchie */
+      width: 18px; height: 4px; border-radius: 2px;
+    }
+
+    /* [2] MATURITÉ — 3 pastilles croissantes (couleur teal : progression, croissance) */
+    .fi-pastilles {
+      display: inline-flex; gap: 4px;
+      align-items: center; vertical-align: middle;
+    }
+    .fi-pastilles i {
+      display: block; border-radius: 50%; background: #d6dae5;
+    }
+    .fi-pastilles i:nth-child(1) { width: 8px;  height: 8px; }
+    .fi-pastilles i:nth-child(2) { width: 10px; height: 10px; }
+    .fi-pastilles i:nth-child(3) { width: 12px; height: 12px; }
+    .fi-pastilles[data-niveau="debutant"]      i:nth-child(1),
+    .fi-pastilles[data-niveau="intermediaire"] i:nth-child(-n+2),
+    .fi-pastilles[data-niveau="avance"]        i {
+      background: #00897b;                   /* teal — croissance (≠ vert fiabilité) */
+    }
+
+    /* [3] FIABILITÉ — 3 barres verticales (signal / jauge) */
+    .fi-jauge {
+      display: inline-flex; gap: 2px; align-items: flex-end;
+    }
+    .fi-jauge i {
+      display: block; width: 5px; border-radius: 1px; background: #e5e9f2;
+    }
+    .fi-jauge i:nth-child(1) { height: 8px; }
+    .fi-jauge i:nth-child(2) { height: 11px; }
+    .fi-jauge i:nth-child(3) { height: 14px; }
+    .fi-cadre-item[data-niveau="haute"]   .fi-jauge i                 { background: #2e7d32; }
+    .fi-cadre-item[data-niveau="moyenne"] .fi-jauge i:nth-child(-n+2) { background: #f59e0b; }
+    .fi-cadre-item[data-niveau="faible"]  .fi-jauge i:nth-child(1)    { background: #c62828; }
+
+    /* Blocs de contenu : principal vs inline */
+    .fi-bloc-principal {
+      background: var(--carte-fond-2);
+      border: 1px solid var(--carte-bord);
+      border-radius: 12px;
+      padding: 1.1rem 1.2rem 1.15rem;
+      margin-bottom: 1rem;
+    }
+    .fi-bloc-principal h3 {
+      font-size: var(--fs-h3); font-weight: var(--fw-semi);
+      color: var(--texte-primaire);
+      margin: 0 0 0.6rem; letter-spacing: -0.2px;
+      line-height: var(--lh-tight);
+    }
+    .fi-bloc-principal p {
+      font-size: var(--fs-base); line-height: var(--lh-relaxed);
+      color: var(--texte-primaire); margin: 0;
+    }
+
+    .fi-bloc-inline { padding: 0 0.15rem; margin-bottom: 1rem; }
+    .fi-bloc-inline h4 {
+      font-size: var(--fs-meta); font-weight: var(--fw-bold);
+      text-transform: uppercase; letter-spacing: 1.1px;
+      color: var(--ambre-profond); margin: 0 0 0.35rem;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .fi-bloc-inline h4 svg { width: 12px; height: 12px; color: var(--ambre-profond); flex-shrink: 0; }
+    .fi-bloc-inline p {
+      font-size: var(--fs-base); line-height: var(--lh-relaxed);
+      color: var(--texte-primaire); margin: 0;
+    }
+
+    /* Duo Entreprise / Équipe */
+    .fi-exemples {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;
+      margin-top: 0.15rem;
+    }
+    @media (max-width: 640px) { .fi-exemples { grid-template-columns: 1fr; } }
+    .fi-exemple {
+      background: white; border: 1px solid var(--carte-bord);
+      border-radius: 10px; padding: 0.85rem 0.95rem;
+    }
+    .fi-exemple-entete {
+      display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;
+    }
+    .fi-exemple-icone {
+      width: 24px; height: 24px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; flex-shrink: 0;
+    }
+    .fi-exemple-entreprise .fi-exemple-icone { background: #e3f2fd; color: #0d47a1; }
+    .fi-exemple-equipe     .fi-exemple-icone { background: #f3e5f5; color: #4a148c; }
+    .fi-exemple-label {
+      font-size: var(--fs-meta); font-weight: var(--fw-bold);
+      text-transform: uppercase; letter-spacing: 0.6px;
+      color: var(--texte-secondaire);
+    }
+    .fi-exemple-texte {
+      font-size: var(--fs-sm); line-height: var(--lh-relaxed);
+      color: var(--texte-primaire);
+    }
+
+    /* Point de vigilance : encart ambre calmé */
+    .fi-vigilance {
+      background: var(--ambre-fond);
+      border-left: 2px solid var(--ambre-profond);
+      border-radius: 0 10px 10px 0;
+      padding: 0.95rem 1.1rem; margin-top: 0.5rem;
+    }
+    .fi-vigilance h3 {
+      font-size: var(--fs-base); font-weight: var(--fw-semi);
+      color: var(--ambre-texte); margin: 0 0 0.4rem;
+      display: flex; align-items: center; gap: 0.45rem;
+      line-height: var(--lh-tight);
+    }
+    .fi-vigilance h3 svg { width: 16px; height: 16px; color: var(--ambre-profond); flex-shrink: 0; }
+    .fi-vigilance p {
+      font-size: var(--fs-sm); line-height: var(--lh-relaxed);
+      color: var(--ambre-texte); margin: 0;
+    }
+
+    /* ── Encart Terrain (Gemba) — triptyque par type d'indicateur ──
+       Palette : ambre pâle / texte ambre foncé pour rester dans la grammaire pédagogique Lean.
+       Distinct de .gemba-band (qui est utilisé sur l'accueil en fond indigo sombre). */
+    .fi-gemba {
+      margin-top: 1.4rem;
+      background: var(--ambre-fond);
+      border: 1px solid var(--ambre-bord);
+      border-radius: 12px;
+      padding: 1rem 1.15rem 1.1rem;
+    }
+    .fi-gemba-header {
+      display: flex; align-items: center; gap: 0.5rem;
+      color: var(--ambre-profond);
+      font-size: var(--fs-meta); font-weight: var(--fw-bold);
+      text-transform: uppercase; letter-spacing: 0.9px;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.7rem;
+      border-bottom: 1px dashed rgba(183, 121, 31, 0.25);
+    }
+    .fi-gemba-header svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--ambre-profond); }
+    .fi-gemba-triptyque {
+      display: flex; flex-direction: column; gap: 0.7rem;
+    }
+    .fi-gemba-item {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 0.85rem;
+      align-items: baseline;
+    }
+    .fi-gemba-question {
+      font-size: var(--fs-sm); font-weight: var(--fw-semi);
+      color: var(--ambre-texte);
+      letter-spacing: 0.2px;
+    }
+    .fi-gemba-reponse {
+      font-size: var(--fs-sm); line-height: var(--lh-relaxed);
+      color: var(--texte-primaire);
+    }
+    @media (max-width: 540px) {
+      .fi-gemba-item { grid-template-columns: 1fr; gap: 0.2rem; }
+      .fi-gemba-question { color: var(--ambre-profond); }
+    }
+
+    /* Infobulles (term-def) — pédagogie du jargon */
+    .term-def {
+      position: relative; border-bottom: 1.5px dotted #5e35b1;
+      cursor: help; color: #4a148c; font-weight: var(--fw-medium);
+    }
+    .term-def:hover, .term-def:focus { outline: none; }
+    .term-def::after {
+      content: attr(data-def); position: absolute;
+      left: 50%; bottom: calc(100% + 8px);
+      transform: translateX(-50%);
+      width: 260px; background: #1c2033; color: white;
+      padding: 0.65rem 0.85rem; border-radius: 8px;
+      font-size: var(--fs-sm); font-weight: var(--fw-normal);
+      line-height: var(--lh-normal);
+      text-transform: none; letter-spacing: 0;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.15s ease; z-index: 10;
+      text-align: left;
+    }
+    .term-def::before {
+      content: ''; position: absolute;
+      left: 50%; bottom: calc(100% + 2px);
+      transform: translateX(-50%);
+      border: 6px solid transparent; border-top-color: #1c2033;
+      opacity: 0; transition: opacity 0.15s ease; z-index: 10;
+    }
+    .term-def:hover::after, .term-def:focus::after,
+    .term-def:hover::before, .term-def:focus::before { opacity: 1; }
+
+    /* ══════════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════════ */
+    @media (max-width: 730px) {
+      .bande-1, .bande-2, .bande-3, .niv4-container { width: 100%; }
+      .niv4-container { flex-direction: column; }
+    }
+    @media (max-width: 640px) {
+      .onglets { display: none; }
+      .contenu { padding: 1rem; }
+      .exemples-duo { grid-template-columns: 1fr; }
+      .tiroir { width: 100%; }
+      .en-tete { padding: 0 1rem; }
+    }
+    @media (max-width: 520px) {
+      /* Bascule en 1 colonne uniquement pour les très petits écrans (vrai mobile portrait).
+         Au-dessus, la grille auto-fill avec minmax(215px, 1fr) gère 2+ colonnes naturellement. */
+      .grille-cartes { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     ACCUEIL — PYRAMIDE HIÉRARCHIQUE (4 niveaux)
+══════════════════════════════════════════════════════ -->
+<div id="accueil">
+  <button class="apropos-btn" onclick="CM.Apropos.ouvrir()" aria-label="&Agrave; propos de cet outil">&Agrave; propos</button>
+
+  <div class="accueil-intro">
+    <h1>Cadre des Indicateurs de Performance</h1>
+    <p>Ton attention est rare. O&ugrave; la portes-tu&nbsp;?</p>
+    <span class="intro-chip">Lean Six Sigma &middot; DORA &middot; OKRs &middot; Drucker &middot; 4 niveaux &middot; 75+ indicateurs</span>
+  </div>
+
+  <!-- Overlay À propos -->
+  <div class="apropos-overlay" id="apropos-overlay" role="dialog" aria-modal="true" aria-labelledby="apropos-titre" aria-hidden="true">
+    <div class="apropos-modal">
+      <button class="apropos-close" onclick="CM.Apropos.fermer()" aria-label="Fermer">&times;</button>
+      <h2 id="apropos-titre">&Agrave; propos de cet outil</h2>
+      <p class="sous-titre">Regarder peu, mais juste.</p>
+
+      <div class="apropos-grid">
+
+        <section class="apropos-card">
+          <svg class="apropos-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M9.3 9.2a2.7 2.7 0 1 1 3.9 2.5c-.9.5-1.2 1.1-1.2 1.9v.6"/>
+            <circle cx="12" cy="16.8" r="0.7" fill="currentColor" stroke="none"/>
+          </svg>
+          <h3>Pourquoi</h3>
+          <p>Chaque niveau de l'organisation a ses propres questions &mdash; et donc ses propres indicateurs.</p>
+          <p>Un dirigeant choisit la direction. Un manager arbitre. Un chef de programme articule. Une &eacute;quipe livre.</p>
+          <p>Ce sont des <strong>r&ocirc;les diff&eacute;rents et compl&eacute;mentaires</strong> &mdash; ind&eacute;pendamment de toute hi&eacute;rarchie intellectuelle. Chacun est indispensable.</p>
+        </section>
+
+        <section class="apropos-card">
+          <svg class="apropos-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"/>
+            <circle cx="12" cy="12" r="5"/>
+            <circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>
+          </svg>
+          <h3>Notre conviction</h3>
+          <p>Quand chacun pilote ce qui correspond &agrave; son niveau de responsabilit&eacute;, l'organisation respire.</p>
+          <p>Les &eacute;quipes gagnent en <strong>autonomie</strong>. Les managers retrouvent leur <strong>mission</strong>. Les dirigeants reprennent du <strong>recul</strong>.</p>
+          <p class="punchline">Le micromanagement est souvent un r&eacute;flexe de transition&nbsp;: celui d'un manager qui m&eacute;rite d'&ecirc;tre accompagn&eacute; dans sa mont&eacute;e en responsabilit&eacute;.</p>
+          <p>Cet outil est un <strong>appui</strong> pour cet apprentissage.</p>
+        </section>
+
+        <section class="apropos-card">
+          <svg class="apropos-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 20.5h18"/>
+            <path d="M3.5 4.5h17"/>
+            <path d="M5.5 4.5v16"/>
+            <path d="M10 4.5v16"/>
+            <path d="M14 4.5v16"/>
+            <path d="M18.5 4.5v16"/>
+          </svg>
+          <h3>D'o&ugrave; &ccedil;a vient</h3>
+          <p>Quatre sources, une m&ecirc;me id&eacute;e.</p>
+          <ul class="sources">
+            <li><strong>Drucker</strong> management par objectifs, concentration sur l'essentiel</li>
+            <li><strong>Lean Six Sigma</strong> flux, qualit&eacute;, r&eacute;duction des gaspillages</li>
+            <li><strong>DORA</strong> performance r&eacute;elle du delivery logiciel</li>
+            <li><strong>OKRs</strong> relier l'ambition strat&eacute;gique aux r&eacute;sultats mesurables</li>
+          </ul>
+          <p class="punchline">La concentration est le secret de l'efficacit&eacute;.</p>
+        </section>
+
+        <section class="apropos-card">
+          <svg class="apropos-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M2.5 12s3.5-7 9.5-7 9.5 7 9.5 7-3.5 7-9.5 7S2.5 12 2.5 12z"/>
+            <circle cx="12" cy="12" r="3.2"/>
+          </svg>
+          <h3>La limite de cet outil</h3>
+          <p>Le terrain reste <strong>irrempla&ccedil;able</strong>.</p>
+          <p>L'ambiance d'une &eacute;quipe, l'&eacute;tat des outils, les irritants du quotidien, les contournements invisibles &mdash; tout cela se voit et s'entend sur le terrain.</p>
+          <p class="punchline">Le chiffre alerte. Le terrain explique.</p>
+          <p>Utilise cet outil <em>en compagnie</em> de tes yeux et de tes oreilles.</p>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="pyramide">
+
+    <!-- Niveau 1 : Stratégique -->
+    <button class="bande bande-1" onclick="CM.App.entrer('strategique',null,null,this)">
+      <span class="b-icone">&#x1F3DB;</span>
+      <div class="b-corps">
+        <div class="b-nom">Strat&eacute;gique</div>
+        <div class="b-desc">Direction, Board &amp; Gouvernance</div>
+        <span class="b-chip">IGO &middot; ORC &middot; II</span>
+      </div>
+      <span class="b-fleche">&#8250;</span>
+    </button>
+
+    <!-- Niveau 2 : Portefeuille -->
+    <button class="bande bande-2" onclick="CM.App.entrer('portefeuille',null,null,this)">
+      <span class="b-icone">&#x1F4CA;</span>
+      <div class="b-corps">
+        <div class="b-nom">Portefeuille</div>
+        <div class="b-desc">Arbitrage investissements &amp; allocation des ressources</div>
+        <span class="b-chip">ICP &middot; ORC &middot; ROI &middot; Risques</span>
+      </div>
+      <span class="b-fleche">&#8250;</span>
+    </button>
+
+    <!-- Niveau 3 : Programme & Projet -->
+    <button class="bande bande-3" onclick="CM.App.entrer('programme',null,null,this)">
+      <span class="b-icone">&#x1F5C2;</span>
+      <div class="b-corps">
+        <div class="b-nom">Programme &amp; Projet</div>
+        <div class="b-desc">Coordination multi-equipes, livraison d'initiatives</div>
+        <span class="b-chip">ICP &middot; FLUX &middot; ICC &middot; Avancement</span>
+      </div>
+      <span class="b-fleche">&#8250;</span>
+    </button>
+
+    <!-- Niveau 4 : Équipes (TI | Affaires) -->
+    <div class="niv4-container">
+
+      <!-- Branche TI — 4 domaines distincts par profil de métriques -->
+      <div class="carte-branche carte-ti">
+        <div class="branche-entete">
+          <span class="branche-ico">&#x1F4BB;</span>
+          <div>
+            <div class="branche-nom">Equipes TI</div>
+            <div class="branche-desc">DORA &middot; FLUX &middot; Fiabilite &middot; Securite</div>
+          </div>
+        </div>
+        <div class="grille-sous grille-ti">
+          <button class="btn-sous" onclick="CM.App.entrer('equipes','ti','dev',this)">
+            <span class="s-ico">&#x1F3D7;</span> Developpement
+          </button>
+          <button class="btn-sous" onclick="CM.App.entrer('equipes','ti','plateforme',this)">
+            <span class="s-ico">&#x1F680;</span> Plateforme &amp; DevOps
+          </button>
+          <button class="btn-sous" onclick="CM.App.entrer('equipes','ti','ops-support',this)">
+            <span class="s-ico">&#x1F527;</span> Operations &amp; Support
+          </button>
+          <button class="btn-sous" onclick="CM.App.entrer('equipes','ti','securite',this)">
+            <span class="s-ico">&#x1F6E1;</span> Securite
+          </button>
+        </div>
+        <div class="note-domaine">Dev inclut Produit numerique &middot; Ops inclut Infrastructure</div>
+      </div>
+
+      <!-- Branche Affaires — 6 domaines fonctionnels distincts -->
+      <div class="carte-branche carte-aff">
+        <div class="branche-entete">
+          <span class="branche-ico">&#x1F3E2;</span>
+          <div>
+            <div class="branche-nom">Equipes Affaires</div>
+            <div class="branche-desc">ICP &middot; ICC &middot; ORC metier &middot; Flux</div>
+          </div>
+        </div>
+        <div class="grille-sous grille-aff">
+          <button class="btn-sous" onclick="CM.App.entrer('equipes','affaires','commercial',this)">
+            <span class="s-ico">&#x1F4C8;</span> Commercial
+          </button>
+          <button class="btn-sous" onclick="CM.App.entrer('equipes','affaires','marketing',this)">
+            <span class="s-ico">&#x1F4E3;</span> Marketing
+          </button>
+          <button class="btn-sous" onclick="CM.App.entrer('equipes','affaires','finance',this)">
+            <span class="s-ico">&#x1F4B0;</span> Finance
+          </button>
+          <button class="btn-sous" onclick="CM.App.entrer('equipes','affaires','rh',this)">
+            <span class="s-ico">&#x1F465;</span> RH
+          </button>
+          <button class="btn-sous" onclick="CM.App.entrer('equipes','affaires','operations',this)">
+            <span class="s-ico">&#x1F529;</span> Operations
+          </button>
+          <button class="btn-sous" onclick="CM.App.entrer('equipes','affaires','service-client',this)">
+            <span class="s-ico">&#x1F3AF;</span> Serv. client
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /niv4-container -->
+  </div><!-- /pyramide -->
+
+  <p class="note-bas">Selectionnez votre niveau ou domaine pour acceder aux indicateurs pertinents</p>
+</div><!-- /accueil -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     APPLICATION PRINCIPALE
+══════════════════════════════════════════════════════ -->
+<div id="app">
+  <header class="en-tete" role="banner">
+    <span class="logo">&#x2B21; Indicateurs</span>
+    <span id="badge-contexte" class="badge-contexte"></span>
+    <nav class="onglets" role="tablist" aria-label="Vues disponibles">
+      <button class="onglet actif" onclick="CM.App.changerVue('tableau-bord',this)" role="tab" aria-selected="true">Mon tableau de bord</button>
+      <button class="onglet" onclick="CM.App.changerVue('cascade',this)" role="tab" aria-selected="false">Cascade strat&eacute;gique</button>
+      <button class="onglet" onclick="CM.App.changerVue('questionnaire',this)" role="tab" aria-selected="false">Choisir mes indicateurs</button>
+      <button class="onglet" onclick="CM.App.changerVue('maturite',this)" role="tab" aria-selected="false">Maturit&eacute; &amp; Recommandations</button>
+    </nav>
+    <button class="btn-changer" onclick="CM.App.retourAccueil()">&larr; Accueil</button>
+  </header>
+
+  <main class="contenu" role="main">
+    <div class="vue active" id="vue-tableau-bord" role="tabpanel"><div id="contenu-tdb" class="tableau-bord"></div></div>
+    <div class="vue" id="vue-cascade"       role="tabpanel"><div id="contenu-cascade"></div></div>
+    <div class="vue" id="vue-questionnaire" role="tabpanel"><div id="contenu-questionnaire"></div></div>
+    <div class="vue" id="vue-maturite"      role="tabpanel"><div id="contenu-maturite"></div></div>
+  </main>
+</div><!-- /app -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     TIROIR — DÉTAIL INDICATEUR
+══════════════════════════════════════════════════════ -->
+<div class="fond-tiroir" id="fond-tiroir" onclick="CM.Composants.fermerTiroir()"></div>
+<aside class="tiroir" id="tiroir" role="complementary" aria-label="Detail de l'indicateur" aria-modal="true" aria-hidden="true">
+  <button class="btn-fermer" onclick="CM.Composants.fermerTiroir()" aria-label="Fermer">&times;</button>
+  <div class="tiroir-corps fi" id="t-fiche"></div>
+</aside>
+
+
+<!-- ══ MODULE : CM.Config — Référentiel des types, fiabilité, maturité, niveaux ══ -->
+<script>
+window.CM = window.CM || {};
+
+CM.Config = (function() {
+  'use strict';
+
+  var TYPES_COULEURS = {
+    'IGO':  '#1a237e',
+    'ICP':  '#1565c0',
+    'ICC':  '#00695c',
+    'ORC':  '#6a1b9a',
+    'DORA': '#bf360c',
+    'FLUX': '#e65100',
+    'II':   '#37474f'
+  };
+
+  var TYPES_LIBELLES = {
+    'IGO':  "Indicateur Global d'Objectif (KGI)",
+    'ICP':  'Indicateur Clé de Performance (KPI)',
+    'ICC':  'Indicateur Clé de Comportement (KBI)',
+    'ORC':  'Objectifs & Résultats Clés (OKR)',
+    'DORA': 'Performance DevOps',
+    'FLUX': 'Flux & Throughput (Lean)',
+    'II':   "Indicateur d'Impact (KII)"
+  };
+
+  var FIABILITE = {
+    'fiable': {
+      label:       'Fiable',
+      label_court: 'Fiable',
+      couleur:     '#2e7d32',
+      icone:       '✅',
+      desc:        'Metrique objective, peu susceptible d\'etre instrumentalisee. A privilegier en premier lieu.'
+    },
+    'precaution': {
+      label:       'A utiliser avec soin',
+      label_court: 'Precaution',
+      couleur:     '#e65100',
+      icone:       '⚠️',
+      desc:        'Utile dans le bon contexte, mais l\'interpretation est delicate. Toujours contextualiser.'
+    },
+    'risque': {
+      label:       'Courant & risque',
+      label_court: 'Risque',
+      couleur:     '#c62828',
+      icone:       '⚡',
+      desc:        'Tres repandue mais facilement instrumentalisee. Employer avec grande vigilance.'
+    }
+  };
+
+  var MATURITE = {
+    'debutant': {
+      label:   'Équipe débutante',
+      icone:   '🌱',
+      couleur: '#388e3c',
+      horizon: '0 – 12 mois',
+      desc:    'Pratiques en construction, apprentissage collectif en cours.',
+      conseil: 'Commencez par 2 ou 3 indicateurs maximum. Établissez d\'abord une ligne de référence (valeur actuelle mesurée) avant de fixer des cibles. Résistez à la tentation de tout mesurer d\'un coup.',
+      caracteristiques: [
+        'Processus informels et peu documentés — les façons de travailler varient selon les personnes',
+        'Peu ou pas de métriques suivies régulièrement ; les données sont collectées manuellement si elles existent',
+        'Automatisation faible : tests principalement manuels, déploiements peu ou pas automatisés',
+        'Livraisons peu prévisibles, cycles longs, nombreuses interruptions non planifiées',
+        'Collaboration en construction : rôles parfois flous, communication encore réactive',
+        'Objectif prioritaire : stabiliser 2-3 pratiques de base avant de mesurer quoi que ce soit'
+      ]
+    },
+    'intermediaire': {
+      label:   'Équipe intermédiaire',
+      icone:   '🌿',
+      couleur: '#0277bd',
+      horizon: '1 – 2 ans',
+      desc:    'Pratiques établies et globalement respectées, premières données disponibles.',
+      conseil: 'Introduisez les métriques DORA et les indicateurs de flux. Commencez à corréler plusieurs indicateurs entre eux pour détecter les tensions (ex. : fréquence de déploiement vs taux d\'échec).',
+      caracteristiques: [
+        'Processus définis et documentés, globalement suivis de façon cohérente par tous',
+        'Quelques métriques déjà en place et suivies régulièrement (fréquence de déploiement, incidents…)',
+        'CI/CD partiellement en place, couverture de tests automatisés en progression',
+        'Livraisons modérément prévisibles ; l\'équipe commence à planifier sur la base de son débit réel',
+        'L\'équipe analyse ses données pour s\'améliorer, pas seulement pour rendre compte',
+        'Les métriques DORA et de flux peuvent être introduites progressivement'
+      ]
+    },
+    'avance': {
+      label:   'Équipe avancée',
+      icone:   '🌳',
+      couleur: '#6a1b9a',
+      horizon: '2 ans et plus',
+      desc:    'Pratiques solides, amélioration continue ancrée dans la culture.',
+      conseil: 'Concentrez-vous sur la réduction de la variabilité plutôt que sur l\'optimisation des moyennes. Exploitez les corrélations entre niveaux pour relier performance d\'équipe et résultats business.',
+      caracteristiques: [
+        'Processus solides et en amélioration continue : l\'équipe ajuste ses pratiques sans attendre qu\'un problème survienne',
+        'Métriques multiples corrélées entre elles, exploitées activement pour la prise de décision',
+        'CI/CD mature, automatisation avancée : tests, monitoring, alerting, rollback automatique',
+        'Livraisons stables et très prévisibles ; déploiements fréquents (quotidiens ou à la demande)',
+        'Culture de l\'expérimentation : l\'équipe teste des hypothèses et mesure l\'impact réel de ses changements',
+        'Capable d\'exploiter les indicateurs d\'impact complexes (KII) et de relier sa performance aux résultats métier'
+      ]
+    }
+  };
+
+  /* 4 niveaux hierachiques — niveauData = valeur du champ ind.niveau dans les donnees */
+  var NIVEAUX = [
+    {
+      id: 'strategique', niveauData: 'strategique',
+      libelle: 'Niveau Stratégique', sous_libelle: 'Direction & Gouvernance',
+      description: 'Vision long terme · Résultats globaux · Investissements',
+      couleur: '#1a237e', couleur_l: '#e8eaf6', icone: '🏛'
+    },
+    {
+      id: 'portefeuille', niveauData: 'tactique',
+      libelle: 'Niveau Portefeuille', sous_libelle: 'Arbitrage & Allocation',
+      description: 'Priorisation · Capacité · Feuille de route',
+      couleur: '#01579b', couleur_l: '#e1f5fe', icone: '📊'
+    },
+    {
+      id: 'programme', niveauData: 'programme',
+      libelle: 'Programme & Projet', sous_libelle: 'Coordination multi-équipes',
+      description: 'Jalons · Budget · Risques · Livraisons',
+      couleur: '#1b5e20', couleur_l: '#f1f8e9', icone: '🗂'
+    },
+    {
+      id: 'equipes', niveauData: 'operationnel',
+      libelle: 'Niveau Équipes', sous_libelle: 'Livraison continue & amélioration',
+      description: 'DORA · Flux · Qualité · Pratiques',
+      couleur: '#004d40', couleur_l: '#e0f2f1', icone: '⚙️'
+    }
+  ];
+
+  return { TYPES_COULEURS: TYPES_COULEURS, TYPES_LIBELLES: TYPES_LIBELLES, FIABILITE: FIABILITE, MATURITE: MATURITE, NIVEAUX: NIVEAUX };
+})();
+</script>
+
+<!-- ══ MODULE : CM.Apropos — Ouverture/fermeture de la section À propos ══ -->
+<script>
+CM.Apropos = (function() {
+  'use strict';
+
+  function overlay() { return document.getElementById('apropos-overlay'); }
+
+  function ouvrir() {
+    var o = overlay();
+    if (!o) return;
+    o.classList.add('is-open');
+    o.setAttribute('aria-hidden', 'false');
+    // Focus sur le bouton fermer pour l'accessibilité clavier
+    var btnFermer = o.querySelector('.apropos-close');
+    if (btnFermer) { btnFermer.focus(); }
+    // Fermeture au clic en dehors de la modale
+    o.addEventListener('click', fermerSiFondClique);
+    document.addEventListener('keydown', fermerSiEchap);
+  }
+
+  function fermer() {
+    var o = overlay();
+    if (!o) return;
+    o.classList.remove('is-open');
+    o.setAttribute('aria-hidden', 'true');
+    o.removeEventListener('click', fermerSiFondClique);
+    document.removeEventListener('keydown', fermerSiEchap);
+  }
+
+  function fermerSiFondClique(e) {
+    if (e.target && e.target.classList.contains('apropos-overlay')) { fermer(); }
+  }
+
+  function fermerSiEchap(e) {
+    if (e.key === 'Escape') { fermer(); }
+  }
+
+  return { ouvrir: ouvrir, fermer: fermer };
+})();
+</script>
+
+<!-- ══ MODULE : CM.Gemba — Voix d'appui contextuelle (terrain ≠ dashboards) ══ -->
+<script>
+CM.Gemba = (function() {
+  'use strict';
+
+  /* Bibliothèque de variations — évite la répétition lassante.
+     Chaque formule respecte : affirmation plutôt que négation,
+     question/constat plutôt que jugement, action implicite plutôt que prescription. */
+  var VARIATIONS = [
+    'Ce chiffre ouvre une question. Une visite du terrain peut y r\u00e9pondre.',
+    'L\'ambiance, les irritants, les contournements : cela se voit sur place.',
+    'Un chiffre parle. Le terrain raconte.',
+    'Avant d\'agir sur ce chiffre, regarde ceux qui le produisent.',
+    'Le terrain compl\u00e8te ce que ce tableau peut montrer.',
+    'Le chiffre alerte. Le terrain explique.',
+    'Une donn\u00e9e inqui\u00e9tante m\u00e9rite une visite, pas une pression.'
+  ];
+
+  /* Icône œil — cohérente avec la carte "La limite de cet outil" du modal À propos. */
+  var ICONE_SVG = '<svg class="gemba-band-icon" viewBox="0 0 24 24" fill="none" '
+    + 'stroke="currentColor" stroke-width="1.5" stroke-linecap="round" '
+    + 'stroke-linejoin="round" aria-hidden="true">'
+    + '<path d="M2.5 12s3.5-7 9.5-7 9.5 7 9.5 7-3.5 7-9.5 7S2.5 12 2.5 12z"/>'
+    + '<circle cx="12" cy="12" r="3.2"/>'
+    + '</svg>';
+
+  /* Choix pseudo-aléatoire sans répéter la dernière formule affichée.
+     Stocké en mémoire de session uniquement (pas de localStorage). */
+  var _derniere = -1;
+  function _choisir() {
+    if (VARIATIONS.length <= 1) return 0;
+    var i;
+    do { i = Math.floor(Math.random() * VARIATIONS.length); }
+    while (i === _derniere);
+    _derniere = i;
+    return i;
+  }
+
+  /* Retourne le HTML de l'encart "bande" (utilisé sur l'accueil en fond indigo sombre). */
+  function htmlEncart() {
+    var texte = VARIATIONS[_choisir()];
+    return '<div class="gemba-band" role="note" aria-label="Rappel Gemba">'
+      + ICONE_SVG
+      + '<div class="gemba-band-body">'
+      +   '<span class="gemba-band-label">Terrain</span>'
+      +   '<div class="gemba-band-text">' + texte + '</div>'
+      + '</div>'
+      + '</div>';
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     TRIPTYQUES GEMBA par TYPE d'indicateur
+     Pour chaque famille : "Où aller ? / Qui interroger ? / Quoi observer ?"
+     ══════════════════════════════════════════════════════════ */
+  var TRIPTYQUES = {
+    'DORA': {
+      ouAller:     'Daily de l\'équipe, séances de revue de déploiement, post-mortems d\'incidents.',
+      quiInterroger: 'Développeurs qui poussent le code, SRE et ops qui gèrent les incidents en production.',
+      quoiObserver:  'Friction du pipeline, anxiété autour des releases, contournements (ex. « on ne déploie jamais le vendredi »), temps passé hors du flux.'
+    },
+    'ICP': {
+      ouAller:     'Interactions réelles côté client, métier ou opération — pas le tableau de bord.',
+      quiInterroger: 'Clients eux-mêmes (promoteurs ET détracteurs), agents en première ligne, opérateurs du processus mesuré.',
+      quoiObserver:  'Écarts entre le score et le ressenti, irritants invisibles, contournements inventés par les équipes, ce qui est dit hors enquête.'
+    },
+    'ICC': {
+      ouAller:     'Routines d\'équipe (rétrospectives, plannings, cérémonies), outils réellement utilisés au quotidien.',
+      quiInterroger: 'Membres de l\'équipe sur leurs pratiques effectives, pas sur les pratiques affichées.',
+      quoiObserver:  'Écart entre pratiques déclarées et pratiques réelles, charge mentale, qualité de l\'attention portée à ces comportements.'
+    },
+    'IGO': {
+      ouAller:     'Comités de direction, plans d\'action stratégiques, opérationnels qui exécutent la stratégie.',
+      quiInterroger: 'Sponsors des initiatives, équipes qui contribuent réellement aux chantiers stratégiques.',
+      quoiObserver:  'Alignement entre stratégie déclarée et chantiers réellement financés/priorisés, mobilisation effective des équipes.'
+    },
+    'ORC': {
+      ouAller:     'Cérémonies de revue OKR, checkpoints hebdomadaires des Key Results, conversations informelles.',
+      quiInterroger: 'Équipe qui porte l\'OKR, sponsors, parties prenantes impactées par les Key Results.',
+      quoiObserver:  'Énergie et clarté autour des KR, signes de rituel creux, sujets que l\'équipe évite, transparence des blocages.'
+    },
+    'FLUX': {
+      ouAller:     'Tableau de flux de l\'équipe (Kanban ou équivalent), daily, séance de planification.',
+      quiInterroger: 'Équipe sur les goulets perçus, parties prenantes amont (entrées du flux) et aval (sorties).',
+      quoiObserver:  'Encombrement réel, files d\'attente cachées (ex. « en attente de revue »), blocages récurrents, items qui stagnent.'
+    },
+    'II': {
+      ouAller:     'Auprès des bénéficiaires réels de l\'impact : utilisateurs finaux, communautés, parties prenantes externes.',
+      quiInterroger: 'Utilisateurs finaux, associations, régulateurs, témoins indirects de l\'impact.',
+      quoiObserver:  'Impact réel vs impact déclaré, effets collatéraux non anticipés, voix minoritaires ou absentes des indicateurs.'
+    }
+  };
+  var TRIPTYQUE_DEFAUT = {
+    ouAller:     'Là où le chiffre est produit — pas seulement là où il est commenté.',
+    quiInterroger: 'Les personnes qui vivent la situation mesurée, pas uniquement leurs responsables.',
+    quoiObserver:  'Ce que le chiffre ne peut pas capturer : ambiance, irritants, contournements, écarts entre discours et réalité.'
+  };
+
+  /* Icône œil adaptée au triptyque (sans classe gemba-band-icon — CSS propre à .fi-gemba) */
+  var ICONE_FICHE = '<svg viewBox="0 0 24 24" fill="none" '
+    + 'stroke="currentColor" stroke-width="1.8" stroke-linecap="round" '
+    + 'stroke-linejoin="round" aria-hidden="true">'
+    + '<path d="M2.5 12s3.5-7 9.5-7 9.5 7 9.5 7-3.5 7-9.5 7S2.5 12 2.5 12z"/>'
+    + '<circle cx="12" cy="12" r="3.2"/>'
+    + '</svg>';
+
+  /* Retourne le HTML du triptyque Gemba contextualisé au type d'indicateur.
+     Si le type n'est pas reconnu, un triptyque générique est utilisé. */
+  function htmlEncartFiche(typeIndicateur) {
+    var t = TRIPTYQUES[typeIndicateur] || TRIPTYQUE_DEFAUT;
+    var html = '<div class="fi-gemba" role="note" aria-label="Invitation à aller voir le terrain">';
+    html +=   '<div class="fi-gemba-header">' + ICONE_FICHE + '<span>Terrain &mdash; ce que ce chiffre ne dit pas</span></div>';
+    html +=   '<div class="fi-gemba-triptyque">';
+    html +=     '<div class="fi-gemba-item">';
+    html +=       '<span class="fi-gemba-question">Où aller voir ?</span>';
+    html +=       '<span class="fi-gemba-reponse">' + t.ouAller + '</span>';
+    html +=     '</div>';
+    html +=     '<div class="fi-gemba-item">';
+    html +=       '<span class="fi-gemba-question">Qui interroger ?</span>';
+    html +=       '<span class="fi-gemba-reponse">' + t.quiInterroger + '</span>';
+    html +=     '</div>';
+    html +=     '<div class="fi-gemba-item">';
+    html +=       '<span class="fi-gemba-question">Quoi observer ?</span>';
+    html +=       '<span class="fi-gemba-reponse">' + t.quoiObserver + '</span>';
+    html +=     '</div>';
+    html +=   '</div>';
+    html += '</div>';
+    return html;
+  }
+
+  return { htmlEncart: htmlEncart, htmlEncartFiche: htmlEncartFiche };
+})();
+</script>
+
+<!-- ══ MODULE : CM.Referentiel — Stockage et requete des indicateurs ══ -->
+<script>
+CM.Referentiel = (function() {
+  'use strict';
+  var _indicateurs = [];
+
+  function ajouter(liste) {
+    for (var i = 0; i < liste.length; i++) {
+      _indicateurs.push(liste[i]);
+    }
+  }
+
+  function tous() { return _indicateurs; }
+
+  function chercher(id) {
+    for (var i = 0; i < _indicateurs.length; i++) {
+      if (_indicateurs[i].id === id) return _indicateurs[i];
+    }
+    return null;
+  }
+
+  function filtrerParContexte(contexte) {
+    return _indicateurs.filter(function(ind) {
+      if (contexte.niveau === 'equipes') {
+        if (ind.niveau !== 'operationnel') return false;
+        if (ind.branche && contexte.branche && ind.branche !== contexte.branche) return false;
+        if (ind.domaine && contexte.domaine && ind.domaine !== contexte.domaine) return false;
+        return true;
+      }
+      /* mappage contexte.niveau -> ind.niveau */
+      var map = { 'strategique': 'strategique', 'portefeuille': 'tactique', 'programme': 'programme' };
+      return ind.niveau === (map[contexte.niveau] || contexte.niveau);
+    });
+  }
+
+  return { ajouter: ajouter, tous: tous, chercher: chercher, filtrerParContexte: filtrerParContexte };
+})();
+</script>
+
+
+<!-- ══ DATA : Indicateurs Strategiques (s1–s5) ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'s1', niveau:'strategique', type:'IGO', icone:'📈',
+    nom:'Croissance du chiffre d\'affaires',
+    definition:'Variation des revenus sur une periode donnee, exprimee en pourcentage par rapport a la periode de reference precedente.',
+    objectif:'Evaluer la dynamique de croissance economique de l\'organisation a long terme.',
+    frequence:'Trimestrielle · Annuelle',
+    exemple_ent:'Objectif : +18 % de revenus annuels recurrents d\'ici decembre. Ligne de reference actuelle : +9 %.',
+    exemple_eq:'Non directement visible au niveau equipe — il resulte de l\'ensemble des livraisons combinees.',
+    risque:'Peut pousser a des decisions court-termistes (reduction des couts de qualite) au detriment de la durabilite. Analyser avec la satisfaction client et la dette technique.',
+    roles:['direction'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant'
+  },
+  {
+    id:'s2', niveau:'strategique', type:'ICP', icone:'⭐',
+    nom:'Indice de recommandation client (NPS)',
+    definition:'Mesure la propension des clients a recommander l\'organisation (score de -100 a +100). Calculee a partir de la difference entre promoteurs et detracteurs.',
+    objectif:'Evaluer la fidelite client et la force de la relation commerciale dans la duree.',
+    frequence:'Trimestrielle',
+    exemple_ent:'NPS de +42 apres lancement de la nouvelle version produit, en hausse de 8 points.',
+    exemple_eq:'L\'equipe produit suit la satisfaction sur les fonctionnalites specifiques qu\'elle livre.',
+    risque:'Peut etre influence par le moment de la collecte. Seul, il ne dit pas pourquoi les clients sont insatisfaits. Completer par des entretiens qualitatifs.',
+    roles:['direction','portefeuille'], prioritaire:true, fiabilite:'precaution', maturite_min:'debutant'
+  },
+  {
+    id:'s3', niveau:'strategique', type:'IGO', icone:'💰',
+    nom:'Résultat opérationnel brut (EBITDA)',
+    definition:'Benefice avant interets, impots, depreciation et amortissement. Mesure la rentabilite operationnelle reelle independamment de la structure financiere.',
+    objectif:'Evaluer la capacite de l\'organisation a generer de la valeur economique de facon durable.',
+    frequence:'Trimestrielle · Annuelle',
+    exemple_ent:'Atteindre une marge EBITDA de 22 % sur l\'exercice, en hausse de 3 points.',
+    exemple_eq:'Non directement visible au niveau equipe.',
+    risque:'L\'optimisation exclusive peut freiner l\'investissement en recherche et formation — nuisant a la competitivite future.',
+    roles:['direction'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant'
+  },
+  {
+    id:'s4', niveau:'strategique', type:'ORC', icone:'🎯',
+    nom:'Objectifs strategiques annuels (OKR)',
+    definition:'Ensemble de 3 a 5 objectifs ambitieux d\'entreprise, chacun associe a 2-4 resultats cles mesurables.',
+    objectif:'Aligner toutes les equipes sur une vision commune et des priorites strategiques partagees.',
+    frequence:'Annuelle — revision trimestrielle',
+    exemple_ent:'Objectif : Devenir la reference europeenne sur les outils RH numeriques — RC1 : 10 000 nouveaux utilisateurs actifs avant T4.',
+    exemple_eq:'L\'equipe co-construit ses propres OKR en coherence avec ceux de l\'entreprise.',
+    risque:'Devient contre-productif si lie a la remuneration variable : les equipes fixent alors des cibles atteignables plutot qu\'ambitieuses.',
+    roles:['direction','portefeuille','chef-equipe'], prioritaire:true, fiabilite:'precaution', maturite_min:'intermediaire'
+  },
+  {
+    id:'s5', niveau:'strategique', type:'ICP', icone:'🏪',
+    nom:'Part de marché',
+    definition:'Pourcentage du marche total capture par l\'organisation, analyse par segment et territoire.',
+    objectif:'Mesurer la position concurrentielle et l\'efficacite de la strategie de croissance.',
+    frequence:'Semestrielle · Annuelle',
+    exemple_ent:'Passer de 8 % a 12 % de part de marche sur les PME en France sur 18 mois.',
+    exemple_eq:'Non directement visible au niveau equipe.',
+    risque:'Peut croitre en degradant les marges (guerre des prix). Analyser imperative conjointement avec la rentabilite.',
+    roles:['direction'], prioritaire:false, fiabilite:'fiable', maturite_min:'intermediaire'
+  }
+]);
+</script>
+
+<!-- ══ DATA : Indicateurs Portefeuille (t1–t5, x3) ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'t1', niveau:'tactique', type:'ICP', icone:'💸',
+    nom:'Rendement du portefeuille d\'initiatives (ROI)',
+    definition:'Rapport entre la valeur economique generee et les ressources investies dans l\'ensemble des initiatives du portefeuille.',
+    objectif:'Optimiser l\'allocation des ressources humaines et financieres entre les initiatives concurrentes.',
+    frequence:'Trimestrielle',
+    exemple_ent:'Le portefeuille genere 3,2 EUR de valeur pour chaque euro investi — 2 initiatives sont candidates a la cloture.',
+    exemple_eq:'Chaque equipe contribue a ce ratio par la valeur metier des fonctionnalites livrees.',
+    risque:'Un ROI calcule trop tot peut decourager des initiatives strategiques a retour lent mais fort impact long terme.',
+    roles:['portefeuille','direction'], prioritaire:true, fiabilite:'precaution', maturite_min:'intermediaire'
+  },
+  {
+    id:'t2', niveau:'tactique', type:'ICP', icone:'🚀',
+    nom:'Délai de commercialisation (Lead Time métier)',
+    definition:'Duree moyenne entre la decision de lancer une initiative et sa mise a disposition en production pour les utilisateurs finaux.',
+    objectif:'Mesurer la reactivite de l\'organisation et sa capacite a concrétiser rapidement la valeur.',
+    frequence:'Continue — revue trimestrielle',
+    exemple_ent:'Reduire le delai de commercialisation moyen de 9 a 5 mois sur les nouvelles fonctionnalites majeures.',
+    exemple_eq:'L\'equipe contribue directement via la frequence de deploiement et le delai de livraison des changements (DORA).',
+    risque:'Optimiser uniquement la rapidite sans mesurer la qualite peut accroitre le taux d\'echec des livraisons.',
+    roles:['portefeuille','chef-equipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant'
+  },
+  {
+    id:'t3', niveau:'tactique', type:'ORC', icone:'🗓',
+    nom:'Objectifs trimestriels de portefeuille',
+    definition:'OKR definis au niveau du portefeuille pour aligner les equipes sur les priorites du trimestre en cours.',
+    objectif:'Traduire la vision strategique en engagements concrets et mesurables sur 90 jours.',
+    frequence:'Trimestrielle',
+    exemple_ent:'Objectif : Accelerer la migration vers le nouveau socle technique — RC1 : 60 % des services migres avant T2.',
+    exemple_eq:'Les equipes definissent leurs propres OKR en coherence avec les objectifs de portefeuille.',
+    risque:'Peut creer une pression descendante si les equipes ne participent pas a leur definition.',
+    roles:['portefeuille','chef-equipe'], prioritaire:true, fiabilite:'precaution', maturite_min:'intermediaire'
+  },
+  {
+    id:'t4', niveau:'tactique', type:'FLUX', icone:'🌊',
+    nom:'Efficacite de flux du portefeuille',
+    definition:'Proportion du temps total ou le travail est activement traite, par opposition au temps d\'attente (decisions, validations, ressources).',
+    objectif:'Identifier les goulots d\'etranglement dans le flux de valeur a l\'echelle du portefeuille.',
+    frequence:'Mensuelle',
+    exemple_ent:'Efficacite de flux : 32 % — 68 % du temps, les elements du portefeuille attendent une decision ou une ressource.',
+    exemple_eq:'Au niveau equipe, cela se traduit par la duree de cycle et le volume d\'encours.',
+    risque:'Un faible taux n\'est pas toujours negatif — certaines phases de maturation sont intrinsequement longues.',
+    roles:['portefeuille','chef-equipe'], prioritaire:false, fiabilite:'fiable', maturite_min:'avance'
+  },
+  {
+    id:'t5', niveau:'tactique', type:'ICP', icone:'📅',
+    nom:'Taux de livraison dans les délais',
+    definition:'Pourcentage des engagements de livraison honores dans les delais initialement convenus avec les parties prenantes.',
+    objectif:'Mesurer la fiabilite et la previsibilite des livraisons au niveau du portefeuille.',
+    frequence:'Mensuelle · Trimestrielle',
+    exemple_ent:'Taux de livraison : 74 % — objectif : 85 % grace a une meilleure estimation de capacite.',
+    exemple_eq:'Chaque equipe contribue via sa cadence de livraison et la stabilite de son debit.',
+    risque:'Peut encourager a sous-estimer les delais pour afficher un taux eleve, ou a negliger la qualite.',
+    roles:['portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant'
+  },
+  {
+    id:'x3', niveau:'tactique', type:'ICP', icone:'👤',
+    nom:'Taux d\'occupation des ressources',
+    definition:'Pourcentage de temps durant lequel les personnes sont affectees a des taches actives par rapport a leur capacite totale disponible.',
+    objectif:'Evaluer l\'utilisation de la capacite humaine et detecter les surcharges ou sous-utilisations.',
+    frequence:'Mensuelle',
+    exemple_ent:'Taux d\'occupation a 95 % — en apparence excellent, signalant en realite l\'absence de marge pour absorber les imprevus.',
+    exemple_eq:'Une equipe a 100 % ne peut ni s\'ameliorer, ni absorber une urgence sans sacrifier un engagement.',
+    risque:'Classiquement mal interprete : un taux proche de 100 % est un signal d\'alarme Lean. La loi des files d\'attente montre qu\'au-dela de 80 %, les delais explosent. Alternative : debit et duree de cycle.',
+    alt:'Debit d\'equipe · Duree de cycle · Efficacite de flux',
+    roles:['portefeuille','chef-equipe'], prioritaire:false, fiabilite:'risque', maturite_min:'debutant'
+  }
+]);
+</script>
+
+
+<!-- ══ DATA : Programme & Projet (p1–p5) ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'p1', niveau:'programme', type:'ICP', icone:'📋',
+    nom:'Taux d\'avancement des jalons',
+    definition:'Pourcentage de jalons cles atteints dans les delais prevus, rapporte au nombre total de jalons planifies sur la periode.',
+    objectif:'Mesurer la progression effective du programme par rapport au plan initial.',
+    frequence:'Bi-mensuelle',
+    exemple_ent:'72 % des jalons T1 atteints a date — 2 jalons critiques decales de 3 semaines en raison d\'une dependance externe.',
+    exemple_eq:'Chaque equipe contribue en livrant ses increments selon le calendrier convenu lors du PI Planning.',
+    risque:'Un fort taux d\'avancement avec jalons "artificiellement" fermes masque la dette de qualite. Croiser avec le taux de defauts echappes.',
+    roles:['programme','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant'
+  },
+  {
+    id:'p2', niveau:'programme', type:'ICP', icone:'💵',
+    nom:'Écart budget (Budget Variance)',
+    definition:'Difference entre le budget consomme et le budget planifie a date, exprimee en pourcentage du budget total.',
+    objectif:'Controler la maitrise financiere du programme et anticiper les depassements.',
+    frequence:'Mensuelle',
+    exemple_ent:'Ecart de +8 % a M6 — principalement lie a des achats de licences supplementaires non prevus. Action correctrice lancee.',
+    exemple_eq:'Non directement visible au niveau equipe, sauf pour les equipes responsables de budgets de fournisseurs.',
+    risque:'Un ecart negatif (sous-consommation) peut signaler un programme qui prend du retard et reporte des depenses, pas une bonne gestion.',
+    roles:['programme','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant'
+  },
+  {
+    id:'p3', niveau:'programme', type:'II', icone:'🚨',
+    nom:'Risques critiques ouverts',
+    definition:'Nombre de risques evalues comme critiques (probabilite et impact eleves) non encore mitiges ou acceptes dans le registre des risques.',
+    objectif:'Maintenir une visibilite sur les menaces susceptibles de compromettre le programme.',
+    frequence:'Hebdomadaire',
+    exemple_ent:'3 risques critiques ouverts : dependance fournisseur, transition des donnees, disponibilite d\'une competence rare.',
+    exemple_eq:'Les equipes signalent les impediments techniques qui peuvent se transformer en risques programme.',
+    risque:'Un nombre de risques tres faible peut indiquer un registre sous-alimente, non pas l\'absence de risques reels.',
+    roles:['programme','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant'
+  },
+  {
+    id:'p4', niveau:'programme', type:'ICP', icone:'📊',
+    nom:'Satisfaction des parties prenantes',
+    definition:'Score moyen de satisfaction des commanditaires et utilisateurs cles, mesure via sondage structure apres chaque livraison majeure.',
+    objectif:'Detecter les ecarts entre les attentes des parties prenantes et la valeur livree.',
+    frequence:'A chaque livraison majeure',
+    exemple_ent:'Score de 3,6/5 apres la premiere release — 2 themes d\'insatisfaction identifies : communication insuffisante et manque de formation.',
+    exemple_eq:'L\'equipe contribue en assurant une demonstration de valeur claire a chaque revue.',
+    risque:'Les scores peuvent etre biaises si les parties prenantes hesitent a exprimer une insatisfaction. Combiner avec des entretiens qualitatifs.',
+    roles:['programme','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant'
+  },
+  {
+    id:'p5', niveau:'programme', type:'FLUX', icone:'🔁',
+    nom:'Débit d\'initiatives livrées (Programme Throughput)',
+    definition:'Nombre d\'<span class="term-def" data-def="Initiative ou epic : ensemble de fonctionnalités cohérentes livrées par un ou plusieurs équipes sur un trimestre. Vocabulaire SAFe / Flow Framework.">épics</span> ou d\'initiatives majeures livrées en production par trimestre, indépendamment de leur taille. C\'est un indicateur d\'<strong>output</strong> (rythme de sortie de la machine programme), <strong>pas un indicateur d\'<span class="term-def" data-def="Résultat réellement constaté côté utilisateur ou métier (adoption, satisfaction, impact business), par opposition à l\'output — ce que l\'équipe produit.">outcome</span></strong> (valeur réellement adoptée). Une initiative livrée mais peu utilisée gonfle le débit sans créer de valeur.',
+    objectif:'Mesurer la <strong>cadence de livraison</strong> du programme et alimenter la prévision de capacité (combien d\'initiatives le programme peut-il raisonnablement livrer au prochain trimestre ?). À lire <strong>toujours conjointement</strong> avec le WIP et le Lead Time — <span class="term-def" data-def="Loi de Little : Lead Time = WIP / Throughput. Augmenter le débit en gonflant le WIP détériore mécaniquement le Lead Time. C\'est une fausse victoire.">loi de Little</span> — et avec un indicateur d\'outcome distinct (adoption, impact métier). À ne JAMAIS utiliser pour comparer deux programmes ni pour évaluer une performance individuelle.',
+    frequence:'Trimestrielle — revue lors du PI Planning ou cycle équivalent',
+    exemple_ent:'Le programme Paiements livre 4 initiatives ce trimestre contre 3 le précédent — débit en hausse de 33 %. Lecture honnête : sur ces 4 initiatives, 2 sont réellement adoptées (>50 % d\'usage à 30 jours), 1 dort derrière un feature flag, 1 attend un retour client. Le débit dit « la machine tourne plus vite » ; il ne dit pas « on livre plus de valeur ». Toujours croiser avec un indicateur d\'outcome.',
+    exemple_eq:'Chaque équipe contribue via son propre throughput opérationnel (stories ou <span class="term-def" data-def="Flow item : unité de travail à valeur de bout en bout (feature, défaut, dette, risque) — vocabulaire Flow Framework de Mik Kersten.">flow items</span> terminés par sprint). Vigilance : ne pas additionner mécaniquement les débits d\'équipe — les dépendances inter-équipes créent du blocage qui n\'apparaît qu\'au niveau programme. Le débit programme est plus faible que la somme des débits d\'équipe : c\'est normal, c\'est ce que mesure l\'<em>efficacité de flux</em> (t4).',
+    risque:'Anti-patterns fréquents : <span class="term-def" data-def="Splitting d\'initiatives : découper artificiellement une initiative en deux ou trois pour faire monter le chiffre du débit. Garantie dès que le débit devient un objectif au lieu d\'un indicateur de santé.">splitting d\'initiatives</span> (effet <span class="term-def" data-def="Principe de Goodhart : dès qu\'une mesure devient un objectif, elle cesse d\'être une bonne mesure. Les équipes optimisent la métrique, pas l\'intention qu\'elle représentait.">Goodhart</span> garanti), <span class="term-def" data-def="Phantom delivery : déclarer une initiative livrée alors qu\'elle est derrière un feature flag dormant, non adoptée, ou en attente de validation utilisateur. Vocabulaire Lean / Flow Framework.">phantom delivery</span> (déclarer livré ce qui est dormant ou non adopté), confusion output/outcome (4 initiatives livrées ≠ 4 initiatives qui créent de la valeur), comparaison inter-programmes (les tailles d\'initiative sont trop hétérogènes — comparer Paiements et CRM au débit pur est trompeur et pousse au splitting). À lire systématiquement avec WIP, Lead Time et un indicateur d\'outcome.',
+    alt:'Si l\'objectif réel est de mesurer la <strong>valeur livrée</strong> et pas la cadence : préférer un indicateur de <em>Value Delivered</em> (Flow Framework de Mik Kersten) ou un OKR centré outcome avec Key Results d\'adoption et d\'impact métier.',
+    roles:['programme','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
+  }
+]);
+</script>
+
+<!-- ══ DATA : TI — Developpement (o1–o3, o5, o8 existants + ti-d1 a ti-d4 nouveaux) ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'o1', niveau:'operationnel', type:'DORA', icone:'🚢',
+    nom:'Fréquence de déploiement',
+    definition:'Nombre de mises en production par unité de temps. Elle reflète la <strong>cadence du pipeline</strong> et la <span class="term-def" data-def="Taille moyenne d\'un changement déployé. Plus elle est petite, plus le risque par déploiement est faible et l\'apprentissage rapide (principe Lean).">taille des lots</span> déployés : plus la fréquence est élevée, plus les changements sont petits et le risque maîtrisé. Elle mesure la maturité technique DevOps — <strong>pas la valeur livrée à l\'utilisateur</strong>, qui relève d\'indicateurs d\'<span class="term-def" data-def="Résultat réellement constaté côté utilisateur ou métier (adoption, satisfaction, conversion), par opposition à l\'output — ce que l\'équipe produit.">outcome</span> distincts (adoption, satisfaction, impact métier).',
+    objectif:'Piloter la maturité DevOps et la taille des lots. Une fréquence élevée corrèle avec des changements plus petits, un risque de déploiement réduit, et une capacité d\'apprentissage rapide (A/B tests, rollback facile). Elle ne préjuge ni de la valeur métier livrée, ni de l\'adoption utilisateur — ces dimensions s\'observent avec des indicateurs d\'outcome distincts.',
+    frequence:'Continue — revue hebdomadaire',
+    exemple_ent:'L\'équipe passe de 1 déploiement/mois à 5 déploiements/semaine grâce à CI/CD et <span class="term-def" data-def="Interrupteurs logiciels permettant d\'activer/désactiver une fonctionnalité sans redéploiement. Utiles pour le canary release, mais ils peuvent gonfler la fréquence de déploiement sans valeur livrée si les flags restent dormants.">feature flags</span>. À ne pas confondre avec « 5× plus de valeur livrée » : la même roadmap déployée par plus petits lots améliore la stabilité, mais pas mécaniquement l\'impact métier.',
+    exemple_eq:'Les équipes élites (rapport DORA) déploient plusieurs fois par jour. C\'est un indicateur de maturité technique et de capacité à livrer par petits incréments — à croiser systématiquement avec un indicateur d\'outcome (adoption, conversion, satisfaction).',
+    risque:'Anti-patterns fréquents : déploiements gonflés par des changements sans valeur utilisateur (« <span class="term-def" data-def="Pratique où les équipes multiplient les déploiements vides ou mineurs pour faire monter la fréquence, sans impact réel sur la valeur livrée. Vocabulaire Lean/DevOps.">deploy theater</span> »), feature flags dormants comptabilisés comme déploiements, Pull Requests artificiellement splittées en micro-déploiements. <span class="term-def" data-def="Principe : dès qu\'une mesure devient un objectif, elle cesse d\'être une bonne mesure. Les équipes optimisent la métrique et non l\'intention qu\'elle représentait.">Effet Goodhart</span> garanti si l\'on vise la fréquence pour elle-même. Toujours croiser avec le taux d\'échec de changement (o3) ET un indicateur d\'outcome (adoption, satisfaction).',
+    roles:['chef-equipe','membre-equipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'intermediaire',
+    branche:'ti', domaine:'dev'
+  },
+  {
+    id:'o2', niveau:'operationnel', type:'DORA', icone:'⏱️',
+    nom:'Délai de livraison des changements (Lead Time for Changes)',
+    definition:'Temps écoulé entre <strong>le premier <em>commit</em> de code</strong> et sa mise en production. Périmètre strict : ingénierie + pipeline — pas l\'amont (idéation, priorisation, conception) ni l\'aval (adoption utilisateur). À distinguer du <span class="term-def" data-def="Lead Time produit ou Flow Framework (Kersten) : temps depuis la demande utilisateur ou la décision produit jusqu\'à la valeur effectivement constatée côté utilisateur. Beaucoup plus large que le Lead Time DORA.">Lead Time produit</span>, qui court de la demande jusqu\'à la valeur constatée.',
+    objectif:'Mesurer la fluidité du pipeline d\'ingénierie : qualité des tests, temps de revue, CI/CD. Une baisse du lead time indique moins de friction technique, pas nécessairement plus de valeur métier livrée.',
+    frequence:'Continue — revue hebdomadaire',
+    exemple_ent:'Passage d\'un Lead Time de 3 semaines à 48h pour les correctifs critiques — résultat d\'une refonte des étapes de revue et d\'un pipeline CI/CD automatisé. À croiser avec le délai <em>idéation → valeur</em> pour mesurer l\'impact métier.',
+    exemple_eq:'Un Lead Time court indique un pipeline fluide côté ingénierie. Si le Lead Time est à 2 jours mais qu\'il faut 3 mois pour qu\'une demande utilisateur soit priorisée, le goulet est en amont — l\'indicateur DORA ne le voit pas.',
+    risque:'Un Lead Time court obtenu au prix de tests précipités, de revues superficielles ou de découpage artificiel dégrade la qualité — croiser systématiquement avec le <strong>taux d\'échec (o3)</strong>. Ne pas confondre avec « on livre de la valeur plus vite » : la valeur suppose aussi adoption et impact, qui se mesurent avec des indicateurs d\'<span class="term-def" data-def="Résultat réellement constaté côté utilisateur ou métier (adoption, satisfaction, conversion), par opposition à l\'output — ce que l\'équipe produit.">outcome</span>.',
+    roles:['chef-equipe','membre-equipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'intermediaire',
+    branche:'ti', domaine:'dev'
+  },
+  {
+    id:'o3', niveau:'operationnel', type:'DORA', icone:'🔴',
+    nom:'Taux d\'échec des changements (Change Failure Rate)',
+    definition:'Pourcentage des deploiements en production qui entrainent une degradation du service ou necessitent une correction urgente.',
+    objectif:'Mesurer la stabilite et la qualite des livraisons mises en production.',
+    frequence:'Continue — revue hebdomadaire',
+    exemple_ent:'Taux a 8 % — objectif : descendre sous 5 % via l\'amelioration de la couverture de tests automatises.',
+    exemple_eq:'Un taux eleve signale des insuffisances dans les tests ou la revue de code.',
+    risque:'Optimiser uniquement ce taux peut freiner l\'innovation si l\'equipe devient trop prudente.',
+    roles:['chef-equipe','membre-equipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'intermediaire',
+    branche:'ti', domaine:'dev'
+  },
+  {
+    id:'o5', niveau:'operationnel', type:'FLUX', icone:'🔄',
+    nom:'Durée de cycle (Cycle Time)',
+    definition:'Temps écoulé entre <strong>le début effectif du travail</strong> sur un item (entrée dans « en cours ») et sa sortie du flux côté équipe (« terminé / prêt à livrer »). Indicateur central du Lean appliqué au logiciel, relié au débit via la <span class="term-def" data-def="Little\'s Law : Cycle Time = WIP / Throughput. Réduire l\'encours (WIP) est le levier le plus puissant pour réduire le Cycle Time.">loi de Little</span>. Mesure une fluidité de flux côté équipe — pas le délai de valeur perçue par l\'utilisateur.',
+    objectif:'Mesurer la fluidité du flux de travail côté équipe, détecter les goulets et améliorer la prévisibilité. Le Cycle Time court ne garantit pas que les items produits aient de la valeur : croiser avec indicateurs d\'outcome.',
+    frequence:'Continue — revue hebdomadaire',
+    exemple_ent:'La durée de cycle passe de 12 à 4 jours après révision du processus de revue et réduction de la taille des lots. Gain de prévisibilité, à coupler avec un indicateur d\'outcome pour valider que les items livrés servent les objectifs métier.',
+    exemple_eq:'Une durée courte ET prévisible signale un processus maîtrisé. Préférer mesurer la médiane et le 85e percentile à la moyenne (moins sensible aux outliers). Les graphes en nuage de points (Cycle Time Scatter) révèlent la variabilité, pas juste la tendance centrale.',
+    risque:'Découper artificiellement le travail en tâches trop petites réduit le Cycle Time à l\'écran mais crée du gaspillage de coordination (effet Goodhart). Un Cycle Time stable sur des items sans valeur reste un Cycle Time stable : c\'est un indicateur de flux, pas de performance métier.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:false, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'ti', domaine:'dev'
+  },
+  {
+    id:'o8', niveau:'operationnel', type:'ICC', icone:'🧪',
+    nom:'Couverture de tests automatises',
+    definition:'Pourcentage du code couvert par des tests automatises (unitaires, integration, bout-en-bout). Mesure de la confiance dans les deploiements.',
+    objectif:'Mesurer la maturite des pratiques d\'ingenierie et la securite des livraisons continues.',
+    frequence:'Continue — revue a chaque livraison',
+    exemple_ent:'Atteindre 80 % de couverture avant chaque livraison majeure, avec au moins 60 % de tests d\'integration.',
+    exemple_eq:'Indicateur de comportement : une couverture croissante reflète l\'investissement collectif dans la qualite.',
+    risque:'La couverture ne dit rien de la qualite des tests eux-memes. Une couverture a 90 % avec des tests mal ecrits donne une fausse securite.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire',
+    branche:'ti', domaine:'dev'
+  },
+  {
+    id:'ti-d1', niveau:'operationnel', type:'ICC', icone:'📉',
+    nom:'Ratio de dette technique',
+    definition:'Rapport entre le temps necessaire pour remedier aux problemes de qualite du code existant et le cout total de developpement du systeme.',
+    objectif:'Maintenir la sante du code et la velocite de livraison sur le long terme.',
+    frequence:'Mensuelle (analyse SonarQube ou equivalent)',
+    exemple_ent:'Ratio de dette technique a 12 % — objectif : passer sous 8 % en 2 trimestres en dediant 20 % de chaque sprint au remboursement.',
+    exemple_eq:'Un ratio croissant signale que l\'equipe accumule de la dette plutot que de la rembourser — signal d\'alerte pour la direction.',
+    risque:'Un ratio tres bas peut reflecter une absence de mesure plutot qu\'un code parfait. Choisir un outil de mesure fiable et coherent.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire',
+    branche:'ti', domaine:'dev'
+  },
+  {
+    id:'ti-d2', niveau:'operationnel', type:'ICP', icone:'🏁',
+    nom:'Taux de completion de sprint',
+    definition:'Pourcentage des elements planifies en debut de sprint effectivement livres et valides a la fin du sprint.',
+    objectif:'Mesurer la previsibilite de l\'equipe et la qualite de sa planification.',
+    frequence:'Par sprint (toutes les 2 semaines)',
+    exemple_ent:'Taux de completion stable a 82 % sur 6 sprints — signale une planification mature, ni trop ambitieuse ni trop conservative.',
+    exemple_eq:'Un taux < 70 % signale une planification insuffisante ou des impediments recurrents. Un taux de 100 % peut indiquer des engagements trop prudents.',
+    risque:'Peut encourager l\'equipe a ne planifier que des taches certaines pour afficher un beau taux, au detriment de l\'ambition.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant',
+    branche:'ti', domaine:'dev'
+  },
+  {
+    id:'ti-d3', niveau:'operationnel', type:'DORA', icone:'🐛',
+    nom:'Taux de defauts echappes en production (Escaped Defect Rate)',
+    definition:'Nombre de defauts decouverts en production par les utilisateurs, rapporte au volume de livraisons sur la meme periode.',
+    objectif:'Mesurer l\'efficacite des pratiques de test et la qualite reelle livree aux utilisateurs.',
+    frequence:'Continue — revue hebdomadaire',
+    exemple_ent:'2,3 defauts echappes pour 10 deploiements ce mois — en baisse de 40 % depuis l\'introduction des tests d\'acceptance automatises.',
+    exemple_eq:'Chaque defaut echappe est un signal que quelque chose n\'a pas ete couvert lors des tests ou de la revue de code.',
+    risque:'Un taux nul pendant longtemps peut indiquer que les utilisateurs ne rapportent pas les problemes plutot qu\'une qualite parfaite.',
+    roles:['chef-equipe','membre-equipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'ti', domaine:'dev'
+  },
+  {
+    id:'ti-d4', niveau:'operationnel', type:'ICC', icone:'🔍',
+    nom:'Délai de revue de code (PR Turnaround Time)',
+    definition:'Duree moyenne entre la soumission d\'une pull request et son approbation ou son rejet documente.',
+    objectif:'Mesurer la fluidite des pratiques de collaboration et l\'absence de goulots dans la revue de code.',
+    frequence:'Continue — revue hebdomadaire',
+    exemple_ent:'Delai moyen de revue : 6 heures. Objectif : maintenir sous 4 heures pour ne pas bloquer le flux de livraison.',
+    exemple_eq:'Un long delai de revue ralentit tout le pipeline de livraison. Il reflete aussi la disponibilite et la collaboration de l\'equipe.',
+    risque:'Reduire le delai en approuvant sans vraiment relire le code degraderait la qualite. La vitesse de revue doit rester associee a la qualite des commentaires.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:false, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'ti', domaine:'dev'
+  }
+]);
+</script>
+
+<!-- ══ DATA : TI — Plateforme & DevOps (ti-p1 a ti-p5) ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'ti-p1', niveau:'operationnel', type:'ICP', icone:'🟢',
+    nom:'Disponibilite du pipeline CI/CD',
+    definition:'Pourcentage du temps durant lequel le pipeline d\'integration et de deploiement continus est operationnel et capable d\'executer des builds.',
+    objectif:'Garantir que les equipes de developpement ne sont jamais bloquees par une indisponibilite de leur outillage de livraison.',
+    frequence:'Continue — rapport quotidien',
+    exemple_ent:'Disponibilite pipeline a 99,2 % ce mois — 1 incident de 5 heures lie a une mise a jour de l\'agent Jenkins. SLA interne : 99,5 %.',
+    exemple_eq:'Une indisponibilite pipeline bloque toutes les livraisons. L\'equipe Plateforme est directement responsable de cet indicateur.',
+    risque:'Un taux elevé peut masquer une disponibilite formelle mais avec des performances degradees (builds lents). Croiser avec la duree de build.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'ti', domaine:'plateforme'
+  },
+  {
+    id:'ti-p2', niveau:'operationnel', type:'FLUX', icone:'⏰',
+    nom:'Duree moyenne de build',
+    definition:'Temps moyen necessaire pour qu\'un build complet (compilation, tests, analyse) se termine avec succes dans le pipeline CI.',
+    objectif:'Reduire la friction dans le cycle de feedback des developpeurs et accelerer la boucle de validation.',
+    frequence:'Continue — revue hebdomadaire',
+    exemple_ent:'Duree de build reduite de 22 min a 8 min apres parallelisation des tests et mise en cache des dependances.',
+    exemple_eq:'Un build long decoura ge les developpeurs de commiter frequemment, degradant ainsi la frequence de deploiement.',
+    risque:'Reduire la duree en supprimant des tests raccourcit les builds mais degrade la qualite. Optimiser par parallelisation, pas par reduction des tests.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'ti', domaine:'plateforme'
+  },
+  {
+    id:'ti-p3', niveau:'operationnel', type:'DORA', icone:'✅',
+    nom:'Taux de succes du pipeline (Pipeline Success Rate)',
+    definition:'Pourcentage des executions de pipeline CI/CD qui se terminent avec succes, sans echec de build, de test ou de deploiement.',
+    objectif:'Mesurer la stabilite de la chaine de livraison et la qualite du code soumis.',
+    frequence:'Continue — revue hebdomadaire',
+    exemple_ent:'Taux de succes a 87 % — 13 % d\'echecs principalement dus a des tests instables (flaky tests). Plan d\'action pour stabiliser 20 tests identifiés.',
+    exemple_eq:'Un faible taux signale soit des tests instables, soit un code de mauvaise qualite soumis sans validation locale prealable.',
+    risque:'Des tests desactives pour "corriger" le taux font monter le chiffre sans corriger le probleme sous-jacent.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'ti', domaine:'plateforme'
+  },
+  {
+    id:'ti-p4', niveau:'operationnel', type:'FLUX', icone:'⚡',
+    nom:'Délai de provisionnement d\'infrastructure',
+    definition:'Temps moyen necessaire pour provisionner un nouvel environnement (dev, staging, production) de zero a entierement operationnel.',
+    objectif:'Mesurer l\'agilite de l\'infrastructure et la maturite des pratiques Infrastructure-as-Code.',
+    frequence:'Mensuelle (sur evenement)',
+    exemple_ent:'Provisionnement d\'un environnement de staging : de 3 jours a 45 minutes apres migration vers Terraform + pipeline automatise.',
+    exemple_eq:'Un long delai de provisionnement bloque les equipes lorsqu\'elles ont besoin d\'un nouvel environnement rapidement.',
+    risque:'Un tres court delai peut refleter un environnement provisonn e de facon manuelle et non reproductible. Privilegier l\'automatisation documentee.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:false, fiabilite:'fiable', maturite_min:'intermediaire',
+    branche:'ti', domaine:'plateforme'
+  },
+  {
+    id:'ti-p5', niveau:'operationnel', type:'ICC', icone:'📜',
+    nom:'Taux d\'adoption de l\'Infrastructure-as-Code (IaC)',
+    definition:'Pourcentage de l\'infrastructure totale gere via du code versionne (Terraform, Ansible, Pulumi, etc.) plutot que via des operations manuelles.',
+    objectif:'Mesurer la progression vers une infrastructure reproductible, versionnee et auditab le.',
+    frequence:'Trimestrielle',
+    exemple_ent:'Taux d\'adoption IaC a 68 % — objectif 90 % avant fin d\'annee. Les 32 % restants sont des serveurs legacy difficiles a migrer.',
+    exemple_eq:'Un taux eleve reduit le risque d\'ecart entre les environnements (dev/staging/prod) et accelere les deploiements futurs.',
+    risque:'L\'IaC mal ecrit peut etre aussi dangereux que des operations manuelles. La qualite du code IaC doit etre soumise aux memes revues que le code applicatif.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:false, fiabilite:'fiable', maturite_min:'intermediaire',
+    branche:'ti', domaine:'plateforme'
+  }
+]);
+</script>
+
+
+<!-- ══ DATA : TI — Operations & Support (o4 existant + ti-o1 a ti-o5 nouveaux) ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'o4', niveau:'operationnel', type:'DORA', icone:'🔧',
+    nom:'Temps de rétablissement du service (MTTR)',
+    definition:'Duree moyenne entre la detection d\'un incident en production et le retablissement complet du service pour les utilisateurs.',
+    objectif:'Mesurer la resilience operationnelle et la capacite de reaction face aux incidents.',
+    frequence:'Sur evenement — revue mensuelle',
+    exemple_ent:'MTTR reduit de 6 heures a 45 minutes grace a l\'automatisation des alertes et aux procedures documentees.',
+    exemple_eq:'Un temps court reflète de bonnes pratiques : observabilite, runbooks, automatisation des retours arriere.',
+    risque:'Se concentrer sur la rapidite de retablissement sans analyser les causes profondes revient a traiter les symptomes. Pratiquer systematiquement l\'analyse post-incident.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'ti', domaine:'ops-support'
+  },
+  {
+    id:'ti-o1', niveau:'operationnel', type:'ICP', icone:'💪',
+    nom:'MTBF — Temps moyen entre pannes',
+    definition:'Duree moyenne entre deux incidents en production sur un meme service ou composant. Mesure de la stabilite intrinseque du systeme.',
+    objectif:'Evaluer la fiabilite du systeme et prioriser les investissements de stabilisation.',
+    frequence:'Mensuelle',
+    exemple_ent:'MTBF de 15 jours sur le service de paiement — objectif : 30 jours avant Q3 apres refonte du module de connexion base de donnees.',
+    exemple_eq:'Un MTBF en hausse signifie que le systeme devient plus stable. Un MTBF stable malgre des correctifs indique une cause profonde non traitee.',
+    risque:'Le MTBF peut etre ameliore artificiellement en sous-declarant les incidents. Necesssite une culture de transparence dans le signalement des problemes.',
+    roles:['chef-equipe','membre-equipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'ti', domaine:'ops-support'
+  },
+  {
+    id:'ti-o2', niveau:'operationnel', type:'ICP', icone:'📞',
+    nom:'Resolution au premier contact (FCR)',
+    definition:'Pourcentage de tickets ou d\'incidents resolus sans necessite de rer ouvrir ou de remonter a un niveau superieur.',
+    objectif:'Mesurer l\'efficacite et la qualite des interventions de l\'equipe de support.',
+    frequence:'Hebdomadaire',
+    exemple_ent:'FCR a 74 % — les 26 % de rer ouvertures sont principalement lies a des solutions provisoires documentees comme definitives.',
+    exemple_eq:'Un FCR eleve reflete une base de connaissances riche, une bonne formation et une resolution de cause profonde plutot que de cause symptomatique.',
+    risque:'Fermer un ticket "resolu" sans verification aupres de l\'utilisateur gonfle artificiellement le FCR. Mesurer aussi la satisfaction post-resolution.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant',
+    branche:'ti', domaine:'ops-support'
+  },
+  {
+    id:'ti-o3', niveau:'operationnel', type:'ICP', icone:'📄',
+    nom:'Conformite SLA (SLA Compliance Rate)',
+    definition:'Pourcentage d\'incidents et de demandes traites dans les delais definis par les accords de niveau de service.',
+    objectif:'Garantir le respect des engagements de service pris envers les utilisateurs et les metiers.',
+    frequence:'Mensuelle',
+    exemple_ent:'Conformite SLA a 91 % — 9 % de violations concentrees sur la categorie "haute priorite" dont le delai cible de 4 heures est trop ambitieux au vu de la capacite actuelle.',
+    exemple_eq:'Une faible conformite SLA signale soit des SLA mal calibres, soit une equipe sous-dimensionnee ou mal organisee.',
+    risque:'Des SLA definis sans analyse de capacite reelle genereront inevitablement des violations. Revisiter les SLA regulierement et les baser sur des donnees historiques.',
+    roles:['chef-equipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'ti', domaine:'ops-support'
+  },
+  {
+    id:'ti-o4', niveau:'operationnel', type:'ICC', icone:'🔁',
+    nom:'Taux de recurrence d\'incidents',
+    definition:'Pourcentage d\'incidents recurrents (meme cause profonde) parmi l\'ensemble des incidents traites sur la periode.',
+    objectif:'Mesurer l\'efficacite des corrections permanentes et de la pratique d\'analyse des causes profondes.',
+    frequence:'Mensuelle',
+    exemple_ent:'Taux de recurrence a 22 % — signale que les corrections sont souvent provisoires. Lancement d\'une initiative d\'analyse post-incident systematique.',
+    exemple_eq:'Chaque incident recurrent represente un echec de la correction precedente. Ce taux mesure la qualite de la resolution, pas juste la rapidite.',
+    risque:'Un taux de recurrence faible peut refleter un sous-signalement ou une categorisation inadaptee des incidents, pas une resolution systematique.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:false, fiabilite:'fiable', maturite_min:'intermediaire',
+    branche:'ti', domaine:'ops-support'
+  },
+  {
+    id:'ti-o5', niveau:'operationnel', type:'ICP', icone:'💳',
+    nom:'Cout moyen par ticket de support',
+    definition:'Cout total de l\'equipe de support divise par le nombre de tickets traites sur la periode. Indicateur d\'efficacite economique du support.',
+    objectif:'Identifier les opportunites d\'automatisation et evaluer l\'efficience du modele de support.',
+    frequence:'Trimestrielle',
+    exemple_ent:'Cout par ticket a 47 EUR — objectif : 32 EUR via l\'introduction d\'un chatbot pour les demandes de niveau 1 (reinitialisation de mots de passe, acces).',
+    exemple_eq:'Un cout eleve peut signaler un manque d\'automatisation, de self-service ou une mauvaise classification des tickets.',
+    risque:'Optimiser exclusivement ce cout peut degrader la qualite du service si l\'equipe est reduite sans reduire le volume de tickets.',
+    roles:['chef-equipe','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire',
+    branche:'ti', domaine:'ops-support'
+  }
+]);
+</script>
+
+<!-- ══ DATA : TI — Securite (ti-s1 a ti-s5) ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'ti-s1', niveau:'operationnel', type:'ICP', icone:'🔎',
+    nom:'Délai de détection des incidents de sécurité (MTTD)',
+    definition:'Duree moyenne entre le debut reel d\'une attaque ou d\'une compromission et sa detection par les systemes ou les equipes de securite.',
+    objectif:'Reduire la fenetre d\'exposition lors d\'un incident de securite pour limiter l\'impact.',
+    frequence:'Mensuelle (sur evenement)',
+    exemple_ent:'MTTD reduit de 72 heures a 4 heures grace au deploiement d\'un SIEM et a la creation de regles de detection adaptees.',
+    exemple_eq:'Un MTTD long signifie que des attaques restent invisibles pendant des jours — chaque heure gagnee reduit dramatiquement les dommages.',
+    risque:'Un MTTD court peut refleter un grand nombre de faux positifs saturant l\'equipe. Mesurer aussi la precision des alertes (signal vs bruit).',
+    roles:['chef-equipe','direction'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'ti', domaine:'securite'
+  },
+  {
+    id:'ti-s2', niveau:'operationnel', type:'DORA', icone:'🛡',
+    nom:'Temps de rétablissement sécurité (MTTR Sécurité)',
+    definition:'Duree entre la detection d\'un incident de securite confirme et la restauration complete et securisee du service affecte.',
+    objectif:'Mesurer la capacite de l\'organisation a contenir et remedier rapidement a un incident de securite.',
+    frequence:'Sur evenement — revue mensuelle',
+    exemple_ent:'MTTR securite : 8 heures en moyenne — objectif : 4 heures via la creation de runbooks de reponse a incident pre-approuves.',
+    exemple_eq:'Un MTTR long augmente la duree d\'exposition et le risque de fuite de donnees. La preparation (runbooks, exercices) est le principal levier de reduction.',
+    risque:'Fermer un incident trop vite sans s\'assurer de l\'elimination de la cause profonde peut laisser une porte derobee active.',
+    roles:['chef-equipe','membre-equipe','direction'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'ti', domaine:'securite'
+  },
+  {
+    id:'ti-s3', niveau:'operationnel', type:'ICP', icone:'🧹',
+    nom:'Délai de remédiation des vulnérabilités (par sévérité)',
+    definition:'Duree moyenne entre la decouverte d\'une vulnerabilite et son correctif deploye en production, segmentee par niveau de severite (critique, haute, moyenne).',
+    objectif:'Mesurer la discipline de l\'equipe a remedier les vulnerabilites avant qu\'elles ne soient exploitees.',
+    frequence:'Continue — rapport hebdomadaire',
+    exemple_ent:'Vulnerabilites critiques : remediation en 48h en moyenne (SLA interne : 24h). Hautes : 7 jours. Moyennes : 30 jours.',
+    exemple_eq:'Chaque vulnerabilite non remediee dans les delais est une fenetre d\'opportunite pour un attaquant. Le suivi doit etre automatise et visible.',
+    risque:'Des SLA de remediation trop agressifs peuvent pousser les equipes a deployer des correctifs non testes, creant de nouveaux problemes.',
+    roles:['chef-equipe','membre-equipe','direction'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'ti', domaine:'securite'
+  },
+  {
+    id:'ti-s4', niveau:'operationnel', type:'ICC', icone:'🧪',
+    nom:'Couverture des tests de sécurité',
+    definition:'Pourcentage des composants et des flux critiques couverts par des tests de securite automatises (SAST, DAST, tests de penetration periodiques).',
+    objectif:'Mesurer la maturite des pratiques de securite integree au cycle de developpement (DevSecOps).',
+    frequence:'Mensuelle',
+    exemple_ent:'55 % des microservices analyses par SAST dans le pipeline CI — objectif 80 % en 2 trimestres. Aucun DAST en place pour l\'instant.',
+    exemple_eq:'L\'integration de tests de securite dans le pipeline CI permet de detecter les vulnerabilites avant la production, pas apres.',
+    risque:'Un taux de couverture eleve avec des regles de test trop permissives donne une fausse securite. La qualite des regles de detection est aussi importante que la couverture.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire',
+    branche:'ti', domaine:'securite'
+  },
+  {
+    id:'ti-s5', niveau:'operationnel', type:'ICP', icone:'📋',
+    nom:'Score de conformite reglementaire (Compliance Score)',
+    definition:'Pourcentage de controles reglementaires (RGPD, ISO 27001, SOC2, PCI-DSS...) satisfaits lors du dernier audit ou auto-evaluation.',
+    objectif:'Mesurer l\'etat de conformite de l\'organisation par rapport aux reglementations et normes applicables.',
+    frequence:'Trimestrielle — audit annuel',
+    exemple_ent:'Score de conformite ISO 27001 a 78 % — 12 ecarts identifies dont 3 critiques. Feuille de route de remediation sur 6 mois.',
+    exemple_eq:'Les equipes contribuent en appliquant les pratiques de securite documentees : chiffrement, journalisation, gestion des acces.',
+    risque:'Un score de conformite n\'est pas equivalent a un niveau de securite. La conformite mesure le suivi des procedures, pas l\'efficacite reelle de la securite.',
+    roles:['chef-equipe','direction'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant',
+    branche:'ti', domaine:'securite'
+  }
+]);
+</script>
+
+<!-- ══ DATA : Indicateurs communs (FLUX, ORC, Transverses) — valables toutes equipes ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'o6', niveau:'operationnel', type:'FLUX', icone:'📦',
+    nom:'Débit d\'équipe (Throughput)',
+    definition:'Nombre d\'<span class="term-def" data-def="Items qui traversent le flux de travail : stories, tickets, PRs, cartes Kanban. Unité de comptage d\'output (ce que l\'équipe produit), distincte de la valeur effectivement livrée.">flow items</span> (stories, tickets, cartes) qui franchissent la ligne « terminé » par unité de temps. C\'est une mesure d\'<strong>output</strong> (ce que l\'équipe produit) objective et comptable — <strong>pas une mesure de valeur livrée</strong>, qui relève d\'indicateurs d\'<span class="term-def" data-def="Résultat réellement constaté côté utilisateur ou métier (adoption, satisfaction, conversion), par opposition à l\'output — ce que l\'équipe produit.">outcome</span> (adoption, impact métier).',
+    objectif:'Estimer la capacité de production de l\'équipe et sa prévisibilité. Couplé à la durée de cycle via la loi de Little, il permet de prévoir les délais sans engagement de dates arbitraires. Ne préjuge ni de l\'impact métier, ni de la pertinence des items livrés.',
+    frequence:'Par itération — revue mensuelle',
+    exemple_ent:'L\'équipe livre en moyenne 12 items/itération avec une variabilité de ±2. Prévisibilité suffisante pour planifier à 3 mois. Mais « 12 items livrés » ne dit rien de la valeur : 12 items utiles = impact fort ; 12 items opportunistes = deploy theater.',
+    exemple_eq:'Alternative objective à la vélocité : contrairement aux <em>story points</em>, le débit se compte sans estimation. Attention : le garder pour les tendances internes — comparer le débit entre équipes n\'a pas de sens car la taille des items varie. Toujours coupler avec un indicateur d\'outcome (satisfaction, adoption, KR business).',
+    risque:'Anti-patterns : découper artificiellement les items pour gonfler le débit (fausse amélioration, vrai <span class="term-def" data-def="Principe : dès qu\'une mesure devient un objectif, elle cesse d\'être une bonne mesure. Les équipes optimisent la métrique et non l\'intention qu\'elle représentait.">effet Goodhart</span>), comparer le débit entre équipes (taille d\'items hétérogène), l\'utiliser comme objectif individuel (destruction de la collaboration). Le débit sans outcome associé est un indicateur d\'activité, pas de performance.',
+    roles:['chef-equipe','portefeuille'], prioritaire:false, fiabilite:'fiable', maturite_min:'debutant'
+  },
+  {
+    id:'o7', niveau:'operationnel', type:'FLUX', icone:'📋',
+    nom:'Encours de travail (WIP)',
+    definition:'Nombre d\'elements traites simultanement dans le flux de l\'equipe a un instant donne. Indicateur fondamental du Kanban et du Lean.',
+    objectif:'Identifier la surcharge, limiter les changements de contexte et rendre le flux previsible.',
+    frequence:'Continue — revue quotidienne',
+    exemple_ent:'L\'equipe fixe une limite d\'encours a 6 elements pour 4 personnes — au-dela, tout nouvel element est bloque jusqu\'a livraison.',
+    exemple_eq:'La loi de Little etablit que reduire l\'encours est le levier le plus puissant pour reduire la duree de cycle.',
+    risque:'Des limites trop rigides peuvent bloquer si elles ignorent les urgences. Adapter les regles au contexte.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:false, fiabilite:'fiable', maturite_min:'debutant'
+  },
+  {
+    id:'o9', niveau:'operationnel', type:'ORC', icone:'🎯',
+    nom:'Objectifs & Résultats Clés d\'équipe (OKR)',
+    definition:'Objectifs ambitieux definis par et pour l\'equipe, associes a 2-4 resultats cles mesurables pour un trimestre.',
+    objectif:'Aligner les efforts de l\'equipe sur les priorites strategiques tout en favorisant l\'auto-organisation.',
+    frequence:'Trimestrielle — revision hebdomadaire',
+    exemple_ent:'Objectif : Ameliorer la resilience du service de paiement — RC1 : MTTR < 30 min. RC2 : Taux d\'echec < 3 %.',
+    exemple_eq:'Les OKR d\'equipe sont co-construits par les membres — ils ne doivent jamais etre imposes par le management.',
+    risque:'Lier les OKR a l\'evaluation individuelle ou aux primes detruit leur raison d\'etre.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:true, fiabilite:'precaution', maturite_min:'intermediaire'
+  },
+  {
+    id:'x1', niveau:'operationnel', type:'FLUX', icone:'⚡',
+    nom:'Velocite (Velocity)',
+    definition:'Nombre de points de complexite (story points) completes par l\'equipe durant une iteration. Unite inventee par chaque equipe, non standardisee.',
+    objectif:'Estimer la capacite de l\'equipe en methode Scrum.',
+    frequence:'Par sprint',
+    exemple_ent:'L\'equipe complete en moyenne 42 points par sprint. Utilise pour estimer combien d\'iterations seront necessaires.',
+    exemple_eq:'Tres repandue en Scrum. A remplacer progressivement par le Debit et la Duree de cycle, plus objectifs.',
+    risque:'Subjective, gameable, ne mesure pas la valeur livree. Comparer les velocites entre equipes est une erreur manageriale grave.',
+    alt:'Debit d\'equipe (Throughput) · Duree de cycle (Cycle Time)',
+    roles:['chef-equipe','membre-equipe'], prioritaire:false, fiabilite:'risque', maturite_min:'debutant'
+  },
+  {
+    id:'x2', niveau:'operationnel', type:'FLUX', icone:'📉',
+    nom:'Graphe de progression d\'iteration (Burndown Chart)',
+    definition:'Representation visuelle de la quantite de travail restante dans une iteration, comparee a la trajectoire ideale.',
+    objectif:'Visualiser l\'avancement et detecter les risques de non-atteinte des engagements.',
+    frequence:'Quotidienne — par iteration',
+    exemple_ent:'Le graphe montre que l\'equipe est en retard de 30 % sur sa trajectoire ideale a mi-iteration.',
+    exemple_eq:'Utile pour les debutants en Scrum. Perd de son utilite en flux continu (Kanban).',
+    risque:'Peut encourager a cloturer les taches rapidement plutot qu\'a les terminer correctement. Inutile en contexte Kanban.',
+    alt:'Cumulative Flow Diagram · Debit · Duree de cycle',
+    roles:['chef-equipe','membre-equipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant'
+  },
+  {
+    id:'x4', niveau:'operationnel', type:'ICC', icone:'💚',
+    nom:'Indice de bien-etre de l\'equipe (Team Health Check)',
+    definition:'Evaluation subjective periodique du niveau d\'engagement, satisfaction et bien-etre des membres, via un sondage rapide anonyme.',
+    objectif:'Detecter les signaux faibles de desengagement ou de surcharge avant qu\'ils n\'impactent la performance.',
+    frequence:'Hebdomadaire ou bi-mensuelle',
+    exemple_ent:'Score de 3,8/5 cette semaine, en baisse de 0,6 depuis 3 semaines. Signal d\'alerte traite en retrospective.',
+    exemple_eq:'Precieux pour le responsable d\'equipe comme signal d\'alerte precoce. Ne jamais utiliser pour evaluer individuellement.',
+    risque:'Les equipes peuvent declarer ce qu\'elles pensent que le manager veut entendre. Doit etre strictement anonyme.',
+    alt:'Entretiens individuels · Retrospectives structurees',
+    roles:['chef-equipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant'
+  },
+  {
+    id:'x5', niveau:'operationnel', type:'ICP', icone:'🔢',
+    nom:'Nombre de fonctionnalites livrees (Feature Count)',
+    definition:'Comptage brut du nombre de fonctionnalites livrees sur une periode, sans distinction de taille ou de valeur.',
+    objectif:'Mesurer le volume de production d\'une equipe sur une periode donnee.',
+    frequence:'Par iteration — mensuelle',
+    exemple_ent:'18 fonctionnalites livrees ce trimestre — en hausse de 20 % mais sans mesure de valeur reelle generee.',
+    exemple_eq:'Mesure l\'activite, pas la valeur. Favorise le morcellement artificiel pour gonfler les chiffres.',
+    risque:'Une equipe peut livrer 30 fonctionnalites inutiles et sembler tres performante. Remplacer par des indicateurs d\'impact.',
+    alt:'Debit · Indicateurs d\'impact (KII) · Resultats cles (ORC)',
+    roles:['chef-equipe','portefeuille'], prioritaire:false, fiabilite:'risque', maturite_min:'debutant'
+  }
+]);
+</script>
+
+
+<!-- ══ DATA : Affaires — Commercial (af-c1 a af-c5) ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'af-c1', niveau:'operationnel', type:'ICP', icone:'💹',
+    nom:'Taux de conversion',
+    definition:'Pourcentage de prospects ou d\'opportunites qui se transforment en clients sur une periode donnee.',
+    objectif:'Mesurer l\'efficacite du processus commercial et la qualite des leads entrants.',
+    frequence:'Mensuelle',
+    exemple_ent:'Taux de conversion de 18 % sur les leads qualifies — objectif 22 % via la refonte du script de decouverte.',
+    exemple_eq:'L\'equipe commerciale suit ce taux par representant et par segment pour identifier les meilleures pratiques a partager.',
+    risque:'Un taux en hausse peut refleter une selectivite accrue en amont (qualification plus stricte) plutot qu\'une meilleure performance commerciale.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'affaires', domaine:'commercial'
+  },
+  {
+    id:'af-c2', niveau:'operationnel', type:'FLUX', icone:'🗓',
+    nom:'Duree du cycle de vente',
+    definition:'Duree moyenne entre le premier contact qualifie avec un prospect et la signature du contrat.',
+    objectif:'Mesurer et reduire la friction dans le processus commercial pour accelerer la generation de revenus.',
+    frequence:'Mensuelle',
+    exemple_ent:'Cycle de vente moyen de 47 jours — reduction a 32 jours ciblee via l\'elimination de 2 etapes de validation internes inutiles.',
+    exemple_eq:'Un long cycle signale souvent des goulots d\'approbation internes ou une proposition de valeur insuffisamment claire.',
+    risque:'Reduire le cycle de vente en sautant des etapes de qualification peut accroitre les desistements post-signature.',
+    roles:['chef-equipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'affaires', domaine:'commercial'
+  },
+  {
+    id:'af-c3', niveau:'operationnel', type:'II', icone:'💰',
+    nom:'Valeur vie client (LTV — Lifetime Value)',
+    definition:'Revenu total genere par un client sur la duree complete de sa relation avec l\'entreprise.',
+    objectif:'Evaluer la valeur economique reelle des clients et orienter les investissements d\'acquisition et de fidelisation.',
+    frequence:'Trimestrielle',
+    exemple_ent:'LTV moyenne de 24 000 EUR par client B2B — justifie un cout d\'acquisition pouvant aller jusqu\'a 8 000 EUR (ratio LTV/CAC de 3).',
+    exemple_eq:'L\'equipe commerciale optimise la LTV en ciblant des segments a fort potentiel de renouvellement et d\'upsell.',
+    risque:'La LTV est une projection, pas une mesure certaine. Les hypotheses de retention peuvent etre trop optimistes.',
+    roles:['chef-equipe','direction'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire',
+    branche:'affaires', domaine:'commercial'
+  },
+  {
+    id:'af-c4', niveau:'operationnel', type:'ICP', icone:'🏆',
+    nom:'Taux d\'atteinte des quotas',
+    definition:'Pourcentage des representants commerciaux ayant atteint ou depasse leur objectif de vente sur la periode.',
+    objectif:'Mesurer la performance globale de la force de vente et identifier les ecarts entre individus.',
+    frequence:'Mensuelle · Trimestrielle',
+    exemple_ent:'62 % des commerciaux ont atteint leur quota ce trimestre — objectif : 75 %. Analyse des pratiques des top performers lancee.',
+    exemple_eq:'Un taux faible peut signaler des quotas inatteignables, une formation insuffisante ou un manque de leads qualifies.',
+    risque:'Comparer les individus uniquement sur ce taux ignore la qualite du territoire, du portefeuille clients et du soutien recu.',
+    roles:['chef-equipe','portefeuille'], prioritaire:true, fiabilite:'precaution', maturite_min:'debutant',
+    branche:'affaires', domaine:'commercial'
+  },
+  {
+    id:'af-c5', niveau:'operationnel', type:'ICP', icone:'📊',
+    nom:'Couverture du pipeline commercial',
+    definition:'Rapport entre la valeur totale des opportunites en cours dans le pipeline et l\'objectif de revenus de la periode.',
+    objectif:'Verifier que le volume d\'opportunites est suffisant pour atteindre les objectifs, meme en cas de pertes.',
+    frequence:'Hebdomadaire',
+    exemple_ent:'Couverture de pipeline a 3,2x l\'objectif — acceptable. En dessous de 3x, le risque de manquer les objectifs augmente significativement.',
+    exemple_eq:'Un pipeline insuffisant en volume ou en qualite est le premier signal d\'alerte avant un trimestre manque.',
+    risque:'Un pipeline gonfle d\'opportunites peu qualifiees donne une fausse confiance. La qualite des opportunites est aussi importante que leur volume.',
+    roles:['chef-equipe','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant',
+    branche:'affaires', domaine:'commercial'
+  }
+]);
+</script>
+
+<!-- ══ DATA : Affaires — Marketing (af-m1 a af-m5) ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'af-m1', niveau:'operationnel', type:'ICP', icone:'💸',
+    nom:'Cout d\'acquisition client (CAC)',
+    definition:'Cout total des depenses marketing et commerciales divise par le nombre de nouveaux clients acquis sur la periode.',
+    objectif:'Mesurer l\'efficience des investissements d\'acquisition et assurer la rentabilite du modele de croissance.',
+    frequence:'Mensuelle · Trimestrielle',
+    exemple_ent:'CAC a 2 800 EUR — en hausse de 15 % ce trimestre. Ratio LTV/CAC a 3,2 : acceptable, mais a surveiller.',
+    exemple_eq:'Un CAC en hausse signale une baisse d\'efficience des canaux d\'acquisition ou une concurrence accrue sur le marche.',
+    risque:'Le CAC calcule en periode de forte croissance peut sous-estimer les couts reels (delai entre investissement et acquisition).',
+    roles:['chef-equipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'affaires', domaine:'marketing'
+  },
+  {
+    id:'af-m2', niveau:'operationnel', type:'ICP', icone:'🔗',
+    nom:'Cout par lead qualifie (CPL)',
+    definition:'Depense marketing totale divisee par le nombre de leads qualifies (MQL ou SQL) generes sur la periode.',
+    objectif:'Evaluer l\'efficience des campagnes marketing dans la generation de leads a forte probabilite de conversion.',
+    frequence:'Mensuelle',
+    exemple_ent:'CPL a 180 EUR sur le canal LinkedIn Ads contre 95 EUR sur le SEO — optimisation du budget vers le SEO lancee.',
+    exemple_eq:'Comparer le CPL par canal permet d\'allouer le budget vers les sources les plus rentables.',
+    risque:'Optimiser exclusivement le CPL peut generer des leads peu qualifies en abondance, surchargeant l\'equipe commerciale.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant',
+    branche:'affaires', domaine:'marketing'
+  },
+  {
+    id:'af-m3', niveau:'operationnel', type:'FLUX', icone:'🔁',
+    nom:'Taux de conversion MQL vers SQL',
+    definition:'Pourcentage de leads qualifies par le marketing (MQL) qui sont acceptes et qualifies par l\'equipe commerciale (SQL).',
+    objectif:'Mesurer l\'alignement entre marketing et ventes et la qualite des leads transmis.',
+    frequence:'Mensuelle',
+    exemple_ent:'Taux MQL-SQL a 32 % — signifie que 68 % des leads marketing ne repondent pas aux criteres commerciaux. Atelier d\'alignement lance.',
+    exemple_eq:'Un faible taux revele un desalignement entre les criteres de qualification marketing et commerciaux. La solution est un accord formel sur la definition d\'un lead qualifie.',
+    risque:'Un taux artificiellement eleve peut refleter une baisse des standards de qualification commerciale plutot qu\'une meilleure qualite des leads.',
+    roles:['chef-equipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'intermediaire',
+    branche:'affaires', domaine:'marketing'
+  },
+  {
+    id:'af-m4', niveau:'operationnel', type:'ICP', icone:'📰',
+    nom:'Retour sur investissement publicitaire (ROAS)',
+    definition:'Revenu genere pour chaque euro investi en publicite payante. Calcule comme revenu attribue divise par depenses publicitaires.',
+    objectif:'Evaluer la rentabilite directe des campagnes publicitaires payantes.',
+    frequence:'Hebdomadaire · Mensuelle',
+    exemple_ent:'ROAS a 4,2 sur Google Ads — chaque euro investi genere 4,20 EUR de revenus. Seuil de rentabilite calcule a 3,0 pour ce produit.',
+    exemple_eq:'Un ROAS < seuil signifie que la campagne detruit de la valeur. Stopper ou optimiser avant d\'investir davantage.',
+    risque:'Le ROAS mesure le revenu brut, pas le benefice. Un ROAS eleve avec de faibles marges peut masquer une rentabilite negative.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant',
+    branche:'affaires', domaine:'marketing'
+  },
+  {
+    id:'af-m5', niveau:'operationnel', type:'II', icone:'🌟',
+    nom:'Notoriete de marque (Brand Awareness)',
+    definition:'Pourcentage de la cible potentielle capable de citer spontanement ou d\'identifier la marque, mesure par sondage periodique.',
+    objectif:'Evaluer la portee et la penetration de la marque dans l\'esprit des prospects et clients potentiels.',
+    frequence:'Trimestrielle · Semestrielle',
+    exemple_ent:'Notoriete spontanee en hausse de 8 % a 23 % sur la cible PME apres la campagne de contenu du T2.',
+    exemple_eq:'Indicateur lent et difficile a attribuer a une action specifique. Utile comme direction strategique, peu actionnable a court terme.',
+    risque:'Tres difficile a mesurer avec precision. Les methodologies de sondage varient et les resultats peuvent etre biaises par l\'echantillon.',
+    roles:['chef-equipe','direction'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire',
+    branche:'affaires', domaine:'marketing'
+  }
+]);
+</script>
+
+<!-- ══ DATA : Affaires — Finance (af-f1 a af-f4) ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'af-f1', niveau:'operationnel', type:'ICP', icone:'📅',
+    nom:'Délai moyen de recouvrement (DSO)',
+    definition:'Nombre moyen de jours entre l\'emission d\'une facture et son encaissement effectif.',
+    objectif:'Optimiser la tresorerie et mesurer l\'efficacite du processus de recouvrement.',
+    frequence:'Mensuelle',
+    exemple_ent:'DSO a 52 jours — objectif 40 jours via la mise en place de relances automatisees et d\'incitations au paiement anticipe.',
+    exemple_eq:'Un DSO eleve penalise la tresorerie meme si le chiffre d\'affaires est bon. Signal d\'alerte sur la qualite du processus de facturation.',
+    risque:'Un DSO tres bas peut refleter des conditions de paiement trop strictes qui penalisent l\'acquisition de nouveaux clients.',
+    roles:['chef-equipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'affaires', domaine:'finance'
+  },
+  {
+    id:'af-f2', niveau:'operationnel', type:'ICP', icone:'🎯',
+    nom:'Precision des previsions financieres',
+    definition:'Ecart moyen en pourcentage entre les previsions financieres etablies et les resultats reels constates, mesure a 30, 60 et 90 jours.',
+    objectif:'Ameliorer la fiabilite des projections pour faciliter la prise de decision et l\'allocation des ressources.',
+    frequence:'Mensuelle',
+    exemple_ent:'Precision des previsions a 90 jours : 78 % — ecart moyen de 22 %. Objectif : 85 % en ameliorant la granularite des donnees de pipeline.',
+    exemple_eq:'Des previsions imprecises forcent des decisions reactives plutot que proactives — surembauche, sous-investissement, ratages d\'opportunites.',
+    risque:'Une tres haute precision peut refleter des previsions tres conservatrices plutot qu\'un processus de forecast sophistique.',
+    roles:['chef-equipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'affaires', domaine:'finance'
+  },
+  {
+    id:'af-f3', niveau:'operationnel', type:'FLUX', icone:'⏱️',
+    nom:'Délai de clôture comptable',
+    definition:'Nombre de jours ouvrables necessaires pour finaliser les etats financiers apres la fin d\'une periode comptable.',
+    objectif:'Accelerer la disponibilite des donnees financieres pour la prise de decision.',
+    frequence:'Mensuelle · Trimestrielle',
+    exemple_ent:'Cloture en 7 jours actuellement — objectif : 3 jours via l\'automatisation des reconciliations et la suppression des exports manuels.',
+    exemple_eq:'Un long delai de cloture retarde toutes les decisions basees sur les donnees financieres reelles.',
+    risque:'Accelerer la cloture en sacrifiant la rigueur des reconciliations peut introduire des erreurs dans les etats financiers.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:false, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'affaires', domaine:'finance'
+  },
+  {
+    id:'af-f4', niveau:'operationnel', type:'ICP', icone:'📜',
+    nom:'Taux de conformite reglementaire financiere',
+    definition:'Pourcentage de controles reglementaires (fiscaux, comptables, reporting) satisfaits dans les delais requis.',
+    objectif:'Eviter les sanctions reglementaires et maintenir la confiance des parties prenantes externes.',
+    frequence:'Trimestrielle',
+    exemple_ent:'100 % de conformite sur les declarations fiscales T1 et T2. Un retard de 3 jours identifie sur le reporting ESG — remedie avant l\'echeance formelle.',
+    exemple_eq:'La non-conformite genere des penalites financieres, des risques reputationnels et mobilise des ressources en mode pompier.',
+    risque:'Un taux de 100 % ne garantit pas la qualite du contenu des declarations — seulement leur depot dans les delais.',
+    roles:['chef-equipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'affaires', domaine:'finance'
+  }
+]);
+</script>
+
+<!-- ══ DATA : Affaires — RH (af-r1 a af-r4) ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'af-r1', niveau:'operationnel', type:'ICP', icone:'💚',
+    nom:'Indice de recommandation employe (eNPS)',
+    definition:'Mesure la propension des employes a recommander l\'organisation comme employeur (score de -100 a +100).',
+    objectif:'Evaluer l\'engagement des employes et detecter les risques de desengagement ou de depart.',
+    frequence:'Trimestrielle',
+    exemple_ent:'eNPS a +22 — en hausse de 8 points apres la mise en place du programme de flexible working. Benchmark secteur : +18.',
+    exemple_eq:'Un eNPS en baisse est un signal precoce de desengagement et de risque de departs. A analyser par equipe pour identifier les zones de tension.',
+    risque:'Peut etre influence par des evenements ponctuels (bonus, licenciements recents). Completer par des entretiens qualitatifs.',
+    roles:['chef-equipe','direction'], prioritaire:true, fiabilite:'precaution', maturite_min:'debutant',
+    branche:'affaires', domaine:'rh'
+  },
+  {
+    id:'af-r2', niveau:'operationnel', type:'FLUX', icone:'📆',
+    nom:'Délai de recrutement (Time to Fill)',
+    definition:'Nombre de jours moyen entre la validation d\'un besoin de recrutement et la signature du contrat d\'embauche.',
+    objectif:'Mesurer l\'efficacite du processus de recrutement et l\'impact des postes vacants sur les equipes.',
+    frequence:'Mensuelle',
+    exemple_ent:'Time to Fill moyen a 68 jours — objectif 45 jours via la refonte du processus d\'entretien (reduction de 5 a 3 etapes).',
+    exemple_eq:'Un long delai de recrutement charge les equipes existantes, rallonge les projets et augmente le risque de perte du candidat.',
+    risque:'Reduire le delai en sautant des etapes d\'evaluation peut generer de mauvais recrutements couteux a corriger.',
+    roles:['chef-equipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'affaires', domaine:'rh'
+  },
+  {
+    id:'af-r3', niveau:'operationnel', type:'ICP', icone:'🚪',
+    nom:'Taux de depart volontaire (Voluntary Turnover)',
+    definition:'Pourcentage d\'employes ayant demissionne sur une periode, rapporte aux effectifs moyens.',
+    objectif:'Mesurer la retention des talents et identifier les causes structurelles de departs evitables.',
+    frequence:'Trimestrielle',
+    exemple_ent:'Taux de depart volontaire a 14 % annuel — au-dessus du benchmark (11 %). Analyse par equipe : turnover concentre dans les 2 premières années d\'anciennete.',
+    exemple_eq:'Chaque depart volontaire represente une perte de connaissance et un cout de remplacement estime a 6-18 mois de salaire.',
+    risque:'Separer departs volontaires et involontaires est essentiel : les confondre masque les problemes reels de retention.',
+    roles:['chef-equipe','direction'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'affaires', domaine:'rh'
+  },
+  {
+    id:'af-r4', niveau:'operationnel', type:'ICC', icone:'🎓',
+    nom:'Taux de completion des formations',
+    definition:'Pourcentage d\'employes ayant complete les formations planifiees dans leur plan de developpement sur la periode.',
+    objectif:'Mesurer l\'investissement reel dans le developpement des competences et la culture d\'apprentissage.',
+    frequence:'Trimestrielle',
+    exemple_ent:'Taux de completion a 71 % — les 29 % restants citent principalement le manque de temps. Signal d\'une charge de travail trop elevee.',
+    exemple_eq:'Un faible taux de completion est souvent le symptome d\'une charge operationnelle qui ne laisse pas de place a l\'amelioration. Indicateur de sante organisationnelle.',
+    risque:'Un taux eleve peut refleter des formations courtes et peu exigeantes plutot qu\'un vrai investissement en competences.',
+    roles:['chef-equipe','direction'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant',
+    branche:'affaires', domaine:'rh'
+  }
+]);
+</script>
+
+<!-- ══ DATA : Affaires — Operations metier (af-op1 a af-op4) ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'af-op1', niveau:'operationnel', type:'ICP', icone:'⚙️',
+    nom:'Efficacite globale des equipements (OEE)',
+    definition:'Produit de la disponibilite, de la performance et de la qualite d\'un equipement ou d\'un processus de production. Standard Lean Six Sigma.',
+    objectif:'Identifier les pertes cachees dans le processus de production et prioriser les investissements d\'amelioration.',
+    frequence:'Quotidienne · Hebdomadaire',
+    exemple_ent:'OEE a 72 % — la decomposition revele 18 % de pertes dues aux arrets non planifies, 10 % a des microarrets. Chantier 5S lance sur la ligne 3.',
+    exemple_eq:'Un OEE de 85 % est considere comme le standard de classe mondiale. Sous 65 %, le processus necessite une transformation significative.',
+    risque:'L\'OEE seul ne dit pas quoi ameliorer — la decomposition en ses trois composantes est indispensable pour prioriser les actions.',
+    roles:['chef-equipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'affaires', domaine:'operations'
+  },
+  {
+    id:'af-op2', niveau:'operationnel', type:'ICP', icone:'📉',
+    nom:'DPMO et niveau sigma du processus',
+    definition:'Nombre de defauts par million d\'opportunites (DPMO) et son equivalence en niveau sigma. Mesure centrale du Lean Six Sigma.',
+    objectif:'Quantifier la performance qualite du processus et fixer des objectifs d\'amelioration bases sur des donnees.',
+    frequence:'Mensuelle',
+    exemple_ent:'DPMO a 12 400 — niveau sigma 3,7. Objectif : atteindre sigma 4,5 (DPMO < 1 350) en 18 mois via un chantier DMAIC.',
+    exemple_eq:'Le niveau sigma permet de comparer la performance qualite entre processus tres differents sur une echelle commune.',
+    risque:'Atteindre sigma 6 (3,4 DPMO) n\'est ni necessaire ni economiquement viable pour tous les processus. Calibrer l\'objectif selon l\'impact client.',
+    roles:['chef-equipe','portefeuille'], prioritaire:false, fiabilite:'fiable', maturite_min:'intermediaire',
+    branche:'affaires', domaine:'operations'
+  },
+  {
+    id:'af-op3', niveau:'operationnel', type:'ICP', icone:'🚚',
+    nom:'Taux de livraison a temps (On-Time Delivery)',
+    definition:'Pourcentage de commandes, produits ou services livres dans le delai promis au client.',
+    objectif:'Mesurer la fiabilite operationnelle et la capacite a tenir les engagements de service.',
+    frequence:'Hebdomadaire · Mensuelle',
+    exemple_ent:'Taux de livraison a temps a 88 % — 12 % de retards concentres sur les commandes sur-mesure avec un delai < 48h. Revue du processus de priorisation lancee.',
+    exemple_eq:'Chaque retard impacte directement la satisfaction client et peut engendrer des penalites contractuelles.',
+    risque:'Des delais promis artificiellement longs pour garantir un bon taux de livraison degradent la competitivite sans ameliorer la performance reelle.',
+    roles:['chef-equipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'affaires', domaine:'operations'
+  },
+  {
+    id:'af-op4', niveau:'operationnel', type:'ICC', icone:'🧹',
+    nom:'Taux de réduction des gaspillages (Waste Reduction Rate)',
+    definition:'Pourcentage de reduction des gaspillages identifies (surproduction, attentes, transports inutiles, etc.) par rapport a une ligne de reference etablie.',
+    objectif:'Mesurer la progression de la demarche Lean et l\'elimination des activites sans valeur ajoutee.',
+    frequence:'Trimestrielle',
+    exemple_ent:'Reduction de 28 % des gaspillages de type "attente" apres cartographie du flux de valeur (VSM) et implementation du flux tiree.',
+    exemple_eq:'Indicateur de comportement collectif : reflete l\'engagement de l\'equipe dans la demarche d\'amelioration continue.',
+    risque:'Difficile a mesurer sans une cartographie prealable rigoureuse des gaspillages. La ligne de reference doit etre etablie avant de fixer des objectifs.',
+    roles:['chef-equipe','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire',
+    branche:'affaires', domaine:'operations'
+  }
+]);
+</script>
+
+<!-- ══ DATA : Affaires — Service client (af-sc1 a af-sc5) ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'af-sc1', niveau:'operationnel', type:'ICP', icone:'😊',
+    nom:'Score de satisfaction client (CSAT)',
+    definition:'Mesure directe de la satisfaction apres une interaction specifique, generalement sur une echelle de 1 a 5 ou 1 a 10.',
+    objectif:'Evaluer la qualite percue de chaque interaction et identifier rapidement les points de friction.',
+    frequence:'Continue — revue hebdomadaire',
+    exemple_ent:'CSAT moyen de 4,2/5 sur les interactions de support — en hausse de 0,3 point apres formation des agents a l\'ecoute active.',
+    exemple_eq:'Le CSAT est immediatement actionnable : un score bas sur un type d\'interaction specifique indique ou agir en priorite.',
+    risque:'Le CSAT mesure la satisfaction immediatiate, pas la loyalty a long terme. Des clients tres satisfaits peuvent quand meme churner.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'affaires', domaine:'service-client'
+  },
+  {
+    id:'af-sc2', niveau:'operationnel', type:'ICP', icone:'💬',
+    nom:'Indice de recommandation client (NPS Service)',
+    definition:'Score de recommandation mesure specifiquement apres les interactions de service client (different du NPS strategique).',
+    objectif:'Evaluer si les interactions de service renforcent ou degradent la relation client globale.',
+    frequence:'Mensuelle',
+    exemple_ent:'NPS Service a +34 — superieur de 12 points au NPS produit, indiquant que le service est un facteur de retention fort.',
+    exemple_eq:'Croiser NPS service et CSAT permet de distinguer la satisfaction immediate (CSAT) de l\'impact long terme sur la fidelite (NPS).',
+    risque:'Meme biais que le NPS global : sensible au timing de la collecte et au segment interroge.',
+    roles:['chef-equipe','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant',
+    branche:'affaires', domaine:'service-client'
+  },
+  {
+    id:'af-sc3', niveau:'operationnel', type:'ICP', icone:'🏋',
+    nom:'Score d\'effort client (CES)',
+    definition:'Mesure l\'effort percu par le client pour resoudre son probleme ou obtenir ce dont il avait besoin, sur une echelle de "Tres facile" a "Tres difficile".',
+    objectif:'Identifier et eliminer les frictions dans le parcours client qui augmentent l\'effort et le risque de churn.',
+    frequence:'Continue — par interaction',
+    exemple_ent:'CES moyen a 2,1/5 (echelle 1=facile, 5=difficile) — le canal email obtient 2,8 contre 1,6 pour le chat en direct.',
+    exemple_eq:'Le CES predit mieux le churn que le CSAT : les clients qui font des efforts pour obtenir de l\'aide sont plus susceptibles de partir.',
+    risque:'Le CES capture l\'effort percu, pas l\'effort reel. Certains clients trouvent tout difficile independamment de la qualite du service.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'intermediaire',
+    branche:'affaires', domaine:'service-client'
+  },
+  {
+    id:'af-sc4', niveau:'operationnel', type:'ICP', icone:'📞',
+    nom:'Resolution au premier contact — Service (FCR)',
+    definition:'Pourcentage de demandes clients resolues lors du premier contact, sans necessite de suivi ou d\'escalade.',
+    objectif:'Reduire les couts de support tout en ameliorant la satisfaction client.',
+    frequence:'Hebdomadaire',
+    exemple_ent:'FCR a 68 % — objectif 78 % via le renforcement de la base de connaissances et la formation des agents de niveau 1.',
+    exemple_eq:'Chaque interaction supplementaire necessaire pour resoudre un probleme augmente le cout et diminue la satisfaction.',
+    risque:'Pression sur le FCR peut pousser les agents a clore des tickets sans veritablement resoudre le probleme. Croiser avec le CSAT post-interaction.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:true, fiabilite:'precaution', maturite_min:'debutant',
+    branche:'affaires', domaine:'service-client'
+  },
+  {
+    id:'af-sc5', niveau:'operationnel', type:'FLUX', icone:'⚡',
+    nom:'Délai de première réponse',
+    definition:'Duree moyenne entre la soumission d\'une demande client et la premiere reponse d\'un agent ou d\'un systeme automatise.',
+    objectif:'Garantir une reactivite suffisante pour maintenir la confiance et la satisfaction du client en attente.',
+    frequence:'Continue — revue quotidienne',
+    exemple_ent:'Delai de premiere reponse email : 4h en moyenne. SLA client : 8h. Chat : 45 secondes. Objectif email : 2h via le tri automatise.',
+    exemple_eq:'Un long delai de premiere reponse est la premiere cause de frustration client, avant meme la qualite de la resolution.',
+    risque:'Optimiser le delai de premiere reponse avec des reponses automatisees generiques peut frustrer davantage si elles ne repondent pas au probleme.',
+    roles:['chef-equipe','membre-equipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
+    branche:'affaires', domaine:'service-client'
+  }
+]);
+</script>
+
+
+<!-- ══ MODULE : CM.Domaine — Configuration des domaines et des roles d\'affichage ══ -->
+<script>
+CM.Domaine = (function() {
+  'use strict';
+
+  /* Config des 10 domaines specialises (niveau equipes) */
+  var DOMAINES = {
+    'dev':           { libelle:'Développement',       icone:'🏗', branche:'ti',       couleur:'#bf360c' },
+    'plateforme':    { libelle:'Plateforme & DevOps',  icone:'🚀', branche:'ti',       couleur:'#00695c' },
+    'ops-support':   { libelle:'Opérations & Support', icone:'🔧', branche:'ti',       couleur:'#0277bd' },
+    'securite':      { libelle:'Sécurité',             icone:'🛡', branche:'ti',       couleur:'#6a1b9a' },
+    'commercial':    { libelle:'Commercial',           icone:'📈', branche:'affaires', couleur:'#e65100' },
+    'marketing':     { libelle:'Marketing',            icone:'📣', branche:'affaires', couleur:'#c2185b' },
+    'finance':       { libelle:'Finance',              icone:'💰', branche:'affaires', couleur:'#1b5e20' },
+    'rh':            { libelle:'Ressources Humaines',  icone:'👥', branche:'affaires', couleur:'#01579b' },
+    'operations':    { libelle:'Opérations Métier',    icone:'🔩', branche:'affaires', couleur:'#37474f' },
+    'service-client':{ libelle:'Service Client',       icone:'🎯', branche:'affaires', couleur:'#f57c00' }
+  };
+
+  /* Labels des branches */
+  var BRANCHES = {
+    'ti':      { libelle:'Equipes TI',      couleur:'rgba(80,210,195,0.7)'  },
+    'affaires':{ libelle:'Equipes Affaires', couleur:'rgba(255,160,80,0.7)' }
+  };
+
+  /* Infos d\'affichage selon le contexte actuel */
+  function infoContexte(contexte) {
+    var cfg = CM.Config;
+    if (!contexte) return { libelle:'Accueil', icone:'🏛', couleur:'#1a237e' };
+    if (contexte.niveau === 'equipes' && contexte.domaine) {
+      var d = DOMAINES[contexte.domaine];
+      return d ? { libelle: d.libelle, icone: d.icone, couleur: d.couleur } : { libelle:'Equipes', icone:'⚙️', couleur:'#004d40' };
+    }
+    var niv = null;
+    for (var i = 0; i < cfg.NIVEAUX.length; i++) {
+      if (cfg.NIVEAUX[i].id === contexte.niveau) { niv = cfg.NIVEAUX[i]; break; }
+    }
+    return niv ? { libelle: niv.libelle, icone: niv.icone, couleur: niv.couleur } : { libelle:'', icone:'', couleur:'#1a237e' };
+  }
+
+  return { DOMAINES: DOMAINES, BRANCHES: BRANCHES, infoContexte: infoContexte };
+})();
+</script>
+
+<!-- ══ MODULE : CM.Composants — Rendu HTML des cartes et du tiroir ══ -->
+<script>
+CM.Composants = (function() {
+  'use strict';
+
+  function htmlCarte(ind, couleurNiv, prioritaire, contexte) {
+    var cfg  = CM.Config;
+    var c    = cfg.TYPES_COULEURS[ind.type] || '#546e7a';
+    var fib  = cfg.FIABILITE[ind.fiabilite || 'fiable'];
+    var mat  = cfg.MATURITE[ind.maturite_min || 'debutant'];
+    // Option A — une seule semantique par zone visuelle : la bordure communique la FIABILITE uniquement.
+    // Le TYPE est deja porte par l'icone (fond colore) et le chip de titre. Evite la collision chromatique
+    // ex. FLUX (#e65100) qui etait identique a la couleur "precaution".
+    var bord = fib.couleur;
+    var def  = ind.definition.length > 95 ? ind.definition.substring(0, 95) + '…' : ind.definition;
+    return '<div class="carte-ind' + (prioritaire ? ' prioritaire' : '') + (contexte ? ' contexte' : '') + '"'
+      + ' style="border-color:' + (prioritaire ? bord : 'var(--bordure)') + '"'
+      + ' onclick="CM.Composants.ouvrirTiroir(\'' + ind.id + '\')"'
+      + ' tabindex="0" role="button" aria-label="Voir le detail : ' + ind.nom + '"'
+      + ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();CM.Composants.ouvrirTiroir(\'' + ind.id + '\');}">'
+      + '<div class="carte-en-tete">'
+      +   '<div class="carte-icone" style="background:' + c + '18;color:' + c + '">' + ind.icone + '</div>'
+      +   '<div style="flex:1">'
+      +     '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.4rem">'
+      +       '<div class="carte-type" style="color:' + c + '">' + ind.type + ' · ' + cfg.TYPES_LIBELLES[ind.type] + '</div>'
+      +       '<span class="badge-fiabilite" style="background:' + fib.couleur + '" title="' + fib.label + '">' + fib.icone + ' ' + fib.label_court + '</span>'
+      +     '</div>'
+      +     '<div class="carte-nom">' + ind.nom + '</div>'
+      +   '</div>'
+      + '</div>'
+      + '<div class="carte-corps">'
+      +   '<div class="carte-def">' + def + '</div>'
+      +   '<div class="carte-meta-bas">'
+      +     '<span class="carte-freq">🕐 ' + ind.frequence + '</span>'
+      +     '<span class="badge-maturite" title="Niveau de maturite recommande">' + mat.icone + ' ' + mat.label + '</span>'
+      +   '</div>'
+      + '</div>'
+      + '<div class="carte-pied">'
+      +   '<button class="btn-detail" onclick="event.stopPropagation();CM.Composants.ouvrirTiroir(\'' + ind.id + '\')">Voir le detail →</button>'
+      + '</div>'
+      + '</div>';
+  }
+
+  /* Mappings pour la grammaire visuelle v3 */
+  var NIVEAU_VERS_POSITION = {
+    'strategique':  'strategique',
+    'tactique':     'portefeuille',
+    'programme':    'programme',
+    'operationnel': 'equipe'
+  };
+  var FIABILITE_VERS_NIVEAU = {
+    'fiable':     'haute',
+    'precaution': 'moyenne',
+    'risque':     'faible'
+  };
+
+  // rendreFicheHtml(ind) : construit le HTML complet d'une fiche-indicateur.
+  // Fonction pure : pas d'accès au DOM, pas d'effet de bord. Entrée = objet indicateur, sortie = string HTML.
+  // Exemple : rendreFicheHtml(CM.Referentiel.chercher('p5')) → '<div class="fi-header">…</div>…'
+  function rendreFicheHtml(ind) {
+    var cfg = CM.Config;
+    var c   = cfg.TYPES_COULEURS[ind.type] || '#546e7a';
+    var fib = cfg.FIABILITE[ind.fiabilite || 'fiable'];
+    var mat = cfg.MATURITE[ind.maturite_min || 'debutant'];
+
+    /* Trouver l'objet niveau */
+    var nivObj = null;
+    for (var i = 0; i < cfg.NIVEAUX.length; i++) {
+      if (cfg.NIVEAUX[i].niveauData === ind.niveau) { nivObj = cfg.NIVEAUX[i]; break; }
+    }
+    var nivLibelle = nivObj ? nivObj.libelle : ind.niveau;
+    var nivLibelleCourt = nivLibelle.replace(/^Niveau\s+/i, '');
+    var positionKey = NIVEAU_VERS_POSITION[ind.niveau] || 'equipe';
+    var fiabKey = FIABILITE_VERS_NIVEAU[ind.fiabilite || 'fiable'] || 'haute';
+    var matKey = ind.maturite_min || 'debutant';
+
+    var html = '';
+
+    /* ── En-tête : chip type + nom ── */
+    html += '<div class="fi-header">';
+    html +=   '<div class="fi-chip-ligne">';
+    html +=     '<span class="fi-chip" style="background:' + c + '">' + ind.type + '</span>';
+    html +=     '<span class="fi-chip-label">' + cfg.TYPES_LIBELLES[ind.type] + '</span>';
+    html +=   '</div>';
+    html +=   '<h2 class="fi-nom">' + ind.icone + ' ' + ind.nom + '</h2>';
+    html += '</div>';
+
+    /* ── Cadre de lecture : Niveau / Maturité / Fiabilité ── */
+    html += '<div class="fi-cadre">';
+    html +=   '<div class="fi-cadre-item">';
+    html +=     '<span class="fi-cadre-label">Niveau</span>';
+    html +=     '<span class="fi-cadre-valeur">';
+    html +=       '<span class="fi-strates" data-position="' + positionKey + '" aria-hidden="true"><i></i><i></i><i></i><i></i></span>';
+    html +=       nivLibelleCourt;
+    html +=     '</span>';
+    html +=   '</div>';
+    html +=   '<div class="fi-cadre-item">';
+    html +=     '<span class="fi-cadre-label">Maturité min.</span>';
+    html +=     '<span class="fi-cadre-valeur">';
+    html +=       '<span class="fi-pastilles" data-niveau="' + matKey + '" aria-hidden="true"><i></i><i></i><i></i></span>';
+    html +=       mat.label.replace(/^Équipe\s+/i, '');
+    html +=     '</span>';
+    html +=   '</div>';
+    html +=   '<div class="fi-cadre-item" data-niveau="' + fiabKey + '">';
+    html +=     '<span class="fi-cadre-label">Fiabilité</span>';
+    html +=     '<span class="fi-cadre-valeur">';
+    html +=       '<span class="fi-jauge" aria-hidden="true"><i></i><i></i><i></i></span>';
+    html +=       fib.label_court;
+    html +=     '</span>';
+    html +=   '</div>';
+    html += '</div>';
+
+    /* ── Définition : bloc principal ── */
+    html += '<div class="fi-bloc-principal">';
+    html +=   '<h3>Ce que mesure l\'indicateur</h3>';
+    html +=   '<p>' + ind.definition + '</p>';
+    html += '</div>';
+
+    /* ── Objectif ── */
+    html += '<div class="fi-bloc-inline">';
+    html +=   '<h4>Objectif</h4>';
+    html +=   '<p>' + ind.objectif + '</p>';
+    html += '</div>';
+
+    /* ── Fréquence ── */
+    html += '<div class="fi-bloc-inline">';
+    html +=   '<h4>🕐 Fréquence de mesure</h4>';
+    html +=   '<p>' + ind.frequence + '</p>';
+    html += '</div>';
+
+    /* ── Exemples concrets ── */
+    html += '<div class="fi-bloc-inline">';
+    html +=   '<h4>Exemples concrets</h4>';
+    html +=   '<div class="fi-exemples">';
+    html +=     '<div class="fi-exemple fi-exemple-entreprise">';
+    html +=       '<div class="fi-exemple-entete">';
+    html +=         '<div class="fi-exemple-icone">🏢</div>';
+    html +=         '<span class="fi-exemple-label">Entreprise</span>';
+    html +=       '</div>';
+    html +=       '<div class="fi-exemple-texte">' + ind.exemple_ent + '</div>';
+    html +=     '</div>';
+    html +=     '<div class="fi-exemple fi-exemple-equipe">';
+    html +=       '<div class="fi-exemple-entete">';
+    html +=         '<div class="fi-exemple-icone">👥</div>';
+    html +=         '<span class="fi-exemple-label">Équipe</span>';
+    html +=       '</div>';
+    html +=       '<div class="fi-exemple-texte">' + ind.exemple_eq + '</div>';
+    html +=     '</div>';
+    html +=   '</div>';
+    html += '</div>';
+
+    /* ── Vigilance ── */
+    html += '<div class="fi-vigilance">';
+    html +=   '<h3>';
+    html +=     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+    html +=       '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>';
+    html +=       '<line x1="12" y1="9" x2="12" y2="13"/>';
+    html +=       '<line x1="12" y1="17" x2="12.01" y2="17"/>';
+    html +=     '</svg>';
+    html +=     'Point de vigilance';
+    html +=   '</h3>';
+    html +=   '<p>' + ind.risque + '</p>';
+    html += '</div>';
+
+    /* ── Alternative recommandée (si fiabilité à risque) ── */
+    if (ind.alt) {
+      html += '<div class="fi-bloc-inline" style="margin-top:0.9rem">';
+      html +=   '<h4>💡 Alternative recommandée</h4>';
+      html +=   '<p>' + ind.alt + '</p>';
+      html += '</div>';
+    }
+
+    /* ── Contexte : description longue Fiabilité + Maturité ── */
+    html += '<div class="fi-bloc-inline" style="margin-top:1.2rem">';
+    html +=   '<h4>' + fib.icone + ' Fiabilité &mdash; ' + fib.label + '</h4>';
+    html +=   '<p>' + fib.desc + '</p>';
+    html += '</div>';
+
+    html += '<div class="fi-bloc-inline">';
+    html +=   '<h4>' + mat.icone + ' Maturité recommandée &mdash; ' + mat.label + '</h4>';
+    html +=   '<p>' + mat.desc + '</p>';
+    html += '</div>';
+
+    /* ── Domaine (si présent) ── */
+    if (ind.domaine && CM.Domaine && CM.Domaine.DOMAINES && CM.Domaine.DOMAINES[ind.domaine]) {
+      var d = CM.Domaine.DOMAINES[ind.domaine];
+      html += '<div class="fi-bloc-inline">';
+      html +=   '<h4>Domaine</h4>';
+      html +=   '<p><span style="display:inline-flex;align-items:center;gap:0.4rem;background:' + d.couleur + ';color:white;padding:0.25rem 0.75rem;border-radius:20px;font-size:var(--fs-sm);font-weight:600;">' + d.icone + ' ' + d.libelle + '</span></p>';
+      html += '</div>';
+    }
+
+    /* ── Encart Terrain (Gemba) — triptyque contextualisé au type d'indicateur ── */
+    html += CM.Gemba.htmlEncartFiche(ind.type);
+
+    return html;
+  }
+
+  // ouvrirTiroir(id) : orchestration — récupère la donnée, délègue le rendu HTML, ouvre le tiroir, gère le focus.
+  function ouvrirTiroir(id) {
+    var ind = CM.Referentiel.chercher(id);
+    if (!ind) return;
+    document.getElementById('t-fiche').innerHTML = rendreFicheHtml(ind);
+    document.getElementById('fond-tiroir').classList.add('ouvert');
+    document.getElementById('tiroir').classList.add('ouvert');
+    document.getElementById('tiroir').setAttribute('aria-hidden', 'false');
+    /* Reset scroll en haut */
+    document.getElementById('tiroir').scrollTop = 0;
+    setTimeout(function() { var b = document.querySelector('.btn-fermer'); if (b) b.focus(); }, 300);
+  }
+
+  function fermerTiroir() {
+    document.getElementById('fond-tiroir').classList.remove('ouvert');
+    document.getElementById('tiroir').classList.remove('ouvert');
+    document.getElementById('tiroir').setAttribute('aria-hidden', 'true');
+  }
+
+  return { htmlCarte: htmlCarte, rendreFicheHtml: rendreFicheHtml, ouvrirTiroir: ouvrirTiroir, fermerTiroir: fermerTiroir };
+})();
+</script>
+
+
+<!-- ══ MODULE : CM.App — Etat, navigation et rendu des 4 vues ══ -->
+<script>
+CM.App = (function() {
+  'use strict';
+
+  /* ─── Etat ─── */
+  var contexte  = null;  /* { niveau, branche, domaine } */
+  var reponses  = {};
+  var maturiteActive = 'debutant';
+
+  /* ─── Navigation ─── */
+  function entrer(niveau, branche, domaine, elClic) {
+    /* Flash visuel 120ms, puis transition */
+    if (elClic) {
+      elClic.classList.add('flash');
+      setTimeout(function() { elClic.classList.remove('flash'); }, 120);
+    }
+    setTimeout(function() {
+      contexte = { niveau: niveau, branche: branche || null, domaine: domaine || null };
+      reponses = {};
+      maturiteActive = 'debutant';
+      _afficherApp();
+      _rendreTout();
+    }, 130);
+  }
+
+  function retourAccueil() {
+    contexte = null;
+    reponses = {};
+    document.getElementById('accueil').style.display = 'flex';
+    document.getElementById('app').classList.remove('actif');
+    /* Remettre le premier onglet actif */
+    var onglets = document.querySelectorAll('.onglet');
+    for (var i = 0; i < onglets.length; i++) {
+      onglets[i].classList.toggle('actif', i === 0);
+      onglets[i].setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+    }
+    _basculerVue('tableau-bord');
+  }
+
+  function changerVue(id, btn) {
+    var onglets = document.querySelectorAll('.onglet');
+    for (var i = 0; i < onglets.length; i++) {
+      onglets[i].classList.remove('actif');
+      onglets[i].setAttribute('aria-selected', 'false');
+    }
+    btn.classList.add('actif');
+    btn.setAttribute('aria-selected', 'true');
+    _basculerVue(id);
+  }
+
+  function changerMaturite(id) {
+    maturiteActive = id;
+    _rendreMaturite();
+  }
+
+  function repondre(qId, optId) {
+    reponses[qId] = optId;
+    _rendreQuestionnaire();
+  }
+
+  function reinitQuestionnaire() {
+    reponses = {};
+    _rendreQuestionnaire();
+  }
+
+  /* ─── Helpers internes ─── */
+  function _basculerVue(id) {
+    var vues = document.querySelectorAll('.vue');
+    for (var i = 0; i < vues.length; i++) vues[i].classList.remove('active');
+    document.getElementById('vue-' + id).classList.add('active');
+  }
+
+  function _afficherApp() {
+    document.getElementById('accueil').style.display = 'none';
+    document.getElementById('app').classList.add('actif');
+    _basculerVue('tableau-bord');
+    /* Badge contexte */
+    var info = CM.Domaine.infoContexte(contexte);
+    var badge = document.getElementById('badge-contexte');
+    badge.textContent = info.icone + ' ' + info.libelle;
+    badge.style.background = info.couleur;
+  }
+
+  function _rendreTout() {
+    _rendreTableauDeBord();
+    _rendreCascade();
+    _rendreQuestionnaire();
+    _rendreMaturite();
+  }
+
+  /* ─── VUE 1 : Tableau de bord ─── */
+  function _rendreTableauDeBord() {
+    var zone = document.getElementById('contenu-tdb');
+    var info = CM.Domaine.infoContexte(contexte);
+    var inds = CM.Referentiel.filtrerParContexte(contexte);
+    var html = '';
+
+    /* Bandeau de contexte */
+    html += '<div class="bandeau-role" style="background:' + info.couleur + '">'
+      + '<span style="font-size:1.8rem">' + info.icone + '</span>'
+      + '<div><strong>' + info.libelle + '</strong>'
+      + ' ' + _descContexte() + '</div>'
+      + '</div>';
+
+    /* Indicateurs essentiels */
+    var essentiels = inds.filter(function(i) { return i.prioritaire; });
+    html += '<div class="panneau"><div class="panneau-titre">Indicateurs essentiels'
+      + '<span class="chip-essentiel">⭐ ' + essentiels.length + ' sur 5 maximum</span></div>'
+      + '<div class="grille-cartes">';
+    essentiels.forEach(function(ind) { html += CM.Composants.htmlCarte(ind, info.couleur, true, false); });
+    html += '</div></div>';
+
+    /* Indicateurs complementaires */
+    var complement = inds.filter(function(i) { return !i.prioritaire; });
+    if (complement.length > 0) {
+      html += '<div class="panneau"><div class="panneau-titre">Indicateurs complementaires</div>'
+        + '<div class="grille-cartes">';
+      complement.forEach(function(ind) { html += CM.Composants.htmlCarte(ind, info.couleur, false, false); });
+      html += '</div></div>';
+    }
+
+    zone.innerHTML = html;
+  }
+
+  function _descContexte() {
+    if (!contexte) return '';
+    var cfg = CM.Config;
+    var map = { 'strategique':'Vision long terme · Résultats globaux', 'portefeuille':'Arbitrage · Capacité · Feuille de route', 'programme':'Coordination · Jalons · Budget · Risques', 'equipes':'Livraison continue · Amélioration' };
+    return map[contexte.niveau] || '';
+  }
+
+  /* ─── VUE 2 : Cascade strategique ─── */
+  function _rendreCascade() {
+    var zone = document.getElementById('contenu-cascade');
+    var cfg = CM.Config;
+    var html = '';
+
+    /* Legende des types */
+    html += '<div class="legende" role="list" aria-label="Legende des types d\'indicateurs">';
+    Object.keys(cfg.TYPES_LIBELLES).forEach(function(sigle) {
+      html += '<div class="legende-item" role="listitem"><span class="legende-badge" style="background:' + cfg.TYPES_COULEURS[sigle] + '">' + sigle + '</span><span>' + cfg.TYPES_LIBELLES[sigle] + '</span></div>';
+    });
+    html += '</div>';
+
+    html += '<div style="background:#e3f2fd;border-radius:10px;padding:0.85rem 1rem;font-size:0.84rem;margin-bottom:1.25rem;color:#01579b;line-height:1.5;">'
+      + '💡 La cascade montre comment les objectifs se declinent de la strategie jusqu\'aux equipes. Cliquez sur un indicateur pour sa fiche complete.'
+      + '</div>';
+
+    /* 4 niveaux */
+    for (var i = 0; i < cfg.NIVEAUX.length; i++) {
+      var niv = cfg.NIVEAUX[i];
+      var estMonNiv = contexte && contexte.niveau === niv.id;
+      var contour = estMonNiv ? 'box-shadow:0 0 0 3px ' + niv.couleur + ',var(--ombre);' : '';
+      var indsNiv = CM.Referentiel.tous().filter(function(ind) { return ind.niveau === niv.niveauData; });
+
+      html += '<div class="noeud-cascade" style="' + contour + '">'
+        + '<div class="noeud-en-tete" style="background:' + niv.couleur + '">'
+        + '<span class="noeud-icone">' + niv.icone + '</span>'
+        + '<div><div class="noeud-label">' + niv.libelle + '</div><div class="noeud-titre">' + niv.sous_libelle + '</div><div class="noeud-desc">' + niv.description + '</div></div>'
+        + (estMonNiv ? '<span class="chip-mon-niv">✓ Mon niveau</span>' : '')
+        + '</div>'
+        + '<div class="noeud-corps"><div class="grille-puces">';
+
+      indsNiv.forEach(function(ind) {
+        var c = cfg.TYPES_COULEURS[ind.type] || '#546e7a';
+        html += '<button class="puce" style="color:' + c + '" onclick="CM.Composants.ouvrirTiroir(\'' + ind.id + '\')" aria-label="' + ind.nom + '">'
+          + '<span class="puce-badge" style="background:' + c + '">' + ind.type + '</span>'
+          + '<span class="puce-nom">' + ind.icone + ' ' + ind.nom + '</span>'
+          + '</button>';
+      });
+
+      html += '</div></div></div>';
+      if (i < cfg.NIVEAUX.length - 1) html += '<div class="fleche-lien" aria-hidden="true">↓</div>';
+    }
+
+    zone.innerHTML = html;
+  }
+
+  /* ─── VUE 3 : Questionnaire ─── */
+  var QUESTIONS = [
+    {
+      id:'q1', num:'01',
+      texte:'Quel est votre objectif principal a piloter ?',
+      options:[
+        { id:'business',  lib:'📈 Resultats economiques',     desc:'Revenus, rentabilite, croissance' },
+        { id:'livraison', lib:'🚀 Vitesse de livraison',      desc:'Delais, frequence, flux de valeur' },
+        { id:'qualite',   lib:'🎯 Qualite & stabilite',       desc:'Defauts, incidents, fiabilite' },
+        { id:'humain',    lib:'👥 Comportements & engagement', desc:'Collaboration, pratiques, competences' }
+      ]
+    },
+    {
+      id:'q2', num:'02',
+      texte:'Quelle decision cherchez-vous a eclairer ?',
+      options:[
+        { id:'investir',  lib:'💰 Arbitrer les investissements', desc:'Prioriser entre initiatives' },
+        { id:'ameliorer', lib:'🔄 Ameliorer en continu',         desc:'Identifier et reduire les gaspillages' },
+        { id:'aligner',   lib:'🎯 Aligner les equipes',           desc:'Coordonner vers un objectif commun' },
+        { id:'piloter',   lib:'📊 Piloter au quotidien',          desc:'Suivre la progression et reagir' }
+      ]
+    },
+    {
+      id:'q3', num:'03',
+      texte:'A quel niveau hierarchique se situe votre decision ?',
+      options:[
+        { id:'strategique',  lib:'🏛 Strategique',  desc:'Direction, horizon 1 a 3 ans' },
+        { id:'tactique',     lib:'📊 Portefeuille', desc:'Arbitrage, horizon 3 a 12 mois' },
+        { id:'programme',    lib:'🗂 Programme',    desc:'Coordination, horizon 1 a 6 mois' },
+        { id:'operationnel', lib:'⚙️ Equipes',    desc:'Livraison, horizon hebdomadaire' }
+      ]
+    }
+  ];
+
+  function _rendreQuestionnaire() {
+    var zone = document.getElementById('contenu-questionnaire');
+    var repondues = Object.keys(reponses).length;
+    var total = QUESTIONS.length;
+    var pct = Math.round((repondues / total) * 100);
+    var html = '<div class="questionnaire-enveloppe">'
+      + '<div class="questionnaire-intro"><h2>Outil de selection des indicateurs</h2>'
+      + '<p>Repondez aux 3 questions pour identifier les 3 a 5 indicateurs les plus pertinents pour votre situation.</p></div>'
+      + '<div class="barre-prog-enveloppe" role="progressbar" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100">'
+      + '<div class="barre-infos"><span>' + repondues + ' / ' + total + ' questions repondues</span><span>' + pct + ' %</span></div>'
+      + '<div class="barre-fond"><div class="barre-remplie" style="width:' + pct + '%"></div></div></div>';
+
+    QUESTIONS.forEach(function(q) {
+      var rep = reponses[q.id];
+      html += '<div class="bloc-question"><div class="q-numero">Question ' + q.num + '</div>'
+        + '<div class="q-texte">' + q.texte + '</div>'
+        + '<div class="options-grille" role="group">';
+      q.options.forEach(function(opt) {
+        var sel = rep === opt.id;
+        html += '<button class="option-btn' + (sel ? ' sel' : '') + '"'
+          + ' onclick="CM.App.repondre(\'' + q.id + '\',\'' + opt.id + '\')"'
+          + ' role="radio" aria-checked="' + sel + '">'
+          + opt.lib + '<div class="option-sous">' + opt.desc + '</div></button>';
+      });
+      html += '</div></div>';
+    });
+
+    if (repondues === total) html += _rendreResultats();
+    html += '</div>';
+    zone.innerHTML = html;
+  }
+
+  function _rendreResultats() {
+    var obj    = reponses['q1'];
+    var niveau = reponses['q3'];
+
+    var candidats = CM.Referentiel.tous().filter(function(ind) {
+      if (ind.niveau !== niveau) return false;
+      if (obj === 'business'  && !['IGO','ICP','ORC'].includes(ind.type)) return false;
+      if (obj === 'livraison' && !['DORA','FLUX','ICP'].includes(ind.type)) return false;
+      if (obj === 'qualite'   && !['DORA','ICP','ICC'].includes(ind.type)) return false;
+      if (obj === 'humain'    && !['ICC','ORC'].includes(ind.type)) return false;
+      return true;
+    });
+    if (candidats.length === 0) candidats = CM.Referentiel.tous().filter(function(i) { return i.niveau === niveau; });
+    var recommandes = candidats.slice(0, 5);
+
+    var html = '<div class="resultat-zone"><div class="resultat-titre">✅ Vos indicateurs recommandes — ' + recommandes.length + ' sur 5 maximum</div>'
+      + '<div class="grille-cartes">';
+    recommandes.forEach(function(ind) { html += CM.Composants.htmlCarte(ind, '#1a237e', true, false); });
+    html += '</div><div class="conseil-zone"><strong>Conseil pratique :</strong> Commencez par mesurer 1 a 2 indicateurs. Etablissez d\'abord une ligne de reference (valeur actuelle), fixez une ambition realiste, puis ajoutez les autres progressivement. <em>Ne mesurez jamais tout en meme temps.</em></div>'
+      + '<button class="btn-principal" onclick="CM.App.reinitQuestionnaire()">Recommencer</button></div>';
+    return html;
+  }
+
+  /* ─── VUE 4 : Maturite & Recommandations ─── */
+  function _rendreMaturite() {
+    var zone = document.getElementById('contenu-maturite');
+    var cfg  = CM.Config;
+    var inds = CM.Referentiel.filtrerParContexte(contexte);
+    var ordMat = { debutant: 0, intermediaire: 1, avance: 2 };
+    var mat = maturiteActive;
+
+    var fiables    = inds.filter(function(i) { return (i.fiabilite || 'fiable') === 'fiable'     && ordMat[i.maturite_min || 'debutant'] <= ordMat[mat]; });
+    var precaution = inds.filter(function(i) { return (i.fiabilite || 'fiable') === 'precaution' && ordMat[i.maturite_min || 'debutant'] <= ordMat[mat]; });
+    var risques    = inds.filter(function(i) { return (i.fiabilite || 'fiable') === 'risque'; });
+    var prochainNiv = inds.filter(function(i) { return ordMat[i.maturite_min || 'debutant'] > ordMat[mat] && (i.fiabilite || 'fiable') !== 'risque'; });
+
+    var html = '';
+    /* Selecteur maturite */
+    html += '<div class="maturite-selecteur" role="group" aria-label="Niveau de maturite">';
+    Object.keys(cfg.MATURITE).forEach(function(id) {
+      var m = cfg.MATURITE[id];
+      html += '<button class="btn-maturite' + (maturiteActive === id ? ' actif' : '') + '"'
+        + ' onclick="CM.App.changerMaturite(\'' + id + '\')" aria-pressed="' + (maturiteActive === id) + '">'
+        + m.icone + ' ' + m.label + '</button>';
+    });
+    html += '</div>';
+
+    var mc = cfg.MATURITE[mat];
+    /* Encart de description riche de la maturité */
+    html += '<div class="encart-maturite">'
+      + '<div style="display:flex;align-items:baseline;gap:0.6rem;margin-bottom:0.65rem">'
+      +   '<span style="font-size:1.6rem">' + mc.icone + '</span>'
+      +   '<div>'
+      +     '<strong style="font-size:1rem">' + mc.label + '</strong>'
+      +     '<span style="font-size:0.78rem;color:var(--texte-2);margin-left:0.6rem">— ' + mc.horizon + '</span>'
+      +   '</div>'
+      + '</div>'
+      + '<p style="font-size:0.88rem;margin-bottom:0.75rem;color:var(--texte-2)">' + mc.desc + '</p>'
+      + '<div style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--texte-2);margin-bottom:0.5rem">Ce qui caractérise cette équipe</div>'
+      + '<ul style="list-style:none;padding:0;margin:0 0 0.85rem;display:flex;flex-direction:column;gap:0.35rem">';
+    mc.caracteristiques.forEach(function(c) {
+      html += '<li style="display:flex;gap:0.55rem;align-items:flex-start;font-size:0.85rem;line-height:1.45">'
+        + '<span style="color:' + mc.couleur + ';flex-shrink:0;margin-top:2px">●</span>'
+        + '<span>' + c + '</span>'
+        + '</li>';
+    });
+    html += '</ul>'
+      + '<div style="border-top:1px solid var(--bordure);padding-top:0.7rem;margin-top:0.1rem">'
+      +   '<span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:' + mc.couleur + '">💡 Conseil pratique</span>'
+      +   '<p style="font-size:0.85rem;margin-top:0.3rem;color:var(--texte);line-height:1.55">' + mc.conseil + '</p>'
+      + '</div>'
+      + '</div>';
+
+    /* Legende fiabilite */
+    html += '<div class="legende-fiabilite">';
+    Object.keys(cfg.FIABILITE).forEach(function(id) {
+      var f = cfg.FIABILITE[id];
+      html += '<div class="fib-item"><span class="badge-fiabilite" style="background:' + f.couleur + ';font-size:0.62rem">' + f.icone + ' ' + f.label_court + '</span><span>' + f.label + '</span></div>';
+    });
+    html += '</div>';
+
+    if (fiables.length) {
+      html += '<div class="section-fiabilite"><div class="titre-fiabilite" style="color:#2e7d32"><span style="font-size:1.1rem">✅</span> Indicateurs recommandes (' + fiables.length + ')</div><div class="grille-cartes">';
+      fiables.forEach(function(i) { html += CM.Composants.htmlCarte(i, '#2e7d32', true, false); });
+      html += '</div></div>';
+    }
+    if (precaution.length) {
+      html += '<div class="section-fiabilite"><div class="titre-fiabilite" style="color:#e65100"><span style="font-size:1.1rem">⚠️</span> A utiliser avec soin (' + precaution.length + ')</div><div class="grille-cartes">';
+      precaution.forEach(function(i) { html += CM.Composants.htmlCarte(i, '#e65100', false, false); });
+      html += '</div></div>';
+    }
+    if (prochainNiv.length) {
+      html += '<div class="section-fiabilite"><div class="titre-fiabilite" style="color:var(--niv-2)"><span style="font-size:1.1rem">🔭</span> A introduire au niveau suivant (' + prochainNiv.length + ')</div>'
+        + '<div style="background:var(--niv-2-clair);border-radius:10px;padding:0.75rem 1rem;font-size:0.83rem;margin-bottom:0.9rem;color:var(--niv-2)">Ces indicateurs deviennent pertinents une fois les pratiques de base solidement etablies.</div>'
+        + '<div class="grille-cartes">';
+      prochainNiv.forEach(function(i) { html += CM.Composants.htmlCarte(i, '#0277bd', false, true); });
+      html += '</div></div>';
+    }
+    if (risques.length) {
+      html += '<div class="section-fiabilite"><div class="titre-fiabilite" style="color:#c62828"><span style="font-size:1.1rem">⚡</span> Courantes mais risquees — employer avec vigilance (' + risques.length + ')</div>'
+        + '<div style="background:#fce4e4;border-radius:10px;padding:0.75rem 1rem;font-size:0.83rem;margin-bottom:0.9rem;color:#7f0000;line-height:1.5;">Ces metriques sont tres repandues mais facilement instrumentalisees. Ouvrez la fiche pour decouvrir l\'alternative recommandee.</div>'
+        + '<div class="grille-cartes">';
+      risques.forEach(function(i) { html += CM.Composants.htmlCarte(i, '#c62828', false, false); });
+      html += '</div></div>';
+    }
+
+    zone.innerHTML = html;
+  }
+
+  /* ─── Initialisation ─── */
+  function init() {
+    document.getElementById('accueil').style.display = 'flex';
+    document.getElementById('app').classList.remove('actif');
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') CM.Composants.fermerTiroir();
+    });
+  }
+
+  /* API publique */
+  return {
+    entrer:               entrer,
+    retourAccueil:        retourAccueil,
+    changerVue:           changerVue,
+    changerMaturite:      changerMaturite,
+    repondre:             repondre,
+    reinitQuestionnaire:  reinitQuestionnaire,
+    init:                 init
+  };
+})();
+</script>
+
+<!-- ══ INIT ══ -->
+<script>
+CM.App.init();
+</script>
+
+</body>
+</html>
