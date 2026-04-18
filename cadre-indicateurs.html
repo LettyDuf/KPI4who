@@ -1997,6 +1997,7 @@ CM.IndicateursMeta = (function() {
     's3': { tags:['valeur'],                     cadres:['bsc','generique'] },
     's4': { tags:['alignement','valeur'],        cadres:['okr','mbo'] },
     's5': { tags:['valeur','alignement'],        cadres:['bsc','generique'] },
+    's6': { tags:['humain','alignement'],        cadres:['generique'] },
 
     /* Portefeuille (ancien id "tactique") */
     't1': { tags:['valeur'],                     cadres:['safe','generique'] },
@@ -2266,6 +2267,18 @@ CM.Referentiel.ajouter([
     exemple_eq:'Non directement visible au niveau équipe.',
     risque:'Peut croitre en degradant les marges (guerre des prix). Analyser imperative conjointement avec la rentabilite.',
     roles:['direction'], prioritaire:false, fiabilite:'fiable', maturite_min:'intermediaire'
+  },
+  {
+    id:'s6', niveau:'strategique', type:'ICP', icone:'🔋',
+    nom:'Capacité d\'absorption du changement',
+    definition:'Niveau agrégé de préparation de l\'organisation à porter un changement stratégique, mesuré sur les 5 dimensions <span class="term-def" data-def="ADKAR (Prosci) : Awareness (conscience du besoin de changer), Desire (désir d\'y contribuer), Knowledge (connaissance du comment), Ability (capacité à l\'appliquer), Reinforcement (renforcement pour pérenniser). Modèle de maturité du changement au niveau individuel, agrégé ici en lecture organisationnelle.">ADKAR</span> (conscience, désir, connaissance, capacité, renforcement), via enquête structurée au lancement ou à mi-parcours d\'une transformation majeure. C\'est un indicateur d\'<strong>outcome systémique</strong> — il capte la capacité du <strong>système organisationnel</strong> à encaisser la stratégie, <strong>pas</strong> la performance individuelle des collaborateurs ou des managers. Un score faible signale que la stratégie est mal ancrée, pas que les gens sont mauvais.',
+    objectif:'Éclairer la <strong>maturité organisationnelle</strong> avant ou pendant une bascule stratégique majeure (transformation, acquisition, repositionnement, changement de modèle). Donner au board une lecture honnête : l\'organisation est-elle prête à porter ce qu\'on s\'apprête à engager ? À lire comme un <strong>thermomètre de la stratégie elle-même</strong>, pas comme une évaluation des équipes. Un ADKAR à 45 % ne dit pas « vos équipes sont en retard » — il dit « votre stratégie n\'est pas encore ancrée, il manque du travail de conviction, de formation ou de renforcement en amont ».',
+    frequence:'Semestrielle en période stable — trimestrielle pendant une transformation active',
+    exemple_ent:'Bascule vers une stratégie produit « data-as-a-service ». Score ADKAR global à 52 % au T+2. Décomposition : conscience à 78 % (les gens ont compris), désir à 48 % (ils ne voient pas ce qu\'ils gagnent), capacité à 35 % (pas encore outillés). Conclusion board : la communication a fait son travail, mais le pourquoi individuel et les moyens d\'agir manquent. Ralentir le calendrier serait un mauvais réflexe ; renforcer l\'enveloppe formation et clarifier les contreparties individuelles est la bonne réponse stratégique.',
+    exemple_eq:'Au niveau équipe, cette métrique n\'a pas sa place — les équipes ont leurs propres rituels de maturité au changement (rétrospectives, baromètres d\'équipe). Vigilance principale : ne <strong>jamais</strong> publier les scores ADKAR par équipe avec noms. Ce serait confondre « outil d\'éclairage du système » et « fiche de notation des managers », ce qui détruit la confiance et la qualité de la mesure.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Scoring individuel : appliquer ADKAR comme une évaluation des personnes (qui est au niveau 3, qui est au niveau 5). Déforme le modèle ADKAR qui est un diagnostic systémique, pas une fiche de notation. Repère Deming : 94 % des problèmes viennent du système, pas des personnes.">scoring individuel</span>, publication par équipe avec identification des managers, inclusion dans la rémunération variable (effet Goodhart garanti — les managers coachent la réponse à l\'enquête au lieu du changement lui-même), moyennes organisationnelles qui masquent des poches de blocage critique (toujours lire la distribution, pas la moyenne), confusion readiness et obéissance (un score bas peut signaler des questions légitimes non traitées). Vigilance coaching : un score ADKAR élevé peut masquer une <span class="term-def" data-def="Zone neutre (William Bridges) : période où l\'ancien est abandonné mais le nouveau n\'est pas encore incarné. Phase émotionnellement coûteuse, souvent invisible des indicateurs quantitatifs. Se manifeste par de la fatigue, de la confusion, une baisse de créativité.">zone neutre</span> collective non traversée (le deuil de l\'ancien avant l\'adoption du nouveau) — compléter par des groupes de parole et de l\'écoute terrain.',
+    alt:'Si l\'objectif est de mesurer la <strong>satisfaction au travail</strong> ou l\'<strong>engagement émotionnel</strong>, ce n\'est pas le bon indicateur — ADKAR mesure la préparation au changement, pas le bien-être. Préférer l\'indice de confiance organisationnelle (s8) ou un Happiness Index (Management 3.0), avec les mêmes précautions de non-individualisation.',
+    roles:['direction'], prioritaire:true, fiabilite:'precaution', maturite_min:'intermediaire'
   }
 ]);
 </script>
