@@ -3473,10 +3473,12 @@ CM.DiagnosticProbleme = (function() {
   /* Indicateurs recommandés pour un couple (niveau, problème).
      Critères : ind.niveau === ctx.niveau ET ctx.probleme ∈ tags(ind).
      Le domaine (ctx.domaine, optionnel) filtre au niveau opérationnel uniquement.
-     Tri par fiabilité décroissante (fiable > précaution > risque) avant la coupure
-     à 5, pour ne pas évincer une métrique fiable au profit d'une métrique risquée
-     simplement à cause de leur ordre dans le référentiel.
-     Limite à 5 pour éviter la surcharge cognitive (règle "moins = mieux"). */
+     Tri par fiabilité décroissante (fiable > précaution > risque) pour présenter
+     les métriques les plus exploitables en tête — sans masquer les autres.
+     Pas de plafond appliqué : les étapes du parcours (niveau, problème, domaine)
+     jouent déjà le rôle de filtres explicites ; couper arbitrairement la liste
+     créerait un biais d'information invisible. À l'utilisateur d'arbitrer ce
+     qu'il retient, pas au produit de décider pour lui. */
   // Exemple : recommander({niveau:'operationnel', probleme:'flux'}) → [ind, ind, ...]
   function recommander(ctx) {
     if (!ctx || !ctx.niveau || !ctx.probleme) return [];
@@ -3488,7 +3490,7 @@ CM.DiagnosticProbleme = (function() {
     pertinents.sort(function(a, b) {
       return _rangFiabilite(b) - _rangFiabilite(a);
     });
-    return pertinents.slice(0, 5);
+    return pertinents;
   }
 
   /* Indicateurs qui éclairent le problème mais relèvent d'un autre niveau.
@@ -4266,7 +4268,7 @@ CM.App = (function() {
     /* Indicateurs essentiels */
     var essentiels = inds.filter(function(i) { return i.prioritaire; });
     html += '<div class="panneau"><div class="panneau-titre">Indicateurs essentiels'
-      + '<span class="chip-essentiel">⭐ ' + essentiels.length + ' sur 5 maximum</span></div>'
+      + '<span class="chip-essentiel">⭐ ' + essentiels.length + ' essentiel' + (essentiels.length > 1 ? 's' : '') + '</span></div>'
       + '<div class="grille-cartes">';
     essentiels.forEach(function(ind) { html += CM.Composants.htmlCarte(ind, info.couleur, true, false); });
     html += '</div></div>';
@@ -4416,9 +4418,9 @@ CM.App = (function() {
       return true;
     });
     if (candidats.length === 0) candidats = CM.Referentiel.tous().filter(function(i) { return i.niveau === niveau; });
-    var recommandes = candidats.slice(0, 5);
+    var recommandes = candidats;
 
-    var html = '<div class="resultat-zone"><div class="resultat-titre">✅ Vos indicateurs recommandes — ' + recommandes.length + ' sur 5 maximum</div>'
+    var html = '<div class="resultat-zone"><div class="resultat-titre">✅ Vos indicateurs recommandes — ' + recommandes.length + ' au total</div>'
       + '<div class="grille-cartes">';
     recommandes.forEach(function(ind) { html += CM.Composants.htmlCarte(ind, '#1a237e', true, false); });
     html += '</div><div class="conseil-zone"><strong>Conseil pratique :</strong> Commencez par mesurer 1 a 2 indicateurs. Etablissez d\'abord une ligne de référence (valeur actuelle), fixez une ambition realiste, puis ajoutez les autres progressivement. <em>Ne mesurez jamais tout en meme temps.</em></div>'
