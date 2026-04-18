@@ -1878,6 +1878,64 @@ CM.IndicateursMeta = (function() {
 </script>
 
 
+<!-- ══ MODULE : CM.Preferences — Lecture/écriture des préférences utilisateur ══
+     Source de vérité avec priorité :
+       1. URL hash  (override explicite, partageable, debug)  → ex : cadre-indicateurs.html#portes
+       2. localStorage (persistance discrète entre sessions)
+       3. valeur par défaut codée
+     Pas de DOM, pas de dépendance autre que window.location et window.localStorage.
+     Open/closed : pour ajouter une préférence, déclarer son hash dans HASH_VERS_PREFERENCE. -->
+<script>
+CM.Preferences = (function() {
+  'use strict';
+
+  var PREFIXE_STOCKAGE = 'cm_';
+
+  /* Hash → préférence cible
+     Convention : les hashes sont des "raccourcis" pour préselectionner une vue.
+     Format simple aujourd'hui (#portes), extensible demain (#portes/probleme/...). */
+  var HASH_VERS_PREFERENCE = {
+    'portes':   { cle:'accueil', valeur:'portes'   },
+    'pyramide': { cle:'accueil', valeur:'pyramide' }
+  };
+
+  // Exemple : CM.Preferences.lire('accueil', 'pyramide') → 'portes' si #portes dans l'URL
+  function lire(cle, defaut) {
+    var override = _lireHash();
+    if (override && override.cle === cle) return override.valeur;
+    var stocke = _lireStockage(cle);
+    return stocke !== null && stocke !== undefined ? stocke : defaut;
+  }
+
+  // Exemple : CM.Preferences.ecrire('accueil', 'portes') → true si écrit, false sinon
+  function ecrire(cle, valeur) {
+    return _ecrireStockage(cle, valeur);
+  }
+
+  /* ─── Internes ─── */
+  function _lireHash() {
+    var h = (window.location && window.location.hash || '').replace(/^#/, '').toLowerCase();
+    return HASH_VERS_PREFERENCE[h] || null;
+  }
+
+  function _lireStockage(cle) {
+    try { return window.localStorage.getItem(PREFIXE_STOCKAGE + cle); }
+    catch (e) { return null; } /* file:// strict ou navigateur en mode privé */
+  }
+
+  function _ecrireStockage(cle, valeur) {
+    try { window.localStorage.setItem(PREFIXE_STOCKAGE + cle, String(valeur)); return true; }
+    catch (e) { return false; }
+  }
+
+  return {
+    lire:   lire,
+    ecrire: ecrire
+  };
+})();
+</script>
+
+
 <!-- ══ DATA : Indicateurs Strategiques (s1–s5) ══ -->
 <script>
 CM.Referentiel.ajouter([
