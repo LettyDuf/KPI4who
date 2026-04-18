@@ -17,3 +17,7 @@ Thumbs.db
 
 # Fichiers de test du setup git (mount immuable)
 .git-test-*
+
+# Prompts de reprise de conversation (documents de travail, non versionnés)
+prompt-reprise-conversation.md
+prompt-reprise-*.md

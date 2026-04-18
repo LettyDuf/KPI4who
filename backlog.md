@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **18 avril 2026** (après revue p5, extraction rendreFicheHtml, refonte libellés types et accents).
+Dernière mise à jour : **18 avril 2026** (chantier 3 clôturé — 4 paires de matrice initialement vides complétées : stratégique × humain, stratégique × risque, tactique × risque, programme × qualité).
 
 Légende : 🔴 priorité haute · 🟡 moyenne · 🟢 basse · ⚪ à décider · ✅ fait · ⏳ en cours
 
