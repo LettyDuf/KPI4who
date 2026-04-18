@@ -14,3 +14,6 @@ Thumbs.db
 # Brouillons temporaires éventuels
 *.tmp
 *.bak
+
+# Fichiers de test du setup git (mount immuable)
+.git-test-*
