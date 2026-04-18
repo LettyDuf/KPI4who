@@ -3348,16 +3348,22 @@ CM.DiagnosticProbleme = (function() {
   /* Indicateurs recommandés pour un couple (niveau, problème).
      Critères : ind.niveau === ctx.niveau ET ctx.probleme ∈ tags(ind).
      Le domaine (ctx.domaine, optionnel) filtre au niveau opérationnel uniquement.
+     Tri par fiabilité décroissante (fiable > précaution > risque) avant la coupure
+     à 5, pour ne pas évincer une métrique fiable au profit d'une métrique risquée
+     simplement à cause de leur ordre dans le référentiel.
      Limite à 5 pour éviter la surcharge cognitive (règle "moins = mieux"). */
   // Exemple : recommander({niveau:'operationnel', probleme:'flux'}) → [ind, ind, ...]
   function recommander(ctx) {
     if (!ctx || !ctx.niveau || !ctx.probleme) return [];
     var tous = CM.Referentiel.tous();
-    var resultats = [];
-    for (var i = 0; i < tous.length && resultats.length < 5; i++) {
-      if (_estPertinent(tous[i], ctx)) resultats.push(tous[i]);
+    var pertinents = [];
+    for (var i = 0; i < tous.length; i++) {
+      if (_estPertinent(tous[i], ctx)) pertinents.push(tous[i]);
     }
-    return resultats;
+    pertinents.sort(function(a, b) {
+      return _rangFiabilite(b) - _rangFiabilite(a);
+    });
+    return pertinents.slice(0, 5);
   }
 
   /* Indicateurs qui éclairent le problème mais relèvent d'un autre niveau.
@@ -3388,6 +3394,16 @@ CM.DiagnosticProbleme = (function() {
     }
     var tags = CM.IndicateursMeta.tagsDe(ind.id);
     return tags.indexOf(ctx.probleme) !== -1;
+  }
+
+  /* Score numérique pour ordonner les indicateurs par qualité de mesure.
+     Reflète la hiérarchie pédagogique : on présente d'abord ce qui est fiable,
+     puis ce qui demande de la précaution, puis ce qui est risqué (Goodhart).
+     Indicateur sans fiabilité renseignée → score 0 (relégué en queue). */
+  // Exemple : _rangFiabilite({fiabilite:'fiable'}) → 3
+  var _RANG_FIABILITE = { 'fiable': 3, 'precaution': 2, 'risque': 1 };
+  function _rangFiabilite(ind) {
+    return _RANG_FIABILITE[ind && ind.fiabilite] || 0;
   }
 
   return {
