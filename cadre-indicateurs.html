@@ -1689,7 +1689,33 @@ CM.Config = (function() {
     }
   ];
 
-  return { TYPES_COULEURS: TYPES_COULEURS, TYPES_LIBELLES: TYPES_LIBELLES, FIABILITE: FIABILITE, MATURITE: MATURITE, NIVEAUX: NIVEAUX };
+  /* Textes pédagogiques rendus par les vues, centralisés ici pour :
+     (1) découpler le texte de la vue qui l'affiche (reformulation sans
+     toucher la vue), (2) préparer une clé MESSAGES.panierConsignes quand
+     le chantier 6.4 (CM.Panier) démarrera, (3) permettre l'alignement
+     éditorial entre portes d'entrée lors du chantier 6.2.
+
+     conseilPedagogique : affiché sous la liste d'indicateurs recommandés.
+     Invite à n'en retenir que 1 à 2, à poser une ligne de référence
+     honnête, et à n'ajouter d'autres métriques que si une décision concrète
+     l'exige. Principe : la cohérence d'attention prime sur l'exhaustivité. */
+  var MESSAGES = {
+    conseilPedagogique:
+        '<div class="conseil-zone">'
+      +   '<strong>Comment lire cette liste :</strong> elle présente tous les '
+      +   'indicateurs pertinents pour ce couple (niveau × problème), classés '
+      +   'par fiabilité décroissante — à vous d\'arbitrer ce que vous retenez, '
+      +   'pas au produit de décider pour vous. '
+      +   '<strong>Commencez par n\'en retenir que 1 à 2.</strong> '
+      +   'Établissez leur ligne de référence (la valeur actuelle, mesurée '
+      +   'honnêtement), fixez une ambition réaliste à 3–6 mois, puis ajoutez-en '
+      +   'd\'autres <em>uniquement</em> si une décision concrète l\'exige. '
+      +   '<em>Tout mesurer en même temps dilue l\'attention collective et '
+      +   'ne révèle rien.</em>'
+      + '</div>'
+  };
+
+  return { TYPES_COULEURS: TYPES_COULEURS, TYPES_LIBELLES: TYPES_LIBELLES, FIABILITE: FIABILITE, MATURITE: MATURITE, NIVEAUX: NIVEAUX, MESSAGES: MESSAGES };
 })();
 </script>
 
@@ -4532,7 +4558,7 @@ CM.App = (function() {
     var html = '<div class="resultat-zone"><div class="resultat-titre">✅ Vos indicateurs recommandes — ' + recommandes.length + ' au total</div>'
       + '<div class="grille-cartes">';
     recommandes.forEach(function(ind) { html += CM.Composants.htmlCarte(ind, '#1a237e', true, false); });
-    html += '</div><div class="conseil-zone"><strong>Comment lire cette liste :</strong> elle présente tous les indicateurs pertinents pour ce couple (niveau × problème), classés par fiabilité décroissante — à vous d\'arbitrer ce que vous retenez, pas au produit de décider pour vous. <strong>Commencez par n\'en retenir que 1 à 2.</strong> Établissez leur ligne de référence (la valeur actuelle, mesurée honnêtement), fixez une ambition réaliste à 3–6 mois, puis ajoutez-en d\'autres <em>uniquement</em> si une décision concrète l\'exige. <em>Tout mesurer en même temps dilue l\'attention collective et ne révèle rien.</em></div>'
+    html += '</div>' + CM.Config.MESSAGES.conseilPedagogique
       + '<button class="btn-principal" onclick="CM.App.reinitQuestionnaire()">Recommencer</button></div>';
     return html;
   }
