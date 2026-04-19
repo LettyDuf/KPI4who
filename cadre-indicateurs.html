@@ -3703,7 +3703,6 @@ CM.Composants = (function() {
       +       '<span class="badge-fiabilite" style="background:' + fib.couleur + '" title="' + fib.label + '">' + fib.icone + ' ' + fib.label_court + '</span>'
       +     '</div>'
       +     '<div class="carte-nom">' + ind.nom + '</div>'
-      +     rendreChipsCadres(ind.id)
       +   '</div>'
       + '</div>'
       + '<div class="carte-corps">'
@@ -3712,6 +3711,7 @@ CM.Composants = (function() {
       +     '<span class="carte-freq">🕐 ' + ind.frequence + '</span>'
       +     '<span class="badge-maturite" title="Niveau de maturité recommande">' + mat.icone + ' ' + mat.label + '</span>'
       +   '</div>'
+      +   rendreChipsCadres(ind.id)
       + '</div>'
       + '<div class="carte-pied">'
       +   '<button class="btn-detail" onclick="event.stopPropagation();CM.Composants.ouvrirTiroir(\'' + ind.id + '\')">Voir le detail →</button>'
