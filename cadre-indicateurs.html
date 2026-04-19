@@ -1692,30 +1692,58 @@ CM.Config = (function() {
   /* Textes pédagogiques rendus par les vues, centralisés ici pour :
      (1) découpler le texte de la vue qui l'affiche (reformulation sans
      toucher la vue), (2) préparer une clé MESSAGES.panierConsignes quand
-     le chantier 6.4 (CM.Panier) démarrera, (3) permettre l'alignement
-     éditorial entre portes d'entrée lors du chantier 6.2.
+     le chantier 6.4 (CM.Panier) démarrera, (3) offrir une chaîne unique
+     partagée entre les portes « Par mon rôle » et « Par mon problème »
+     (chantier 6.2 livré 2026-04-19, variante 2).
 
      conseilPedagogique : affiché sous la liste d'indicateurs recommandés.
-     Invite à n'en retenir que 1 à 2, à poser une ligne de référence
-     honnête, et à n'ajouter d'autres métriques que si une décision concrète
-     l'exige. Principe : la cohérence d'attention prime sur l'exhaustivité. */
+     Règle métier portée par la chaîne : retenir 1 à 2 métriques PAR AXE
+     (flux, qualité, humain, alignement…) sur 2 à 3 axes, pas 1 à 2 au
+     total ni 5 sur le même axe. Principe : la cohérence entre axes prime
+     sur l'exhaustivité d'un seul axe.
+
+     conseilPedagogiquePour(contexte) : façade (port) qui isole les vues
+     de la chaîne concrète. Aujourd'hui retourne toujours la même chaîne
+     quel que soit le contexte (variante 2 — unifiée). Évolution prévue
+     au backlog (variante 3 — « conseil adapté au contexte ») : produire
+     une formulation qui nomme explicitement l'axe du problème ou de
+     l'objectif choisi. Les appelants passeront déjà un contexte riche,
+     il n'y aura qu'à enrichir cette fonction, sans refactor des vues. */
   var MESSAGES = {
     conseilPedagogique:
         '<div class="conseil-zone">'
-      +   '<strong>Comment lire cette liste :</strong> elle présente tous les '
-      +   'indicateurs pertinents pour ce couple (niveau × problème), classés '
-      +   'par fiabilité décroissante — à vous d\'arbitrer ce que vous retenez, '
-      +   'pas au produit de décider pour vous. '
-      +   '<strong>Commencez par n\'en retenir que 1 à 2.</strong> '
+      +   '<strong>Comment lire cette liste :</strong> elle présente les '
+      +   'indicateurs pertinents pour ce niveau, classés par fiabilité '
+      +   'décroissante — à vous d\'arbitrer ce que vous retenez, pas '
+      +   'au produit de décider pour vous. '
+      +   '<strong>Retenez 1 à 2 métriques par axe</strong> (flux, qualité, '
+      +   'humain, alignement…), <strong>sur 2 à 3 axes</strong> — la '
+      +   'cohérence entre axes prime sur l\'exhaustivité d\'un seul axe. '
       +   'Établissez leur ligne de référence (la valeur actuelle, mesurée '
-      +   'honnêtement), fixez une ambition réaliste à 3–6 mois, puis ajoutez-en '
+      +   'honnêtement), fixez une ambition à 3–6 mois, puis ajoutez-en '
       +   'd\'autres <em>uniquement</em> si une décision concrète l\'exige. '
-      +   '<em>Tout mesurer en même temps dilue l\'attention collective et '
-      +   'ne révèle rien.</em>'
+      +   '<em>Tout mesurer en même temps dilue l\'attention collective '
+      +   'et ne révèle rien.</em>'
       + '</div>'
   };
 
-  return { TYPES_COULEURS: TYPES_COULEURS, TYPES_LIBELLES: TYPES_LIBELLES, FIABILITE: FIABILITE, MATURITE: MATURITE, NIVEAUX: NIVEAUX, MESSAGES: MESSAGES };
+  /* Façade stable pour les vues. Contexte attendu :
+     { niveau: string, probleme?: string, objectif?: string }
+     Aujourd'hui : ignore le contexte, retourne la chaîne unifiée.
+     Demain (variante 3) : pourra renvoyer une chaîne adaptée. */
+  function conseilPedagogiquePour(/* contexte */) {
+    return MESSAGES.conseilPedagogique;
+  }
+
+  return {
+    TYPES_COULEURS: TYPES_COULEURS,
+    TYPES_LIBELLES: TYPES_LIBELLES,
+    FIABILITE: FIABILITE,
+    MATURITE: MATURITE,
+    NIVEAUX: NIVEAUX,
+    MESSAGES: MESSAGES,
+    conseilPedagogiquePour: conseilPedagogiquePour
+  };
 })();
 </script>
 
@@ -4142,6 +4170,9 @@ CM.VuePorteProbleme = (function() {
         html += CM.Composants.htmlCarte(recos[i], '#1a237e', true, false);
       }
       html += '</div>';
+      // Conseil pédagogique (chantier 6.2 — variante 2 unifiée).
+      // Contexte riche déjà passé pour préparer la variante 3 future.
+      html += CM.Config.conseilPedagogiquePour({ niveau: etat.niveau, probleme: etat.probleme });
     }
 
     if (aDeleguer.length > 0) {
@@ -4559,7 +4590,8 @@ CM.App = (function() {
     var html = '<div class="resultat-zone"><div class="resultat-titre">✅ Vos indicateurs recommandes — ' + recommandes.length + ' au total</div>'
       + '<div class="grille-cartes">';
     recommandes.forEach(function(ind) { html += CM.Composants.htmlCarte(ind, '#1a237e', true, false); });
-    html += '</div>' + CM.Config.MESSAGES.conseilPedagogique
+    html += '</div>'
+      + CM.Config.conseilPedagogiquePour({ niveau: niveau, objectif: obj })
       + '<button class="btn-principal" onclick="CM.App.reinitQuestionnaire()">Recommencer</button></div>';
     return html;
   }
