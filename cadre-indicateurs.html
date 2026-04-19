@@ -2113,6 +2113,18 @@ CM.IndicateursMeta = (function() {
   function tagsDe(id) { return pour(id).tags || []; }
   function cadresDe(id) { return pour(id).cadres || []; }
 
+  /* ── Règle d'affichage : le cadre « generique » est un fallback sémantique.
+     Quand une méthodologie spécifique (Lean, DORA, Scrum…) est déjà présente,
+     on masque « generique » pour ne pas diluer le signal visuel. Il reste
+     visible uniquement sur les fiches sans rattachement méthodologique, où
+     il porte l'information utile « indicateur universel ». */
+  function cadresAffichables(id) {
+    var liste = cadresDe(id);
+    if (liste.length <= 1) return liste;
+    var specifiques = liste.filter(function(k) { return k !== 'generique'; });
+    return specifiques.length > 0 ? specifiques : liste;
+  }
+
   function infoTag(id) {
     var t = TAGS[id];
     return t ? { id:id, label:t.label, icone:t.icone } : null;
@@ -2148,6 +2160,7 @@ CM.IndicateursMeta = (function() {
     pour: pour,
     tagsDe: tagsDe,
     cadresDe: cadresDe,
+    cadresAffichables: cadresAffichables,
     infoTag: infoTag,
     infoCadre: infoCadre,
     tousLesTags: tousLesTags,
