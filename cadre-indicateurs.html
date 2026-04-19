@@ -1584,10 +1584,10 @@ CM.Config = (function() {
       label_court: 'Fiable',
       couleur:     '#2e7d32',
       icone:       '✅',
-      desc:        'Metrique objective, peu susceptible d\'etre instrumentalisee. A privilegier en premier lieu.'
+      desc:        'Metrique objective, peu susceptible d\'etre instrumentalisee. À privilégier en premier lieu.'
     },
     'precaution': {
-      label:       'A utiliser avec soin',
+      label:       'À utiliser avec soin',
       label_court: 'Precaution',
       couleur:     '#e65100',
       icone:       '⚠️',
@@ -1864,7 +1864,7 @@ CM.Gemba = (function() {
 CM.Html = (function() {
   'use strict';
 
-  // Échappé les caractères HTML dangereux. A utiliser quand on injecte
+  // Échappé les caractères HTML dangereux. À utiliser quand on injecte
   // du contenu utilisateur ou de données non maitrisees dans innerHTML.
   function escape(texte) {
     if (texte === null || texte === undefined) return '';
@@ -2223,7 +2223,7 @@ CM.Referentiel.ajouter([
     id:'s1', niveau:'strategique', type:'IGO', icone:'📈',
     nom:'Croissance du chiffre d\'affaires',
     definition:'Variation des revenus sur une période donnée, exprimée en pourcentage par rapport a la période de référence précédente.',
-    objectif:'Evaluer la dynamique de croissance economique de l\'organisation a long terme.',
+    objectif:'Evaluer la dynamique de croissance economique de l\'organisation à long terme.',
     frequence:'Trimestrielle · Annuelle',
     exemple_ent:'Objectif : +18 % de revenus annuels recurrents d\'ici decembre. Ligne de référence actuelle : +9 %.',
     exemple_eq:'Non directement visible au niveau équipe — il resulte de l\'ensemble des livraisons combinees.',
@@ -2233,7 +2233,7 @@ CM.Referentiel.ajouter([
   {
     id:'s2', niveau:'strategique', type:'ICP', icone:'⭐',
     nom:'Indice de recommandation client (NPS)',
-    definition:'Mesure la propension des clients a recommander l\'organisation (score de -100 a +100). Calculee a partir de la différence entre promoteurs et detracteurs.',
+    definition:'Mesure la propension des clients à recommander l\'organisation (score de -100 a +100). Calculee à partir de la différence entre promoteurs et detracteurs.',
     objectif:'Evaluer la fidelite client et la force de la relation commerciale dans la duree.',
     frequence:'Trimestrielle',
     exemple_ent:'NPS de +42 après lancement de la nouvelle version produit, en hausse de 8 points.',
@@ -2245,7 +2245,7 @@ CM.Referentiel.ajouter([
     id:'s3', niveau:'strategique', type:'IGO', icone:'💰',
     nom:'Résultat opérationnel brut (EBITDA)',
     definition:'Benefice avant intérêts, impots, depreciation et amortissement. Mesure la rentabilité opérationnelle reelle independamment de la structure financiere.',
-    objectif:'Evaluer la capacité de l\'organisation a générer de la valeur economique de facon durable.',
+    objectif:'Evaluer la capacité de l\'organisation à générer de la valeur economique de facon durable.',
     frequence:'Trimestrielle · Annuelle',
     exemple_ent:'Atteindre une marge EBITDA de 22 % sur l\'exercice, en hausse de 3 points.',
     exemple_eq:'Non directement visible au niveau équipe.',
@@ -2354,7 +2354,7 @@ CM.Referentiel.ajouter([
   {
     id:'t2', niveau:'tactique', type:'ICP', icone:'🚀',
     nom:'Délai de commercialisation (Lead Time métier)',
-    definition:'Duree moyenne entre la décision de lancer une initiative et sa mise a disposition en production pour les utilisateurs finaux.',
+    definition:'Duree moyenne entre la décision de lancer une initiative et sa mise à disposition en production pour les utilisateurs finaux.',
     objectif:'Mesurer la reactivite de l\'organisation et sa capacité a concrétiser rapidement la valeur.',
     frequence:'Continue — revue trimestrielle',
     exemple_ent:'Reduire le délai de commercialisation moyen de 9 a 5 mois sur les nouvelles fonctionnalités majeures.',
@@ -2393,7 +2393,7 @@ CM.Referentiel.ajouter([
     frequence:'Mensuelle · Trimestrielle',
     exemple_ent:'Taux de livraison : 74 % — objectif : 85 % grace a une meilleure estimation de capacité.',
     exemple_eq:'Chaque équipe contribue via sa cadence de livraison et la stabilite de son debit.',
-    risque:'Peut encourager a sous-estimer les délais pour afficher un taux élevé, ou a negliger la qualité.',
+    risque:'Peut encourager a sous-estimer les délais pour afficher un taux élevé, ou à négliger la qualité.',
     roles:['portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant'
   },
   {
@@ -2445,7 +2445,7 @@ CM.Referentiel.ajouter([
     definition:'Pourcentage de jalons cles atteints dans les délais prevus, rapporte au nombre total de jalons planifies sur la période.',
     objectif:'Mesurer la progression effective du programme par rapport au plan initial.',
     frequence:'Bi-mensuelle',
-    exemple_ent:'72 % des jalons T1 atteints a date — 2 jalons critiques decales de 3 semaines en raison d\'une dépendance externe.',
+    exemple_ent:'72 % des jalons T1 atteints à date — 2 jalons critiques decales de 3 semaines en raison d\'une dépendance externe.',
     exemple_eq:'Chaque équipe contribue en livrant ses incréments selon le calendrier convenu lors du PI Planning.',
     risque:'Un fort taux d\'avancement avec jalons "artificiellement" fermes masque la dette de qualité. Croiser avec le taux de défauts échappés.',
     roles:['programme','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant'
@@ -2453,7 +2453,7 @@ CM.Referentiel.ajouter([
   {
     id:'p2', niveau:'programme', type:'ICP', icone:'💵',
     nom:'Écart budget (Budget Variance)',
-    definition:'Difference entre le budget consomme et le budget planifie a date, exprimée en pourcentage du budget total.',
+    definition:'Difference entre le budget consomme et le budget planifie à date, exprimée en pourcentage du budget total.',
     objectif:'Controler la maîtrise financiere du programme et anticiper les depassements.',
     frequence:'Mensuelle',
     exemple_ent:'Ecart de +8 % a M6 — principalement lié a des achats de licences supplementaires non prevus. Action correctrice lancee.',
@@ -2477,10 +2477,10 @@ CM.Referentiel.ajouter([
     nom:'Satisfaction des parties prenantes',
     definition:'Score moyen de satisfaction des commanditaires et utilisateurs cles, mesure via sondage structure après chaque livraison majeure.',
     objectif:'Detecter les écarts entre les attentes des parties prenantes et la valeur livrée.',
-    frequence:'A chaque livraison majeure',
+    frequence:'À chaque livraison majeure',
     exemple_ent:'Score de 3,6/5 après la premiere release — 2 themes d\'insatisfaction identifies : communication insuffisante et manque de formation.',
-    exemple_eq:'L\'équipe contribue en assurant une démonstration de valeur claire a chaque revue.',
-    risque:'Les scores peuvent etre biaises si les parties prenantes hesitent a exprimer une insatisfaction. Combiner avec des entretiens qualitatifs.',
+    exemple_eq:'L\'équipe contribue en assurant une démonstration de valeur claire à chaque revue.',
+    risque:'Les scores peuvent etre biaises si les parties prenantes hesitent à exprimer une insatisfaction. Combiner avec des entretiens qualitatifs.',
     roles:['programme','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant'
   },
   {
@@ -2578,7 +2578,7 @@ CM.Referentiel.ajouter([
     nom:'Couverture de tests automatises',
     definition:'Pourcentage du code couvert par des tests automatises (unitaires, intégration, bout-en-bout). Mesure de la confiance dans les déploiements.',
     objectif:'Mesurer la maturité des pratiques d\'ingenierie et la sécurité des livraisons continues.',
-    frequence:'Continue — revue a chaque livraison',
+    frequence:'Continue — revue à chaque livraison',
     exemple_ent:'Atteindre 80 % de couverture avant chaque livraison majeure, avec au moins 60 % de tests d\'integration.',
     exemple_eq:'Indicateur de comportement : une couverture croissante reflète l\'investissement collectif dans la qualité.',
     risque:'La couverture ne dit rien de la qualité des tests eux-mêmes. Une couverture a 90 % avec des tests mal ecrits donne une fausse sécurité.',
@@ -2645,7 +2645,7 @@ CM.Referentiel.ajouter([
     definition:'Pourcentage du temps durant lequel le pipeline d\'integration et de déploiement continus est opérationnel et capable d\'executer des builds.',
     objectif:'Garantir que les équipes de développement ne sont jamais bloquees par une indisponibilite de leur outillage de livraison.',
     frequence:'Continue — rapport quotidien',
-    exemple_ent:'Disponibilite pipeline a 99,2 % ce mois — 1 incident de 5 heures lié a une mise a jour de l\'agent Jenkins. SLA interne : 99,5 %.',
+    exemple_ent:'Disponibilite pipeline a 99,2 % ce mois — 1 incident de 5 heures lié a une mise à jour de l\'agent Jenkins. SLA interne : 99,5 %.',
     exemple_eq:'Une indisponibilite pipeline bloque toutes les livraisons. L\'équipe Plateforme est directement responsable de cet indicateur.',
     risque:'Un taux elevé peut masquer une disponibilite formelle mais avec des performances degradees (builds lents). Croiser avec la duree de build.',
     roles:['chef-équipe','membre-équipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
@@ -2693,7 +2693,7 @@ CM.Referentiel.ajouter([
     definition:'Pourcentage de l\'infrastructure totale gere via du code versionne (Terraform, Ansible, Pulumi, etc.) plutôt que via des operations manuelles.',
     objectif:'Mesurer la progression vers une infrastructure reproductible, versionnee et auditab le.',
     frequence:'Trimestrielle',
-    exemple_ent:'Taux d\'adoption IaC a 68 % — objectif 90 % avant fin d\'annee. Les 32 % restants sont des serveurs legacy difficiles a migrer.',
+    exemple_ent:'Taux d\'adoption IaC a 68 % — objectif 90 % avant fin d\'annee. Les 32 % restants sont des serveurs legacy difficiles à migrer.',
     exemple_eq:'Un taux élevé reduit le risque d\'ecart entre les environnements (dev/staging/prod) et accelere les déploiements futurs.',
     risque:'L\'IaC mal ecrit peut etre aussi dangereux que des operations manuelles. La qualité du code IaC doit etre soumise aux mêmes revues que le code applicatif.',
     roles:['chef-équipe','membre-équipe'], prioritaire:false, fiabilite:'fiable', maturite_min:'intermediaire',
@@ -2714,7 +2714,7 @@ CM.Referentiel.ajouter([
     frequence:'Sur événement — revue mensuelle',
     exemple_ent:'MTTR reduit de 6 heures a 45 minutes grace a l\'automatisation des alertes et aux procédures documentees.',
     exemple_eq:'Un temps court reflète de bonnes pratiques : observabilite, runbooks, automatisation des retours arriere.',
-    risque:'Se concentrer sur la rapidite de retablissement sans analyser les causes profondes revient a traiter les symptomes. Pratiquer systematiquement l\'analyse post-incident.',
+    risque:'Se concentrer sur la rapidite de retablissement sans analyser les causes profondes revient à traiter les symptomes. Pratiquer systematiquement l\'analyse post-incident.',
     roles:['chef-équipe','membre-équipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
     branche:'ti', domaine:'ops-support'
   },
@@ -2800,7 +2800,7 @@ CM.Referentiel.ajouter([
     id:'ti-s2', niveau:'operationnel', type:'DORA', icone:'🛡',
     nom:'Temps de rétablissement sécurité (MTTR Sécurité)',
     definition:'Duree entre la détection d\'un incident de sécurité confirme et la restauration complete et securisee du service affecté.',
-    objectif:'Mesurer la capacité de l\'organisation a contenir et remédier rapidement a un incident de sécurité.',
+    objectif:'Mesurer la capacité de l\'organisation à contenir et remédier rapidement a un incident de sécurité.',
     frequence:'Sur événement — revue mensuelle',
     exemple_ent:'MTTR securite : 8 heures en moyenne — objectif : 4 heures via la creation de runbooks de réponse a incident pre-approuves.',
     exemple_eq:'Un MTTR long augmente la duree d\'exposition et le risque de fuite de données. La preparation (runbooks, exercices) est le principal levier de réduction.',
@@ -2812,11 +2812,11 @@ CM.Referentiel.ajouter([
     id:'ti-s3', niveau:'operationnel', type:'ICP', icone:'🧹',
     nom:'Délai de remédiation des vulnérabilités (par sévérité)',
     definition:'Duree moyenne entre la découverte d\'une vulnerabilite et son correctif deploye en production, segmentee par niveau de severite (critique, haute, moyenne).',
-    objectif:'Mesurer la discipline de l\'équipe a remédier les vulnerabilites avant qu\'elles ne soient exploitees.',
+    objectif:'Mesurer la discipline de l\'équipe à remédier les vulnerabilites avant qu\'elles ne soient exploitees.',
     frequence:'Continue — rapport hebdomadaire',
     exemple_ent:'Vulnerabilites critiques : remediation en 48h en moyenne (SLA interne : 24h). Hautes : 7 jours. Moyennes : 30 jours.',
     exemple_eq:'Chaque vulnerabilite non remediee dans les délais est une fenêtre d\'opportunite pour un attaquant. Le suivi doit etre automatise et visible.',
-    risque:'Des SLA de remediation trop agressifs peuvent pousser les équipes a deployer des correctifs non testes, creant de nouveaux problèmes.',
+    risque:'Des SLA de remediation trop agressifs peuvent pousser les équipes à déployer des correctifs non testes, creant de nouveaux problèmes.',
     roles:['chef-équipe','membre-équipe','direction'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
     branche:'ti', domaine:'sécurité'
   },
@@ -2890,7 +2890,7 @@ CM.Referentiel.ajouter([
     objectif:'Estimer la capacité de l\'équipe en méthode Scrum.',
     frequence:'Par sprint',
     exemple_ent:'L\'équipe complete en moyenne 42 points par sprint. Utilise pour estimer combien d\'iterations seront nécessaires.',
-    exemple_eq:'Tres repandue en Scrum. A remplacer progressivement par le Debit et la Duree de cycle, plus objectifs.',
+    exemple_eq:'Tres repandue en Scrum. À remplacer progressivement par le Debit et la Duree de cycle, plus objectifs.',
     risque:'Subjective, gameable, ne mesure pas la valeur livrée. Comparer les velocites entre équipes est une erreur manageriale grave.',
     alt:'Debit d\'équipe (Throughput) · Duree de cycle (Cycle Time)',
     roles:['chef-équipe','membre-équipe'], prioritaire:false, fiabilite:'risque', maturite_min:'debutant'
@@ -2901,9 +2901,9 @@ CM.Referentiel.ajouter([
     definition:'Representation visuelle de la quantite de travail restante dans une iteration, comparee a la trajectoire ideale.',
     objectif:'Visualiser l\'avancement et detecter les risques de non-atteinte des engagements.',
     frequence:'Quotidienne — par iteration',
-    exemple_ent:'Le graphe montre que l\'équipe est en retard de 30 % sur sa trajectoire ideale a mi-iteration.',
+    exemple_ent:'Le graphe montre que l\'équipe est en retard de 30 % sur sa trajectoire ideale à mi-iteration.',
     exemple_eq:'Utile pour les debutants en Scrum. Perd de son utilite en flux continu (Kanban).',
-    risque:'Peut encourager a cloturer les tâches rapidement plutôt qu\'a les terminer correctement. Inutile en contexte Kanban.',
+    risque:'Peut encourager à clôturer les tâches rapidement plutôt qu\'a les terminer correctement. Inutile en contexte Kanban.',
     alt:'Cumulative Flow Diagram · Debit · Duree de cycle',
     roles:['chef-équipe','membre-équipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant'
   },
@@ -2945,7 +2945,7 @@ CM.Referentiel.ajouter([
     objectif:'Mesurer l\'efficacite du processus commercial et la qualité des leads entrants.',
     frequence:'Mensuelle',
     exemple_ent:'Taux de conversion de 18 % sur les leads qualifies — objectif 22 % via la refonte du script de découverte.',
-    exemple_eq:'L\'équipe commerciale suit ce taux par representant et par segment pour identifier les meilleures pratiques a partager.',
+    exemple_eq:'L\'équipe commerciale suit ce taux par representant et par segment pour identifier les meilleures pratiques à partager.',
     risque:'Un taux en hausse peut refleter une selectivite accrue en amont (qualification plus stricte) plutôt qu\'une meilleure performance commerciale.',
     roles:['chef-équipe','membre-équipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
     branche:'affaires', domaine:'commercial'
@@ -3011,7 +3011,7 @@ CM.Referentiel.ajouter([
     definition:'Cout total des depenses marketing et commerciales divise par le nombre de nouveaux clients acquis sur la période.',
     objectif:'Mesurer l\'efficience des investissements d\'acquisition et assurer la rentabilité du modele de croissance.',
     frequence:'Mensuelle · Trimestrielle',
-    exemple_ent:'CAC a 2 800 EUR — en hausse de 15 % ce trimestre. Ratio LTV/CAC a 3,2 : acceptable, mais a surveiller.',
+    exemple_ent:'CAC a 2 800 EUR — en hausse de 15 % ce trimestre. Ratio LTV/CAC a 3,2 : acceptable, mais à surveiller.',
     exemple_eq:'Un CAC en hausse signale une baisse d\'efficience des canaux d\'acquisition ou une concurrence accrue sur le marche.',
     risque:'Le CAC calcule en période de forte croissance peut sous-estimer les couts reels (délai entre investissement et acquisition).',
     roles:['chef-équipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
@@ -3060,8 +3060,8 @@ CM.Referentiel.ajouter([
     objectif:'Evaluer la portee et la penetration de la marque dans l\'esprit des prospects et clients potentiels.',
     frequence:'Trimestrielle · Semestrielle',
     exemple_ent:'Notoriete spontanee en hausse de 8 % a 23 % sur la cible PME après la campagne de contenu du T2.',
-    exemple_eq:'Indicateur lent et difficile a attribuer a une action spécifique. Utile comme direction stratégique, peu actionnable a court terme.',
-    risque:'Tres difficile a mesurer avec précision. Les methodologies de sondage varient et les résultats peuvent etre biaises par l\'echantillon.',
+    exemple_eq:'Indicateur lent et difficile à attribuer a une action spécifique. Utile comme direction stratégique, peu actionnable à court terme.',
+    risque:'Tres difficile à mesurer avec précision. Les methodologies de sondage varient et les résultats peuvent etre biaises par l\'echantillon.',
     roles:['chef-équipe','direction'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire',
     branche:'affaires', domaine:'marketing'
   }
@@ -3128,11 +3128,11 @@ CM.Referentiel.ajouter([
   {
     id:'af-r1', niveau:'operationnel', type:'ICP', icone:'💚',
     nom:'Indice de recommandation employe (eNPS)',
-    definition:'Mesure la propension des employes a recommander l\'organisation comme employeur (score de -100 a +100).',
+    definition:'Mesure la propension des employes à recommander l\'organisation comme employeur (score de -100 a +100).',
     objectif:'Evaluer l\'engagement des employes et detecter les risques de desengagement ou de depart.',
     frequence:'Trimestrielle',
     exemple_ent:'eNPS a +22 — en hausse de 8 points après la mise en place du programme de flexible working. Benchmark secteur : +18.',
-    exemple_eq:'Un eNPS en baisse est un signal precoce de desengagement et de risque de departs. A analyser par équipe pour identifier les zones de tension.',
+    exemple_eq:'Un eNPS en baisse est un signal precoce de desengagement et de risque de departs. À analyser par équipe pour identifier les zones de tension.',
     risque:'Peut etre influence par des événements ponctuels (bonus, licenciements recents). Completer par des entretiens qualitatifs.',
     roles:['chef-équipe','direction'], prioritaire:true, fiabilite:'precaution', maturite_min:'debutant',
     branche:'affaires', domaine:'rh'
@@ -3145,7 +3145,7 @@ CM.Referentiel.ajouter([
     frequence:'Mensuelle',
     exemple_ent:'Time to Fill moyen a 68 jours — objectif 45 jours via la refonte du processus d\'entretien (reduction de 5 a 3 etapes).',
     exemple_eq:'Un long délai de recrutement charge les équipes existantes, rallonge les projets et augmente le risque de perte du candidat.',
-    risque:'Reduire le délai en sautant des etapes d\'evaluation peut générer de mauvais recrutements couteux a corriger.',
+    risque:'Reduire le délai en sautant des etapes d\'evaluation peut générer de mauvais recrutements couteux à corriger.',
     roles:['chef-équipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
     branche:'affaires', domaine:'rh'
   },
@@ -3205,11 +3205,11 @@ CM.Referentiel.ajouter([
   },
   {
     id:'af-op3', niveau:'operationnel', type:'ICP', icone:'🚚',
-    nom:'Taux de livraison a temps (On-Time Delivery)',
+    nom:'Taux de livraison à temps (On-Time Delivery)',
     definition:'Pourcentage de commandes, produits ou services livrés dans le délai promis au client.',
-    objectif:'Mesurer la fiabilité opérationnelle et la capacité a tenir les engagements de service.',
+    objectif:'Mesurer la fiabilité opérationnelle et la capacité à tenir les engagements de service.',
     frequence:'Hebdomadaire · Mensuelle',
-    exemple_ent:'Taux de livraison a temps a 88 % — 12 % de retards concentres sur les commandes sur-mesure avec un délai < 48h. Revue du processus de priorisation lancee.',
+    exemple_ent:'Taux de livraison à temps a 88 % — 12 % de retards concentres sur les commandes sur-mesure avec un délai < 48h. Revue du processus de priorisation lancee.',
     exemple_eq:'Chaque retard impacte directement la satisfaction client et peut engendrer des penalites contractuelles.',
     risque:'Des délais promis artificiellement longs pour garantir un bon taux de livraison degradent la compétitivité sans améliorer la performance reelle.',
     roles:['chef-équipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
@@ -3223,7 +3223,7 @@ CM.Referentiel.ajouter([
     frequence:'Trimestrielle',
     exemple_ent:'Reduction de 28 % des gaspillages de type "attente" après cartographie du flux de valeur (VSM) et implementation du flux tiree.',
     exemple_eq:'Indicateur de comportement collectif : reflete l\'engagement de l\'équipe dans la demarche d\'amélioration continue.',
-    risque:'Difficile a mesurer sans une cartographie préalable rigoureuse des gaspillages. La ligne de référence doit etre établie avant de fixer des objectifs.',
+    risque:'Difficile à mesurer sans une cartographie préalable rigoureuse des gaspillages. La ligne de référence doit etre établie avant de fixer des objectifs.',
     roles:['chef-équipe','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire',
     branche:'affaires', domaine:'operations'
   }
@@ -3241,7 +3241,7 @@ CM.Referentiel.ajouter([
     frequence:'Continue — revue hebdomadaire',
     exemple_ent:'CSAT moyen de 4,2/5 sur les interactions de support — en hausse de 0,3 point après formation des agents a l\'ecoute active.',
     exemple_eq:'Le CSAT est immediatement actionnable : un score bas sur un type d\'interaction spécifique indique ou agir en priorité.',
-    risque:'Le CSAT mesure la satisfaction immediatiate, pas la loyalty a long terme. Des clients tres satisfaits peuvent quand même churner.',
+    risque:'Le CSAT mesure la satisfaction immediatiate, pas la loyalty à long terme. Des clients tres satisfaits peuvent quand même churner.',
     roles:['chef-équipe','membre-équipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
     branche:'affaires', domaine:'service-client'
   },
@@ -3277,7 +3277,7 @@ CM.Referentiel.ajouter([
     frequence:'Hebdomadaire',
     exemple_ent:'FCR a 68 % — objectif 78 % via le renforcement de la base de connaissances et la formation des agents de niveau 1.',
     exemple_eq:'Chaque interaction supplementaire nécessaire pour resoudre un problème augmente le cout et diminue la satisfaction.',
-    risque:'Pression sur le FCR peut pousser les agents a clore des tickets sans veritablement resoudre le problème. Croiser avec le CSAT post-interaction.',
+    risque:'Pression sur le FCR peut pousser les agents à clore des tickets sans veritablement resoudre le problème. Croiser avec le CSAT post-interaction.',
     roles:['chef-équipe','membre-équipe'], prioritaire:true, fiabilite:'precaution', maturite_min:'debutant',
     branche:'affaires', domaine:'service-client'
   },
@@ -4343,7 +4343,7 @@ CM.App = (function() {
   var QUESTIONS = [
     {
       id:'q1', num:'01',
-      texte:'Quel est votre objectif principal a piloter ?',
+      texte:'Quel est votre objectif principal à piloter ?',
       options:[
         { id:'business',  lib:'📈 Résultats economiques',     desc:'Revenus, rentabilité, croissance' },
         { id:'livraison', lib:'🚀 Vitesse de livraison',      desc:'Delais, frequence, flux de valeur' },
@@ -4353,7 +4353,7 @@ CM.App = (function() {
     },
     {
       id:'q2', num:'02',
-      texte:'Quelle décision cherchez-vous a eclairer ?',
+      texte:'Quelle décision cherchez-vous à éclairer ?',
       options:[
         { id:'investir',  lib:'💰 Arbitrer les investissements', desc:'Prioriser entre initiatives' },
         { id:'ameliorer', lib:'🔄 Améliorer en continu',         desc:'Identifier et reduire les gaspillages' },
@@ -4363,7 +4363,7 @@ CM.App = (function() {
     },
     {
       id:'q3', num:'03',
-      texte:'A quel niveau hiérarchique se situe votre décision ?',
+      texte:'À quel niveau hiérarchique se situe votre décision ?',
       options:[
         { id:'strategique',  lib:'🏛 Strategique',  desc:'Direction, horizon 1 a 3 ans' },
         { id:'tactique',     lib:'📊 Portefeuille', desc:'Arbitrage, horizon 3 a 12 mois' },
@@ -4492,12 +4492,12 @@ CM.App = (function() {
       html += '</div></div>';
     }
     if (precaution.length) {
-      html += '<div class="section-fiabilite"><div class="titre-fiabilite" style="color:#e65100"><span style="font-size:1.1rem">⚠️</span> A utiliser avec soin (' + precaution.length + ')</div><div class="grille-cartes">';
+      html += '<div class="section-fiabilite"><div class="titre-fiabilite" style="color:#e65100"><span style="font-size:1.1rem">⚠️</span> À utiliser avec soin (' + precaution.length + ')</div><div class="grille-cartes">';
       precaution.forEach(function(i) { html += CM.Composants.htmlCarte(i, '#e65100', false, false); });
       html += '</div></div>';
     }
     if (prochainNiv.length) {
-      html += '<div class="section-fiabilite"><div class="titre-fiabilite" style="color:var(--niv-2)"><span style="font-size:1.1rem">🔭</span> A introduire au niveau suivant (' + prochainNiv.length + ')</div>'
+      html += '<div class="section-fiabilite"><div class="titre-fiabilite" style="color:var(--niv-2)"><span style="font-size:1.1rem">🔭</span> À introduire au niveau suivant (' + prochainNiv.length + ')</div>'
         + '<div style="background:var(--niv-2-clair);border-radius:10px;padding:0.75rem 1rem;font-size:0.83rem;margin-bottom:0.9rem;color:var(--niv-2)">Ces indicateurs deviennent pertinents une fois les pratiques de base solidement établies.</div>'
         + '<div class="grille-cartes">';
       prochainNiv.forEach(function(i) { html += CM.Composants.htmlCarte(i, '#0277bd', false, true); });
