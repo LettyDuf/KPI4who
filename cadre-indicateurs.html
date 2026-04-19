@@ -3936,10 +3936,15 @@ CM.VuePorteProbleme = (function() {
      Le domaine (opérationnel) est réservé pour l'extension future. */
   var etat = { etape: 1, niveau: null, probleme: null, domaine: null };
 
-  /* Ids des zones DOM — centralisés pour éviter les chaînes magiques. */
-  var ID_STEPPER = 'porte-problème-stepper';
-  var ID_ETAPES  = 'porte-problème-etapes';
-  var ID_VUE     = 'vue-porte-problème';
+  /* Ids des zones DOM — centralisés pour éviter les chaînes magiques.
+     Volontairement ASCII (sans accent) : doivent matcher exactement les
+     attributs `id="..."` côté HTML et les sélecteurs `#vue-porte-probleme`
+     côté CSS, qui eux ne portent pas d'accent. La correction d'accents
+     d'une session précédente avait accentué ces trois constantes JS par
+     erreur — rupture silencieuse, page blanche au clic sur la porte. */
+  var ID_STEPPER = 'porte-probleme-stepper';
+  var ID_ETAPES  = 'porte-probleme-etapes';
+  var ID_VUE     = 'vue-porte-probleme';
 
   /* ─── API publique ────────────────────────────────────────────── */
 
