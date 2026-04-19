@@ -457,7 +457,10 @@
     .carte-nom  { font-size: 0.92rem; font-weight: 600; line-height: 1.3; margin-top: 0.12rem; }
     .carte-corps { padding: 0.6rem 1rem 0.85rem; border-top: 1px solid var(--bordure); flex: 1; }
     .carte-def { font-size: 0.81rem; color: var(--texte-2); line-height: 1.5; }
-    .carte-meta-bas { display: flex; align-items: center; justify-content: space-between; margin-top: 0.55rem; flex-wrap: wrap; gap: 0.3rem; }
+    /* Fréquence + maturité en 2 lignes TOUJOURS (pas de flex-wrap aléatoire).
+       Le rendu précédent avec flex-wrap donnait parfois 1 ligne (textes courts),
+       parfois 2 (textes longs) — créait une incohérence visuelle d'une carte à l'autre. */
+    .carte-meta-bas { display: flex; flex-direction: column; align-items: flex-start; margin-top: 0.55rem; gap: 0.3rem; }
     .carte-freq { margin-top: 0.55rem; font-size: 0.74rem; color: var(--texte-2); }
     .carte-pied { padding: 0.6rem 1rem; border-top: 1px solid var(--bordure); display: flex; justify-content: flex-end; }
     .btn-detail { font-size: 0.78rem; color: var(--texte-2); background: none; border: none; cursor: pointer; border-radius: 6px; padding: 0.28rem 0.5rem; transition: var(--trans); font-family: inherit; }
