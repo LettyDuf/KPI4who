@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **19 avril 2026** (revue t4 ✅ + greffe `CM.FicheViewModel` ✅ + 3 commits accents/préposition/conseil pédagogique + chantier 6.3 chips cadres ✅).
+Dernière mise à jour : **19 avril 2026** (revue t4 ✅ + greffe `CM.FicheViewModel` ✅ + 3 commits accents/préposition/conseil pédagogique + chantier 6.3 chips cadres ✅ + revue af-m3 ✅ + extraction `CM.Config.MESSAGES` ✅).
 
 Légende : 🔴 priorité haute · 🟡 moyenne · 🟢 basse · ⚪ à décider · ✅ fait · ⏳ en cours
 
@@ -37,10 +37,10 @@ Règle appliquée : chaque fiche doit distinguer **ce qu'elle mesure** (output) 
 | p5 | Programme / FLUX | Débit d'initiatives livrées | ✅ | Splitting, phantom delivery, confusion output/outcome, comparaison inter-programmes — **révisée le 18/04/2026** |
 | t4 | Portefeuille / FLUX | Efficacité de flux (ratio temps actif / lead time) | ✅ | Usage en évaluation individuelle, optimisation locale, moyenne trompeuse, Goodhart, piloter sans Gemba — **révisée le 19/04/2026** (commit `bae57b0`, enrichissement `exemple_eq` avec usage constructif Gemba côté équipe ; panel Kersten / Vacanti / Goldratt + Deming / Gemba déjà présent) |
 | af-c2 | Affaires / FLUX | Durée du cycle de vente | ✅ | Usage en évaluation individuelle, moyenne trompeuse, définition floue, biais du survivant, optimisation locale — **révisée le 18/04/2026** (commit `c9640e9`, panel Roberge / Rackham / Ross + Deming / Goodhart / Gemba) |
-| af-m3 | Affaires / FLUX | Taux de conversion MQL → SQL | 🟡 | À identifier lors de la revue (inflation de MQL pour cocher la case, désalignement marketing/ventes en mode accusatoire) |
+| af-m3 | Affaires / FLUX | Taux de conversion MQL → SQL | ✅ | Inflation MQL, abaissement silencieux des standards SQL, confusion output/outcome, désalignement accusatoire, moyenne trompeuse — **révisée le 19/04/2026** (commit `52ea2a1`, panel Sirius Decisions Demand Waterfall / Roberge / Kaplan & Norton + garde-fous Deming / Goodhart / Gemba) |
 | af-sc5 | Affaires / FLUX | Délai de première réponse client | 🟡 | À identifier lors de la revue (réponse vide pour cocher le SLA, pression sur agents, Goodhart temporel) |
 
-**Fiches déjà revues au standard 2026-04** : o1 (Fréquence de déploiement), o2 (Lead Time), o3 (Change Failure Rate), o5 (MTTR), p5 (Débit d'initiatives livrées), **af-c2 (Durée du cycle de vente, 18/04/2026)**, **t4 (Efficacité de flux portefeuille, 19/04/2026)**, et les fiches du chantier 3 (s6 à s10, t6, t7, p6, p7) nativement rédigées à ce standard.
+**Fiches déjà revues au standard 2026-04** : o1 (Fréquence de déploiement), o2 (Lead Time), o3 (Change Failure Rate), o5 (MTTR), p5 (Débit d'initiatives livrées), **af-c2 (Durée du cycle de vente, 18/04/2026)**, **t4 (Efficacité de flux portefeuille, 19/04/2026)**, **af-m3 (Taux de conversion MQL → SQL, 19/04/2026)**, et les fiches du chantier 3 (s6 à s10, t6, t7, p6, p7) nativement rédigées à ce standard.
 
 ---
 
@@ -135,7 +135,7 @@ Chantier en pause le 18/04/2026 après l'item 6.1 : l'ossature est assainie (pla
 | # | Évolution | Priorité | Valeur | État |
 |---|---|---|---|---|
 | 6.1 | Retrait du plafond arbitraire de 5 recommandations (2 portes + 2 labels UI) | 🔴 | Corrige un biais d'information invisible — 75-80 % de l'information était masquée sur les couples les plus denses (23 fiches visibles sur opé × qualité) | ✅ (18/04/2026, commit `e4d7041`) |
-| 6.2 | Reformulation du conseil pédagogique (« 1-2 par axe, plusieurs axes » au lieu de « 1-2 au total ») | 🟡 | Aligne le discours de l'outil sur la règle réelle : la cohérence entre axes (humain / livraison / alignement) compte plus que le total arithmétique | ⏸ |
+| 6.2 | Reformulation du conseil pédagogique (« 1-2 par axe, plusieurs axes » au lieu de « 1-2 au total ») | 🟡 | Aligne le discours de l'outil sur la règle réelle : la cohérence entre axes (humain / livraison / alignement) compte plus que le total arithmétique. **Infrastructure prête** (commit `af216d4` du 19/04/2026) : texte extrait vers `CM.Config.MESSAGES.conseilPedagogique` — 6.2 devient désormais une simple réécriture de chaîne. Décision UX pendante : faut-il aussi afficher ce conseil dans la porte Par mon problème (`_etapeResultats`) qui n'en porte actuellement pas ? | ⏸ |
 | 6.3 | Chips « cadres de travail » (DORA, Lean, Scrum…) visibles sur les cartes | 🟡 | La donnée META existe déjà sur 60+ fiches mais n'est jamais rendue — l'utilisateur ne voit pas à quel cadre méthodologique rattacher une métrique | ✅ (19/04/2026, commits `caf98ea` règle de filtrage + `0987af5` rendu sous le nom) |
 | 6.4 | Module `CM.Panier` (ajout/retrait métriques vers une sélection personnalisée, persistance localStorage) | 🟡 | Socle du tableau de bord personnalisé multi-axes — permet de construire une sélection 3-5 métriques cohérentes | ⏸ |
 | 6.5 | Vue « Mon tableau de bord » groupée par axe (3 statuts : active / veille / écartée) | 🟡 | Rend la sélection actionnable : distingue ce qu'on suit activement de ce qu'on garde en veille, avec raison d'écartement tracée | ⏸ |
@@ -149,7 +149,7 @@ Chaque item ci-dessous pointe précisément vers le code à toucher, pour qu'une
 
 | Item | Fichier / ligne | Nature de l'intervention |
 |---|---|---|
-| 6.2 Conseil pédagogique reformulé | `cadre-indicateurs.html` ligne ~4423 (`<div class="conseil-zone">` dans la vue Par mon rôle) et conseil équivalent dans `CM.VuePorteProbleme` | Texte inline dans un `html +=` — à extraire vers `CM.Config.MESSAGES.conseilPedagogique` pour factorisation et flexibilité d'évolution |
+| 6.2 Conseil pédagogique reformulé | `CM.Config.MESSAGES.conseilPedagogique` (module `CM.Config`) — **infrastructure livrée 19/04/2026** (commit `af216d4`). Constat du repérage : **une seule** occurrence inline existait (porte Par mon rôle, `_rendreResultats` ~ligne 4535). La porte Par mon problème (`CM.VuePorteProbleme._etapeResultats`) n'affiche actuellement pas de conseil pédagogique — cela devra être tranché en 6.2. | Réécriture de la chaîne dans `CM.Config.MESSAGES.conseilPedagogique` ; choix UX à trancher pour la porte Par mon problème (l'ajouter ? l'adapter ?) |
 | ~~6.3 Chips cadres sur cartes~~ | ~~`CM.Composants.htmlCarte` (~ligne 3552) + lookup `CM.IndicateursMeta.META` (lignes 1953-2100) + vocabulaire `CADRES` déjà défini~~ | ✅ Livré 19/04/2026 (commits `caf98ea` règle métier + `0987af5` rendu + `bcd95f7` repositionnement final en pied de carte-corps). Nouvelle méthode `cadresAffichables` dans CM.IndicateursMeta (masque « generique » en présence d'un cadre spécifique) ; sous-fonction `rendreChipsCadres` dans CM.Composants. Décision UX validée après mockup-preview comparant 3 emplacements : pied de carte-corps, prolongement naturel de la zone méta (fréquence + maturité). |
 | 6.4 Module `CM.Panier` | Nouveau module à créer entre `CM.Preferences` et `CM.App` | API proposée : `Panier.ajouter(id, statut, raison?)` / `Panier.retirer(id)` / `Panier.changerStatut(id, statut)` / `Panier.tous()` / `Panier.parAxe()`. Persistance localStorage clé `cm-panier-v1` |
 | 6.5 Vue Tableau de bord | Nouveau module `CM.VueTableauDeBord` + 5e vue dans l'accueil 4 portes | 3 statuts : `active` / `veille` / `ecartee`. Grouper par axe problème (flux, qualité, valeur, risque, humain…). Raisons d'écartement : liste fixe 6 items (voir 6.b) |
@@ -177,7 +177,7 @@ Pour garder la file d'attente 6.2-6.8 facile à reprendre, ces refactors **ne ca
 
 | Préparation | Bénéfice à la reprise | Coût maintenant |
 |---|---|---|
-| Extraire textes de conseil pédagogique vers `CM.Config.MESSAGES` | 6.2 devient un changement de string, pas un changement structurel | ~15 lignes, 1 commit `refactor:` |
+| ~~Extraire textes de conseil pédagogique vers `CM.Config.MESSAGES`~~ ✅ livré 19/04/2026 (commit `af216d4`) | 6.2 devient un changement de string, pas un changement structurel | ~15 lignes, 1 commit `refactor:` — **livré** (28 insertions / 2 suppressions) |
 | Ajouter stub `CM.Panier = { ajouter: () => {}, tous: () => [] }` avec `TODO` | 6.4 démarre avec l'API déjà posée ; les vues qui référencent le panier ne cassent pas le jour où on l'active | ~20 lignes, 1 commit `chore:` |
 | Créer `CM.Html.escape()` avant le premier usage utilisateur (panier + export JSON seront les premières entrées utilisateur) | 6.4-6.6 ont le garde-fou sécurité déjà présent — pas besoin d'un refactor urgent plus tard | ~10 lignes, règle 1 du refactoring |
 
@@ -187,8 +187,11 @@ Pour garder la file d'attente 6.2-6.8 facile à reprendre, ces refactors **ne ca
 
 ## Prochaine action recommandée
 
-**af-m3 — Taux de conversion MQL → SQL** (priorité 🟡) ou **af-sc5 — Délai de première réponse client** (priorité 🟡). Ce sont les deux fiches Affaires/FLUX restantes au format pré-2026-04. Panel spécifique à l'axe marketing↔ventes (pas Lean+Agile par défaut) : pour af-m3 — Sirius Decisions (MQL/SQL/SAL), Roberge, Kaplan/Norton sur l'alignement marketing↔ventes + garde-fous Deming/Goodhart. Pour af-sc5 — Dixon (*The Effortless Experience*), Reichheld (loyauté client), ITIL service desk + garde-fous Goodhart temporel/Gemba.
+**af-sc5 — Délai de première réponse client** (priorité 🟡). Dernière fiche Affaires/FLUX restante au format pré-2026-04. Panel spécifique à l'axe service client (pas Lean+Agile par défaut) : Matthew Dixon (*The Effortless Experience* — customer effort score, principe que réduire l'effort client prime sur battre des records de vitesse), Fred Reichheld (loyauté client, lien entre expérience et rétention), ITIL Service Operation (gestion structurée des files d'attente et des priorités en service desk) + garde-fous **Goodhart temporel** (la course à la seconde de réponse produit des réponses vides qui allongent le temps total de résolution) et **Gemba** (observer quelques tickets réels, pas le seul SLA).
 
-La greffe opportuniste possible sur ces deux fiches : achever le jalon 3.2 via l'extraction des **textes de conseil pédagogique vers `CM.Config.MESSAGES`** (préparation section 6.c du backlog — coût marginal ~15 lignes).
+**Greffes opportunistes disponibles** après af-sc5 :
+- Jalon `CM.Html.escape()` **déjà ✅ livré**.
+- Extraction `CM.Config.MESSAGES.conseilPedagogique` **✅ livrée le 19/04/2026 (commit `af216d4`)** — socle prêt pour 6.2 et 6.4.
+- Mappings `NIVEAU_VERS_POSITION` et `FIABILITE_VERS_NIVEAU` restent à migrer vers `CM.Config` (règle 2 du refactoring progressif) — déclencheur : toute intervention sur `CM.Composants`.
 
-**Note méthode** : la Règle 1 (`CM.Html.escape`) ✅ livrée. `CM.FicheViewModel` ✅ livré. Le chantier 6 (panier + import JSON) dispose désormais de l'infra nécessaire pour démarrer dès redéclenchement.
+**État infra pour le chantier 6** : Règle 1 ✅, `CM.FicheViewModel` ✅, `CM.Config.MESSAGES` ✅, stub `CM.Panier` pas encore posé (~20 lignes le jour où 6.4 redémarre).
