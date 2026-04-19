@@ -3546,6 +3546,95 @@ CM.DiagnosticProbleme = (function() {
 </script>
 
 
+<!-- ══ MODULE : CM.FicheViewModel — Adaptateur Référentiel → ViewModel ══
+     Transforme un indicateur brut (issu de CM.Referentiel) en ViewModel
+     prêt à rendre. Concentre toutes les dérivations d'affichage (libellés
+     courts, clés de position, couleurs, mappings visuels) en un seul
+     endroit, pour que les sous-fonctions de rendu de CM.Composants
+     restent de pures templates string ↔ HTML.
+
+     Bénéfices :
+     - rendreFicheHtml ne contient plus de logique de dérivation.
+     - Les mappings display-only (NIVEAU_VERS_POSITION, FIABILITE_VERS_NIVEAU)
+       vivent ici, pas mélangés au rendu.
+     - Un futur changement de mapping métier-visuel (ex. ajouter un nouveau
+       niveau, changer la grammaire visuelle) se fait dans un seul module.
+     - Préparation au jalon 3.2 du backlog (séparation Vues / ViewModel).
+
+     Dépendance : CM.Config uniquement.
+─────────────────────────────────────────────────────────────────── -->
+<script>
+CM.FicheViewModel = (function() {
+  'use strict';
+
+  /* Mappings d'affichage — clés métier (data) vers clés visuelles (CSS data-*) */
+  var NIVEAU_VERS_POSITION = {
+    'strategique':  'strategique',
+    'tactique':     'portefeuille',
+    'programme':    'programme',
+    'operationnel': 'équipe'
+  };
+
+  var FIABILITE_VERS_NIVEAU = {
+    'fiable':     'haute',
+    'precaution': 'moyenne',
+    'risque':     'faible'
+  };
+
+  /* from(ind) — produit un ViewModel à partir d'un indicateur brut.
+   * Toutes les dérivations sont calculées une seule fois, accessibles via
+   * une structure stable (vm.niveau.*, vm.maturite.*, vm.fiabilite.*).
+   *
+   * Exemple : from(CM.Referentiel.chercher('t4')) → {
+   *   ind, couleurType:'#e65100', libelleType:'Flux & Throughput (Lean)',
+   *   fib:{...}, mat:{...},
+   *   niveau:    { libelleCourt:'Portefeuille', positionKey:'portefeuille' },
+   *   maturite:  { labelCourt:'Avancée',        key:'avance' },
+   *   fiabilite: { labelCourt:'Précaution',     key:'moyenne' }
+   * }
+   */
+  function from(ind) {
+    var cfg = CM.Config;
+    var couleurType = cfg.TYPES_COULEURS[ind.type] || '#546e7a';
+    var libelleType = cfg.TYPES_LIBELLES[ind.type];
+    var fib = cfg.FIABILITE[ind.fiabilite || 'fiable'];
+    var mat = cfg.MATURITE[ind.maturite_min || 'debutant'];
+
+    /* Trouver l'objet niveau et calculer le libellé court */
+    var nivObj = null;
+    for (var i = 0; i < cfg.NIVEAUX.length; i++) {
+      if (cfg.NIVEAUX[i].niveauData === ind.niveau) { nivObj = cfg.NIVEAUX[i]; break; }
+    }
+    var nivLibelle = nivObj ? nivObj.libelle : ind.niveau;
+    var nivLibelleCourt = nivLibelle.replace(/^Niveau\s+/i, '');
+    var matLabelCourt = mat.label.replace(/^Équipe\s+/i, '');
+
+    return {
+      ind: ind,
+      couleurType: couleurType,
+      libelleType: libelleType,
+      fib: fib,
+      mat: mat,
+      niveau: {
+        libelleCourt: nivLibelleCourt,
+        positionKey:  NIVEAU_VERS_POSITION[ind.niveau] || 'équipe'
+      },
+      maturite: {
+        labelCourt: matLabelCourt,
+        key:        ind.maturite_min || 'debutant'
+      },
+      fiabilite: {
+        labelCourt: fib.label_court,
+        key:        FIABILITE_VERS_NIVEAU[ind.fiabilite || 'fiable'] || 'haute'
+      }
+    };
+  }
+
+  return { from: from };
+})();
+</script>
+
+
 <!-- ══ MODULE : CM.Composants — Rendu HTML des cartes et du tiroir ══ -->
 <script>
 CM.Composants = (function() {
@@ -3591,19 +3680,6 @@ CM.Composants = (function() {
       + '</div>'
       + '</div>';
   }
-
-  /* Mappings pour la grammaire visuelle v3 */
-  var NIVEAU_VERS_POSITION = {
-    'strategique':  'strategique',
-    'tactique':     'portefeuille',
-    'programme':    'programme',
-    'operationnel': 'équipe'
-  };
-  var FIABILITE_VERS_NIVEAU = {
-    'fiable':     'haute',
-    'precaution': 'moyenne',
-    'risque':     'faible'
-  };
 
   /* ── Sous-fonctions de rendu, une par section de fiche ──
    * Chaque fonction est pure : entrée = valeurs métier, sortie = fragment HTML string.
@@ -3750,41 +3826,27 @@ CM.Composants = (function() {
 
   // rendreFicheHtml(ind) : orchestrateur — construit le HTML complet d'une fiche-indicateur.
   // Fonction pure : pas d'accès au DOM, pas d'effet de bord. Entrée = objet indicateur, sortie = string HTML.
-  // Responsabilité : calculer les dérivés (libellés courts, clés normalisées, etc.) et composer les sections.
+  // Responsabilité : dériver le ViewModel via CM.FicheViewModel puis composer les sections.
   // Le rendu proprement dit est délégué aux sous-fonctions rendreXxx() ci-dessus.
   // Exemple : rendreFicheHtml(CM.Referentiel.chercher('p5')) → '<div class="fi-header">…</div>…'
   function rendreFicheHtml(ind) {
-    var cfg = CM.Config;
-    var couleurType = cfg.TYPES_COULEURS[ind.type] || '#546e7a';
-    var libelleType = cfg.TYPES_LIBELLES[ind.type];
-    var fib = cfg.FIABILITE[ind.fiabilite || 'fiable'];
-    var mat = cfg.MATURITE[ind.maturite_min || 'debutant'];
-
-    /* Trouver l'objet niveau et calculer le libellé court */
-    var nivObj = null;
-    for (var i = 0; i < cfg.NIVEAUX.length; i++) {
-      if (cfg.NIVEAUX[i].niveauData === ind.niveau) { nivObj = cfg.NIVEAUX[i]; break; }
-    }
-    var nivLibelle = nivObj ? nivObj.libelle : ind.niveau;
-    var nivLibelleCourt = nivLibelle.replace(/^Niveau\s+/i, '');
-    var matLabelCourt = mat.label.replace(/^Équipe\s+/i, '');
-    var positionKey = NIVEAU_VERS_POSITION[ind.niveau] || 'équipe';
-    var fiabKey = FIABILITE_VERS_NIVEAU[ind.fiabilite || 'fiable'] || 'haute';
-    var matKey = ind.maturite_min || 'debutant';
+    var vm = CM.FicheViewModel.from(ind);
 
     /* Composition des sections dans l'ordre d'affichage du tiroir */
-    return rendreEnteteFiche(ind, couleurType, libelleType)
-         + rendreCadreLecture(nivLibelleCourt, positionKey, matLabelCourt, matKey, fib.label_court, fiabKey)
-         + rendreDefinition(ind)
-         + rendreObjectif(ind)
-         + rendreFrequence(ind)
-         + rendreExemples(ind)
-         + rendreVigilance(ind)
-         + rendreAlternative(ind)
-         + rendreContexteFiabilite(fib)
-         + rendreContexteMaturite(mat)
-         + rendreDomaine(ind)
-         + CM.Gemba.htmlEncartFiche(ind.type); /* Encart Terrain — triptyque contextualisé au type */
+    return rendreEnteteFiche(vm.ind, vm.couleurType, vm.libelleType)
+         + rendreCadreLecture(vm.niveau.libelleCourt, vm.niveau.positionKey,
+                              vm.maturite.labelCourt, vm.maturite.key,
+                              vm.fiabilite.labelCourt, vm.fiabilite.key)
+         + rendreDefinition(vm.ind)
+         + rendreObjectif(vm.ind)
+         + rendreFrequence(vm.ind)
+         + rendreExemples(vm.ind)
+         + rendreVigilance(vm.ind)
+         + rendreAlternative(vm.ind)
+         + rendreContexteFiabilite(vm.fib)
+         + rendreContexteMaturite(vm.mat)
+         + rendreDomaine(vm.ind)
+         + CM.Gemba.htmlEncartFiche(vm.ind.type); /* Encart Terrain — triptyque contextualisé au type */
   }
 
   // ouvrirTiroir(id) : orchestration — récupère la donnée, délègue le rendu HTML, ouvre le tiroir, gère le focus.
