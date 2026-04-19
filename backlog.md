@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **19 avril 2026** (revue t4 ✅ + greffe `CM.FicheViewModel` ✅ + 3 commits accents/préposition/conseil pédagogique + chantier 6.3 chips cadres ✅ + revue af-m3 ✅ + extraction `CM.Config.MESSAGES` ✅).
+Dernière mise à jour : **19 avril 2026** (revue t4 ✅ + greffe `CM.FicheViewModel` ✅ + 3 commits accents/préposition/conseil pédagogique + chantier 6.3 chips cadres ✅ + revue af-m3 ✅ + extraction `CM.Config.MESSAGES` ✅ + revue af-sc5 ✅ — toutes les fiches Affaires/FLUX sont désormais au standard 2026-04).
 
 Légende : 🔴 priorité haute · 🟡 moyenne · 🟢 basse · ⚪ à décider · ✅ fait · ⏳ en cours
 
@@ -38,9 +38,11 @@ Règle appliquée : chaque fiche doit distinguer **ce qu'elle mesure** (output) 
 | t4 | Portefeuille / FLUX | Efficacité de flux (ratio temps actif / lead time) | ✅ | Usage en évaluation individuelle, optimisation locale, moyenne trompeuse, Goodhart, piloter sans Gemba — **révisée le 19/04/2026** (commit `bae57b0`, enrichissement `exemple_eq` avec usage constructif Gemba côté équipe ; panel Kersten / Vacanti / Goldratt + Deming / Gemba déjà présent) |
 | af-c2 | Affaires / FLUX | Durée du cycle de vente | ✅ | Usage en évaluation individuelle, moyenne trompeuse, définition floue, biais du survivant, optimisation locale — **révisée le 18/04/2026** (commit `c9640e9`, panel Roberge / Rackham / Ross + Deming / Goodhart / Gemba) |
 | af-m3 | Affaires / FLUX | Taux de conversion MQL → SQL | ✅ | Inflation MQL, abaissement silencieux des standards SQL, confusion output/outcome, désalignement accusatoire, moyenne trompeuse — **révisée le 19/04/2026** (commit `52ea2a1`, panel Sirius Decisions Demand Waterfall / Roberge / Kaplan & Norton + garde-fous Deming / Goodhart / Gemba) |
-| af-sc5 | Affaires / FLUX | Délai de première réponse client | 🟡 | À identifier lors de la revue (réponse vide pour cocher le SLA, pression sur agents, Goodhart temporel) |
+| af-sc5 | Affaires / FLUX | Délai de première réponse client | ✅ | Réponse vide pour cocher le SLA, moyenne globale trompeuse, pression individuelle sur agents, confusion TTFR / Time to Resolution, optimisation locale vs effort total (CES) — **révisée le 19/04/2026** (commit `5cdd889`, panel Dixon / Reichheld / ITIL + garde-fous Goodhart temporel / Deming / Gemba ; fiabilité descendue de 'fiable' à 'precaution') |
 
-**Fiches déjà revues au standard 2026-04** : o1 (Fréquence de déploiement), o2 (Lead Time), o3 (Change Failure Rate), o5 (MTTR), p5 (Débit d'initiatives livrées), **af-c2 (Durée du cycle de vente, 18/04/2026)**, **t4 (Efficacité de flux portefeuille, 19/04/2026)**, **af-m3 (Taux de conversion MQL → SQL, 19/04/2026)**, et les fiches du chantier 3 (s6 à s10, t6, t7, p6, p7) nativement rédigées à ce standard.
+**Fiches déjà revues au standard 2026-04** : o1 (Fréquence de déploiement), o2 (Lead Time), o3 (Change Failure Rate), o5 (MTTR), p5 (Débit d'initiatives livrées), **af-c2 (Durée du cycle de vente, 18/04/2026)**, **t4 (Efficacité de flux portefeuille, 19/04/2026)**, **af-m3 (Taux de conversion MQL → SQL, 19/04/2026)**, **af-sc5 (Délai de première réponse client, 19/04/2026)**, et les fiches du chantier 3 (s6 à s10, t6, t7, p6, p7) nativement rédigées à ce standard.
+
+**🎯 Toutes les fiches Affaires/FLUX (af-c2, af-m3, af-sc5) sont désormais au standard 2026-04**, au même titre que les fiches DevOps (o1, o2, o3, o5), Programme (p5) et Portefeuille (t4). Les prochaines fiches à reprendre seront sur d'autres axes (Qualité, Humain, Risque, Sécurité, Données…) à mesure que des incohérences ou des besoins terrain remontent.
 
 ---
 
@@ -187,11 +189,14 @@ Pour garder la file d'attente 6.2-6.8 facile à reprendre, ces refactors **ne ca
 
 ## Prochaine action recommandée
 
-**af-sc5 — Délai de première réponse client** (priorité 🟡). Dernière fiche Affaires/FLUX restante au format pré-2026-04. Panel spécifique à l'axe service client (pas Lean+Agile par défaut) : Matthew Dixon (*The Effortless Experience* — customer effort score, principe que réduire l'effort client prime sur battre des records de vitesse), Fred Reichheld (loyauté client, lien entre expérience et rétention), ITIL Service Operation (gestion structurée des files d'attente et des priorités en service desk) + garde-fous **Goodhart temporel** (la course à la seconde de réponse produit des réponses vides qui allongent le temps total de résolution) et **Gemba** (observer quelques tickets réels, pas le seul SLA).
+Toutes les fiches Affaires/FLUX étant désormais au standard 2026-04 (af-c2, af-m3, af-sc5), il n'y a plus d'urgence métier sur une fiche particulière. Trois pistes sont ouvertes — à trancher par Lætitia selon l'envie du moment :
 
-**Greffes opportunistes disponibles** après af-sc5 :
-- Jalon `CM.Html.escape()` **déjà ✅ livré**.
-- Extraction `CM.Config.MESSAGES.conseilPedagogique` **✅ livrée le 19/04/2026 (commit `af216d4`)** — socle prêt pour 6.2 et 6.4.
-- Mappings `NIVEAU_VERS_POSITION` et `FIABILITE_VERS_NIVEAU` restent à migrer vers `CM.Config` (règle 2 du refactoring progressif) — déclencheur : toute intervention sur `CM.Composants`.
+**Piste A — Reprendre le chantier 6 sur la porte « Par mon problème »** (🟡). Infrastructure prête (`CM.Config.MESSAGES` livrée, Règle 1 livrée). Item le plus immédiat : **6.2 — reformulation du conseil pédagogique** (« 1-2 par axe, plusieurs axes » au lieu de « 1-2 au total ») avec décision UX en amont : faut-il aussi afficher le conseil dans la porte Par mon problème qui n'en porte actuellement pas ? Coût estimé : un mockup-preview + une réécriture de chaîne + un commit.
+
+**Piste B — Greffe architecturale opportuniste** (🟡) sur `CM.Composants` : migrer les mappings `NIVEAU_VERS_POSITION` et `FIABILITE_VERS_NIVEAU` vers `CM.Config` (Règle 2 du refactoring progressif). Déclencheur déjà réuni : la prochaine modification des composants. Cela fermerait le dernier jalon de la section 3.2 en suspens côté mappings. Coût : ~30-40 lignes déplacées + validation d'identité HTML + 1 commit `refactor:`.
+
+**Piste C — Ouvrir un autre axe de revue métier** (🟢). Les fiches DevOps (o-*), Programme (p-*), Portefeuille (t-*) et Affaires (af-*) sont à jour. Les autres axes (Qualité, Humain, Risque, Sécurité, Données, Produit) n'ont pas été systématiquement audités au standard 2026-04. Choisir une fiche qui *te* paraît la plus fragile ou la plus utilisée en atelier serait un bon point de départ — je n'ai pas de reco métier tant que tu n'as pas signalé un besoin terrain.
 
 **État infra pour le chantier 6** : Règle 1 ✅, `CM.FicheViewModel` ✅, `CM.Config.MESSAGES` ✅, stub `CM.Panier` pas encore posé (~20 lignes le jour où 6.4 redémarre).
+
+**Ma recommandation par défaut** : piste A (chantier 6.2) car elle consomme l'infrastructure qu'on vient de poser et livre une amélioration UX immédiatement visible à l'utilisateur. La piste B est un bon fallback si tu préfères une session courte et technique.
