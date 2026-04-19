@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **19 avril 2026** (revue t4 ✅ + greffe `CM.FicheViewModel` ✅ + 3 commits accents/préposition/conseil pédagogique).
+Dernière mise à jour : **19 avril 2026** (revue t4 ✅ + greffe `CM.FicheViewModel` ✅ + 3 commits accents/préposition/conseil pédagogique + chantier 6.3 chips cadres ✅).
 
 Légende : 🔴 priorité haute · 🟡 moyenne · 🟢 basse · ⚪ à décider · ✅ fait · ⏳ en cours
 
@@ -136,7 +136,7 @@ Chantier en pause le 18/04/2026 après l'item 6.1 : l'ossature est assainie (pla
 |---|---|---|---|---|
 | 6.1 | Retrait du plafond arbitraire de 5 recommandations (2 portes + 2 labels UI) | 🔴 | Corrige un biais d'information invisible — 75-80 % de l'information était masquée sur les couples les plus denses (23 fiches visibles sur opé × qualité) | ✅ (18/04/2026, commit `e4d7041`) |
 | 6.2 | Reformulation du conseil pédagogique (« 1-2 par axe, plusieurs axes » au lieu de « 1-2 au total ») | 🟡 | Aligne le discours de l'outil sur la règle réelle : la cohérence entre axes (humain / livraison / alignement) compte plus que le total arithmétique | ⏸ |
-| 6.3 | Chips « cadres de travail » (DORA, Lean, Scrum…) visibles sur les cartes | 🟡 | La donnée META existe déjà sur 60+ fiches mais n'est jamais rendue — l'utilisateur ne voit pas à quel cadre méthodologique rattacher une métrique | ⏸ |
+| 6.3 | Chips « cadres de travail » (DORA, Lean, Scrum…) visibles sur les cartes | 🟡 | La donnée META existe déjà sur 60+ fiches mais n'est jamais rendue — l'utilisateur ne voit pas à quel cadre méthodologique rattacher une métrique | ✅ (19/04/2026, commits `caf98ea` règle de filtrage + `0987af5` rendu sous le nom) |
 | 6.4 | Module `CM.Panier` (ajout/retrait métriques vers une sélection personnalisée, persistance localStorage) | 🟡 | Socle du tableau de bord personnalisé multi-axes — permet de construire une sélection 3-5 métriques cohérentes | ⏸ |
 | 6.5 | Vue « Mon tableau de bord » groupée par axe (3 statuts : active / veille / écartée) | 🟡 | Rend la sélection actionnable : distingue ce qu'on suit activement de ce qu'on garde en veille, avec raison d'écartement tracée | ⏸ |
 | 6.6 | Export / import JSON du panier | 🟢 | Partage entre équipes, réutilisation d'un tableau de bord validé, sauvegarde hors navigateur | ⏸ |
@@ -150,7 +150,7 @@ Chaque item ci-dessous pointe précisément vers le code à toucher, pour qu'une
 | Item | Fichier / ligne | Nature de l'intervention |
 |---|---|---|
 | 6.2 Conseil pédagogique reformulé | `cadre-indicateurs.html` ligne ~4423 (`<div class="conseil-zone">` dans la vue Par mon rôle) et conseil équivalent dans `CM.VuePorteProbleme` | Texte inline dans un `html +=` — à extraire vers `CM.Config.MESSAGES.conseilPedagogique` pour factorisation et flexibilité d'évolution |
-| 6.3 Chips cadres sur cartes | `CM.Composants.htmlCarte` (~ligne 3552) + lookup `CM.IndicateursMeta.META` (lignes 1953-2100) + vocabulaire `CADRES` déjà défini | Ajouter ligne de rendu chips après la pastille fiabilité — le dictionnaire `CADRES` contient déjà `{label, icone}` pour dora/lean/okr/mbo/scrum/kanban/safe/itil/bsc/generique |
+| ~~6.3 Chips cadres sur cartes~~ | ~~`CM.Composants.htmlCarte` (~ligne 3552) + lookup `CM.IndicateursMeta.META` (lignes 1953-2100) + vocabulaire `CADRES` déjà défini~~ | ✅ Livré 19/04/2026 (commits `caf98ea` + `0987af5`). Nouvelle méthode `cadresAffichables` dans CM.IndicateursMeta (masque « generique » en présence d'un cadre spécifique) ; sous-fonction `rendreChipsCadres` dans CM.Composants ; emplacement final : sous le nom de la carte (pas après la pastille fiabilité comme initialement envisagé, mockup validé avec Lætitia). |
 | 6.4 Module `CM.Panier` | Nouveau module à créer entre `CM.Preferences` et `CM.App` | API proposée : `Panier.ajouter(id, statut, raison?)` / `Panier.retirer(id)` / `Panier.changerStatut(id, statut)` / `Panier.tous()` / `Panier.parAxe()`. Persistance localStorage clé `cm-panier-v1` |
 | 6.5 Vue Tableau de bord | Nouveau module `CM.VueTableauDeBord` + 5e vue dans l'accueil 4 portes | 3 statuts : `active` / `veille` / `ecartee`. Grouper par axe problème (flux, qualité, valeur, risque, humain…). Raisons d'écartement : liste fixe 6 items (voir 6.b) |
 | 6.6 Export / import JSON | Bouton dans vue tableau de bord | Format : `{ version:"1", panier:[{id, statut, raison?, dateAjout}], cadres:[…] }`. Import avec validation `CM.Referentiel.chercher(id)` — les ids inconnus sont ignorés + warning |
