@@ -4423,7 +4423,7 @@ CM.App = (function() {
     var html = '<div class="resultat-zone"><div class="resultat-titre">✅ Vos indicateurs recommandes — ' + recommandes.length + ' au total</div>'
       + '<div class="grille-cartes">';
     recommandes.forEach(function(ind) { html += CM.Composants.htmlCarte(ind, '#1a237e', true, false); });
-    html += '</div><div class="conseil-zone"><strong>Conseil pratique :</strong> Commencez par mesurer 1 a 2 indicateurs. Établissez d\'abord une ligne de référence (valeur actuelle), fixez une ambition réaliste, puis ajoutez les autres progressivement. <em>Ne mesurez jamais tout en même temps.</em></div>'
+    html += '</div><div class="conseil-zone"><strong>Comment lire cette liste :</strong> elle présente tous les indicateurs pertinents pour ce couple (niveau × problème), classés par fiabilité décroissante — à vous d\'arbitrer ce que vous retenez, pas au produit de décider pour vous. <strong>Commencez par n\'en retenir que 1 à 2.</strong> Établissez leur ligne de référence (la valeur actuelle, mesurée honnêtement), fixez une ambition réaliste à 3–6 mois, puis ajoutez-en d\'autres <em>uniquement</em> si une décision concrète l\'exige. <em>Tout mesurer en même temps dilue l\'attention collective et ne révèle rien.</em></div>'
       + '<button class="btn-principal" onclick="CM.App.reinitQuestionnaire()">Recommencer</button></div>';
     return html;
   }
