@@ -463,6 +463,11 @@
     .btn-detail { font-size: 0.78rem; color: var(--texte-2); background: none; border: none; cursor: pointer; border-radius: 6px; padding: 0.28rem 0.5rem; transition: var(--trans); font-family: inherit; }
     .btn-detail:hover { background: var(--fond); color: var(--texte); }
 
+    /* Chips « cadres de travail » sous le nom de la carte (DORA, Lean, Scrum…) */
+    .carte-chips-cadres { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.4rem; }
+    .chip-cadre { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.68rem; font-weight: 600; padding: 0.18rem 0.5rem; border-radius: 12px; background: #f0f1f8; color: #4a5170; border: 1px solid #d8dceb; line-height: 1.2; white-space: nowrap; }
+    .chip-cadre .ic { font-size: 0.78rem; }
+
     /* ══════════════════════════════════════════════
        CASCADE STRATÉGIQUE
     ══════════════════════════════════════════════ */
@@ -3653,6 +3658,25 @@ CM.FicheViewModel = (function() {
 CM.Composants = (function() {
   'use strict';
 
+  /* Rendu des chips « cadres de travail » (DORA, Lean, Scrum…) pour une carte.
+     La règle d'affichage (filtrage du cadre « generique » fallback) vit dans
+     CM.IndicateursMeta.cadresAffichables — on ne fait ici que la projection
+     donnée → HTML, sans logique métier. */
+  function rendreChipsCadres(id) {
+    var keys = CM.IndicateursMeta.cadresAffichables(id);
+    if (!keys || !keys.length) return '';
+    var html = '<div class="carte-chips-cadres">';
+    for (var i = 0; i < keys.length; i++) {
+      var info = CM.IndicateursMeta.infoCadre(keys[i]);
+      if (!info) continue;
+      html += '<span class="chip-cadre" title="' + info.label + '">'
+           +    '<span class="ic" aria-hidden="true">' + info.icone + '</span>'
+           +    info.label
+           +  '</span>';
+    }
+    return html + '</div>';
+  }
+
   function htmlCarte(ind, couleurNiv, prioritaire, contexte) {
     var cfg  = CM.Config;
     var c    = cfg.TYPES_COULEURS[ind.type] || '#546e7a';
@@ -3679,6 +3703,7 @@ CM.Composants = (function() {
       +       '<span class="badge-fiabilite" style="background:' + fib.couleur + '" title="' + fib.label + '">' + fib.icone + ' ' + fib.label_court + '</span>'
       +     '</div>'
       +     '<div class="carte-nom">' + ind.nom + '</div>'
+      +     rendreChipsCadres(ind.id)
       +   '</div>'
       + '</div>'
       + '<div class="carte-corps">'
