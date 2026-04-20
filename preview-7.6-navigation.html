@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Preview 7.6 — Navigation (a) vs (c)</title>
+<style>
+  /* ───────────────────────────────────────────────────────────
+     TOKENS — copiés fidèlement de cadre-indicateurs.html
+     ─────────────────────────────────────────────────────────── */
+  :root {
+    --niv-1: #1a237e; --niv-1-clair: #e8eaf6; --niv-1-moyen: #3949ab;
+    --niv-2: #01579b; --niv-2-clair: #e1f5fe; --niv-2-moyen: #0288d1;
+    --niv-3: #004d40; --niv-3-clair: #e0f2f1; --niv-3-moyen: #00897b;
+    --accent: #e65100;
+    --fond: #f5f6fa; --fond-2: #ffffff;
+    --texte: #1a1a2e; --texte-2: #607d8b;
+    --bordure: #e0e4eb;
+    --ombre: 0 2px 12px rgba(26,35,126,0.08);
+    --ombre-forte: 0 8px 32px rgba(26,35,126,0.14);
+    --rayon: 14px;
+    --ambre: #FFD180; --ambre-profond: #b7791f; --ambre-texte: #6b4a00;
+    --ambre-fond: #fffaf0; --ambre-bord: #f3e3b8;
+    --carte-fond: #ffffff; --carte-bord: #e5e9f2;
+    --texte-primaire: #1c2033; --texte-secondaire: #6b7280;
+    --fs-meta: 0.75rem; --fs-sm: 0.875rem; --fs-base: 1rem;
+    --fs-h1: 1.75rem;
+    --fw-normal: 400; --fw-medium: 500; --fw-semi: 600; --fw-bold: 700;
+    --lh-tight: 1.2; --lh-normal: 1.5; --lh-relaxed: 1.55;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--fond);
+    color: var(--texte);
+  }
+
+  /* ───────────────────────────────────────────────────────────
+     META du mockup (en-têtes explicatifs entre les frames)
+     ─────────────────────────────────────────────────────────── */
+  .meta-hero {
+    padding: 2.5rem 3rem 2rem;
+    background: linear-gradient(180deg, #1a237e 0%, #283593 100%);
+    color: white;
+  }
+  .meta-hero h1 { font-size: 1.75rem; margin: 0 0 0.5rem; font-weight: 800; }
+  .meta-hero p { margin: 0; font-size: 1rem; opacity: 0.85; line-height: 1.55; max-width: 900px; }
+  .meta-hero strong { color: #ffd54f; }
+
+  .meta-section {
+    padding: 1.75rem 3rem 0.75rem;
+    background: var(--fond-2);
+    border-top: 1px solid var(--bordure);
+  }
+  .meta-section h2 {
+    font-size: 1.35rem; margin: 0 0 0.4rem;
+    color: var(--texte); font-weight: 800;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .meta-section h2 .tag {
+    font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase;
+    background: var(--niv-1); color: white;
+    padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 700;
+  }
+  .meta-section p { margin: 0 0 0.3rem; color: var(--texte-2); font-size: 0.95rem; line-height: 1.55; max-width: 900px; }
+
+  .meta-frame-label {
+    padding: 0.75rem 3rem; background: #f8f9fc;
+    border-top: 1px dashed var(--bordure);
+    font-size: 0.8rem; font-weight: 700; color: var(--texte-2);
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+
+  /* ───────────────────────────────────────────────────────────
+     FRAME — reproduit un viewport à taille réelle
+     ─────────────────────────────────────────────────────────── */
+  .frame {
+    position: relative;
+    height: 720px;
+    overflow: hidden;
+    background: var(--fond);
+    border-top: 1px solid var(--bordure);
+    border-bottom: 1px solid var(--bordure);
+  }
+
+  /* Fond pyramide d'accueil (décor simulé pour donner le contexte) */
+  .accueil-decor {
+    position: absolute; inset: 0;
+    padding: 2rem 3rem;
+    display: flex; flex-direction: column; gap: 1rem;
+    background: var(--fond);
+  }
+  .accueil-decor .barre-titre {
+    height: 42px; background: linear-gradient(90deg, #1a237e, #283593);
+    border-radius: 8px; opacity: 0.9;
+  }
+  .accueil-decor .carte-acc {
+    height: 110px; background: white; border-radius: 12px;
+    box-shadow: var(--ombre); padding: 1rem;
+  }
+  .accueil-decor .carte-acc h3 {
+    margin: 0 0 0.3rem; font-size: 1rem; color: var(--texte);
+  }
+  .accueil-decor .carte-acc p {
+    margin: 0; font-size: 0.8rem; color: var(--texte-2);
+  }
+
+  /* Voile fond-tiroir (copie fidèle) */
+  .fond-tiroir {
+    position: absolute; inset: 0;
+    background: rgba(10,15,40,0.42);
+    backdrop-filter: blur(4px);
+    z-index: 10;
+  }
+
+  /* Tiroir principal (copie fidèle, sans position fixed car dans un frame) */
+  .tiroir {
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 600px; max-width: 96%;
+    background: var(--fond-2);
+    box-shadow: -4px 0 40px rgba(26,35,126,0.15);
+    z-index: 20;
+    overflow-y: auto;
+    display: flex; flex-direction: column;
+  }
+
+  /* Pour l'option (c) : tiroir secondaire qui s'empile */
+  .tiroir.tiroir-secondaire {
+    right: 0;
+    z-index: 30;
+    box-shadow: -4px 0 50px rgba(26,35,126,0.28);
+  }
+  .tiroir.tiroir-primaire-reduit {
+    right: 600px;
+    z-index: 19;
+    width: 600px;
+    /* Légère réduction visuelle pour signaler la mise en retrait */
+    filter: brightness(0.94) saturate(0.85);
+  }
+
+  /* Entête fixe du tiroir */
+  .tiroir-entete {
+    padding: 1.4rem 1.5rem;
+    position: sticky; top: 0;
+    background: var(--fond-2);
+    border-bottom: 1px solid var(--bordure);
+    z-index: 1;
+  }
+  .btn-fermer {
+    position: absolute; top: 1rem; right: 1rem;
+    background: var(--fond); border: none; border-radius: 50%;
+    width: 34px; height: 34px; cursor: pointer;
+    font-size: 1rem; display: flex; align-items: center; justify-content: center;
+    color: var(--texte-2);
+  }
+  .tiroir-type-ligne { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+  .tiroir-type-chip {
+    font-size: 0.68rem; font-weight: 800; padding: 0.18rem 0.6rem;
+    border-radius: 6px; color: white;
+  }
+  .tiroir-type-chip.t-flux { background: #00897b; }
+  .tiroir-type-chip.t-output { background: #0288d1; }
+  .tiroir-type-label { font-size: 0.75rem; color: var(--texte-2); }
+  .tiroir-nom {
+    font-size: 1.3rem; font-weight: 800;
+    line-height: 1.2; padding-right: 2.8rem;
+  }
+
+  /* Corps de la fiche */
+  .tiroir-corps.fi { padding: 1.5rem 1.5rem 2rem; flex: 1; }
+  .fi-header {
+    padding-bottom: 1rem; margin-bottom: 1.1rem;
+    border-bottom: 1px solid var(--carte-bord);
+  }
+  .fi-definition h3 {
+    font-size: var(--fs-meta); font-weight: var(--fw-bold);
+    text-transform: uppercase; letter-spacing: 1.1px;
+    color: var(--niv-1); margin: 0 0 0.35rem;
+  }
+  .fi-definition p {
+    font-size: var(--fs-base); line-height: var(--lh-relaxed);
+    color: var(--texte-primaire); margin: 0 0 1.1rem;
+  }
+
+  /* Encart Vigilance (copie fidèle) */
+  .fi-vigilance {
+    background: var(--ambre-fond);
+    border-left: 2px solid var(--ambre-profond);
+    border-radius: 0 10px 10px 0;
+    padding: 0.95rem 1.1rem;
+    margin-top: 0.5rem;
+  }
+  .fi-vigilance h3 {
+    font-size: var(--fs-base); font-weight: var(--fw-semi);
+    color: var(--ambre-texte); margin: 0 0 0.4rem;
+    display: flex; align-items: center; gap: 0.45rem;
+    line-height: var(--lh-tight);
+  }
+  .fi-vigilance h3::before {
+    content: '⚠'; font-size: 0.95rem; color: var(--ambre-profond);
+  }
+  .fi-vigilance p {
+    font-size: var(--fs-sm); line-height: var(--lh-relaxed);
+    color: var(--ambre-texte); margin: 0;
+  }
+
+  /* Encart Alternative recommandée (fi-bloc-inline) */
+  .fi-bloc-inline { padding: 0 0.15rem; margin-top: 0.9rem; }
+  .fi-bloc-inline h4 {
+    font-size: var(--fs-meta); font-weight: var(--fw-bold);
+    text-transform: uppercase; letter-spacing: 1.1px;
+    color: var(--ambre-profond); margin: 0 0 0.35rem;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .fi-bloc-inline p {
+    font-size: var(--fs-base); line-height: var(--lh-relaxed);
+    color: var(--texte-primaire); margin: 0;
+  }
+
+  /* ───────────────────────────────────────────────────────────
+     LIEN CLIQUABLE VERS UNE AUTRE FICHE
+     Variante proposée : souligné dotted + teinte accent au hover
+     ─────────────────────────────────────────────────────────── */
+  .lien-metrique {
+    color: var(--niv-1);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    transition: color 0.18s ease;
+  }
+  .lien-metrique:hover {
+    color: var(--accent);
+    text-decoration-style: solid;
+  }
+  /* Dans l'encart vigilance (fond ambre), le lien doit rester lisible */
+  .fi-vigilance .lien-metrique { color: var(--ambre-profond); }
+  .fi-vigilance .lien-metrique:hover { color: var(--accent); }
+
+  /* ───────────────────────────────────────────────────────────
+     ANNOTATION — callout qui explique le comportement
+     ─────────────────────────────────────────────────────────── */
+  .callout {
+    position: absolute;
+    z-index: 50;
+    background: #1a237e;
+    color: white;
+    padding: 0.6rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    max-width: 280px;
+    line-height: 1.4;
+  }
+  .callout::after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+  }
+  .callout.fleche-bas::after {
+    bottom: -8px; left: 24px;
+    border-width: 8px 8px 0 0;
+    border-color: #1a237e transparent;
+  }
+  .callout.fleche-droite::after {
+    top: 18px; right: -8px;
+    border-width: 8px 0 0 8px;
+    border-color: #1a237e transparent;
+  }
+  .callout.fleche-gauche::after {
+    top: 18px; left: -8px;
+    border-width: 8px 8px 0 0;
+    border-color: transparent #1a237e;
+  }
+
+  /* Badge numéro de frame */
+  .frame-badge {
+    position: absolute;
+    top: 1rem; left: 1rem;
+    background: rgba(26,35,126,0.95);
+    color: white;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem; font-weight: 700;
+    z-index: 100;
+    letter-spacing: 0.5px;
+  }
+
+  /* Bouton retour (option c uniquement) */
+  .btn-retour {
+    position: absolute;
+    top: 1rem; left: 1rem;
+    background: var(--fond);
+    border: 1px solid var(--bordure);
+    border-radius: 20px;
+    padding: 0.35rem 0.85rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: var(--texte-2);
+    display: flex; align-items: center; gap: 0.35rem;
+    font-weight: 600;
+  }
+
+  /* Bloc synthèse finale */
+  .verdict {
+    padding: 2rem 3rem 3rem;
+    background: #1a237e;
+    color: white;
+  }
+  .verdict h2 { margin: 0 0 1rem; font-size: 1.4rem; }
+  .verdict .grille {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+    margin-top: 1rem;
+  }
+  .verdict .col h3 {
+    font-size: 1.05rem; margin: 0 0 0.6rem;
+    color: #ffd54f;
+  }
+  .verdict .col p { margin: 0 0 0.5rem; line-height: 1.55; font-size: 0.92rem; }
+  .verdict .col ul { margin: 0.2rem 0 0 1rem; padding: 0; font-size: 0.9rem; line-height: 1.6; }
+  .verdict .col li { margin-bottom: 0.3rem; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════════════════════ -->
+<div class="meta-hero">
+  <h1>Chantier 7.6 — Liens cliquables : mockup de navigation</h1>
+  <p>
+    Deux options de navigation à comparer quand l'utilisateur clique sur le nom
+    d'une métrique citée dans un encart.
+    <strong>Option (a)</strong> — remplacement direct (la fiche courante est remplacée).
+    <strong>Option (c)</strong> — ouverture parallèle (les deux fiches restent visibles).
+    Chaque option est montrée en deux états : <em>avant le clic</em> et <em>après le clic</em>,
+    à taille réelle, avec les tokens CSS réels de <code>cadre-indicateurs.html</code>.
+  </p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     OPTION (a) — REMPLACEMENT DIRECT
+     ═══════════════════════════════════════════════════════════ -->
+<div class="meta-section">
+  <h2><span class="tag">Option a</span> Remplacement direct</h2>
+  <p>
+    Le clic sur un nom de métrique referme la fiche courante et ouvre la fiche cible
+    à sa place. Un seul tiroir dans le DOM, un seul contexte de lecture à la fois.
+    L'historique n'est pas conservé : pour revenir, l'utilisateur ferme et rouvre.
+  </p>
+</div>
+
+<div class="meta-frame-label">Frame 1 — Avant le clic : fiche <em>Velocity</em> ouverte, « Lead Time » et « Cycle time » cliquables</div>
+
+<div class="frame">
+  <span class="frame-badge">a · avant</span>
+  <div class="accueil-decor">
+    <div class="barre-titre"></div>
+    <div class="carte-acc"><h3>Pyramide des niveaux</h3><p>Entreprise — Programme — Équipe</p></div>
+    <div class="carte-acc"><h3>Porte « Par mon cadre »</h3><p>DORA, Lean, Six Sigma, SAFe…</p></div>
+  </div>
+  <div class="fond-tiroir"></div>
+  <aside class="tiroir">
+    <div class="tiroir-entete">
+      <div class="tiroir-type-ligne">
+        <span class="tiroir-type-chip t-output">OUTPUT</span>
+        <span class="tiroir-type-label">Indicateur d'équipe</span>
+      </div>
+      <div class="tiroir-nom">Velocity</div>
+      <button class="btn-fermer">×</button>
+    </div>
+    <div class="tiroir-corps fi">
+      <div class="fi-definition">
+        <h3>Définition</h3>
+        <p>Volume de points d'estimation livrés par un sprint — moyenne glissante
+        sur les derniers sprints. Mesure de capacité de l'équipe à livrer du contenu
+        estimé.</p>
+      </div>
+
+      <div class="fi-vigilance">
+        <h3>Point de vigilance</h3>
+        <p>La Velocity encourage le <em>gaming des points</em> (inflation de l'estimation)
+        si elle est utilisée comme mesure comparative entre équipes ou comme objectif
+        individuel. Préférez des métriques de flux comme
+        <a class="lien-metrique">Cycle time</a> pour juger de la santé du delivery.</p>
+      </div>
+
+      <div class="fi-bloc-inline">
+        <h4>💡 Alternative recommandée</h4>
+        <p>Pour un signal plus fiable sur le flux, préférez
+        <a class="lien-metrique">Lead Time</a> ou
+        <a class="lien-metrique">Throughput</a> qui mesurent l'output réel
+        livré plutôt que le volume estimé en amont.</p>
+      </div>
+    </div>
+  </aside>
+
+  <div class="callout fleche-bas" style="bottom: 240px; right: 40px;">
+    👆 Survolez un nom cliquable :<br>
+    soulignage dotted discret, couleur indigo,<br>
+    hover → accent orange (cohérent avec le token <code>--accent</code>).
+  </div>
+</div>
+
+<div class="meta-frame-label">Frame 2 — Après le clic sur « Lead Time » : la fiche <em>Velocity</em> a disparu, <em>Lead Time</em> prend sa place</div>
+
+<div class="frame">
+  <span class="frame-badge">a · après</span>
+  <div class="accueil-decor">
+    <div class="barre-titre"></div>
+    <div class="carte-acc"><h3>Pyramide des niveaux</h3><p>Entreprise — Programme — Équipe</p></div>
+    <div class="carte-acc"><h3>Porte « Par mon cadre »</h3><p>DORA, Lean, Six Sigma, SAFe…</p></div>
+  </div>
+  <div class="fond-tiroir"></div>
+  <aside class="tiroir">
+    <div class="tiroir-entete">
+      <div class="tiroir-type-ligne">
+        <span class="tiroir-type-chip t-flux">FLUX</span>
+        <span class="tiroir-type-label">Indicateur d'équipe · DORA</span>
+      </div>
+      <div class="tiroir-nom">Lead Time for Changes</div>
+      <button class="btn-fermer">×</button>
+    </div>
+    <div class="tiroir-corps fi">
+      <div class="fi-definition">
+        <h3>Définition</h3>
+        <p>Temps écoulé entre le premier commit d'un changement et sa mise en
+        production. Métrique DORA emblématique de la santé du flux de delivery.</p>
+      </div>
+      <div class="fi-vigilance">
+        <h3>Point de vigilance</h3>
+        <p>À ne pas confondre avec le <em>lead time Lean</em> qui court de la
+        demande client à la livraison — périmètre différent.</p>
+      </div>
+    </div>
+  </aside>
+
+  <div class="callout fleche-droite" style="top: 150px; right: 640px;">
+    La fiche Velocity est perdue.<br>
+    Pour y revenir : fermer + rouvrir.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     OPTION (c) — OUVERTURE PARALLÈLE (cascade)
+     ═══════════════════════════════════════════════════════════ -->
+<div class="meta-section">
+  <h2><span class="tag" style="background: var(--niv-3);">Option c</span> Ouverture parallèle (cascade)</h2>
+  <p>
+    Le clic ouvre la fiche cible sans refermer la fiche source. Les deux tiroirs
+    s'empilent latéralement : la fiche source est poussée vers la gauche (signalée
+    en retrait), la nouvelle fiche occupe la position droite active. Un bouton
+    « retour » permet de refermer la seconde et de retrouver la première.
+  </p>
+</div>
+
+<div class="meta-frame-label">Frame 3 — Avant le clic : état identique à Frame 1</div>
+
+<div class="frame">
+  <span class="frame-badge">c · avant</span>
+  <div class="accueil-decor">
+    <div class="barre-titre"></div>
+    <div class="carte-acc"><h3>Pyramide des niveaux</h3><p>Entreprise — Programme — Équipe</p></div>
+    <div class="carte-acc"><h3>Porte « Par mon cadre »</h3><p>DORA, Lean, Six Sigma, SAFe…</p></div>
+  </div>
+  <div class="fond-tiroir"></div>
+  <aside class="tiroir">
+    <div class="tiroir-entete">
+      <div class="tiroir-type-ligne">
+        <span class="tiroir-type-chip t-output">OUTPUT</span>
+        <span class="tiroir-type-label">Indicateur d'équipe</span>
+      </div>
+      <div class="tiroir-nom">Velocity</div>
+      <button class="btn-fermer">×</button>
+    </div>
+    <div class="tiroir-corps fi">
+      <div class="fi-definition">
+        <h3>Définition</h3>
+        <p>Volume de points d'estimation livrés par un sprint — moyenne glissante
+        sur les derniers sprints.</p>
+      </div>
+      <div class="fi-vigilance">
+        <h3>Point de vigilance</h3>
+        <p>La Velocity encourage le <em>gaming des points</em> si elle est utilisée
+        comme objectif. Préférez <a class="lien-metrique">Cycle time</a> pour juger
+        du flux.</p>
+      </div>
+      <div class="fi-bloc-inline">
+        <h4>💡 Alternative recommandée</h4>
+        <p>Pour un signal plus fiable sur le flux, préférez
+        <a class="lien-metrique">Lead Time</a> ou
+        <a class="lien-metrique">Throughput</a> qui mesurent l'output réel livré.</p>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="meta-frame-label">Frame 4 — Après le clic sur « Lead Time » : les deux fiches sont visibles, <em>Velocity</em> en retrait à gauche, <em>Lead Time</em> active à droite</div>
+
+<div class="frame">
+  <span class="frame-badge">c · après</span>
+  <div class="accueil-decor">
+    <div class="barre-titre"></div>
+    <div class="carte-acc"><h3>Pyramide des niveaux</h3><p>Entreprise — Programme — Équipe</p></div>
+    <div class="carte-acc"><h3>Porte « Par mon cadre »</h3><p>DORA, Lean, Six Sigma, SAFe…</p></div>
+  </div>
+  <div class="fond-tiroir"></div>
+
+  <!-- Fiche Velocity en retrait (primaire réduit) -->
+  <aside class="tiroir tiroir-primaire-reduit">
+    <div class="tiroir-entete">
+      <div class="tiroir-type-ligne">
+        <span class="tiroir-type-chip t-output">OUTPUT</span>
+        <span class="tiroir-type-label">Indicateur d'équipe</span>
+      </div>
+      <div class="tiroir-nom">Velocity</div>
+    </div>
+    <div class="tiroir-corps fi">
+      <div class="fi-definition">
+        <h3>Définition</h3>
+        <p>Volume de points d'estimation livrés par un sprint.</p>
+      </div>
+      <div class="fi-vigilance">
+        <h3>Point de vigilance</h3>
+        <p>La Velocity encourage le <em>gaming</em> si elle est utilisée comme
+        objectif. Préférez <a class="lien-metrique">Cycle time</a> pour juger du flux.</p>
+      </div>
+      <div class="fi-bloc-inline">
+        <h4>💡 Alternative recommandée</h4>
+        <p>Préférez <a class="lien-metrique" style="color: var(--accent);">Lead Time</a>
+         ou <a class="lien-metrique">Throughput</a>…</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Fiche Lead Time active à droite -->
+  <aside class="tiroir tiroir-secondaire">
+    <div class="tiroir-entete" style="padding-left: 4rem;">
+      <button class="btn-retour">← Velocity</button>
+      <div class="tiroir-type-ligne">
+        <span class="tiroir-type-chip t-flux">FLUX</span>
+        <span class="tiroir-type-label">Indicateur d'équipe · DORA</span>
+      </div>
+      <div class="tiroir-nom">Lead Time for Changes</div>
+      <button class="btn-fermer">×</button>
+    </div>
+    <div class="tiroir-corps fi">
+      <div class="fi-definition">
+        <h3>Définition</h3>
+        <p>Temps écoulé entre le premier commit d'un changement et sa mise en
+        production. Métrique DORA emblématique de la santé du flux de delivery.</p>
+      </div>
+      <div class="fi-vigilance">
+        <h3>Point de vigilance</h3>
+        <p>À ne pas confondre avec le <em>lead time Lean</em> qui court de la
+        demande client à la livraison.</p>
+      </div>
+    </div>
+  </aside>
+
+  <div class="callout fleche-gauche" style="top: 70px; left: 240px; max-width: 180px;">
+    Fiche source en retrait :<br>
+    désaturée, non cliquable.
+  </div>
+
+  <div class="callout fleche-bas" style="bottom: 500px; right: 400px; max-width: 230px;">
+    Bouton « retour à Velocity »<br>
+    dans l'entête de la fiche active.<br>
+    Ferme la fiche Lead Time,<br>
+    ravive la fiche source.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     VERDICT
+     ═══════════════════════════════════════════════════════════ -->
+<div class="verdict">
+  <h2>Ce que chaque option révèle à l'usage</h2>
+  <div class="grille">
+    <div class="col">
+      <h3>Option (a) — Remplacement direct</h3>
+      <p><strong>Ce qu'on gagne.</strong> Simplicité de code (le DOM existant accueille le changement sans refonte). Aucune ambiguïté sur la fiche « courante ». Aucun travail sur le responsive : sur mobile, ça marche déjà.</p>
+      <p><strong>Ce qu'on perd.</strong> Le fil de lecture. Dès qu'un utilisateur pivote d'une fiche à l'autre, il doit mémoriser d'où il venait. Pour comparer deux métriques citées en alternative, il doit ouvrir l'une, lire, fermer, rouvrir l'autre.</p>
+      <ul>
+        <li>Coût dev : ≈ 2 heures</li>
+        <li>Risque régression : faible</li>
+        <li>Dette accessibilité : nulle (on hérite du tiroir existant)</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3>Option (c) — Ouverture parallèle</h3>
+      <p><strong>Ce qu'on gagne.</strong> La toile de références devient lisible — on lit Velocity et Lead Time côte à côte, on voit concrètement pourquoi l'un est préféré à l'autre. Comportement « Wikipedia avancé » que l'utilisateur expérimenté attend.</p>
+      <p><strong>Ce qu'on perd.</strong> Beaucoup. Largeur mobilisée : 2 × 600 px = 1200 px — sur laptop 1280 px, l'accueil disparaît derrière, sur mobile c'est inutilisable. Complexité accrue : deux tiroirs à gérer dans le DOM, logique de mise en retrait, focus trap à deux étages, aria-modal sur quel panneau, gestion du scroll indépendante, cas de l'utilisateur qui ouvre une 3<sup>e</sup> fiche (on tronque ? on empile ?). Le filtre visuel « désaturé » sur la fiche en retrait est une convention non-standard — à enseigner à l'utilisateur.</p>
+      <ul>
+        <li>Coût dev : ≈ 1 à 2 jours</li>
+        <li>Risque régression : moyen à élevé (touche la navigation fondamentale)</li>
+        <li>Dette accessibilité : lourde (focus, aria, clavier, mobile)</li>
+      </ul>
+    </div>
+  </div>
+  <p style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.2); opacity: 0.92;">
+    <strong style="color: #ffd54f;">Ma lecture de craftsman.</strong>
+    L'option (c) livre une vraie valeur UX, mais elle est <em>disproportionnée</em>
+    face au chantier 7.6 qui visait une demi-journée. Elle ressemble davantage à un
+    chantier 7.5 bis (test A/B de mode d'affichage). Si la comparaison côte à côte
+    te paraît valoir l'investissement, je recommande de <strong>livrer (a) d'abord</strong>
+    (gain immédiat, peu de risque), puis d'ouvrir un chantier dédié « navigation
+    multi-fiches » qui traite proprement le responsive, l'accessibilité et le cas
+    de la N<sup>e</sup> fiche. Mélanger les deux dans 7.6 casse le budget et le
+    filet de sécurité des livraisons atomiques.
+  </p>
+</div>
+
+</body>
+</html>
