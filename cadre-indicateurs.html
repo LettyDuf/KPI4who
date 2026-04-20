@@ -1475,6 +1475,78 @@
       outline: 2px solid var(--niv-1-moyen); outline-offset: 2px;
     }
 
+    /* ── Bloc « Cadres voisins dans le référentiel » (chantier 6.7a) ──
+       Carte d'invitation posée après la grille d'indicateurs, avant le bouton
+       Recommencer. Variante C validée le 20/04/2026 : réutilise le vocabulaire
+       visuel des tuiles option-btn (radius, hover translateY) pour cohérence
+       avec l'accordéon étape 1. */
+    #vue-porte-cadre .bloc-voisins {
+      margin-top: 1.5rem;
+      padding: 1.2rem 1.3rem;
+      background: linear-gradient(135deg, var(--niv-1-clair), var(--fond));
+      border-radius: 12px;
+      border: 1px solid var(--bordure);
+    }
+    #vue-porte-cadre .bloc-voisins-titre {
+      font-size: 0.95rem; font-weight: 700;
+      color: var(--niv-1);
+      margin-bottom: 0.2rem;
+    }
+    #vue-porte-cadre .bloc-voisins-sous {
+      font-size: 0.82rem; color: var(--texte-2);
+      margin: 0 0 0.9rem;
+      line-height: 1.5;
+    }
+    #vue-porte-cadre .bloc-voisins-tuiles {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 0.7rem;
+    }
+    #vue-porte-cadre .tuile-voisin {
+      padding: 0.9rem 1rem;
+      border: 2px solid var(--bordure);
+      border-radius: 10px;
+      background: var(--fond-2);
+      cursor: pointer;
+      display: flex; gap: 0.7rem; align-items: flex-start;
+      transition: var(--trans);
+      text-align: left;
+      color: var(--texte);
+      font-family: inherit;
+    }
+    #vue-porte-cadre .tuile-voisin:hover {
+      border-color: var(--niv-2-moyen);
+      transform: translateY(-1px);
+      box-shadow: var(--ombre);
+    }
+    #vue-porte-cadre .tuile-voisin:focus-visible {
+      outline: 2px solid var(--niv-2); outline-offset: 2px;
+    }
+    #vue-porte-cadre .tuile-voisin-icone {
+      font-size: 1.4rem; flex-shrink: 0; line-height: 1.2;
+    }
+    #vue-porte-cadre .tuile-voisin-corps {
+      display: flex; flex-direction: column;
+      min-width: 0;
+    }
+    #vue-porte-cadre .tuile-voisin-label {
+      font-size: 0.92rem; font-weight: 700;
+      color: var(--texte); line-height: 1.25;
+    }
+    #vue-porte-cadre .tuile-voisin-description {
+      font-size: 0.78rem; color: var(--texte-2);
+      margin-top: 0.25rem; line-height: 1.4;
+    }
+    #vue-porte-cadre .tuile-voisin-compteur {
+      align-self: flex-start;
+      font-size: 0.7rem; font-weight: 700;
+      color: var(--niv-1);
+      background: var(--niv-1-clair);
+      padding: 0.1rem 0.5rem;
+      border-radius: 10px;
+      margin-top: 0.45rem;
+    }
+
     /* ══════════════════════════════════════════════
        RESPONSIVE
     ══════════════════════════════════════════════ */
@@ -2574,6 +2646,73 @@ CM.IndicateursMeta = (function() {
                          .map(function(c) { return { id:c.id, label:c.label, icone:c.icone, description:c.description || '' }; });
   }
 
+  /* ── Co-occurrence des cadres (chantier 6.7a, MVP) ──
+     Pour un cadre donné, remonte les autres cadres qui partagent le plus de
+     fiches dans META. Pur compteur, aucune donnée éditoriale supplémentaire :
+     la complémentarité émerge du tagging META.cadres existant — principe de
+     source unique de vérité validé le 20/04/2026.
+
+     Exclusion de 'generique' par défaut : c'est un fallback sémantique tagué
+     sur ~40 fiches comme valeur de repli. Le garder ferait remonter un voisin
+     omniprésent mais sans signification de voisinage éditorial — il est partout
+     par définition, donc son score est un artefact, pas un signal.
+
+     Seuil minimum de 2 fiches partagées : sous ce seuil, la co-occurrence est
+     anecdotique. Le bloc visuel masquera le cadre voisin concerné (silence
+     éditorial plutôt que bruit). Si un cadre donné n'a aucun voisin au-dessus
+     du seuil, le tableau retourné est vide — c'est un signal que le référentiel
+     sous-tagge ce cadre, pas un bug du calcul.
+
+     Signature extensible (options en objet, pas paramètres positionnels) pour
+     que l'API encaisse des évolutions futures (pondération, familleInformelle,
+     autres critères) sans casser les appels existants.
+
+     Exemple : cadresProchesDe('dora') →
+       [ { id:'lean', label:'Lean / Six Sigma', icone:'♻️',
+           description:'Flux…', nbFichesPartagees:6 },
+         { id:'itil', label:'ITIL', icone:'🛠️',
+           description:'IT Service Management…', nbFichesPartagees:3 } ] */
+  function cadresProchesDe(cadreId, options) {
+    options = options || {};
+    var n        = typeof options.n        === 'number' ? options.n        : 2;
+    var seuilMin = typeof options.seuilMin === 'number' ? options.seuilMin : 2;
+    var exclure  = options.exclure || ['generique'];
+
+    if (!CADRES[cadreId]) return [];
+
+    /* Compteur de co-occurrence : pour chaque fiche qui porte le cadre cible,
+       on incrémente les autres cadres qu'elle porte aussi (hors exclus). */
+    var compteurs = {};
+    Object.keys(META).forEach(function(ficheId) {
+      var cadresFiche = META[ficheId].cadres || [];
+      if (cadresFiche.indexOf(cadreId) === -1) return;
+      cadresFiche.forEach(function(autreCadre) {
+        if (autreCadre === cadreId) return;
+        if (exclure.indexOf(autreCadre) !== -1) return;
+        compteurs[autreCadre] = (compteurs[autreCadre] || 0) + 1;
+      });
+    });
+
+    /* Tri décroissant par co-occurrence, filtrage par seuil, top n,
+       enrichissement via infoCadre pour que la vue reçoive tout ce qu'il
+       faut sans relancer un lookup. */
+    return Object.keys(compteurs)
+      .filter(function(id) { return compteurs[id] >= seuilMin; })
+      .sort(function(a, b) { return compteurs[b] - compteurs[a]; })
+      .slice(0, n)
+      .map(function(id) {
+        var info = infoCadre(id);
+        return info ? {
+          id:                info.id,
+          label:             info.label,
+          icone:             info.icone,
+          description:       info.description,
+          nbFichesPartagees: compteurs[id]
+        } : null;
+      })
+      .filter(function(x) { return !!x; });
+  }
+
   /* Sanity check développeur : renvoie la liste des ids présents dans le
      référentiel mais absents du mapping META (à appeler au DOMContentLoaded
      en mode debug). */
@@ -2599,6 +2738,7 @@ CM.IndicateursMeta = (function() {
     famillesOrdonnees: famillesOrdonnees,
     cadresParFamille: cadresParFamille,
     cadresAVenirParFamille: cadresAVenirParFamille,
+    cadresProchesDe: cadresProchesDe,
     valider: valider
   };
 })();
@@ -4822,6 +4962,20 @@ CM.VuePorteCadre = (function() {
     _rendre();
   }
 
+  /* ── Pivot depuis l'étape résultats (chantier 6.7a) ──
+     Chemin rapide pour rebondir d'un cadre à un autre sans repartir de zéro.
+     Préserve le niveau et maintient l'utilisateur à l'étape 3 — l'intention
+     utilisateur est de voir les indicateurs du cadre voisin pour le même étage
+     de pilotage. Fonction distincte de setCadre() volontairement : setCadre()
+     redémarre le parcours à l'étape 2 (choix du niveau), ce qui n'est pas
+     l'intention ici. Explicite beat implicit. */
+  function pivoterVersCadre(cadreId) {
+    etat.cadre = cadreId;
+    /* etat.niveau et etat.etape préservés à dessein. */
+    _rendre();
+    _scrollEnHaut();
+  }
+
   /* ─── Rendu (pas de logique métier ici) ───────────────────────── */
   function _rendre() {
     _rendreStepper();
@@ -4984,11 +5138,57 @@ CM.VuePorteCadre = (function() {
         html += CM.Composants.htmlCarte(recos[i], '#1a237e', true, false);
       }
       html += '</div>';
+      /* Bloc « Cadres voisins » (chantier 6.7a) : uniquement quand il y a des
+         résultats — inutile (voire trompeur) de suggérer de pivoter vers un
+         voisin depuis un contexte où le cadre actuel n'a rien à proposer. */
+      html += _htmlBlocVoisins(etat.cadre);
     }
 
     html += '<button type="button" class="bouton-recommencer"'
           + ' onclick="CM.VuePorteCadre.reset()">↻ Recommencer</button>';
     html += '</div>';
+    return html;
+  }
+
+  /* ── Bloc « Cadres voisins dans le référentiel » (chantier 6.7a) ──
+     Affiche jusqu'à 2 cadres qui revendiquent le plus d'indicateurs en commun
+     avec le cadre courant. Silence éditorial si aucun voisin ne dépasse le
+     seuil de 2 fiches partagées — mieux vaut rien dire qu'un signal faible.
+     Clic → pivoterVersCadre, qui préserve le niveau et reste à l'étape 3.
+
+     Note sécurité : toutes les chaînes concaténées proviennent du catalogue
+     CADRES (données figées, aucun input utilisateur). Pas de XSS possible,
+     donc pas d'échappement. Si un champ user-controlled est ajouté un jour
+     à ce rendu, appliquer la règle 1 du refactoring progressif (CM.Html.escape). */
+  function _htmlBlocVoisins(cadreId) {
+    var voisins = CM.IndicateursMeta.cadresProchesDe(cadreId, { n: 2, seuilMin: 2 });
+    if (voisins.length === 0) return '';
+
+    var html = '<aside class="bloc-voisins" aria-label="Cadres voisins dans le référentiel">';
+    html += '<div class="bloc-voisins-titre">✧ Cadres voisins dans le référentiel</div>';
+    html += '<p class="bloc-voisins-sous">Ces cadres revendiquent plusieurs des mêmes '
+         +  'indicateurs. Les croiser donne un éclairage complémentaire sur le même '
+         +  'étage de pilotage.</p>';
+    html += '<div class="bloc-voisins-tuiles">';
+    for (var i = 0; i < voisins.length; i++) {
+      var v       = voisins[i];
+      var pluriel = v.nbFichesPartagees > 1 ? 's' : '';
+      html += '<button type="button" class="tuile-voisin"'
+            + ' onclick="CM.VuePorteCadre.pivoterVersCadre(\'' + v.id + '\')"'
+            + ' aria-label="Voir les indicateurs du cadre ' + v.label + '">'
+            + '<span class="tuile-voisin-icone" aria-hidden="true">' + v.icone + '</span>'
+            + '<span class="tuile-voisin-corps">'
+            +   '<span class="tuile-voisin-label">' + v.label + '</span>'
+            + (v.description
+                ? '<span class="tuile-voisin-description">' + v.description + '</span>'
+                : '')
+            +   '<span class="tuile-voisin-compteur">'
+            +     v.nbFichesPartagees + ' fiche' + pluriel + ' partagée' + pluriel
+            +   '</span>'
+            + '</span>'
+            + '</button>';
+    }
+    html += '</div></aside>';
     return html;
   }
 
@@ -5042,12 +5242,13 @@ CM.VuePorteCadre = (function() {
   }
 
   return {
-    ouvrir:        ouvrir,
-    retourAccueil: retourAccueil,
-    setCadre:      setCadre,
-    setNiveau:     setNiveau,
-    retourA:       retourA,
-    reset:         reset
+    ouvrir:             ouvrir,
+    retourAccueil:      retourAccueil,
+    setCadre:           setCadre,
+    setNiveau:          setNiveau,
+    pivoterVersCadre:   pivoterVersCadre,
+    retourA:            retourA,
+    reset:              reset
   };
 })();
 </script>
