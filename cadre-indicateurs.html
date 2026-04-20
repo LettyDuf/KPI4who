@@ -515,6 +515,18 @@
     .resultat-zone { background: var(--fond); border-radius: var(--rayon); padding: 1.4rem; margin-top: 1.5rem; }
     .resultat-titre { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.8px; color: var(--texte-2); font-weight: 800; margin-bottom: 1rem; }
     .conseil-zone { margin-top: 1.25rem; padding: 0.9rem 1rem; background: var(--fond-2); border-radius: 10px; border-left: 4px solid var(--niv-2); font-size: 0.85rem; line-height: 1.6; }
+    /* Aération typographique : une idée par paragraphe. L'aphorisme final
+       est isolé par un filet pointillé pour retrouver son rôle de chute
+       (voir preview-conseil-aeration.html, variante V3 retenue). */
+    .conseil-zone p { margin: 0; }
+    .conseil-zone p + p { margin-top: 0.75rem; }
+    .conseil-zone .aphorisme {
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px dashed var(--bordure);
+      color: var(--texte-2);
+      font-style: italic;
+    }
     .btn-principal { display: inline-block; margin-top: 1rem; padding: 0.7rem 1.8rem; background: var(--niv-1); color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 700; transition: var(--trans); font-family: inherit; }
     .btn-principal:hover { background: var(--niv-1-moyen); transform: translateY(-1px); }
 
@@ -1712,18 +1724,20 @@ CM.Config = (function() {
   var MESSAGES = {
     conseilPedagogique:
         '<div class="conseil-zone">'
-      +   '<strong>Comment lire cette liste :</strong> elle présente les '
-      +   'indicateurs pertinents pour ce niveau, classés par fiabilité '
-      +   'décroissante — à vous d\'arbitrer ce que vous retenez, pas '
-      +   'au produit de décider pour vous. '
-      +   '<strong>Retenez 1 à 2 métriques par axe</strong> (flux, qualité, '
-      +   'humain, alignement…), <strong>sur 2 à 3 axes</strong> — la '
-      +   'cohérence entre axes prime sur l\'exhaustivité d\'un seul axe. '
-      +   'Établissez leur ligne de référence (la valeur actuelle, mesurée '
-      +   'honnêtement), fixez une ambition à 3–6 mois, puis ajoutez-en '
-      +   'd\'autres <em>uniquement</em> si une décision concrète l\'exige. '
-      +   '<em>Tout mesurer en même temps dilue l\'attention collective '
-      +   'et ne révèle rien.</em>'
+      +   '<p><strong>Comment lire cette liste :</strong> elle présente '
+      +   'les indicateurs pertinents pour ce niveau, classés par '
+      +   'fiabilité décroissante — à vous d\'arbitrer ce que vous '
+      +   'retenez, pas au produit de décider pour vous.</p>'
+      +   '<p><strong>Retenez 1 à 2 métriques par axe</strong> (flux, '
+      +   'qualité, humain, alignement…), <strong>sur 2 à 3 axes</strong> '
+      +   '— la cohérence entre axes prime sur l\'exhaustivité d\'un '
+      +   'seul axe.</p>'
+      +   '<p>Établissez leur ligne de référence (la valeur actuelle, '
+      +   'mesurée honnêtement), fixez une ambition à 3–6 mois, puis '
+      +   'ajoutez-en d\'autres <em>uniquement</em> si une décision '
+      +   'concrète l\'exige.</p>'
+      +   '<p class="aphorisme">Tout mesurer en même temps dilue '
+      +   'l\'attention collective et ne révèle rien.</p>'
       + '</div>'
   };
 
