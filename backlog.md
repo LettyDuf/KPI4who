@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **19 avril 2026** (revue t4 ✅ + greffe `CM.FicheViewModel` ✅ + 3 commits accents/préposition/conseil pédagogique + chantier 6.3 chips cadres ✅ + revue af-m3 ✅ + extraction `CM.Config.MESSAGES` ✅ + revue af-sc5 ✅ + **chantier 6.2 livré : conseil pédagogique unifié `f7be58b` + aération typographique V3 `38b9458`** — toutes les fiches Affaires/FLUX au standard 2026-04, le conseil pédagogique partage désormais une façade extensible `CM.Config.conseilPedagogiquePour(contexte)` et affiche quatre paragraphes aérés avec aphorisme détaché).
+Dernière mise à jour : **20 avril 2026** (planification chantier 6.7 porte « Par mon cadre » : quatre questions de cadrage tranchées, cinq nouveaux items ajoutés au backlog — cadres complémentaires par co-occurrence pure, conseil post-sélection panier, checkbox métriques déjà en place, filtres cadre+maturité multi-portes, A/B modale-panneau, liens cliquables vers fiches citées, stepper 3 étapes symétrique, type de décision et disponibilité données en étapes futures).
 
 Légende : 🔴 priorité haute · 🟡 moyenne · 🟢 basse · ⚪ à décider · ✅ fait · ⏳ en cours
 
@@ -142,8 +142,11 @@ Chantier en pause le 18/04/2026 après l'item 6.1 : l'ossature est assainie (pla
 | 6.3 | Chips « cadres de travail » (DORA, Lean, Scrum…) visibles sur les cartes | 🟡 | La donnée META existe déjà sur 60+ fiches mais n'est jamais rendue — l'utilisateur ne voit pas à quel cadre méthodologique rattacher une métrique | ✅ (19/04/2026, commits `caf98ea` règle de filtrage + `0987af5` rendu sous le nom) |
 | 6.4 | Module `CM.Panier` (ajout/retrait métriques vers une sélection personnalisée, persistance localStorage) | 🟡 | Socle du tableau de bord personnalisé multi-axes — permet de construire une sélection 3-5 métriques cohérentes | ⏸ |
 | 6.5 | Vue « Mon tableau de bord » groupée par axe (3 statuts : active / veille / écartée) | 🟡 | Rend la sélection actionnable : distingue ce qu'on suit activement de ce qu'on garde en veille, avec raison d'écartement tracée | ⏸ |
+| 6.5a | **Conseil holistique post-sélection panier** | 🟡 | Une fois la sélection faite, audit automatique de la cohérence : axes couverts, cadres représentés, niveaux hiérarchiques. Phrases-conseils (« il te manque l'axe humain », « tu as deux métriques DORA, pense à équilibrer avec une OKR »). Reporte le bloc « cadres complémentaires » de la porte Par mon problème vers le panier — plus pertinent ici, parce que l'utilisateur a fait un choix concret. | ⏸ |
+| 6.5b | **Déclaration des métriques déjà en place (checkbox)** | 🟢 | Checkbox sur les fiches du catalogue : *« je l'ai déjà »*. Transforme l'outil en diagnostic d'un tableau de bord existant, pas seulement en aide à la création. Nouveau conseil exploitable : *« tu as déjà X et Y, ta complémentarité naturelle serait Z »*. | ⏸ |
 | 6.6 | Export / import JSON du panier | 🟢 | Partage entre équipes, réutilisation d'un tableau de bord validé, sauvegarde hors navigateur | ⏸ |
-| 6.7 | Porte « Par mon cadre » (DORA, Scrum, Kanban, SAFe…) | 🟢 | 4e porte d'entrée — pour l'utilisateur qui part d'un cadre méthodologique installé et cherche quelles métriques ce cadre recommande | ⏸ |
+| 6.7 | **Porte « Par mon cadre » (DORA, Scrum, Kanban, SAFe, Lean, OKR, MBO, BSC, ITIL, Générique)** | 🔴 | 3e porte d'entrée — pour l'utilisateur qui part d'un cadre méthodologique installé et cherche quelles métriques ce cadre recommande. Parcours 2 étapes v1 (cadre → niveau → résultats), ouverture à 3 étapes (cf. 7.2). Grille à plat dix tuiles (regroupement par famille en filtre futur — cf. 7.1). `generique` maintenu comme tuile sélectionnable. Conseil pédagogique générique v1 (variante par cadre = 6.2+). | ⏳ (en cadrage le 20/04/2026, mockup-preview étape 1 en cours) |
+| 6.7a | **Cadres complémentaires par co-occurrence pure** | 🟡 | Bloc latéral dans les résultats de la porte cadre : *« ce cadre gagne à être combiné avec X et Y »*. Architecture : une seule fonction `CM.IndicateursMeta.cadresProchesDe(cadre, n)` qui compte la co-occurrence sur `META.cadres` (~15-20 lignes). Aucune table éditoriale séparée — principe source unique de vérité. Flexibilité maximale à l'ajout de cadres futurs (une ligne dans `CADRES` + tagguer progressivement les fiches, et les affinités émergent seules). | ⏸ |
 | 6.8 | Historique / snapshots temporels du panier | 🟢 | Suivre l'évolution de la sélection sur 6-12 mois au rythme de la maturité de l'équipe (ex : on surveille A et B au T1, puis C remplace B au T3) | ⏸ |
 
 ### 6.a Points d'ancrage code (pour reprise fluide)
@@ -157,8 +160,11 @@ Chaque item ci-dessous pointe précisément vers le code à toucher, pour qu'une
 | ~~6.3 Chips cadres sur cartes~~ | ~~`CM.Composants.htmlCarte` (~ligne 3552) + lookup `CM.IndicateursMeta.META` (lignes 1953-2100) + vocabulaire `CADRES` déjà défini~~ | ✅ Livré 19/04/2026 (commits `caf98ea` règle métier + `0987af5` rendu + `bcd95f7` repositionnement final en pied de carte-corps). Nouvelle méthode `cadresAffichables` dans CM.IndicateursMeta (masque « generique » en présence d'un cadre spécifique) ; sous-fonction `rendreChipsCadres` dans CM.Composants. Décision UX validée après mockup-preview comparant 3 emplacements : pied de carte-corps, prolongement naturel de la zone méta (fréquence + maturité). |
 | 6.4 Module `CM.Panier` | Nouveau module à créer entre `CM.Preferences` et `CM.App` | API proposée : `Panier.ajouter(id, statut, raison?)` / `Panier.retirer(id)` / `Panier.changerStatut(id, statut)` / `Panier.tous()` / `Panier.parAxe()`. Persistance localStorage clé `cm-panier-v1` |
 | 6.5 Vue Tableau de bord | Nouveau module `CM.VueTableauDeBord` + 5e vue dans l'accueil 4 portes | 3 statuts : `active` / `veille` / `ecartee`. Grouper par axe problème (flux, qualité, valeur, risque, humain…). Raisons d'écartement : liste fixe 6 items (voir 6.b) |
+| 6.5a Conseil holistique post-sélection | Nouveau module `CM.ConseilSelection` (fonction pure) appelé depuis `CM.VueTableauDeBord` | Entrée : `Panier.tous()` + mapping axes/cadres/niveaux. Sortie : 2 à 4 phrases-conseils. Fonction pure, testable, sans effet de bord — respecte le port hexagonal. |
+| 6.5b Checkbox « je l'ai déjà » | Ajout d'un champ `statut='deja-en-place'` dans `CM.Panier` + bouton dans `rendreFicheHtml` (panneau actuel) | Ne casse pas l'API panier existante (le statut s'ajoute à la liste `active` / `veille` / `ecartee`). Le conseil 6.5a exploite cette information pour produire des suggestions de complément. |
 | 6.6 Export / import JSON | Bouton dans vue tableau de bord | Format : `{ version:"1", panier:[{id, statut, raison?, dateAjout}], cadres:[…] }`. Import avec validation `CM.Referentiel.chercher(id)` — les ids inconnus sont ignorés + warning |
-| 6.7 Porte « Par mon cadre » | Nouveau module `CM.VuePorteCadre` parallèle à `CM.VuePorteProbleme` | Parcours 2 étapes : choix cadre → filtre sur META.cadres. Données déjà présentes, pas de revue métier préalable |
+| 6.7 Porte « Par mon cadre » | Nouveau module `CM.VuePorteCadre` parallèle à `CM.VuePorteProbleme` (même gabarit), grille de tuiles fidèle aux tokens `.porte-carte` | Parcours 2 étapes v1 : choix cadre → niveau → résultats filtrés par `META.cadres` ET `niveau`. Données déjà présentes (`CADRES` ligne 2053, `META` lignes 2071-2106), pas de revue métier préalable. Mockup-preview étape 1 avant modification du fichier réel. |
+| 6.7a Cadres complémentaires | Nouvelle fonction `CM.IndicateursMeta.cadresProchesDe(cadre, n=2)` + bloc latéral `.bloc-cadres-complementaires` dans `CM.VuePorteCadre._etapeResultats` | Algorithme en 3 lignes : pour chaque autre cadre, compter le nombre de fiches partagées avec le cadre cible via `META.cadres`, trier décroissant, retourner les `n` premiers. Tests unitaires faciles (données déterministes). |
 | 6.8 Snapshots temporels | Extension `CM.Panier` | `Panier.snapshot(nom)` sauvegarde l'état courant avec timestamp, `Panier.comparer(nomA, nomB)` affiche le delta |
 
 ### 6.b Spécifications déjà validées (pour ne pas redécider)
@@ -175,6 +181,12 @@ Chaque item ci-dessous pointe précisément vers le code à toucher, pour qu'une
 
 **Principe de non-plafonnement** : toute limite arbitraire imposée par le produit après filtrage explicite (niveau / problème / domaine) crée un biais d'information invisible. Le tri par fiabilité suffit à mettre en tête ce qui est le plus exploitable.
 
+**Principe « source unique de vérité » pour les cadres complémentaires (6.7a)** — validé le 20/04/2026. Les affinités entre cadres ne sont PAS une donnée à stocker dans une seconde table éditoriale : elles sont un *calcul dérivé* des tags `META.cadres` existants. Conséquences : ajouter un nouveau cadre demande uniquement une ligne dans `CADRES` + le tagguer progressivement sur les fiches pertinentes ; les affinités émergent automatiquement. Si un cadre paraît isolé alors qu'il ne devrait pas l'être, c'est un signal que les fiches sont sous-tagguées — le remède est d'enrichir META, pas de créer une couche décorative.
+
+**Principe « generique reste sélectionnable »** — validé le 20/04/2026. La tuile « Indicateur générique » reste un choix accessible depuis la grille de la porte cadre. Elle désigne l'ensemble des fiches non rattachées à un cadre méthodologique spécifique — bac à sable utile, éventuellement porte d'entrée pour un utilisateur sans cadre installé. Le bloc 6.7a *cadres complémentaires* suggère les cadres spécifiques pertinents depuis cette entrée.
+
+**Principe « grille de cadres à plat » (v1)** — validé le 20/04/2026. Dix tuiles sur une grille 3 colonnes × 4 lignes (ou équivalent responsive), pas de regroupement par famille pédagogique. Le regroupement (Flux & livraison / Delivery à l'échelle / Stratégie & alignement) est reporté en **filtre ou option** (cf. 7.1) — il ajoute une typologie discutable qu'il vaut mieux exposer comme choix utilisateur que comme structure imposée.
+
 ### 6.c Flexibilité architecturale — préparation à coût marginal
 
 Pour garder la file d'attente 6.2-6.8 facile à reprendre, ces refactors **ne cassent rien aujourd'hui** et paveront le terrain :
@@ -189,20 +201,52 @@ Pour garder la file d'attente 6.2-6.8 facile à reprendre, ces refactors **ne ca
 
 ---
 
+## 7. Évolutions transversales (cross-portes)
+
+Chantiers ouverts le 20/04/2026 dans le prolongement de la planification de la porte « Par mon cadre ». Ils touchent plusieurs portes à la fois et ne peuvent être imputés au seul chantier 6.
+
+| # | Évolution | Priorité | Valeur | État |
+|---|---|---|---|---|
+| 7.1 | **Filtres globaux par cadre et par maturité de l'équipe** | 🟡 | Nouvelle déclaration utilisateur sur la maturité de son équipe (débutant / structuré / mature). Le filtre se propage à toutes les portes et masque les fiches dont la maturité requise dépasse le seuil. Évite la recommandation de métriques inaccessibles à l'équipe réelle. Peut aussi accueillir le **regroupement par famille pédagogique** de la grille de cadres (option utilisateur plutôt que structure imposée). | ⏸ |
+| 7.2 | **Stepper 3 étapes symétrique sur toutes les portes** | 🟡 | Porte *Par mon problème* : problème → niveau → cadre. Porte *Par mon cadre* : cadre → niveau → problème. Porte *Par mon niveau* (pyramide) : niveau → problème → cadre. Outil anti-surcharge — certaines combinaisons actuelles ramènent 20+ métriques, l'utilisateur se perd. Une 3e étape réduit naturellement vers 3-5 et chaque porte conserve sa *première question* alignée sur son axe d'entrée. | ⏸ |
+| 7.3 | **Type de décision en 4e étape (mode expert)** | 🟢 | priorisation / investissement / arrêt d'initiative / amélioration continue. Vient directement du brief projet. Une métrique de diagnostic (MTTR, Change Failure Rate) ne sert pas la même décision qu'une métrique de priorisation stratégique (ROI, part de marché). Encodage sur les fiches : nouveau champ `META.decisions = [...]`. | ⏸ |
+| 7.4 | **Disponibilité des données en 5e étape (mode expert)** | 🟢 | mesurable aujourd'hui / à instrumenter / absente. Filtre pragmatique pour éviter les recommandations impossibles à alimenter faute d'instrumentation. Allonge le parcours — à réserver au mode expert. | ⏸ |
+| 7.5 | **Test A/B boîte modale vs panneau latéral pour les fiches** | 🟢 | Toggle persistant dans `CM.Preferences` (clé `cm-mode-fiche`, valeurs `panneau` / `modale`). Les deux implémentations coexistent le temps du test. Dette accessibilité à anticiper côté modale : focus trap, Escape, aria-modal, retour au scroll. | ⏸ |
+| 7.6 | **Liens cliquables vers les métriques recommandées dans le panneau** | 🟡 | Rendre cliquables les noms de métriques dans les encarts « Alternative recommandée » (et plus largement les références croisées entre fiches). Ouvre la fiche cible sans retour à la liste. Haute valeur d'usage, faible coût, haute cohérence interne. | ⏸ |
+
+### 7.a Points d'ancrage code
+
+| Item | Fichier / ligne | Nature de l'intervention |
+|---|---|---|
+| 7.1 Filtres cadre + maturité | Barre de filtres existante + nouveau module `CM.FiltresGlobaux` | Nouveau select « ma maturité d'équipe » persistant dans `CM.Preferences`. Filtrage appliqué dans `CM.Referentiel.filtrerParContexte` (point d'entrée unique déjà existant). |
+| 7.2 Stepper 3 étapes | `CM.VuePorteProbleme._etapeResultats` (à scinder en `_etape3_cadre` + `_etapeResultats`), nouveau module `CM.VuePorteCadre` nativement en 3 étapes, et `CM.App.afficherAccueil('pyramide')` à envelopper dans un stepper | Piste de mutualisation : extraire un `CM.Stepper` générique qui prend une liste ordonnée de questions et oriente le parcours. Évite de dupliquer la logique de navigation. |
+| 7.3 Type de décision | Ajout champ `META.decisions` sur toutes les fiches + nouveau filtre dans le stepper | Encodage progressif : commencer par les fiches les plus récentes (standard 2026-04). |
+| 7.4 Disponibilité données | Choix utilisateur stocké en `CM.Preferences`, aucun champ à ajouter aux fiches | Filtre côté UI uniquement (« je n'ai pas les données → écarter les fiches qui supposent une instrumentation non triviale »). Le critère de « non-trivialité » reste à définir. |
+| 7.5 A/B modale / panneau | Nouveau module `CM.PanneauFiche` (API commune) avec deux implémentations : `CM.PanneauLateral` (actuel) et `CM.PanneauModal` (nouveau) | Abstraction à introduire **avant** de coder la modale, sinon on duplique la logique. Port hexagonal : `PanneauFiche.ouvrir(ind)` / `.fermer()`. |
+| 7.6 Liens cliquables | `CM.Composants.rendreAlternative` (et éventuellement `rendreVigilance`) dans `rendreFicheHtml` | Remplacer la concaténation de texte par un `<a data-ind-id="...">` avec un handler qui appelle `CM.App.ouvrirFiche(id)`. Dépend de `CM.Html.escape()` (règle 1 du refactoring). |
+
+---
+
 ## Prochaine action recommandée
 
-6.2 livré le 19/04/2026 en deux commits (`f7be58b` chaîne unifiée + façade, `38b9458` aération typographique V3). Les deux portes d'entrée partagent désormais un conseil pédagogique unifié, aéré en 4 paragraphes avec aphorisme Gemba détaché, et portent la règle « 1 à 2 métriques par axe, sur 2 à 3 axes ». Cinq pistes ouvertes pour la suite :
+Chantier 6.7 (porte « Par mon cadre ») ouvert le 20/04/2026 après cadrage détaillé. Décisions produit arrêtées :
 
-**Piste A — Chantier 6.7 : porte « Par mon cadre »** (🟢). 3e porte d'entrée (DORA, Lean Six Sigma, Drucker/MBO, OKR…). Ne dépend pas du Panier (6.4) ni du Tableau de bord (6.5). Calquée sur `CM.VuePorteProbleme`. Un mockup-preview pour l'ergonomie de sélection du cadre, un module `CM.VuePorteCadre` à créer. Coût estimé : une session moyenne (1-2 h). **C'est ma reco par défaut** : rend l'accueil plus complet (3 portes actives sur 4 prévues) avant d'attaquer l'infra panier/tableau.
+1. **Parcours v1** : 2 étapes (cadre → niveau → résultats), évolution future vers 3 étapes dans le cadre transversal 7.2 (la 3e étape sera le problème pour garder la symétrie).
+2. **Grille de cadres** : dix tuiles à plat (générique maintenu), regroupement par famille = filtre utilisateur futur (cf. 7.1).
+3. **Cadres complémentaires** : par co-occurrence pure (cf. 6.7a), pas de table éditoriale.
+4. **Conseil pédagogique** : variante générique réutilisée (la variante par cadre = chantier 6.2+).
+5. **Bloc « cadres complémentaires » dans la porte Par mon problème** : non, migré vers le conseil post-sélection du panier (6.5a).
+6. **Déclaration de métriques déjà en place** : checkbox (cf. 6.5b).
 
-**Piste B — Greffe architecturale opportuniste** (🟡) sur `CM.Composants` : migrer les mappings `NIVEAU_VERS_POSITION` et `FIABILITE_VERS_NIVEAU` vers `CM.Config` (Règle 2 du refactoring progressif). Session courte et technique, ~45 min.
+**Ordre d'attaque proposé** :
 
-**Piste C — Chantier 6.4 : stub `CM.Panier`** (🟢). Pose l'API côté module sans l'activer. 20 lignes, commit `chore:`. Permet aux vues futures (6.5, 6.7) de référencer le panier dès le premier jour sans casser. À faire si on prévoit d'enchaîner rapidement sur 6.5.
+- **Étape immédiate (session en cours)** : mockup-preview HTML de l'étape 1 de la porte Par mon cadre (grille de dix tuiles, tokens CSS fidèles à `.porte-carte`). Validation UX avant toute modification du fichier réel.
+- **Étape suivante (même session si le mockup est validé)** : implémentation du chantier 6.7 (module `CM.VuePorteCadre`, activation du bouton d'accueil, stepper 2 étapes, résultats filtrés par `META.cadres` et niveau).
+- **Étapes ultérieures (sessions suivantes, à prioriser avec Lætitia)** : 6.7a cadres complémentaires → 7.6 liens cliquables (petit chantier UX à haute valeur) → 7.2 stepper 3 étapes → 7.1 filtres cadre+maturité → 6.4/6.5 panier et conseil post-sélection.
 
-**Piste D — Chantier 6.2+ : variante 3 du conseil pédagogique** (🟢). Nécessite d'abord un travail éditorial (formulations par axe de problème / objectif) + un mockup-preview de lisibilité et placement. À faire quand l'envie de peaufiner la pédagogie se présente.
+**État infra pour le chantier 6.7** : Règle 1 (`CM.Html.escape()`) non livrée — peut être faite en greffe sur ce chantier si l'étape 1 introduit du texte utilisateur, sinon reportée ; `CM.FicheViewModel` ✅, `CM.Config.MESSAGES` ✅, `CM.Config.conseilPedagogiquePour(contexte)` ✅ (façade prête pour 6.2+), stub `CM.Panier` pas encore posé (non bloquant pour 6.7).
 
-**Piste E — Ouvrir un axe de revue métier non encore audité** (🟢). Fiches Qualité, Humain, Risque, Sécurité, Données, Produit jamais systématiquement passées au standard 2026-04.
+**Pistes alternatives si Lætitia préfère pivoter** :
 
-**État infra pour le chantier 6** : Règle 1 ✅, `CM.FicheViewModel` ✅, `CM.Config.MESSAGES` ✅, `CM.Config.conseilPedagogiquePour(contexte)` ✅ (façade prête pour 6.2+), stub `CM.Panier` pas encore posé.
-
-**Ma recommandation** : piste A (porte Par mon cadre). La structure `VuePorteProbleme` fournit un gabarit éprouvé, les données `META.cadres` sont déjà présentes, et la valeur utilisateur est visible (3e entrée dans l'accueil). La piste B est un bon repli si tu préfères une session courte sans décision UX.
+- **Piste B — Greffe architecturale** (🟡) : migrer `NIVEAU_VERS_POSITION` et `FIABILITE_VERS_NIVEAU` vers `CM.Config` (Règle 2). Session courte, ~45 min.
+- **Piste E — Revue métier d'un axe non audité** (🟢). Fiches Qualité, Humain, Risque, Sécurité, Données, Produit jamais systématiquement passées au standard 2026-04.
