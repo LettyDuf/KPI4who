@@ -19,5 +19,6 @@ Thumbs.db
 .git-test-*
 
 # Prompts de reprise de conversation (documents de travail, non versionnés)
-prompt-reprise-conversation.md
+# PROMPT-REPRISE-SESSION.md est la version active (majuscules). Les patterns
+# ci-dessous attrapent d'anciens brouillons en minuscules si jamais il y en a.
 prompt-reprise-*.md
