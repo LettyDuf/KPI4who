@@ -40,9 +40,7 @@ Règle appliquée : chaque fiche doit distinguer **ce qu'elle mesure** (output) 
 | af-m3 | Affaires / FLUX | Taux de conversion MQL → SQL | ✅ | Inflation MQL, abaissement silencieux des standards SQL, confusion output/outcome, désalignement accusatoire, moyenne trompeuse — **révisée le 19/04/2026** (commit `52ea2a1`, panel Sirius Decisions Demand Waterfall / Roberge / Kaplan & Norton + garde-fous Deming / Goodhart / Gemba) |
 | af-sc5 | Affaires / FLUX | Délai de première réponse client | ✅ | Réponse vide pour cocher le SLA, moyenne globale trompeuse, pression individuelle sur agents, confusion TTFR / Time to Resolution, optimisation locale vs effort total (CES) — **révisée le 19/04/2026** (commit `5cdd889`, panel Dixon / Reichheld / ITIL + garde-fous Goodhart temporel / Deming / Gemba ; fiabilité descendue de 'fiable' à 'precaution') |
 
-**Fiches déjà revues au standard 2026-04** : o1 (Fréquence de déploiement), o2 (Lead Time), o3 (Change Failure Rate), o5 (MTTR), p5 (Débit d'initiatives livrées), **af-c2 (Durée du cycle de vente, 18/04/2026)**, **t4 (Efficacité de flux portefeuille, 19/04/2026)**, **af-m3 (Taux de conversion MQL → SQL, 19/04/2026)**, **af-sc5 (Délai de première réponse client, 19/04/2026)**, et les fiches du chantier 3 (s6 à s10, t6, t7, p6, p7) nativement rédigées à ce standard.
-
-**🎯 Toutes les fiches Affaires/FLUX (af-c2, af-m3, af-sc5) sont désormais au standard 2026-04**, au même titre que les fiches DevOps (o1, o2, o3, o5), Programme (p5) et Portefeuille (t4). Les prochaines fiches à reprendre seront sur d'autres axes (Qualité, Humain, Risque, Sécurité, Données…) à mesure que des incohérences ou des besoins terrain remontent.
+**Portée actuelle du standard 2026-04** — les fiches du tableau ci-dessus (axes DevOps, Programme, Portefeuille, Affaires/FLUX) + les fiches du chantier 3 (s6 à s10, t6, t7, p6, p7) nativement rédigées à ce standard. Prochaines fiches à reprendre : d'autres axes (Qualité, Humain, Risque, Sécurité, Données, Produit), à déclencher sur remontée d'incohérence ou de besoin terrain.
 
 ---
 
