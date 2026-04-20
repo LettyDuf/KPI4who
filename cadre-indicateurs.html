@@ -2360,16 +2360,16 @@ CM.IndicateursMeta = (function() {
      Chaque cadre porte un `famille` — clé de FAMILLES — qui pilote le regroupement
      et le style visuel côté porte « Par mon cadre ». */
   var CADRES = {
-    dora:      { label:'DORA / DevOps',            icone:'🚀', famille:'observabilite'   },
-    lean:      { label:'Lean / Six Sigma',         icone:'♻️', famille:'excellence-op'   },
-    okr:       { label:'OKR',                      icone:'🎯', famille:'objectifs'       },
-    mbo:       { label:'MBO (Drucker)',            icone:'📐', famille:'objectifs'       },
-    scrum:     { label:'Scrum',                    icone:'🏉', famille:'empirisme-agile' },
-    kanban:    { label:'Kanban',                   icone:'🗂️', famille:'empirisme-agile' },
-    safe:      { label:'SAFe',                     icone:'🏗️', famille:'empirisme-agile' },
-    itil:      { label:'ITIL',                     icone:'🛠️', famille:'itsm'            },
-    bsc:       { label:'Balanced Scorecard',       icone:'⚖️', famille:'objectifs'       },
-    generique: { label:'Indicateur générique',     icone:'🧩', famille:'universel'       }
+    dora:      { label:'DORA / DevOps',            icone:'🚀', famille:'observabilite',   description:'Quatre métriques de référence du delivery\u00a0: fréquence, lead time, échec, MTTR.' },
+    lean:      { label:'Lean / Six Sigma',         icone:'♻️', famille:'excellence-op',   description:'Flux, variabilité, réduction du gaspillage. Lead time, throughput.' },
+    okr:       { label:'OKR',                      icone:'🎯', famille:'objectifs',       description:'Objectives and Key Results. Ambitions trimestrielles mesurables.' },
+    mbo:       { label:'MBO (Drucker)',            icone:'📐', famille:'objectifs',       description:'Management By Objectives. Alignement individuel / organisationnel.' },
+    scrum:     { label:'Scrum',                    icone:'🏉', famille:'empirisme-agile', description:'Pilotage itératif avec cadence fixe. Vélocité, qualité de sprint.' },
+    kanban:    { label:'Kanban',                   icone:'🗂️', famille:'empirisme-agile', description:'Flux tiré, WIP, cycle time. Flux continu.' },
+    safe:      { label:'SAFe',                     icone:'🏗️', famille:'empirisme-agile', description:'Scaled Agile Framework. Programme et portefeuille à l\u2019échelle.' },
+    itil:      { label:'ITIL',                     icone:'🛠️', famille:'itsm',            description:'IT Service Management. Incidents, changements, problèmes, disponibilité.' },
+    bsc:       { label:'Balanced Scorecard',       icone:'⚖️', famille:'objectifs',       description:'Finance, client, processus, apprentissage — pilotage équilibré.' },
+    generique: { label:'Indicateur générique',     icone:'🧩', famille:'universel',       description:'Indicateurs non rattachés à un cadre spécifique. Bac à sable, équipe sans cadre installé.' }
   };
 
   /* Cadres projetés mais pas encore branchés au référentiel.
@@ -2378,16 +2378,16 @@ CM.IndicateursMeta = (function() {
      de recommandation, c'est un signal d'intention produit.
      Ajout/retrait = opération de data, pas de code. */
   var CADRES_A_VENIR = [
-    { id:'xp',      label:'XP',                           icone:'⚡',  famille:'empirisme-agile' },
-    { id:'ebm',     label:'EBM',                          icone:'🔬', famille:'empirisme-agile' },
-    { id:'toc',     label:'TOC (Théorie des contraintes)', icone:'⛓️', famille:'excellence-op'   },
-    { id:'queues',  label:'Théorie des files d\'attente',  icone:'🧮', famille:'excellence-op'   },
-    { id:'space',   label:'SPACE',                        icone:'🛰️', famille:'observabilite'   },
-    { id:'flow',    label:'Flow Metrics',                 icone:'🌊', famille:'observabilite'   },
-    { id:'hoshin',  label:'Hoshin Kanri',                 icone:'🧭', famille:'objectifs'       },
-    { id:'cobit',   label:'COBIT',                        icone:'📚', famille:'itsm'            },
-    { id:'cynefin', label:'Cynefin',                      icone:'🗺️', famille:'decision'        },
-    { id:'wardley', label:'Wardley Maps',                 icone:'🧭', famille:'decision'        }
+    { id:'xp',      label:'XP',                           icone:'⚡',  famille:'empirisme-agile', description:'Extreme Programming. Qualité de code, TDD, pair programming, refactoring continu.' },
+    { id:'ebm',     label:'EBM',                          icone:'🔬', famille:'empirisme-agile', description:'Evidence-Based Management (Scrum.org). Pilotage empirique de la valeur stratégique.' },
+    { id:'toc',     label:'TOC (Théorie des contraintes)', icone:'⛓️', famille:'excellence-op',   description:'Theory of Constraints (Goldratt). Pilotage par le goulot d\u2019étranglement.' },
+    { id:'queues',  label:'Théorie des files d\'attente',  icone:'🧮', famille:'excellence-op',   description:'Modélisation des flux arrivée/service. Utilisation, variabilité.' },
+    { id:'space',   label:'SPACE',                        icone:'🛰️', famille:'observabilite',   description:'Satisfaction · Performance · Activity · Communication · Efficiency.' },
+    { id:'flow',    label:'Flow Metrics',                 icone:'🌊', famille:'observabilite',   description:'Flow velocity, efficiency, time, load, distribution.' },
+    { id:'hoshin',  label:'Hoshin Kanri',                 icone:'🧭', famille:'objectifs',       description:'Déploiement stratégique japonais. Catchball, X-matrix, alignement vertical.' },
+    { id:'cobit',   label:'COBIT',                        icone:'📚', famille:'itsm',            description:'Governance of Enterprise IT. Gouvernance, alignement business / IT.' },
+    { id:'cynefin', label:'Cynefin',                      icone:'🗺️', famille:'decision',        description:'Cadre de décision en contexte (Snowden)\u00a0: clair, compliqué, complexe, chaotique.' },
+    { id:'wardley', label:'Wardley Maps',                 icone:'🧭', famille:'decision',        description:'Cartographie stratégique orientée valeur × maturité. Anticipation de l\u2019évolution.' }
   ];
 
   /* ── Mapping id → { tags, cadres } ──
@@ -2534,7 +2534,7 @@ CM.IndicateursMeta = (function() {
   }
   function infoCadre(id) {
     var c = CADRES[id];
-    return c ? { id:id, label:c.label, icone:c.icone, famille:c.famille || null } : null;
+    return c ? { id:id, label:c.label, icone:c.icone, famille:c.famille || null, description:c.description || '' } : null;
   }
   // Exemple : infoFamille('empirisme-agile') → { id, label, teinte, fond } ou null
   function infoFamille(id) {
@@ -2554,7 +2554,7 @@ CM.IndicateursMeta = (function() {
   }
   function tousLesCadres() {
     return Object.keys(CADRES).map(function(k) {
-      return { id:k, label:CADRES[k].label, icone:CADRES[k].icone, famille:CADRES[k].famille || null };
+      return { id:k, label:CADRES[k].label, icone:CADRES[k].icone, famille:CADRES[k].famille || null, description:CADRES[k].description || '' };
     });
   }
   // Exemple : famillesOrdonnees() → [{id,label,teinte,fond}, …] dans l'ordre canonique
@@ -2562,16 +2562,16 @@ CM.IndicateursMeta = (function() {
     return ORDRE_FAMILLES.map(function(id) { return infoFamille(id); })
                          .filter(function(f) { return !!f; });
   }
-  // Exemple : cadresParFamille('empirisme-agile') → [{id,label,icone}, …]
+  // Exemple : cadresParFamille('empirisme-agile') → [{id,label,icone,description}, …]
   function cadresParFamille(familleId) {
     return Object.keys(CADRES)
       .filter(function(k) { return CADRES[k].famille === familleId; })
-      .map(function(k) { return { id:k, label:CADRES[k].label, icone:CADRES[k].icone }; });
+      .map(function(k) { return { id:k, label:CADRES[k].label, icone:CADRES[k].icone, description:CADRES[k].description || '' }; });
   }
-  // Exemple : cadresAVenirParFamille('decision') → [{id,label,icone}, …]
+  // Exemple : cadresAVenirParFamille('decision') → [{id,label,icone,description}, …]
   function cadresAVenirParFamille(familleId) {
     return CADRES_A_VENIR.filter(function(c) { return c.famille === familleId; })
-                         .map(function(c) { return { id:c.id, label:c.label, icone:c.icone }; });
+                         .map(function(c) { return { id:c.id, label:c.label, icone:c.icone, description:c.description || '' }; });
   }
 
   /* Sanity check développeur : renvoie la liste des ids présents dans le
@@ -4911,7 +4911,9 @@ CM.VuePorteCadre = (function() {
       html += '<button type="button" class="option-btn"'
         + ' onclick="CM.VuePorteCadre.setCadre(\'' + c.id + '\')">'
         + '<span class="option-icone" aria-hidden="true">' + c.icone + '</span>'
-        + '<span><span class="option-label">' + c.label + '</span></span>'
+        + '<span><span class="option-label">' + c.label + '</span>'
+        + (c.description ? '<span class="option-sous">' + c.description + '</span>' : '')
+        + '</span>'
         + '</button>';
     }
     for (var j = 0; j < f.aVenir.length; j++) {
@@ -4920,6 +4922,7 @@ CM.VuePorteCadre = (function() {
         + ' aria-disabled="true" tabindex="-1">'
         + '<span class="option-icone" aria-hidden="true">' + v.icone + '</span>'
         + '<span><span class="option-label">' + v.label + '</span>'
+        + (v.description ? '<span class="option-sous">' + v.description + '</span>' : '')
         + '<span class="a-venir-badge">À venir</span></span>'
         + '</div>';
     }
