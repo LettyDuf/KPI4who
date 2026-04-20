@@ -1220,6 +1220,262 @@
     }
 
     /* ══════════════════════════════════════════════
+       VUE "PAR MON CADRE" (porte 3)
+       Même grammaire visuelle que porte-problème — on redéclare uniquement
+       les sélecteurs scopés qui en ont besoin. Tout est scopé sous
+       #vue-porte-cadre pour éviter les fuites.
+    ══════════════════════════════════════════════ */
+    #vue-porte-cadre {
+      min-height: 100vh;
+      background: var(--fond);
+      display: flex;
+      flex-direction: column;
+    }
+    #vue-porte-cadre .porte-en-tete {
+      background: var(--fond-2);
+      border-bottom: 1px solid var(--bordure);
+      padding: 0 1.75rem;
+      display: flex; align-items: center; gap: 1rem;
+      height: 58px;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    #vue-porte-cadre .porte-en-tete-titre {
+      font-weight: 800; font-size: 0.92rem;
+      color: var(--niv-1); letter-spacing: -0.3px;
+      margin-left: 0.5rem;
+    }
+    #vue-porte-cadre .porte-en-tete-spacer { flex: 1; }
+    #vue-porte-cadre .porte-en-tete .apropos-btn {
+      position: static; padding: 0.32rem 0.85rem; font-size: 0.8rem;
+    }
+    #vue-porte-cadre .porte-contenu {
+      flex: 1; padding: 2rem 1.75rem;
+      max-width: 1040px; width: 100%; margin: 0 auto;
+    }
+    #vue-porte-cadre .porte-intro h1 {
+      font-size: var(--fs-h2); font-weight: 800;
+      color: var(--texte); margin-bottom: 0.4rem; line-height: 1.25;
+    }
+    #vue-porte-cadre .porte-intro p {
+      font-size: 0.92rem; color: var(--texte-2);
+      max-width: 780px; line-height: 1.55;
+    }
+
+    /* Stepper (1 Cadre → 2 Niveau → 3 Indicateurs) */
+    #vue-porte-cadre .stepper {
+      display: flex; align-items: center; gap: 0.4rem;
+      margin: 1.75rem 0 1.25rem; flex-wrap: wrap;
+    }
+    #vue-porte-cadre .step {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      padding: 0.5rem 0.95rem; border-radius: 20px;
+      font-size: 0.82rem; font-weight: 600;
+      background: var(--fond-2); color: var(--texte-2);
+      border: 1.5px solid var(--bordure);
+      transition: var(--trans); font-family: inherit;
+    }
+    #vue-porte-cadre .step.actif {
+      background: var(--niv-2); color: white; border-color: var(--niv-2);
+    }
+    #vue-porte-cadre .step.fait {
+      background: var(--niv-3-clair); color: var(--niv-3); border-color: var(--niv-3-moyen);
+      cursor: pointer;
+    }
+    #vue-porte-cadre .step.fait:hover {
+      background: var(--niv-3-moyen); color: white; border-color: var(--niv-3);
+      transform: translateY(-1px); box-shadow: var(--ombre);
+    }
+    #vue-porte-cadre .step.fait:focus-visible {
+      outline: 2px solid var(--niv-3-moyen); outline-offset: 2px;
+    }
+    #vue-porte-cadre .step-num     { font-weight: 800; opacity: 0.75; }
+    #vue-porte-cadre .step-valeur  { font-weight: 700; }
+    #vue-porte-cadre .step-icone   { font-size: 0.95rem; }
+    #vue-porte-cadre .step-fleche  { color: var(--texte-2); font-size: 1rem; }
+
+    /* Carte d'étape (conteneur des questions) */
+    #vue-porte-cadre .carte-etape {
+      background: var(--fond-2); border-radius: var(--rayon);
+      padding: 1.75rem; box-shadow: var(--ombre);
+      margin-bottom: 1rem;
+      animation: porte-apparition 0.35s ease;
+    }
+    #vue-porte-cadre .q-numero {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.9px;
+      color: var(--texte-2); font-weight: 800;
+    }
+    #vue-porte-cadre .q-texte {
+      font-size: 1.08rem; font-weight: 700; margin: 0.4rem 0 0.35rem;
+    }
+    #vue-porte-cadre .q-aide {
+      font-size: 0.85rem; color: var(--texte-2); margin-bottom: 1rem;
+    }
+    #vue-porte-cadre abbr[title] {
+      text-decoration: underline dotted;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+      cursor: help;
+    }
+
+    /* ── Accordéon par famille d'école de pensée ────────────────────
+       Pattern <details>/<summary> natif : gratuit côté accessibilité,
+       keyboard, screen reader — on se contente de styler le chrome.
+       La bordure gauche colorée est posée via ::before pour préserver
+       les coins arrondis du conteneur. */
+    #vue-porte-cadre .famille-accordeon {
+      position: relative;
+      background: var(--fond-2);
+      border: 1px solid var(--bordure);
+      border-radius: 12px;
+      margin-bottom: 0.85rem;
+      overflow: hidden;
+      --fam-teinte: #78909c;
+      --fam-fond: var(--fond-2);
+    }
+    #vue-porte-cadre .famille-accordeon::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--fam-teinte);
+    }
+    /* Bandeau cliquable (summary) — pas de marker natif, on pilote le chevron */
+    #vue-porte-cadre .famille-titre {
+      list-style: none;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 0.9rem;
+      padding: 0.95rem 1.1rem 0.95rem 1.35rem;
+      background: var(--fam-fond);
+      font-weight: 700; color: var(--niv-1);
+      transition: background 0.2s ease;
+      user-select: none;
+    }
+    #vue-porte-cadre .famille-titre::-webkit-details-marker { display: none; }
+    #vue-porte-cadre .famille-titre:hover {
+      background: color-mix(in srgb, var(--fam-fond) 80%, var(--fam-teinte) 15%);
+    }
+    #vue-porte-cadre .famille-titre:focus-visible {
+      outline: 2px solid var(--fam-teinte); outline-offset: -2px;
+    }
+    #vue-porte-cadre .famille-titre-libelle {
+      flex: 1;
+      font-size: 0.95rem; letter-spacing: -0.2px;
+    }
+    /* Chevron SVG — disque teinté, trait renforcé, rebond à l'ouverture */
+    #vue-porte-cadre .famille-chevron {
+      margin-left: auto;
+      width: 1.75rem; height: 1.75rem;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #eceff1;
+      border: 1px solid transparent;
+      border-radius: 50%;
+      color: var(--niv-1);
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background 0.2s ease,
+                  border-color 0.2s ease;
+      flex-shrink: 0;
+    }
+    #vue-porte-cadre details[open] > .famille-titre .famille-chevron {
+      transform: rotate(180deg);
+      background: var(--niv-1-clair);
+      border-color: var(--niv-1-moyen);
+    }
+    #vue-porte-cadre .famille-chevron svg { display: block; }
+
+    /* Corps du bandeau ouvert : grille des tuiles de cadres */
+    #vue-porte-cadre .famille-corps {
+      padding: 1rem 1.1rem 1.1rem 1.35rem;
+      background: var(--fond);
+      border-top: 1px solid var(--bordure);
+    }
+    #vue-porte-cadre .famille-cadres {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0.65rem;
+    }
+
+    /* Tuiles de cadres : actif vs "à venir" */
+    #vue-porte-cadre .option-btn {
+      padding: 0.95rem 1rem; border: 2px solid var(--bordure); border-radius: 12px;
+      background: var(--fond-2); cursor: pointer; text-align: left;
+      transition: var(--trans); color: var(--texte); font-family: inherit;
+      display: flex; gap: 0.7rem; align-items: flex-start;
+    }
+    #vue-porte-cadre .option-btn:hover {
+      border-color: var(--niv-2-moyen); transform: translateY(-1px); box-shadow: var(--ombre);
+    }
+    #vue-porte-cadre .option-btn:focus-visible {
+      outline: 2px solid var(--niv-2); outline-offset: 2px;
+    }
+    #vue-porte-cadre .option-icone { font-size: 1.4rem; flex-shrink: 0; }
+    #vue-porte-cadre .option-label {
+      font-size: 0.92rem; font-weight: 700; line-height: 1.25; display: block;
+    }
+    #vue-porte-cadre .option-sous {
+      font-size: 0.78rem; color: var(--texte-2);
+      margin-top: 0.25rem; line-height: 1.4;
+    }
+    /* Tuile "à venir" : visuellement en retrait, non cliquable */
+    #vue-porte-cadre .option-btn.a-venir {
+      opacity: 0.55;
+      filter: grayscale(0.6);
+      cursor: not-allowed;
+      border-style: dashed;
+      background: transparent;
+    }
+    #vue-porte-cadre .option-btn.a-venir:hover {
+      transform: none; box-shadow: none; border-color: var(--bordure);
+    }
+    #vue-porte-cadre .option-btn.a-venir .a-venir-badge {
+      display: inline-block;
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.5px;
+      color: var(--texte-2); text-transform: uppercase;
+      margin-top: 0.25rem;
+    }
+
+    /* Options-grille (étape 2, choix du niveau) : réutilise la convention */
+    #vue-porte-cadre .options-grille {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0.65rem;
+    }
+
+    /* Encart posture (rappel pédagogique à l'étape 2) */
+    #vue-porte-cadre .encart-posture {
+      background: var(--niv-3-clair); border-left: 4px solid var(--niv-3-moyen);
+      padding: 0.85rem 1.1rem; border-radius: 0 10px 10px 0;
+      margin-bottom: 1rem; font-size: 0.85rem; line-height: 1.55; color: var(--niv-3);
+    }
+    #vue-porte-cadre .encart-posture strong { font-weight: 800; }
+
+    /* Résultats + message vide */
+    #vue-porte-cadre .resultat-titre {
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.8px;
+      color: var(--texte-2); font-weight: 800; margin-bottom: 0.9rem;
+    }
+    #vue-porte-cadre .message-vide {
+      padding: 1.1rem 1.25rem; background: var(--fond); border-radius: 10px;
+      color: var(--texte); font-size: 0.88rem; line-height: 1.55;
+    }
+    #vue-porte-cadre .message-vide p { margin: 0 0 0.65rem; text-align: left; }
+    #vue-porte-cadre .message-vide p:last-child { margin-bottom: 0; }
+    #vue-porte-cadre .message-vide .message-vide-chapeau { color: var(--texte); font-weight: 600; }
+    #vue-porte-cadre .message-vide .message-vide-appel { font-style: italic; color: var(--texte-2); }
+
+    /* Bouton recommencer */
+    #vue-porte-cadre .bouton-recommencer {
+      margin-top: 1.2rem; padding: 0.6rem 1.3rem;
+      background: var(--niv-1); color: white;
+      border: none; border-radius: 10px; cursor: pointer;
+      font-size: 0.86rem; font-weight: 700; font-family: inherit;
+      transition: var(--trans);
+    }
+    #vue-porte-cadre .bouton-recommencer:hover { background: var(--niv-1-moyen); }
+    #vue-porte-cadre .bouton-recommencer:focus-visible {
+      outline: 2px solid var(--niv-1-moyen); outline-offset: 2px;
+    }
+
+    /* ══════════════════════════════════════════════
        RESPONSIVE
     ══════════════════════════════════════════════ */
     @media (max-width: 730px) {
@@ -1478,8 +1734,8 @@
     </button>
 
     <!-- Porte 3 — par mon cadre -->
-    <button type="button" class="porte-carte" data-porte="cadre" aria-disabled="true" aria-label="Entrer par mon cadre — bientôt disponible">
-      <span class="porte-statut bientot">Bientôt</span>
+    <button type="button" class="porte-carte" data-porte="cadre" onclick="CM.VuePorteCadre.ouvrir();" aria-label="Entrer par mon cadre — disponible">
+      <span class="porte-statut">Disponible</span>
       <span class="porte-icone" aria-hidden="true">📐</span>
       <span class="porte-titre">Par mon cadre</span>
       <span class="porte-soustitre">Mon équipe travaille avec un framework précis&nbsp;: DORA, Lean Six Sigma, OKR, Scrum, Kanban, SAFe, ITIL… Je veux les indicateurs que ce cadre revendique.</span>
@@ -1534,6 +1790,37 @@
     <div id="porte-probleme-etapes" aria-live="polite"></div>
   </main>
 </div><!-- /vue-porte-problème -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     VUE "PAR MON CADRE" (porte 3)
+     Même pattern d'escape hatches que la porte 2 : ← Accueil + À propos
+     toujours visibles. Contenu rendu dynamiquement par CM.VuePorteCadre.
+══════════════════════════════════════════════════════ -->
+<div id="vue-porte-cadre" hidden>
+  <header class="porte-en-tete" role="banner">
+    <button type="button" class="btn-changer"
+            onclick="CM.VuePorteCadre.retourAccueil()"
+            aria-label="Retour à l'accueil">&larr; Accueil</button>
+    <span class="porte-en-tete-titre">📐 Par mon cadre</span>
+    <span class="porte-en-tete-spacer"></span>
+    <button type="button" class="apropos-btn"
+            onclick="CM.Apropos.ouvrir()"
+            aria-label="&Agrave; propos de cet outil">&Agrave; propos</button>
+  </header>
+  <main class="porte-contenu" role="main">
+    <div class="porte-intro">
+      <h1>Choisir mes indicateurs — par mon cadre, puis par mon niveau</h1>
+      <p>Vous arrivez avec un cadre déjà adopté ou exploré&nbsp;: DORA, Lean,
+         Scrum, OKR&hellip; L'outil vous révèle les indicateurs que
+         <strong>ce cadre revendique à votre niveau</strong>. Les cadres sont
+         regroupés par <strong>école de pensée</strong> pour aider à situer
+         ceux qui se ressemblent.</p>
+    </div>
+    <div id="porte-cadre-stepper" role="navigation" aria-label="Progression"></div>
+    <div id="porte-cadre-etapes" aria-live="polite"></div>
+  </main>
+</div><!-- /vue-porte-cadre -->
 
 
 <!-- ══════════════════════════════════════════════════════
@@ -2050,18 +2337,58 @@ CM.IndicateursMeta = (function() {
   /* ── Vocabulaire fermé des cadres de travail ──
      'generique' = indicateur non lié à un framework particulier (comptable,
      RH, marketing classiques). Utilisé pour éviter un champ vide. */
-  var CADRES = {
-    dora:      { label:'DORA / DevOps',            icone:'🚀' },
-    lean:      { label:'Lean / Six Sigma',         icone:'♻️' },
-    okr:       { label:'OKR',                      icone:'🎯' },
-    mbo:       { label:'MBO (Drucker)',            icone:'📐' },
-    scrum:     { label:'Scrum',                    icone:'🏉' },
-    kanban:    { label:'Kanban',                   icone:'🗂️' },
-    safe:      { label:'SAFe',                     icone:'🏗️' },
-    itil:      { label:'ITIL',                     icone:'🛠️' },
-    bsc:       { label:'Balanced Scorecard',       icone:'⚖️' },
-    generique: { label:'Indicateur générique',     icone:'🧩' }
+  /* Familles d'écoles de pensée — regroupent les cadres par lignée intellectuelle.
+     Convention : nommer au niveau d'abstraction *académique* plutôt que vernaculaire
+     (Empirisme agile plutôt qu'Agile, Excellence opérationnelle plutôt que Lean) pour
+     désamorcer les batailles de chapelles entre tribus qui revendiquent les mêmes cadres.
+     L'ordre ici est canonique et sert à l'affichage des accordéons côté porte 3. */
+  var FAMILLES = {
+    'empirisme-agile':  { label:'Empirisme agile',              teinte:'#8e24aa', fond:'#f5eaf7' },
+    'excellence-op':    { label:'Excellence opérationnelle',    teinte:'#6d4c41', fond:'#efe9e6' },
+    'observabilite':    { label:'Observabilité du delivery',    teinte:'#00838f', fond:'#e0f4f6' },
+    'objectifs':        { label:'Pilotage par les objectifs',   teinte:'#455a64', fond:'#eceff1' },
+    'itsm':             { label:'IT Service Management',        teinte:'#ad1457', fond:'#fce4ec' },
+    'decision':         { label:'Aide à la décision',           teinte:'#827717', fond:'#f5f5e6' },
+    'universel':        { label:'Universel',                    teinte:'#78909c', fond:'transparent' }
   };
+  var ORDRE_FAMILLES = [
+    'empirisme-agile', 'excellence-op', 'observabilite',
+    'objectifs', 'itsm', 'decision', 'universel'
+  ];
+
+  /* Catalogue des cadres méthodologiques.
+     Chaque cadre porte un `famille` — clé de FAMILLES — qui pilote le regroupement
+     et le style visuel côté porte « Par mon cadre ». */
+  var CADRES = {
+    dora:      { label:'DORA / DevOps',            icone:'🚀', famille:'observabilite'   },
+    lean:      { label:'Lean / Six Sigma',         icone:'♻️', famille:'excellence-op'   },
+    okr:       { label:'OKR',                      icone:'🎯', famille:'objectifs'       },
+    mbo:       { label:'MBO (Drucker)',            icone:'📐', famille:'objectifs'       },
+    scrum:     { label:'Scrum',                    icone:'🏉', famille:'empirisme-agile' },
+    kanban:    { label:'Kanban',                   icone:'🗂️', famille:'empirisme-agile' },
+    safe:      { label:'SAFe',                     icone:'🏗️', famille:'empirisme-agile' },
+    itil:      { label:'ITIL',                     icone:'🛠️', famille:'itsm'            },
+    bsc:       { label:'Balanced Scorecard',       icone:'⚖️', famille:'objectifs'       },
+    generique: { label:'Indicateur générique',     icone:'🧩', famille:'universel'       }
+  };
+
+  /* Cadres projetés mais pas encore branchés au référentiel.
+     Servent uniquement à l'affichage côté porte 3 (tuiles grisées "à venir").
+     Ne doivent JAMAIS servir à filtrer META.cadres : ce n'est pas une source
+     de recommandation, c'est un signal d'intention produit.
+     Ajout/retrait = opération de data, pas de code. */
+  var CADRES_A_VENIR = [
+    { id:'xp',      label:'XP',                           icone:'⚡',  famille:'empirisme-agile' },
+    { id:'ebm',     label:'EBM',                          icone:'🔬', famille:'empirisme-agile' },
+    { id:'toc',     label:'TOC (Théorie des contraintes)', icone:'⛓️', famille:'excellence-op'   },
+    { id:'queues',  label:'Théorie des files d\'attente',  icone:'🧮', famille:'excellence-op'   },
+    { id:'space',   label:'SPACE',                        icone:'🛰️', famille:'observabilite'   },
+    { id:'flow',    label:'Flow Metrics',                 icone:'🌊', famille:'observabilite'   },
+    { id:'hoshin',  label:'Hoshin Kanri',                 icone:'🧭', famille:'objectifs'       },
+    { id:'cobit',   label:'COBIT',                        icone:'📚', famille:'itsm'            },
+    { id:'cynefin', label:'Cynefin',                      icone:'🗺️', famille:'decision'        },
+    { id:'wardley', label:'Wardley Maps',                 icone:'🧭', famille:'decision'        }
+  ];
 
   /* ── Mapping id → { tags, cadres } ──
      Convention : un indicateur peut porter plusieurs tags (problèmes qu'il
@@ -2207,7 +2534,17 @@ CM.IndicateursMeta = (function() {
   }
   function infoCadre(id) {
     var c = CADRES[id];
-    return c ? { id:id, label:c.label, icone:c.icone } : null;
+    return c ? { id:id, label:c.label, icone:c.icone, famille:c.famille || null } : null;
+  }
+  // Exemple : infoFamille('empirisme-agile') → { id, label, teinte, fond } ou null
+  function infoFamille(id) {
+    var f = FAMILLES[id];
+    return f ? { id:id, label:f.label, teinte:f.teinte, fond:f.fond } : null;
+  }
+  // Exemple : familleDe('scrum') → 'empirisme-agile'
+  function familleDe(cadreId) {
+    var c = CADRES[cadreId];
+    return c ? (c.famille || null) : null;
   }
 
   function tousLesTags() {
@@ -2217,8 +2554,24 @@ CM.IndicateursMeta = (function() {
   }
   function tousLesCadres() {
     return Object.keys(CADRES).map(function(k) {
-      return { id:k, label:CADRES[k].label, icone:CADRES[k].icone };
+      return { id:k, label:CADRES[k].label, icone:CADRES[k].icone, famille:CADRES[k].famille || null };
     });
+  }
+  // Exemple : famillesOrdonnees() → [{id,label,teinte,fond}, …] dans l'ordre canonique
+  function famillesOrdonnees() {
+    return ORDRE_FAMILLES.map(function(id) { return infoFamille(id); })
+                         .filter(function(f) { return !!f; });
+  }
+  // Exemple : cadresParFamille('empirisme-agile') → [{id,label,icone}, …]
+  function cadresParFamille(familleId) {
+    return Object.keys(CADRES)
+      .filter(function(k) { return CADRES[k].famille === familleId; })
+      .map(function(k) { return { id:k, label:CADRES[k].label, icone:CADRES[k].icone }; });
+  }
+  // Exemple : cadresAVenirParFamille('decision') → [{id,label,icone}, …]
+  function cadresAVenirParFamille(familleId) {
+    return CADRES_A_VENIR.filter(function(c) { return c.famille === familleId; })
+                         .map(function(c) { return { id:c.id, label:c.label, icone:c.icone }; });
   }
 
   /* Sanity check développeur : renvoie la liste des ids présents dans le
@@ -2239,8 +2592,13 @@ CM.IndicateursMeta = (function() {
     cadresAffichables: cadresAffichables,
     infoTag: infoTag,
     infoCadre: infoCadre,
+    infoFamille: infoFamille,
+    familleDe: familleDe,
     tousLesTags: tousLesTags,
     tousLesCadres: tousLesCadres,
+    famillesOrdonnees: famillesOrdonnees,
+    cadresParFamille: cadresParFamille,
+    cadresAVenirParFamille: cadresAVenirParFamille,
     valider: valider
   };
 })();
@@ -4308,6 +4666,383 @@ CM.VuePorteProbleme = (function() {
     retourAccueil: retourAccueil,
     setNiveau:     setNiveau,
     setProbleme:   setProbleme,
+    retourA:       retourA,
+    reset:         reset
+  };
+})();
+</script>
+
+
+<!-- ══ MODULE : CM.DiagnosticCadre — Logique métier "quels indicateurs pour ce cadre × ce niveau"
+     Séparé de CM.VuePorteCadre pour que la règle de recommandation reste
+     testable sans DOM, et ré-utilisable ailleurs (ex : export, check-list).
+     Délégation des niveaux à CM.DiagnosticProbleme : même vocabulaire des
+     étages, on ne duplique pas. ══ -->
+<script>
+CM.DiagnosticCadre = (function() {
+  'use strict';
+
+  /* ─── API publique ─────────────────────────────────────────────── */
+
+  // Exemple : niveauxTous() → [{id:'strategique',...}, ...] (4 étages canoniques)
+  function niveauxTous() {
+    return CM.DiagnosticProbleme.niveauxTous();
+  }
+
+  // Exemple : niveauInfo('programme') → {id, icone, label, sous, posture}
+  function niveauInfo(id) {
+    return CM.DiagnosticProbleme.niveauInfo(id);
+  }
+
+  // Exemple : cadreInfo('dora') → {id, label, icone, famille}
+  function cadreInfo(id) {
+    return CM.IndicateursMeta.infoCadre(id);
+  }
+
+  /* Indicateurs recommandés pour un couple (cadre, niveau).
+     Critères : ind.niveau === ctx.niveau ET ctx.cadre ∈ cadres(ind).
+     Tri par fiabilité décroissante, comme la porte "problème", pour présenter
+     en tête les mesures les plus exploitables. Pas de plafond appliqué : c'est
+     à l'utilisateur d'arbitrer, pas à l'outil. */
+  // Exemple : recommander({cadre:'dora', niveau:'operationnel'}) → [ind, ind, ...]
+  function recommander(ctx) {
+    if (!ctx || !ctx.cadre || !ctx.niveau) return [];
+    var tous = CM.Referentiel.tous();
+    var pertinents = tous.filter(function(ind) {
+      if (ind.niveau !== ctx.niveau) return false;
+      var cadres = CM.IndicateursMeta.cadresDe(ind.id);
+      return cadres.indexOf(ctx.cadre) !== -1;
+    });
+    pertinents.sort(function(a, b) {
+      return _rangFiabilite(b) - _rangFiabilite(a);
+    });
+    return pertinents;
+  }
+
+  /* Vue agrégée pour l'étape 1 : familles ordonnées, chacune avec ses
+     cadres actifs + cadres "à venir". Utilisée pour rendre l'accordéon
+     sans que la vue ait à connaître le modèle sous-jacent. */
+  // Exemple : famillesAvecCadres() → [{id, label, teinte, fond, actifs:[...], aVenir:[...]}, ...]
+  function famillesAvecCadres() {
+    var meta = CM.IndicateursMeta;
+    return meta.famillesOrdonnees().map(function(f) {
+      return {
+        id:      f.id,
+        label:   f.label,
+        teinte:  f.teinte,
+        fond:    f.fond,
+        actifs:  meta.cadresParFamille(f.id),
+        aVenir:  meta.cadresAVenirParFamille(f.id)
+      };
+    });
+  }
+
+  /* ─── Internes ─────────────────────────────────────────────────── */
+  var _RANG_FIABILITE = { 'fiable': 3, 'precaution': 2, 'risque': 1 };
+  function _rangFiabilite(ind) {
+    return _RANG_FIABILITE[ind && ind.fiabilite] || 0;
+  }
+
+  return {
+    niveauxTous:        niveauxTous,
+    niveauInfo:         niveauInfo,
+    cadreInfo:          cadreInfo,
+    recommander:        recommander,
+    famillesAvecCadres: famillesAvecCadres
+  };
+})();
+</script>
+
+
+<!-- ══ MODULE : CM.VuePorteCadre — Contrôleur de la vue "par mon cadre"
+     Pattern calqué sur CM.VuePorteProbleme :
+       - pas de logique métier ici (elle vit dans CM.DiagnosticCadre),
+       - pas de persistance (la vue est jetable, l'état reset à la sortie),
+       - pas de chaîne magique hors des 3 constantes d'ids DOM.
+     Les 3 étapes : cadre → niveau → indicateurs.
+     L'étape 1 ouvre un accordéon par famille d'école de pensée ; ce choix
+     de layout a été tranché pour éviter d'afficher 20+ cadres à plat et
+     pour aider l'utilisateur à situer les cadres qui se ressemblent. ══ -->
+<script>
+CM.VuePorteCadre = (function() {
+  'use strict';
+
+  /* État interne : volontairement minimal (étape + deux choix). */
+  var etat = { etape: 1, cadre: null, niveau: null };
+
+  /* Ids des zones DOM — centralisés, sans accent (doivent matcher l'HTML). */
+  var ID_STEPPER = 'porte-cadre-stepper';
+  var ID_ETAPES  = 'porte-cadre-etapes';
+  var ID_VUE     = 'vue-porte-cadre';
+
+  /* ─── API publique ────────────────────────────────────────────── */
+
+  // Exemple : CM.VuePorteCadre.ouvrir() → masque les accueils + affiche la vue
+  function ouvrir() {
+    _cacherAccueils();
+    var vue = document.getElementById(ID_VUE);
+    if (vue) vue.hidden = false;
+    _reinitialiserEtat();
+    _rendre();
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  function retourAccueil() {
+    var vue = document.getElementById(ID_VUE);
+    if (vue) vue.hidden = true;
+    _reinitialiserEtat();
+    var mode = CM.Preferences.lire('accueil', 'pyramide');
+    CM.App.afficherAccueil(mode);
+  }
+
+  function setCadre(cadreId) {
+    etat.cadre = cadreId;
+    etat.etape = 2;
+    _rendre();
+    _scrollEnHaut();
+  }
+
+  function setNiveau(niveauId) {
+    etat.niveau = niveauId;
+    etat.etape = 3;
+    _rendre();
+    _scrollEnHaut();
+  }
+
+  // Exemple : retourA(2) → revient à l'étape 2 et efface les choix ultérieurs
+  function retourA(numEtape) {
+    etat.etape = numEtape;
+    if (numEtape <= 2) etat.niveau = null;
+    if (numEtape <= 1) etat.cadre  = null;
+    _rendre();
+  }
+
+  function reset() {
+    _reinitialiserEtat();
+    _rendre();
+  }
+
+  /* ─── Rendu (pas de logique métier ici) ───────────────────────── */
+  function _rendre() {
+    _rendreStepper();
+    _rendreEtapes();
+  }
+
+  function _rendreStepper() {
+    var zone = document.getElementById(ID_STEPPER);
+    if (!zone) return;
+    var steps = [
+      { num:1, defaut:'Mon cadre',      valeur: _labelCadre()  },
+      { num:2, defaut:'Mon niveau',     valeur: _labelNiveau() },
+      { num:3, defaut:'Mes indicateurs', valeur: null }
+    ];
+    var html = '<div class="stepper">';
+    for (var i = 0; i < steps.length; i++) {
+      var s = steps[i];
+      var estActif = s.num === etat.etape;
+      var estFait  = s.num < etat.etape;
+      var classe   = estActif ? 'actif' : (estFait ? 'fait' : '');
+      var contenu  = s.valeur
+        ? '<span class="step-num">' + s.num + '.</span>'
+          + '<span class="step-icone">' + s.valeur.icone + '</span>'
+          + '<span class="step-valeur">' + s.valeur.label + '</span>'
+        : '<span class="step-num">' + s.num + '.</span> ' + s.defaut;
+      if (estFait) {
+        html += '<button type="button" class="step ' + classe + '"'
+              + ' onclick="CM.VuePorteCadre.retourA(' + s.num + ')"'
+              + ' aria-label="Revenir à l\'étape ' + s.num + '">'
+              + contenu + '</button>';
+      } else {
+        html += '<div class="step ' + classe + '"'
+              + ' aria-current="' + (estActif ? 'step' : 'false') + '">'
+              + contenu + '</div>';
+      }
+      if (i < steps.length - 1) html += '<span class="step-fleche" aria-hidden="true">→</span>';
+    }
+    html += '</div>';
+    zone.innerHTML = html;
+  }
+
+  function _rendreEtapes() {
+    var zone = document.getElementById(ID_ETAPES);
+    if (!zone) return;
+    var html = '';
+    if (etat.etape === 1) html = _etapeCadre();
+    else if (etat.etape === 2) html = _etapeNiveau();
+    else if (etat.etape === 3) html = _etapeResultats();
+    zone.innerHTML = html;
+  }
+
+  /* ─── Étape 1 : accordéon par famille d'école de pensée ─── */
+  function _etapeCadre() {
+    var familles = CM.DiagnosticCadre.famillesAvecCadres();
+    var html = '<div class="carte-etape">'
+      + '<div class="q-numero">Étape 1</div>'
+      + '<div class="q-texte">Quel cadre utilisez-vous&nbsp;?</div>'
+      + '<div class="q-aide">Les cadres sont regroupés par <strong>école de pensée</strong>. '
+      + 'Ouvrez la famille qui vous parle et choisissez votre cadre. '
+      + 'Les tuiles grisées signalent des cadres <em>prévus</em> mais pas encore branchés au référentiel.</div>';
+    for (var i = 0; i < familles.length; i++) {
+      html += _htmlFamille(familles[i]);
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function _htmlFamille(f) {
+    // Pas d'attribut `open` : à l'arrivée, toutes les familles sont fermées.
+    // Décision UX : permet à l'utilisateur de voir la carte des 7 écoles d'un coup
+    // d'œil et d'ouvrir celle qui le concerne.
+    var styleVar = 'style="--fam-teinte:' + f.teinte + '; --fam-fond:' + f.fond + ';"';
+    var html = '<details class="famille-accordeon famille-' + f.id + '" ' + styleVar + '>'
+      + '<summary class="famille-titre">'
+      + '<span class="famille-titre-libelle">' + f.label + '</span>'
+      + '<span class="famille-chevron" aria-hidden="true">'
+      +   '<svg viewBox="0 0 24 24" width="14" height="14">'
+      +     '<path d="M5 9 L12 16 L19 9" fill="none" stroke="currentColor"'
+      +       ' stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'
+      +   '</svg>'
+      + '</span>'
+      + '</summary>'
+      + '<div class="famille-corps">'
+      + '<div class="famille-cadres">';
+    for (var i = 0; i < f.actifs.length; i++) {
+      var c = f.actifs[i];
+      html += '<button type="button" class="option-btn"'
+        + ' onclick="CM.VuePorteCadre.setCadre(\'' + c.id + '\')">'
+        + '<span class="option-icone" aria-hidden="true">' + c.icone + '</span>'
+        + '<span><span class="option-label">' + c.label + '</span></span>'
+        + '</button>';
+    }
+    for (var j = 0; j < f.aVenir.length; j++) {
+      var v = f.aVenir[j];
+      html += '<div class="option-btn a-venir" role="note"'
+        + ' aria-disabled="true" tabindex="-1">'
+        + '<span class="option-icone" aria-hidden="true">' + v.icone + '</span>'
+        + '<span><span class="option-label">' + v.label + '</span>'
+        + '<span class="a-venir-badge">À venir</span></span>'
+        + '</div>';
+    }
+    if (f.actifs.length === 0 && f.aVenir.length === 0) {
+      html += '<div class="message-vide">Aucun cadre rattaché à cette famille pour le moment.</div>';
+    }
+    html += '</div></div></details>';
+    return html;
+  }
+
+  /* ─── Étape 2 : choix du niveau de pilotage ─── */
+  function _etapeNiveau() {
+    var niveaux = CM.DiagnosticCadre.niveauxTous();
+    var cadre   = CM.DiagnosticCadre.cadreInfo(etat.cadre);
+    var html = '<div class="carte-etape">';
+    if (cadre) {
+      html += '<div class="encart-posture"><strong>Cadre choisi — ' + cadre.label + '&nbsp;:</strong> '
+           + 'on vous proposera uniquement les indicateurs que ce cadre revendique '
+           + '<em>à votre étage de pilotage</em>. Un même cadre ne se regarde pas '
+           + 'de la même façon depuis la direction, le portefeuille, le programme '
+           + 'ou l\'équipe.</div>';
+    }
+    html += '<div class="q-numero">Étape 2</div>'
+      + '<div class="q-texte">Depuis quel étage pilotez-vous&nbsp;?</div>'
+      + '<div class="q-aide">Ce choix filtre les indicateurs selon votre niveau de '
+      + 'responsabilité — principe anti-micromanagement hérité de Drucker et du Lean.</div>'
+      + '<div class="options-grille">';
+    for (var i = 0; i < niveaux.length; i++) {
+      var n = niveaux[i];
+      html += '<button type="button" class="option-btn"'
+        + ' onclick="CM.VuePorteCadre.setNiveau(\'' + n.id + '\')">'
+        + '<span class="option-icone" aria-hidden="true">' + n.icone + '</span>'
+        + '<span><span class="option-label">' + n.label + '</span>'
+        + '<span class="option-sous">' + n.sous + '</span></span>'
+        + '</button>';
+    }
+    html += '</div></div>';
+    return html;
+  }
+
+  /* ─── Étape 3 : résultats (cartes indicateurs) ─── */
+  function _etapeResultats() {
+    var ctx = { cadre: etat.cadre, niveau: etat.niveau };
+    var recos = CM.DiagnosticCadre.recommander(ctx);
+    var n     = CM.DiagnosticCadre.niveauInfo(etat.niveau);
+    var c     = CM.DiagnosticCadre.cadreInfo(etat.cadre);
+
+    var html = '<div class="carte-etape">';
+    html += '<div class="resultat-titre">✅ Indicateurs revendiqués par '
+          + (c ? c.label : etat.cadre) + ' pour le niveau '
+          + (n ? n.label.toLowerCase() : etat.niveau)
+          + ' (' + recos.length + ')</div>';
+
+    if (recos.length === 0) {
+      html += _htmlMessageVide(c, n);
+    } else {
+      html += '<div class="grille-cartes">';
+      for (var i = 0; i < recos.length; i++) {
+        html += CM.Composants.htmlCarte(recos[i], '#1a237e', true, false);
+      }
+      html += '</div>';
+    }
+
+    html += '<button type="button" class="bouton-recommencer"'
+          + ' onclick="CM.VuePorteCadre.reset()">↻ Recommencer</button>';
+    html += '</div>';
+    return html;
+  }
+
+  /* Message pédagogique quand un couple (cadre, niveau) n'a aucun indicateur
+     dans le référentiel. Posture : ne pas fabriquer de métrique pour remplir
+     la case, mais questionner la légitimité du cadre à cet étage. */
+  function _htmlMessageVide(c, n) {
+    var nomCadre  = c ? c.label  : etat.cadre;
+    var nomNiveau = n ? n.label  : etat.niveau;
+    var html = '<div class="message-vide">';
+    html += '<p class="message-vide-chapeau">Aucun indicateur de <strong>'
+         + nomCadre + '</strong> n\'est défini pour le niveau <strong>'
+         + nomNiveau.toLowerCase() + '</strong> dans le référentiel actuel.</p>';
+    html += '<p>Deux lectures possibles&nbsp;: soit ce cadre ne se déploie '
+         + 'pas naturellement à cet étage (c\'est par exemple le cas pour '
+         + 'DORA en stratégique pur, où l\'on consolide plutôt qu\'on ne mesure '
+         + 'le delivery), soit le référentiel est à enrichir.</p>';
+    html += '<p class="message-vide-appel">Si vous pensez qu\'un indicateur '
+         + 'devrait exister ici, c\'est une piste d\'enrichissement du '
+         + 'référentiel à explorer collectivement.</p>';
+    html += '</div>';
+    return html;
+  }
+
+  /* ─── Helpers internes ─── */
+  function _labelCadre() {
+    if (!etat.cadre) return null;
+    var c = CM.DiagnosticCadre.cadreInfo(etat.cadre);
+    return c ? { icone: c.icone, label: c.label } : null;
+  }
+  function _labelNiveau() {
+    if (!etat.niveau) return null;
+    var n = CM.DiagnosticCadre.niveauInfo(etat.niveau);
+    return n ? { icone: n.icone, label: n.label } : null;
+  }
+
+  function _reinitialiserEtat() {
+    etat = { etape: 1, cadre: null, niveau: null };
+  }
+
+  function _cacherAccueils() {
+    var a = document.getElementById('accueil');
+    var b = document.getElementById('accueil-portes');
+    if (a) a.hidden = true;
+    if (b) b.hidden = true;
+  }
+
+  function _scrollEnHaut() {
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    catch (e) { /* navigateurs anciens : ignorer */ }
+  }
+
+  return {
+    ouvrir:        ouvrir,
+    retourAccueil: retourAccueil,
+    setCadre:      setCadre,
+    setNiveau:     setNiveau,
     retourA:       retourA,
     reset:         reset
   };
