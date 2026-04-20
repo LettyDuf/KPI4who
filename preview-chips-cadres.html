@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Prévisualisation — Chips « cadres de travail »</title>
+<style>
+  /* Tokens repris du fichier réel */
+  :root {
+    --niv-1-fonce: #1a237e;
+    --niv-3-moyen: #00897b;
+    --accent: #e65100;
+    --fond: #f5f6fa;
+    --fond-2: #ffffff;
+    --texte: #1a1a2e;
+    --texte-2: #607d8b;
+    --bordure: #e0e4eb;
+    --carte-fond: #ffffff;
+    --carte-fond-2: #f8f9fc;
+    --texte-primaire: #1c2033;
+    --texte-secondaire: #6b7280;
+    --trans: 0.22s ease;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--fond);
+    color: var(--texte);
+    margin: 0;
+    padding: 2rem;
+    line-height: 1.5;
+  }
+
+  h1 { font-size: 1.5rem; margin-bottom: 0.3rem; color: var(--niv-1-fonce); }
+  h2 { font-size: 1.1rem; margin: 2.2rem 0 0.8rem; color: var(--niv-1-fonce); border-bottom: 2px solid var(--bordure); padding-bottom: 0.4rem; }
+  h3 { font-size: 0.92rem; margin: 1rem 0 0.6rem; color: var(--texte-2); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+  p.intro { color: var(--texte-2); max-width: 720px; margin: 0 0 1.5rem; }
+  p.legende { font-size: 0.85rem; color: var(--texte-2); margin: 0.4rem 0 0; padding: 0.5rem 0.7rem; background: var(--fond-2); border-left: 3px solid var(--niv-3-moyen); border-radius: 4px; }
+  p.legende strong { color: var(--texte); }
+
+  .grille {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  /* ── Style fidèle à la carte du fichier réel ── */
+  .carte-ind {
+    background: var(--fond-2);
+    border-radius: 12px;
+    border: 1.5px solid var(--bordure);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: var(--trans);
+    box-shadow: 0 1px 3px rgba(26,35,126,0.04);
+  }
+  .carte-ind:hover { box-shadow: 0 4px 16px rgba(26,35,126,0.08); }
+  .carte-ind.prioritaire { border-width: 2px; border-color: #2e7d32; }
+
+  .carte-en-tete { padding: 1rem; display: flex; align-items: flex-start; gap: 0.7rem; }
+  .carte-icone { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; background: #e6510018; color: #e65100; }
+  .carte-type { font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #e65100; }
+  .carte-nom  { font-size: 0.92rem; font-weight: 600; line-height: 1.3; margin-top: 0.12rem; color: var(--texte); }
+  .carte-corps { padding: 0.6rem 1rem 0.85rem; border-top: 1px solid var(--bordure); flex: 1; }
+  .carte-def { font-size: 0.81rem; color: var(--texte-2); line-height: 1.5; }
+  .carte-meta-bas { display: flex; align-items: center; justify-content: space-between; margin-top: 0.55rem; flex-wrap: wrap; gap: 0.3rem; }
+  .carte-freq { font-size: 0.74rem; color: var(--texte-2); }
+  .carte-pied { padding: 0.6rem 1rem; border-top: 1px solid var(--bordure); display: flex; justify-content: flex-end; }
+  .btn-detail { font-size: 0.78rem; color: var(--texte-2); background: none; border: none; cursor: pointer; border-radius: 6px; padding: 0.28rem 0.5rem; }
+
+  .badge-fiabilite { display: inline-flex; align-items: center; gap: 0.28rem; font-size: 0.64rem; font-weight: 800; padding: 0.16rem 0.52rem; border-radius: 20px; color: white; background: #2e7d32; white-space: nowrap; }
+  .badge-maturite { font-size: 0.72rem; color: var(--texte-2); display: flex; align-items: center; gap: 0.25rem; }
+
+  .ligne-haut { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.4rem; }
+  .titre-bloc { flex: 1; min-width: 0; }
+
+  /* ─── Chips cadres : variante A (icône + label) ─── */
+  .chips-cadres { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.55rem; }
+  .chip-cadre {
+    display: inline-flex; align-items: center; gap: 0.25rem;
+    font-size: 0.7rem; font-weight: 600;
+    padding: 0.2rem 0.55rem;
+    border-radius: 12px;
+    background: #f0f1f8;
+    color: #4a5170;
+    border: 1px solid #d8dceb;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .chip-cadre .ic { font-size: 0.78rem; }
+
+  /* ─── Variante B (icône seule) ─── */
+  .chips-cadres-compact { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.55rem; }
+  .chip-cadre-compact {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    background: #f0f1f8;
+    border: 1px solid #d8dceb;
+    cursor: help;
+  }
+
+  /* ─── Variante C (texte plat sans chip) ─── */
+  .cadres-texte {
+    margin-top: 0.55rem;
+    font-size: 0.72rem;
+    color: var(--texte-2);
+  }
+  .cadres-texte .label { font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; font-size: 0.65rem; color: var(--texte-secondaire); margin-right: 0.4rem; }
+
+  .focus { outline: 3px dashed #2e7d3266; outline-offset: 4px; }
+
+  .panneau-choix {
+    margin-top: 3rem;
+    padding: 1.5rem;
+    background: var(--fond-2);
+    border: 1px solid var(--bordure);
+    border-radius: 12px;
+  }
+  .panneau-choix h2 { margin-top: 0; border: none; padding: 0; }
+  .panneau-choix code { background: #f0f1f8; padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.85em; }
+
+  .demi { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media (max-width: 700px) { .demi { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<h1>Prévisualisation — Chips « cadres de travail » sur les cartes</h1>
+<p class="intro">Six variantes en grandeur nature, à partir de la carte de l'indicateur <strong>t4 — Efficacité de flux (portefeuille)</strong> qui porte trois cadres : <code>Lean</code>, <code>Kanban</code>, <code>SAFe</code>. Le focus vert pointillé encadre la zone des chips dans chaque variante.</p>
+
+<!-- ────────────────────────────────────────────────── -->
+<h2>Question 1 — Emplacement (3 choix)</h2>
+<p class="intro">Toutes les cartes ci-dessous utilisent la <strong>variante « icône + label »</strong> (densité par défaut) et masquent le cadre <code>generique</code> par défaut. Seul l'emplacement varie.</p>
+
+<div class="grille">
+
+  <!-- Emplacement A : pied de corps -->
+  <div>
+    <h3>A. Pied de corps (recommandé)</h3>
+    <div class="carte-ind prioritaire">
+      <div class="carte-en-tete">
+        <div class="carte-icone">🔄</div>
+        <div class="titre-bloc">
+          <div class="ligne-haut">
+            <div class="carte-type">FLUX · Flux de valeur</div>
+            <span class="badge-fiabilite">🟢 fiable</span>
+          </div>
+          <div class="carte-nom">Efficacité de flux (portefeuille)</div>
+        </div>
+      </div>
+      <div class="carte-corps">
+        <div class="carte-def">Part du temps réellement utilisée pour produire de la valeur, hors attente, dans le flux portefeuille…</div>
+        <div class="carte-meta-bas">
+          <span class="carte-freq">🕐 mensuelle</span>
+          <span class="badge-maturite">●●○ intermédiaire</span>
+        </div>
+        <div class="chips-cadres focus">
+          <span class="chip-cadre"><span class="ic">♻️</span>Lean</span>
+          <span class="chip-cadre"><span class="ic">🗂️</span>Kanban</span>
+          <span class="chip-cadre"><span class="ic">🏗️</span>SAFe</span>
+        </div>
+      </div>
+      <div class="carte-pied"><button class="btn-detail">Voir le détail →</button></div>
+    </div>
+    <p class="legende"><strong>Lecture :</strong> type → nom → définition → méta → cadres. Les chips prolongent la zone méta existante (🕐 + maturité). Pas de nouvelle bordure ni de nouvelle zone.</p>
+  </div>
+
+  <!-- Emplacement B : sous le nom -->
+  <div>
+    <h3>B. Sous le nom</h3>
+    <div class="carte-ind prioritaire">
+      <div class="carte-en-tete">
+        <div class="carte-icone">🔄</div>
+        <div class="titre-bloc">
+          <div class="ligne-haut">
+            <div class="carte-type">FLUX · Flux de valeur</div>
+            <span class="badge-fiabilite">🟢 fiable</span>
+          </div>
+          <div class="carte-nom">Efficacité de flux (portefeuille)</div>
+          <div class="chips-cadres focus">
+            <span class="chip-cadre"><span class="ic">♻️</span>Lean</span>
+            <span class="chip-cadre"><span class="ic">🗂️</span>Kanban</span>
+            <span class="chip-cadre"><span class="ic">🏗️</span>SAFe</span>
+          </div>
+        </div>
+      </div>
+      <div class="carte-corps">
+        <div class="carte-def">Part du temps réellement utilisée pour produire de la valeur, hors attente, dans le flux portefeuille…</div>
+        <div class="carte-meta-bas">
+          <span class="carte-freq">🕐 mensuelle</span>
+          <span class="badge-maturite">●●○ intermédiaire</span>
+        </div>
+      </div>
+      <div class="carte-pied"><button class="btn-detail">Voir le détail →</button></div>
+    </div>
+    <p class="legende"><strong>Lecture :</strong> les cadres deviennent une clé de tri prioritaire, lue avant la définition. Densifie l'en-tête (4e ligne d'info) et repousse le contenu lisible.</p>
+  </div>
+
+  <!-- Emplacement C : pied avant bouton -->
+  <div>
+    <h3>C. Carte-pied (avant bouton)</h3>
+    <div class="carte-ind prioritaire">
+      <div class="carte-en-tete">
+        <div class="carte-icone">🔄</div>
+        <div class="titre-bloc">
+          <div class="ligne-haut">
+            <div class="carte-type">FLUX · Flux de valeur</div>
+            <span class="badge-fiabilite">🟢 fiable</span>
+          </div>
+          <div class="carte-nom">Efficacité de flux (portefeuille)</div>
+        </div>
+      </div>
+      <div class="carte-corps">
+        <div class="carte-def">Part du temps réellement utilisée pour produire de la valeur, hors attente, dans le flux portefeuille…</div>
+        <div class="carte-meta-bas">
+          <span class="carte-freq">🕐 mensuelle</span>
+          <span class="badge-maturite">●●○ intermédiaire</span>
+        </div>
+      </div>
+      <div class="carte-pied" style="justify-content: space-between;">
+        <div class="chips-cadres focus" style="margin-top:0;">
+          <span class="chip-cadre"><span class="ic">♻️</span>Lean</span>
+          <span class="chip-cadre"><span class="ic">🗂️</span>Kanban</span>
+          <span class="chip-cadre"><span class="ic">🏗️</span>SAFe</span>
+        </div>
+        <button class="btn-detail">Voir →</button>
+      </div>
+    </div>
+    <p class="legende"><strong>Lecture :</strong> regroupe les cadres avec le bouton d'action. Sépare visuellement les cadres de la zone méta (fréquence/maturité) alors qu'ils sont de même nature informationnelle.</p>
+  </div>
+
+</div>
+
+<!-- ────────────────────────────────────────────────── -->
+<h2>Question 2 — Cadre « générique » : afficher ou masquer ?</h2>
+<p class="intro">Cas pris : indicateur tagué <code>['lean', 'generique']</code>. Le cadre « générique » est un fallback (pas de méthodologie spécifique), présent sur ~50 % des fiches.</p>
+
+<div class="demi">
+  <div>
+    <h3>Masqué quand un autre cadre existe (recommandé)</h3>
+    <div class="carte-ind">
+      <div class="carte-en-tete">
+        <div class="carte-icone">⏱️</div>
+        <div class="titre-bloc">
+          <div class="ligne-haut">
+            <div class="carte-type">DÉLAIS · Time to market</div>
+            <span class="badge-fiabilite">🟢 fiable</span>
+          </div>
+          <div class="carte-nom">Lead time portefeuille</div>
+        </div>
+      </div>
+      <div class="carte-corps">
+        <div class="carte-def">Délai entre la décision d'investir et la mise à disposition de la valeur, mesuré sur le portefeuille…</div>
+        <div class="carte-meta-bas">
+          <span class="carte-freq">🕐 trimestrielle</span>
+          <span class="badge-maturite">●○○ débutant</span>
+        </div>
+        <div class="chips-cadres focus">
+          <span class="chip-cadre"><span class="ic">♻️</span>Lean</span>
+        </div>
+      </div>
+      <div class="carte-pied"><button class="btn-detail">Voir le détail →</button></div>
+    </div>
+    <p class="legende"><strong>Avantage :</strong> chaque chip est informatif. Le « générique » ne reste visible que sur les fiches qui n'ont pas d'autre rattachement — où il devient utile (« cet indicateur est universel »).</p>
+  </div>
+
+  <div>
+    <h3>Toujours affiché (transparence brute)</h3>
+    <div class="carte-ind">
+      <div class="carte-en-tete">
+        <div class="carte-icone">⏱️</div>
+        <div class="titre-bloc">
+          <div class="ligne-haut">
+            <div class="carte-type">DÉLAIS · Time to market</div>
+            <span class="badge-fiabilite">🟢 fiable</span>
+          </div>
+          <div class="carte-nom">Lead time portefeuille</div>
+        </div>
+      </div>
+      <div class="carte-corps">
+        <div class="carte-def">Délai entre la décision d'investir et la mise à disposition de la valeur, mesuré sur le portefeuille…</div>
+        <div class="carte-meta-bas">
+          <span class="carte-freq">🕐 trimestrielle</span>
+          <span class="badge-maturite">●○○ débutant</span>
+        </div>
+        <div class="chips-cadres focus">
+          <span class="chip-cadre"><span class="ic">♻️</span>Lean</span>
+          <span class="chip-cadre"><span class="ic">🧩</span>Indicateur générique</span>
+        </div>
+      </div>
+      <div class="carte-pied"><button class="btn-detail">Voir le détail →</button></div>
+    </div>
+    <p class="legende"><strong>Coût :</strong> le 2e chip n'apporte rien quand Lean est déjà cité. Risque de banalisation visuelle (on apprend à les ignorer).</p>
+  </div>
+</div>
+
+<!-- ────────────────────────────────────────────────── -->
+<h2>Question 3 — Densité visuelle</h2>
+<p class="intro">Comparaison sur le même indicateur t4 (3 cadres) en emplacement A.</p>
+
+<div class="demi">
+  <div>
+    <h3>Icône + label court (recommandé)</h3>
+    <div class="carte-ind prioritaire">
+      <div class="carte-en-tete">
+        <div class="carte-icone">🔄</div>
+        <div class="titre-bloc">
+          <div class="ligne-haut">
+            <div class="carte-type">FLUX · Flux de valeur</div>
+            <span class="badge-fiabilite">🟢 fiable</span>
+          </div>
+          <div class="carte-nom">Efficacité de flux (portefeuille)</div>
+        </div>
+      </div>
+      <div class="carte-corps">
+        <div class="carte-def">Part du temps réellement utilisée pour produire de la valeur…</div>
+        <div class="carte-meta-bas">
+          <span class="carte-freq">🕐 mensuelle</span>
+          <span class="badge-maturite">●●○ intermédiaire</span>
+        </div>
+        <div class="chips-cadres focus">
+          <span class="chip-cadre"><span class="ic">♻️</span>Lean</span>
+          <span class="chip-cadre"><span class="ic">🗂️</span>Kanban</span>
+          <span class="chip-cadre"><span class="ic">🏗️</span>SAFe</span>
+        </div>
+      </div>
+      <div class="carte-pied"><button class="btn-detail">Voir le détail →</button></div>
+    </div>
+    <p class="legende"><strong>Lisible directement</strong>, pas besoin de survol. Tient à 3-4 chips max sur mobile. Accessible touchscreen.</p>
+  </div>
+
+  <div>
+    <h3>Icône seule + tooltip au survol</h3>
+    <div class="carte-ind prioritaire">
+      <div class="carte-en-tete">
+        <div class="carte-icone">🔄</div>
+        <div class="titre-bloc">
+          <div class="ligne-haut">
+            <div class="carte-type">FLUX · Flux de valeur</div>
+            <span class="badge-fiabilite">🟢 fiable</span>
+          </div>
+          <div class="carte-nom">Efficacité de flux (portefeuille)</div>
+        </div>
+      </div>
+      <div class="carte-corps">
+        <div class="carte-def">Part du temps réellement utilisée pour produire de la valeur…</div>
+        <div class="carte-meta-bas">
+          <span class="carte-freq">🕐 mensuelle</span>
+          <span class="badge-maturite">●●○ intermédiaire</span>
+        </div>
+        <div class="chips-cadres-compact focus">
+          <span class="chip-cadre-compact" title="Lean / Six Sigma">♻️</span>
+          <span class="chip-cadre-compact" title="Kanban">🗂️</span>
+          <span class="chip-cadre-compact" title="SAFe">🏗️</span>
+        </div>
+      </div>
+      <div class="carte-pied"><button class="btn-detail">Voir le détail →</button></div>
+    </div>
+    <p class="legende"><strong>Très compact</strong>, jusqu'à 5-6 chips tiennent. Demande de connaître les icônes ou de survoler — moins accessible sur mobile/touchscreen. <em>Survole les chips ci-dessus pour voir le tooltip.</em></p>
+  </div>
+</div>
+
+<!-- ────────────────────────────────────────────────── -->
+<h2>Bonus — Variante C neutre (sans chip, prose)</h2>
+<p class="intro">Pour comparaison, une option non envisagée dans les questions : afficher les cadres en texte plat, sans encadrement visuel. Plus discret, mais perd la qualité scannable d'un chip.</p>
+
+<div class="grille" style="grid-template-columns: minmax(290px, 360px);">
+  <div>
+    <div class="carte-ind prioritaire">
+      <div class="carte-en-tete">
+        <div class="carte-icone">🔄</div>
+        <div class="titre-bloc">
+          <div class="ligne-haut">
+            <div class="carte-type">FLUX · Flux de valeur</div>
+            <span class="badge-fiabilite">🟢 fiable</span>
+          </div>
+          <div class="carte-nom">Efficacité de flux (portefeuille)</div>
+        </div>
+      </div>
+      <div class="carte-corps">
+        <div class="carte-def">Part du temps réellement utilisée pour produire de la valeur…</div>
+        <div class="carte-meta-bas">
+          <span class="carte-freq">🕐 mensuelle</span>
+          <span class="badge-maturite">●●○ intermédiaire</span>
+        </div>
+        <div class="cadres-texte focus">
+          <span class="label">Cadres</span>♻️ Lean · 🗂️ Kanban · 🏗️ SAFe
+        </div>
+      </div>
+      <div class="carte-pied"><button class="btn-detail">Voir le détail →</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ────────────────────────────────────────────────── -->
+<div class="panneau-choix">
+  <h2>Tes choix à me communiquer</h2>
+  <p>Quand tu auras regardé, dis-moi simplement par exemple : <code>A + masqué + icône+label</code> ou <code>A + masqué + bonus C texte</code>. Je peux aussi mixer (ex. emplacement A en mode chip mais avec une couleur de fond différente, etc.) — n'hésite pas à demander un ajustement.</p>
+</div>
+
+</body>
+</html>

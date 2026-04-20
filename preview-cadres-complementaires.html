@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Preview — Cadres complémentaires (chantier 6.7a)</title>
+<style>
+  :root {
+    --niv-1:        #1a237e;
+    --niv-1-clair:  #e8eaf6;
+    --niv-1-moyen:  #3949ab;
+    --niv-2:        #01579b;
+    --niv-2-clair:  #e1f5fe;
+    --niv-2-moyen:  #0288d1;
+    --niv-3:        #004d40;
+    --niv-3-clair:  #e0f2f1;
+    --niv-3-moyen:  #00796b;
+    --accent:       #e65100;
+    --fond:         #f5f6fa;
+    --fond-2:       #ffffff;
+    --texte:        #1a1a2e;
+    --texte-2:      #607d8b;
+    --bordure:      #e0e4eb;
+    --ombre:        0 2px 12px rgba(26,35,126,0.08);
+    --ombre-forte:  0 8px 32px rgba(26,35,126,0.14);
+    --rayon:        14px;
+    --trans:        0.22s ease;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--fond);
+    color: var(--texte);
+    margin: 0;
+    padding: 2rem 1.5rem;
+    line-height: 1.55;
+  }
+
+  h1 {
+    color: var(--niv-1);
+    font-size: 1.4rem;
+    margin: 0 0 0.4rem;
+  }
+  .chapeau {
+    color: var(--texte-2);
+    font-size: 0.95rem;
+    max-width: 900px;
+    margin-bottom: 2.5rem;
+  }
+  .chapeau code {
+    background: var(--niv-1-clair);
+    color: var(--niv-1);
+    padding: 0.05rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+
+  .variante {
+    background: var(--fond-2);
+    border: 1px solid var(--bordure);
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre);
+    margin-bottom: 2.5rem;
+    overflow: hidden;
+  }
+  .variante-header {
+    padding: 1.1rem 1.5rem;
+    background: var(--niv-1-clair);
+    border-bottom: 1px solid var(--bordure);
+  }
+  .variante-badge {
+    display: inline-block;
+    background: var(--niv-1);
+    color: white;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.8px;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    margin-right: 0.6rem;
+  }
+  .variante-titre {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--niv-1);
+    display: inline;
+  }
+  .variante-sous {
+    font-size: 0.88rem;
+    color: var(--texte-2);
+    margin: 0.35rem 0 0;
+  }
+  .variante-body { padding: 1.5rem; }
+  .variante-note {
+    padding: 0.9rem 1.5rem;
+    background: #fffaf0;
+    border-top: 1px solid #f3e3b8;
+    font-size: 0.85rem;
+    color: #6b4a00;
+  }
+  .variante-note strong { color: #b7791f; }
+
+  /* ═══════════════════════════════════════════════════
+     Reproduction fidèle des tokens cadre-indicateurs.html
+     Classes copiées-collées depuis le fichier réel.
+     ═══════════════════════════════════════════════════ */
+  .carte-etape {
+    background: var(--fond-2);
+    border-radius: var(--rayon);
+    padding: 1.75rem;
+    box-shadow: var(--ombre);
+    border: 1px solid var(--bordure);
+  }
+  .resultat-titre {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--texte-2);
+    font-weight: 800;
+    margin-bottom: 0.9rem;
+  }
+  .grille-cartes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.9rem;
+  }
+  .carte-ind {
+    background: var(--fond-2);
+    border: 1px solid var(--bordure);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    box-shadow: var(--ombre);
+    border-left: 4px solid #1a237e;
+    min-height: 90px;
+  }
+  .carte-ind-titre {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--texte);
+    margin-bottom: 0.3rem;
+  }
+  .carte-ind-sous {
+    font-size: 0.78rem;
+    color: var(--texte-2);
+    line-height: 1.4;
+  }
+  .bouton-recommencer {
+    margin-top: 1.2rem;
+    padding: 0.6rem 1.3rem;
+    background: var(--niv-1);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.86rem;
+    font-weight: 700;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     VARIANTE A — Bandeau latéral à droite (aside)
+     ═══════════════════════════════════════════════════ */
+  .variante-a-layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  .aside-complementaires {
+    background: var(--niv-1-clair);
+    border-radius: 10px;
+    padding: 1.1rem;
+    border-left: 4px solid var(--niv-1-moyen);
+  }
+  .aside-titre {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--niv-1);
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+  .aside-pitch {
+    font-size: 0.82rem;
+    color: var(--texte);
+    margin-bottom: 0.85rem;
+    line-height: 1.45;
+  }
+  .aside-tuile {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.6rem 0.75rem;
+    background: var(--fond-2);
+    border: 1px solid var(--bordure);
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+    transition: var(--trans);
+    text-align: left;
+    align-items: center;
+  }
+  .aside-tuile:hover {
+    border-color: var(--niv-1-moyen);
+    transform: translateY(-1px);
+  }
+  .aside-tuile-icone { font-size: 1.2rem; flex-shrink: 0; }
+  .aside-tuile-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--texte);
+  }
+  .aside-tuile-sous {
+    font-size: 0.72rem;
+    color: var(--texte-2);
+    margin-top: 0.1rem;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     VARIANTE B — Pills compacts en en-tête
+     ═══════════════════════════════════════════════════ */
+  .pills-ligne {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 0.9rem;
+    background: var(--niv-1-clair);
+    border-radius: 8px;
+    margin-bottom: 1.1rem;
+    font-size: 0.83rem;
+    color: var(--texte);
+  }
+  .pills-libelle {
+    color: var(--niv-1);
+    font-weight: 700;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: var(--fond-2);
+    border: 1px solid var(--niv-1-moyen);
+    color: var(--niv-1);
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 700;
+    transition: var(--trans);
+  }
+  .pill:hover {
+    background: var(--niv-1);
+    color: white;
+  }
+  .pill-icone { font-size: 0.95rem; }
+
+  /* ═══════════════════════════════════════════════════
+     VARIANTE C — Carte d'invitation en pied
+     ═══════════════════════════════════════════════════ */
+  .invitation-bloc {
+    margin-top: 1.5rem;
+    padding: 1.2rem 1.3rem;
+    background: linear-gradient(135deg, var(--niv-1-clair), #f5f6fa);
+    border-radius: 12px;
+    border: 1px solid var(--bordure);
+  }
+  .invitation-titre {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--niv-1);
+    margin-bottom: 0.2rem;
+  }
+  .invitation-sous {
+    font-size: 0.82rem;
+    color: var(--texte-2);
+    margin-bottom: 0.9rem;
+    line-height: 1.5;
+  }
+  .invitation-tuiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.7rem;
+  }
+  .invitation-tuile {
+    padding: 0.9rem 1rem;
+    border: 2px solid var(--bordure);
+    border-radius: 10px;
+    background: var(--fond-2);
+    cursor: pointer;
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    transition: var(--trans);
+    text-align: left;
+  }
+  .invitation-tuile:hover {
+    border-color: var(--niv-2-moyen);
+    transform: translateY(-1px);
+    box-shadow: var(--ombre);
+  }
+  .invitation-icone {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .invitation-label {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--texte);
+    line-height: 1.25;
+    display: block;
+  }
+  .invitation-description {
+    font-size: 0.78rem;
+    color: var(--texte-2);
+    margin-top: 0.25rem;
+    line-height: 1.4;
+  }
+  .invitation-compteur {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--niv-1);
+    background: var(--niv-1-clair);
+    padding: 0.1rem 0.5rem;
+    border-radius: 10px;
+    margin-top: 0.35rem;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     Cas limite (Scrum) : bande comparative
+     ═══════════════════════════════════════════════════ */
+  .cas-limite {
+    margin-top: 2.5rem;
+    background: var(--fond-2);
+    border: 1px solid var(--bordure);
+    border-radius: var(--rayon);
+    padding: 1.5rem;
+  }
+  .cas-limite h2 {
+    font-size: 1rem;
+    color: var(--niv-1);
+    margin: 0 0 0.3rem;
+  }
+  .cas-limite-sous {
+    font-size: 0.85rem;
+    color: var(--texte-2);
+    margin-bottom: 1.2rem;
+  }
+  .cas-limite-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  .cas-limite-col {
+    padding: 1rem;
+    background: var(--fond);
+    border-radius: 10px;
+    border: 1px solid var(--bordure);
+  }
+  .cas-limite-col h3 {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    color: var(--texte-2);
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    margin: 0 0 0.7rem;
+  }
+
+  /* Stepper mini (pour donner le contexte de la vue) */
+  .stepper-mini {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--texte-2);
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+  .stepper-mini-item {
+    padding: 0.2rem 0.55rem;
+    background: var(--niv-1-clair);
+    color: var(--niv-1);
+    border-radius: 999px;
+    font-weight: 700;
+  }
+  .stepper-mini-fleche { color: var(--texte-2); }
+
+  /* Section generique */
+  .generique-bloc {
+    margin-top: 2.5rem;
+    padding: 1.5rem;
+    background: #fffaf0;
+    border: 1px solid #f3e3b8;
+    border-radius: var(--rayon);
+  }
+  .generique-bloc h2 {
+    font-size: 1rem;
+    color: #b7791f;
+    margin: 0 0 0.4rem;
+  }
+  .generique-bloc p {
+    font-size: 0.9rem;
+    color: #6b4a00;
+    line-height: 1.55;
+    margin: 0 0 0.7rem;
+  }
+  .generique-bloc p:last-child { margin: 0; }
+</style>
+</head>
+<body>
+
+<h1>Preview — Bloc « cadres complémentaires » (chantier 6.7a)</h1>
+<p class="chapeau">
+  Trois variantes d'emplacement/format pour le bloc qui suggère les cadres à explorer
+  ensuite, côté <code>CM.VuePorteCadre._etapeResultats</code>. Scène centrale :
+  entrée par <strong>DORA</strong>, niveau <strong>équipe</strong>.
+  Co-occurrences réelles calculées sur <code>META.cadres</code> (hors <code>generique</code>)
+  : Lean&nbsp;×&nbsp;6 fiches partagées, ITIL&nbsp;×&nbsp;3, Kanban&nbsp;×&nbsp;1.
+  Top 2 retenu : <strong>Lean</strong> et <strong>ITIL</strong>.
+</p>
+
+<!-- ═══════════ VARIANTE A ═══════════ -->
+<section class="variante">
+  <div class="variante-header">
+    <span class="variante-badge">A</span>
+    <span class="variante-titre">Bandeau latéral à droite</span>
+    <p class="variante-sous">Colonne aside de 280 px à droite de la grille d'indicateurs. Toujours visible, devient un bloc empilé sous la grille en mobile (&lt; 900 px).</p>
+  </div>
+  <div class="variante-body">
+    <div class="stepper-mini">
+      <span class="stepper-mini-item">🚀 DORA</span>
+      <span class="stepper-mini-fleche">→</span>
+      <span class="stepper-mini-item">👥 Équipe</span>
+    </div>
+
+    <div class="carte-etape">
+      <div class="resultat-titre">✅ Indicateurs revendiqués par DORA pour le niveau équipe (9)</div>
+
+      <div class="variante-a-layout">
+        <div class="grille-cartes">
+          <div class="carte-ind">
+            <div class="carte-ind-titre">Deployment Frequency</div>
+            <div class="carte-ind-sous">Fréquence de déploiement en production.</div>
+          </div>
+          <div class="carte-ind">
+            <div class="carte-ind-titre">Lead Time for Changes</div>
+            <div class="carte-ind-sous">Délai entre commit et déploiement.</div>
+          </div>
+          <div class="carte-ind">
+            <div class="carte-ind-titre">Change Failure Rate</div>
+            <div class="carte-ind-sous">Part des déploiements entraînant un incident.</div>
+          </div>
+          <div class="carte-ind">
+            <div class="carte-ind-titre">Mean Time To Restore</div>
+            <div class="carte-ind-sous">Temps de rétablissement après incident.</div>
+          </div>
+          <div class="carte-ind">
+            <div class="carte-ind-titre">MTTR Pipeline CI</div>
+            <div class="carte-ind-sous">Temps de remise en service du pipeline.</div>
+          </div>
+          <div class="carte-ind">
+            <div class="carte-ind-titre">Test Coverage Evol.</div>
+            <div class="carte-ind-sous">Évolution de la couverture de tests.</div>
+          </div>
+        </div>
+
+        <aside class="aside-complementaires">
+          <div class="aside-titre">✧ Cadres complémentaires</div>
+          <p class="aside-pitch">DORA se combine souvent avec&nbsp;:</p>
+          <button type="button" class="aside-tuile">
+            <span class="aside-tuile-icone">♻️</span>
+            <span>
+              <span class="aside-tuile-label">Lean / Six Sigma</span>
+              <span class="aside-tuile-sous">6 fiches partagées</span>
+            </span>
+          </button>
+          <button type="button" class="aside-tuile">
+            <span class="aside-tuile-icone">🛠️</span>
+            <span>
+              <span class="aside-tuile-label">ITIL</span>
+              <span class="aside-tuile-sous">3 fiches partagées</span>
+            </span>
+          </button>
+        </aside>
+      </div>
+
+      <button type="button" class="bouton-recommencer">↻ Recommencer</button>
+    </div>
+  </div>
+  <div class="variante-note">
+    <strong>Points forts :</strong> persistance visuelle, l'utilisateur voit les complémentaires
+    pendant qu'il consulte les indicateurs. Signale explicitement l'intensité de la relation (nb fiches).<br>
+    <strong>Limites :</strong> casse le layout plein-largeur actuel de la grille ; dette responsive
+    à tenir. Risque de surcharge si les indicateurs sont déjà nombreux.
+  </div>
+</section>
+
+<!-- ═══════════ VARIANTE B ═══════════ -->
+<section class="variante">
+  <div class="variante-header">
+    <span class="variante-badge">B</span>
+    <span class="variante-titre">Pills compacts en en-tête</span>
+    <p class="variante-sous">Ligne discrète entre le titre des résultats et la grille. Presque zéro surface visuelle ; appuie sur la métaphore « petit lien de navigation ».</p>
+  </div>
+  <div class="variante-body">
+    <div class="stepper-mini">
+      <span class="stepper-mini-item">🚀 DORA</span>
+      <span class="stepper-mini-fleche">→</span>
+      <span class="stepper-mini-item">👥 Équipe</span>
+    </div>
+
+    <div class="carte-etape">
+      <div class="resultat-titre">✅ Indicateurs revendiqués par DORA pour le niveau équipe (9)</div>
+
+      <div class="pills-ligne">
+        <span class="pills-libelle">Se combine souvent avec</span>
+        <button type="button" class="pill">
+          <span class="pill-icone">♻️</span>Lean / Six Sigma
+        </button>
+        <button type="button" class="pill">
+          <span class="pill-icone">🛠️</span>ITIL
+        </button>
+      </div>
+
+      <div class="grille-cartes">
+        <div class="carte-ind">
+          <div class="carte-ind-titre">Deployment Frequency</div>
+          <div class="carte-ind-sous">Fréquence de déploiement en production.</div>
+        </div>
+        <div class="carte-ind">
+          <div class="carte-ind-titre">Lead Time for Changes</div>
+          <div class="carte-ind-sous">Délai entre commit et déploiement.</div>
+        </div>
+        <div class="carte-ind">
+          <div class="carte-ind-titre">Change Failure Rate</div>
+          <div class="carte-ind-sous">Part des déploiements entraînant un incident.</div>
+        </div>
+        <div class="carte-ind">
+          <div class="carte-ind-titre">Mean Time To Restore</div>
+          <div class="carte-ind-sous">Temps de rétablissement après incident.</div>
+        </div>
+      </div>
+
+      <button type="button" class="bouton-recommencer">↻ Recommencer</button>
+    </div>
+  </div>
+  <div class="variante-note">
+    <strong>Points forts :</strong> minimal, inline, ne casse aucun layout. Lisible au même
+    niveau visuel que le titre. Bon compromis pour un MVP.<br>
+    <strong>Limites :</strong> discret au point d'être potentiellement ignoré. Pas d'espace
+    pour expliciter « pourquoi ce cadre ». Les pills ne transportent pas la force de la relation.
+  </div>
+</section>
+
+<!-- ═══════════ VARIANTE C ═══════════ -->
+<section class="variante">
+  <div class="variante-header">
+    <span class="variante-badge">C</span>
+    <span class="variante-titre">Carte d'invitation en pied</span>
+    <p class="variante-sous">Bloc dédié après la grille, avant le bouton « Recommencer ». Matérialise une invitation d'exploration en fin de lecture — moment où l'utilisateur a digéré les indicateurs et peut envisager une bifurcation.</p>
+  </div>
+  <div class="variante-body">
+    <div class="stepper-mini">
+      <span class="stepper-mini-item">🚀 DORA</span>
+      <span class="stepper-mini-fleche">→</span>
+      <span class="stepper-mini-item">👥 Équipe</span>
+    </div>
+
+    <div class="carte-etape">
+      <div class="resultat-titre">✅ Indicateurs revendiqués par DORA pour le niveau équipe (9)</div>
+
+      <div class="grille-cartes">
+        <div class="carte-ind">
+          <div class="carte-ind-titre">Deployment Frequency</div>
+          <div class="carte-ind-sous">Fréquence de déploiement en production.</div>
+        </div>
+        <div class="carte-ind">
+          <div class="carte-ind-titre">Lead Time for Changes</div>
+          <div class="carte-ind-sous">Délai entre commit et déploiement.</div>
+        </div>
+        <div class="carte-ind">
+          <div class="carte-ind-titre">Change Failure Rate</div>
+          <div class="carte-ind-sous">Part des déploiements entraînant un incident.</div>
+        </div>
+        <div class="carte-ind">
+          <div class="carte-ind-titre">Mean Time To Restore</div>
+          <div class="carte-ind-sous">Temps de rétablissement après incident.</div>
+        </div>
+      </div>
+
+      <div class="invitation-bloc">
+        <div class="invitation-titre">✧ Pour prolonger l'exploration</div>
+        <p class="invitation-sous">
+          Ces cadres revendiquent plusieurs des mêmes indicateurs que DORA. Les croiser donne
+          un éclairage complémentaire — flux, qualité de service, gaspillage.
+        </p>
+        <div class="invitation-tuiles">
+          <button type="button" class="invitation-tuile">
+            <span class="invitation-icone">♻️</span>
+            <span>
+              <span class="invitation-label">Lean / Six Sigma</span>
+              <span class="invitation-description">Flux, variabilité, gaspillage. Lead time, throughput.</span>
+              <span class="invitation-compteur">6 fiches partagées</span>
+            </span>
+          </button>
+          <button type="button" class="invitation-tuile">
+            <span class="invitation-icone">🛠️</span>
+            <span>
+              <span class="invitation-label">ITIL</span>
+              <span class="invitation-description">IT Service Management. Incidents, disponibilité.</span>
+              <span class="invitation-compteur">3 fiches partagées</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <button type="button" class="bouton-recommencer">↻ Recommencer</button>
+    </div>
+  </div>
+  <div class="variante-note">
+    <strong>Points forts :</strong> narration claire (« pour prolonger »), surface visuelle
+    à la hauteur de l'information, description des cadres présente, compteur explicite.
+    Cohérent avec les tuiles déjà utilisées dans l'accordéon étape 1 — réutilise le même
+    vocabulaire visuel <code>option-btn</code>.<br>
+    <strong>Limites :</strong> demande du scroll pour le voir quand la grille est longue.
+    Moment d'apparition tardif dans le parcours visuel.
+  </div>
+</section>
+
+<!-- ═══════════ CAS LIMITE — Scrum ═══════════ -->
+<section class="cas-limite">
+  <h2>Cas limite — cadre faiblement connecté (exemple : Scrum)</h2>
+  <p class="cas-limite-sous">
+    Scrum partage seulement 1 fiche avec Lean et 1 avec Kanban (via <code>o6</code>,
+    taguée <code>[lean, kanban, scrum]</code>). Comment chaque variante se comporte ?
+  </p>
+  <div class="cas-limite-grid">
+    <div class="cas-limite-col">
+      <h3>A — Aside</h3>
+      <aside class="aside-complementaires" style="margin:0">
+        <div class="aside-titre">✧ Cadres complémentaires</div>
+        <p class="aside-pitch">Scrum partage quelques fiches avec&nbsp;:</p>
+        <button type="button" class="aside-tuile">
+          <span class="aside-tuile-icone">♻️</span>
+          <span>
+            <span class="aside-tuile-label">Lean / Six Sigma</span>
+            <span class="aside-tuile-sous">1 fiche partagée</span>
+          </span>
+        </button>
+        <button type="button" class="aside-tuile">
+          <span class="aside-tuile-icone">🗂️</span>
+          <span>
+            <span class="aside-tuile-label">Kanban</span>
+            <span class="aside-tuile-sous">1 fiche partagée</span>
+          </span>
+        </button>
+      </aside>
+    </div>
+    <div class="cas-limite-col">
+      <h3>B — Pills</h3>
+      <div class="pills-ligne" style="margin:0">
+        <span class="pills-libelle">Voisinage faible</span>
+        <button type="button" class="pill"><span class="pill-icone">♻️</span>Lean</button>
+        <button type="button" class="pill"><span class="pill-icone">🗂️</span>Kanban</button>
+      </div>
+    </div>
+    <div class="cas-limite-col">
+      <h3>C — Invitation</h3>
+      <div class="invitation-bloc" style="margin:0">
+        <div class="invitation-titre">✧ Pour prolonger</div>
+        <p class="invitation-sous" style="margin-bottom:0.5rem">
+          Scrum est peu couplé à d'autres cadres dans le référentiel actuel — voisins&nbsp;:
+        </p>
+        <div class="invitation-tuiles" style="grid-template-columns:1fr">
+          <button type="button" class="invitation-tuile" style="padding:0.6rem">
+            <span class="invitation-icone">♻️</span>
+            <span>
+              <span class="invitation-label">Lean</span>
+              <span class="invitation-compteur">1 fiche</span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cas-limite-sous" style="margin-top:1rem">
+    <strong>Question de design implicite :</strong> faut-il un seuil minimum de fiches partagées
+    en dessous duquel on masque le bloc ? Ma proposition : oui,
+    <strong>seuil = 2 fiches partagées</strong>. En dessous, la co-occurrence est anecdotique
+    et risque de pousser une recommandation bruitée. Scrum, dans le référentiel actuel, afficherait
+    donc un bloc vide (ou aucun bloc). C'est un signal que le référentiel sous-tagge Scrum —
+    cohérent avec le principe « source unique de vérité » déjà validé.
+  </p>
+</section>
+
+<!-- ═══════════ CAS PARTICULIER — generique ═══════════ -->
+<section class="generique-bloc">
+  <h2>Cas particulier — entrée par le cadre « générique »</h2>
+  <p>
+    Comme discuté, <code>generique</code> est exclu des calculs de co-occurrence (il est
+    taggué en fallback, il gonflerait artificiellement). Mais ça n'empêche pas d'afficher
+    un bloc <em>différent</em> quand l'utilisateur entre par cette porte :
+    <em>« Ces cadres spécifiques éclairent les mêmes indicateurs »</em>, triés par nombre
+    de fiches partagées.
+  </p>
+  <p>
+    <strong>Implémentation propre :</strong> une fonction jumelle <code>cadresDepuisGenerique(n=3)</code>
+    dans <code>CM.IndicateursMeta</code>, qui parcourt les fiches <code>[cadre-spécifique, generique]</code>
+    et remonte les cadres spécifiques les plus fréquents. Distinction nette dans l'API,
+    libellé distinct côté UI.
+  </p>
+  <p>
+    <strong>Décision à prendre :</strong> on implémente ce cas particulier <em>dans</em>
+    le chantier 6.7a, ou on le reporte dans un 6.7c ? Ma reco — on le <strong>reporte</strong>
+    pour garder 6.7a atomique et ne pas allonger la session. Le MVP couvre les 8 cadres
+    spécifiques ; generique reste exploratoire, sans bloc pour l'instant.
+  </p>
+</section>
+
+</body>
+</html>
