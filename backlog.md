@@ -232,17 +232,19 @@ Chantiers ouverts le 20/04/2026 dans le prolongement de la planification de la p
 
 Chantiers 6.7 et 6.7a **livrés** le 20/04/2026. Le bloc *Cadres voisins dans le référentiel* est actif en pied de résultats de la porte cadre, avec pivot préservant le niveau et l'étape 3 (commit `6cdb0c4`).
 
-**Prochain chantier validé par Lætitia — 7.6** (🟡) : liens cliquables vers les métriques citées dans les encarts *Alternative recommandée* et *Vigilance*. Haute valeur d'usage, faible coût. Dépend légèrement de la règle 1 (`CM.Html.escape()`) — décision à prendre au début du chantier : sécuriser à la même passe ou découpler.
+### Prochaine session — chantier validé
 
-**Instruction à porter dans 7.2** (validée le 20/04/2026) : quand le futur `CM.Stepper` générique sera extrait, il devra accepter **un nombre variable d'étapes** (tableau ordonné). But : pouvoir activer plus tard 7.3 (type de décision en 4e étape) ou 7.4 (disponibilité des données en 5e étape) sans réécrire le stepper, seulement en ajoutant une entrée dans la liste. Consigné dans la colonne *Évolution* du 7.2 et dans ses points d'ancrage code.
+**7.6 — Liens cliquables vers les métriques citées** (🟡), dans les encarts *Alternative recommandée* et *Vigilance*. Haute valeur d'usage, faible coût. Dépend légèrement de la règle 1 (`CM.Html.escape()`) — décision à prendre au début du chantier : sécuriser à la même passe ou découpler.
 
-**Candidats ouverts pour des sessions ultérieures** :
+**Instruction à porter dans 7.2 quand il sera ouvert** (validée le 20/04/2026) : le futur `CM.Stepper` générique devra accepter **un nombre variable d'étapes** (tableau ordonné). But : pouvoir activer plus tard 7.3 (type de décision en 4e étape) ou 7.4 (disponibilité des données en 5e étape) sans réécrire le stepper, seulement en ajoutant une entrée dans la liste. Consigné dans la colonne *Évolution* du 7.2 et dans ses points d'ancrage code.
+
+### File d'attente après 7.6 — ordre à trancher en fin de chantier 7.6
 
 1. **6.7b — Enrichissement `familleInformelle`** (🟢). À activer si l'usage terrain confirme qu'on s'ampute de bonnes suggestions en excluant `generique` du calcul de voisinage.
 2. **6.7c — Cas particulier `generique`, bloc dédié** (🟡). Inversion éditoriale : *« Ces cadres spécifiques éclairent les mêmes indicateurs »*. Petit chantier cohérent à empiler sur 6.7a.
 3. **7.2 — Stepper générique extensible** (🟡). Chantier structurant, à coupler avec la symétrisation des portes *problème* et *niveau*.
 
-**Pistes alternatives si Lætitia préfère pivoter** :
+### Pistes alternatives si Lætitia préfère pivoter avant 7.6
 
 - **Piste B — Greffe architecturale** (🟡) : migrer `NIVEAU_VERS_POSITION` et `FIABILITE_VERS_NIVEAU` vers `CM.Config` (Règle 2). Session courte, ~45 min.
 - **Piste C — Scission `lean` en `lean` + `six-sigma`** (🟢) : chantier reporté lors de 6.7 ; demande une revue des `META.cadres` sur une trentaine de fiches.
