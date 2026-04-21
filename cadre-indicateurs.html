@@ -5773,6 +5773,24 @@ CM.App = (function() {
       CM.Composants.ouvrirTiroir(id);
     });
 
+    /* Filet de sécurité — re-synchronise la fiche affichée sur tout changement
+       d'URL du hash. Couvre :
+       — back/forward du navigateur (popstate déclenche aussi hashchange sur les
+         entrées d'historique par fragment) ;
+       — ouverture d'un lien partagé / tapé à la main dans la barre d'adresse ;
+       — environnements d'exécution où la délégation de clic ci-dessus n'aboutit
+         pas pour une raison quelconque (iframe sandboxée, politique CSP, etc.) —
+         le clic natif du <a href="#fiche=…"> met à jour location.hash, hashchange
+         fire, et on re-synchronise la vue.
+
+       Idempotence : ouvrirTiroir() est safe à rappeler sur le même id.
+       Pas de boucle : CM.Hash.ecrireFicheId() utilise history.replaceState qui,
+       par spécification, NE déclenche PAS hashchange. */
+    window.addEventListener('hashchange', function() {
+      var id = CM.Hash.lireFicheId();
+      if (id) CM.Composants.ouvrirTiroir(id);
+    });
+
     /* Deep linking au démarrage : si l'URL pointe déjà sur une fiche
        (partage de lien, favori, rechargement de page, Cmd+clic précédent),
        ouvrir la fiche automatiquement. Le lookup CM.Referentiel.chercher()
