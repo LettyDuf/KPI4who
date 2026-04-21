@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **20 avril 2026** (livraison chantier 6.7a : bloc « Cadres voisins dans le référentiel » en pied de résultats de la porte *Par mon cadre*, calculé par co-occurrence pure sur `META.cadres`, seuil de 2 fiches partagées, exclusion de `generique`. Commit unique `6cdb0c4`. Le chantier 6.7 lui-même avait été livré plus tôt le même jour en cinq commits : `ccbd1e7` planification, `4842231` feat porte complète (référentiel FAMILLES + accordéon), `ce39360` description des cadres sous le libellé, `680f492`+`2988e07` fixes accents).
+Dernière mise à jour : **21 avril 2026** (livraison de la piste F — audit d'uniformité des portes. Trois artefacts livrés : `AUDIT-UNIFORMITE-PORTES.md` dans le dossier projet, mémoire `project_coherence_portes` pour le futur chantier 7.2, et mise à jour du backlog avec trois micro-fixes — AUDIT-F-1 pour le conseil pédagogique porte cadre, AUDIT-F-2 absorbé dans 7.1, AUDIT-F-3 absorbé dans un nouvel item 7.7 persistance / partage des parcours).
 
 Légende : 🔴 priorité haute · 🟡 moyenne · 🟢 basse · ⚪ à décider · ✅ fait · ⏳ en cours
 
@@ -201,6 +201,7 @@ Chantiers ouverts le 20/04/2026 dans le prolongement de la planification de la p
 | 7.4 | **Disponibilité des données en 5e étape (mode expert)** | 🟢 | mesurable aujourd'hui / à instrumenter / absente. Filtre pragmatique pour éviter les recommandations impossibles à alimenter faute d'instrumentation. Allonge le parcours — à réserver au mode expert. | ⏸ |
 | 7.5 | **Test A/B boîte modale vs panneau latéral pour les fiches** | 🟢 | Toggle persistant dans `CM.Preferences` (clé `cm-mode-fiche`, valeurs `panneau` / `modale`). Les deux implémentations coexistent le temps du test. Dette accessibilité à anticiper côté modale : focus trap, Escape, aria-modal, retour au scroll. | ⏸ |
 | 7.6 | **Liens cliquables vers les métriques recommandées dans le panneau** | 🟡 | Rendre cliquables les noms de métriques dans les encarts « Alternative recommandée » (et plus largement les références croisées entre fiches). Ouvre la fiche cible sans retour à la liste. Haute valeur d'usage, faible coût, haute cohérence interne. | ✅ 20/04/2026 (`3afe40e`, `1d77ab4`) |
+| 7.7 | **Persistance et partage des parcours en cours** | 🟢 | Aujourd'hui, F5 ramène à l'accueil et efface le parcours en cours sur les trois portes. Deux pistes : (a) mémoriser automatiquement l'étape et les choix dans le stockage local du navigateur, (b) encoder le parcours dans l'URL (`#porte=cadre&cadre=dora&niveau=programme`) pour permettre le partage à un collègue. La deuxième piste est la plus intéressante stratégiquement — elle transforme chaque parcours en objet partageable. Identifié lors de l'audit d'uniformité du 21/04/2026. | ⏸ |
 
 ### 7.a Points d'ancrage code
 
@@ -212,6 +213,21 @@ Chantiers ouverts le 20/04/2026 dans le prolongement de la planification de la p
 | 7.4 Disponibilité données | Choix utilisateur stocké en `CM.Preferences`, aucun champ à ajouter aux fiches | Filtre côté UI uniquement (« je n'ai pas les données → écarter les fiches qui supposent une instrumentation non triviale »). Le critère de « non-trivialité » reste à définir. |
 | 7.5 A/B modale / panneau | Nouveau module `CM.PanneauFiche` (API commune) avec deux implémentations : `CM.PanneauLateral` (actuel) et `CM.PanneauModal` (nouveau) | Abstraction à introduire **avant** de coder la modale, sinon on duplique la logique. Port hexagonal : `PanneauFiche.ouvrir(ind)` / `.fermer()`. |
 | 7.6 Liens cliquables | `CM.Composants.rendreAlternative` (et éventuellement `rendreVigilance`) dans `rendreFicheHtml` | Remplacer la concaténation de texte par un `<a data-ind-id="...">` avec un handler qui appelle `CM.App.ouvrirFiche(id)`. Dépend de `CM.Html.escape()` (règle 1 du refactoring). |
+| 7.7 Persistance / partage parcours | Extension de `CM.Preferences` (piste a) et/ou nouveau module `CM.PorteHash` similaire à `CM.Hash` mais orienté parcours (piste b) | Piste a : sérialiser `{ porte, etape, choix }` dans localStorage, restaurer au boot. Piste b : encoder `porte=cadre&cadre=dora&niveau=programme` dans l'URL, lecture au boot par un parseur dédié, mise à jour de l'URL à chaque changement d'étape via `history.replaceState`. Prudence XSS sur piste b : valider chaque champ contre sa whitelist (mêmes regex strictes que `CM.Hash`). |
+
+---
+
+## 8. Audit d'uniformité des portes — 21 avril 2026
+
+Audit complet livré dans [`AUDIT-UNIFORMITE-PORTES.md`](./AUDIT-UNIFORMITE-PORTES.md). Contrat de cohérence consigné en mémoire (`project_contrat_coherence_portes.md`) pour être lu au démarrage du chantier 7.2.
+
+**Bilan.** Les portes *problème* et *cadre* partagent déjà 95 % de leur mécanique (duplication saine, terrain propre pour 7.2). La porte *niveau* est structurellement différente (pyramide + 4 onglets, pas de stepper) — décision produit à trancher au démarrage du 7.2 : la faire rejoindre le parcours guidé ou préserver sa forme actuelle. Trois divergences voulues confirmées (taxonomies de première étape, blocs transversaux propres, format des résultats). Trois divergences accidentelles recensées, listées ci-dessous.
+
+| # | Micro-fix | Priorité | Effort | État |
+|---|---|---|---|---|
+| AUDIT-F-1 | Ajouter l'appel à `CM.Config.conseilPedagogiquePour({ cadre, niveau })` dans `CM.VuePorteCadre._etapeResultats`, en miroir de ce que fait déjà la porte problème. Alignement éditorial. | 🟡 | ~30 min, une dizaine de lignes | ⏸ |
+| AUDIT-F-2 | Absorbé par le chantier **7.1** : étendre le filtre maturité aux deux portes stepper, ou documenter qu'il reste spécifique à la vue *Maturité* de la pyramide. | 🟢 | à traiter dans 7.1 | ⏸ |
+| AUDIT-F-3 | Absorbé par le nouvel item **7.7** : persistance et partage des parcours. | 🟢 | à traiter dans 7.7 | ⏸ |
 
 ---
 
@@ -250,10 +266,12 @@ Sur les quatre lots, 33 liens ont été posés sur 25 champs éditoriaux de 18 f
 
 ### Prochaine session — ordre à trancher
 
-1. **6.7b — Enrichissement `familleInformelle`** (🟢). À activer si l'usage terrain confirme qu'on s'ampute de bonnes suggestions en excluant `generique` du calcul de voisinage.
-2. **6.7c — Cas particulier `generique`, bloc dédié** (🟡). Inversion éditoriale : *« Ces cadres spécifiques éclairent les mêmes indicateurs »*. Petit chantier cohérent à empiler sur 6.7a.
-3. **7.2 — Stepper générique extensible** (🟡). Chantier structurant, à coupler avec la symétrisation des portes *problème* et *niveau*.
-4. **Audit visuel 7.6** (🟢). Session courte de relecture terrain : ouvrir chaque fiche enrichie dans le tiroir, cliquer chaque lien, valider l'imbrication term-def.
+1. **AUDIT-F-1 — Conseil pédagogique dans la porte cadre** (🟡). Micro-fix opportuniste ressorti de l'audit du 21/04/2026. Session courte, effet éditorial direct. Le plus court chemin entre deux chantiers.
+2. **6.7b — Enrichissement `familleInformelle`** (🟢). À activer si l'usage terrain confirme qu'on s'ampute de bonnes suggestions en excluant `generique` du calcul de voisinage.
+3. **6.7c — Cas particulier `generique`, bloc dédié** (🟡). Inversion éditoriale : *« Ces cadres spécifiques éclairent les mêmes indicateurs »*. Petit chantier cohérent à empiler sur 6.7a.
+4. **7.2 — Stepper générique extensible** (🟡). Chantier structurant, désormais armé d'un contrat de cohérence (voir mémoire `project_contrat_coherence_portes.md`) qui encadre ce qui doit être partagé, ce qui reste propre à chaque porte, et la décision à trancher pour la porte *niveau*.
+5. **7.7 — Persistance et partage des parcours** (🟢). Nouvel item ouvert lors de l'audit du 21/04/2026.
+6. **Audit visuel 7.6** (🟢). Session courte de relecture terrain : ouvrir chaque fiche enrichie dans le tiroir, cliquer chaque lien, valider l'imbrication term-def.
 
 ### Pistes alternatives
 
