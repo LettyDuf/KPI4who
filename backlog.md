@@ -200,7 +200,7 @@ Chantiers ouverts le 20/04/2026 dans le prolongement de la planification de la p
 | 7.3 | **Type de décision en 4e étape (mode expert)** | 🟢 | priorisation / investissement / arrêt d'initiative / amélioration continue. Vient directement du brief projet. Une métrique de diagnostic (MTTR, Change Failure Rate) ne sert pas la même décision qu'une métrique de priorisation stratégique (ROI, part de marché). Encodage sur les fiches : nouveau champ `META.decisions = [...]`. | ⏸ |
 | 7.4 | **Disponibilité des données en 5e étape (mode expert)** | 🟢 | mesurable aujourd'hui / à instrumenter / absente. Filtre pragmatique pour éviter les recommandations impossibles à alimenter faute d'instrumentation. Allonge le parcours — à réserver au mode expert. | ⏸ |
 | 7.5 | **Test A/B boîte modale vs panneau latéral pour les fiches** | 🟢 | Toggle persistant dans `CM.Preferences` (clé `cm-mode-fiche`, valeurs `panneau` / `modale`). Les deux implémentations coexistent le temps du test. Dette accessibilité à anticiper côté modale : focus trap, Escape, aria-modal, retour au scroll. | ⏸ |
-| 7.6 | **Liens cliquables vers les métriques recommandées dans le panneau** | 🟡 | Rendre cliquables les noms de métriques dans les encarts « Alternative recommandée » (et plus largement les références croisées entre fiches). Ouvre la fiche cible sans retour à la liste. Haute valeur d'usage, faible coût, haute cohérence interne. | ⏸ |
+| 7.6 | **Liens cliquables vers les métriques recommandées dans le panneau** | 🟡 | Rendre cliquables les noms de métriques dans les encarts « Alternative recommandée » (et plus largement les références croisées entre fiches). Ouvre la fiche cible sans retour à la liste. Haute valeur d'usage, faible coût, haute cohérence interne. | ✅ 20/04/2026 (`3afe40e`, `1d77ab4`) |
 
 ### 7.a Points d'ancrage code
 
@@ -217,21 +217,20 @@ Chantiers ouverts le 20/04/2026 dans le prolongement de la planification de la p
 
 ## Prochaine action recommandée
 
-Chantiers 6.7 et 6.7a **livrés** le 20/04/2026. Le bloc *Cadres voisins dans le référentiel* est actif en pied de résultats de la porte cadre, avec pivot préservant le niveau et l'étape 3 (commit `6cdb0c4`).
+Chantier **7.6 livré** le 20/04/2026. Les noms de métriques cités dans les encarts *Alternative recommandée* et *Point de vigilance* sont cliquables : clic simple = ouverture dans le tiroir latéral, Cmd/Ctrl+clic = nouvel onglet (web-native). Deep linking activé via `CM.Hash` (port hexagonal). 4 fiches de démonstration enrichies : `s6.alt → s8`, `s7.alt → s8`, `p6.risque → p7`, `p7.risque → o3`. Commits `3afe40e` (code + module) et `1d77ab4` (CSS + enrichissements éditoriaux).
 
-### Prochaine session — chantier validé
-
-**7.6 — Liens cliquables vers les métriques citées** (🟡), dans les encarts *Alternative recommandée* et *Vigilance*. Haute valeur d'usage, faible coût. Dépend légèrement de la règle 1 (`CM.Html.escape()`) — décision à prendre au début du chantier : sécuriser à la même passe ou découpler.
+**Sécurité posée** (3 règles non-négociables documentées en tête du module `CM.Hash`) : regex stricte sur l'id, aucun réinjection dans le DOM, `rel="noopener noreferrer"` sur tout `target="_blank"` futur.
 
 **Instruction à porter dans 7.2 quand il sera ouvert** (validée le 20/04/2026) : le futur `CM.Stepper` générique devra accepter **un nombre variable d'étapes** (tableau ordonné). But : pouvoir activer plus tard 7.3 (type de décision en 4e étape) ou 7.4 (disponibilité des données en 5e étape) sans réécrire le stepper, seulement en ajoutant une entrée dans la liste. Consigné dans la colonne *Évolution* du 7.2 et dans ses points d'ancrage code.
 
-### File d'attente après 7.6 — ordre à trancher en fin de chantier 7.6
+### Prochaine session — ordre à trancher
 
-1. **6.7b — Enrichissement `familleInformelle`** (🟢). À activer si l'usage terrain confirme qu'on s'ampute de bonnes suggestions en excluant `generique` du calcul de voisinage.
-2. **6.7c — Cas particulier `generique`, bloc dédié** (🟡). Inversion éditoriale : *« Ces cadres spécifiques éclairent les mêmes indicateurs »*. Petit chantier cohérent à empiler sur 6.7a.
-3. **7.2 — Stepper générique extensible** (🟡). Chantier structurant, à coupler avec la symétrisation des portes *problème* et *niveau*.
+1. **Généraliser 7.6 à toutes les fiches** (🟢). Le patron technique est en place et démontré sur 4 fiches ; il reste une passe éditoriale pour repérer et enrichir les autres références croisées dans les champs `alt` et `risque` de toutes les fiches. Petit chantier de contenu, à vitesse constante.
+2. **6.7b — Enrichissement `familleInformelle`** (🟢). À activer si l'usage terrain confirme qu'on s'ampute de bonnes suggestions en excluant `generique` du calcul de voisinage.
+3. **6.7c — Cas particulier `generique`, bloc dédié** (🟡). Inversion éditoriale : *« Ces cadres spécifiques éclairent les mêmes indicateurs »*. Petit chantier cohérent à empiler sur 6.7a.
+4. **7.2 — Stepper générique extensible** (🟡). Chantier structurant, à coupler avec la symétrisation des portes *problème* et *niveau*.
 
-### Pistes alternatives si Lætitia préfère pivoter avant 7.6
+### Pistes alternatives
 
 - **Piste B — Greffe architecturale** (🟡) : migrer `NIVEAU_VERS_POSITION` et `FIABILITE_VERS_NIVEAU` vers `CM.Config` (Règle 2). Session courte, ~45 min.
 - **Piste C — Scission `lean` en `lean` + `six-sigma`** (🟢) : chantier reporté lors de 6.7 ; demande une revue des `META.cadres` sur une trentaine de fiches.
