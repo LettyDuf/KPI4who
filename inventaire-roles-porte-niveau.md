@@ -105,4 +105,94 @@ Chaque fiche rôle porte :
 
 ---
 
-*Trois niveaux restants à produire après validation de la calibration Opérationnel : Tactique (programme), Portefeuille, Exécutif (entreprise).*
+## Tactique — strate programme (horizon 1 à 2 ans)
+
+> Code interne `META.niveau = "programme"`. Libellé de surface *Tactique*.
+
+### 1. Release Train Engineer (RTE)
+
+- **Axes** : méthodologique, projet
+- **Source** : SAFe 6.0 (*Release Train Engineer*).
+- **Descriptif orthodoxe** : Chef d'orchestre d'un Agile Release Train, c'est-à-dire d'un ensemble d'équipes synchronisées (typiquement 5 à 12 équipes) qui livrent ensemble à un rythme trimestriel. Facilite la planification d'incréments de programme, lève les obstacles transverses entre équipes, assure la cadence et l'alignement avec les engagements de valeur.
+
+### 2. Coach en transformation
+
+- **Axes** : méthodologique, humaine
+- **Source** : ICAgile ICP-ENT (*Enterprise Coaching for Agility*), SAFe SPC (*SAFe Program Consultant*) ; Michael Sahota *Emerging Leadership* ; Kotter *Leading Change* pour la conduite du changement.
+- **Descriptif orthodoxe** : Accompagne une organisation ou un programme dans un changement d'ampleur vers un mode de fonctionnement plus agile ou plus lean. Intervient auprès des managers intermédiaires, des équipes et des communautés de pratique, mobilise la conduite du changement et la dynamique systémique. Mission typique de un à trois ans, centrée sur la structure et la culture organisationnelles.
+
+### 3. Product Manager (produit multi-équipes)
+
+- **Axes** : stratégique, projet
+- **Source** : Marty Cagan & Chris Jones *Empowered* ; SAFe 6.0 (*Product Manager*).
+- **Descriptif orthodoxe** : Responsable de la valeur d'un produit dont le périmètre dépasse une seule équipe. Arbitre la vision, les priorités et les engagements stratégiques du produit, tient la cohérence du parcours utilisateur à travers les équipes contributrices. Distinct du Product Owner par l'ampleur du produit, jamais par la séniorité de la personne.
+
+### 4. Business Owner
+
+- **Axes** : stratégique, projet
+- **Source** : SAFe 6.0 (*Business Owner*).
+- **Descriptif orthodoxe** : Représentant des parties prenantes exécutives au sein d'un Agile Release Train. Porte la responsabilité business de la livraison du programme, valide les engagements de valeur à chaque incrément, sponsorise les arbitrages d'investissement et de périmètre.
+
+### 5. Chef de programme
+
+- **Axes** : projet, stratégique
+- **Source** : PMBOK *Standard for Program Management* (PMI) ; *Managing Successful Programmes* (MSP / PRINCE2).
+- **Descriptif orthodoxe** : Coordonne un ensemble de projets interdépendants qui concourent à un bénéfice stratégique commun pour l'organisation. Responsable de la feuille de route du programme, de l'allocation des ressources entre projets, des arbitrages de périmètre et du reporting aux instances de direction.
+
+### 6. Chef de service / Responsable d'unité
+
+- **Axes** : humaine, stratégique
+- **Source** : Peter Drucker *The Practice of Management* ; Henry Mintzberg *Structure in Fives* (ligne hiérarchique intermédiaire) ; management classique.
+- **Descriptif orthodoxe** : Manager hiérarchique d'une unité rassemblant plusieurs équipes ou plusieurs métiers. Porte les décisions d'organisation de son périmètre — effectifs, trajectoires individuelles, budget de fonctionnement — et assure l'alignement sur les orientations de la direction générale.
+
+### 7. PMO (Project / Program Management Officer)
+
+- **Axes** : méthodologique, projet
+- **Source** : PMI *PMO Frameworks* ; Association for Project Management (APM) *Body of Knowledge*.
+- **Descriptif orthodoxe** : Garant des méthodes, des standards et du reporting à l'échelle d'un portefeuille de projets ou d'un programme. Outille les chefs de projet et de programme, consolide les indicateurs de pilotage, veille à la cohérence des pratiques sans se substituer aux décisions opérationnelles.
+
+### 8. Black Belt (Lean Six Sigma)
+
+- **Axes** : méthodologique, projet
+- **Source** : ASQ / IASSC Lean Six Sigma Body of Knowledge (niveau *Black Belt*).
+- **Descriptif orthodoxe** : Pilote des projets DMAIC transverses de grande ampleur, sur des problèmes complexes qui dépassent une seule équipe. Maîtrise les outils statistiques avancés (plans d'expérience, analyse de capabilité de processus), mentore les Green Belts et intervient pour le compte de plusieurs unités. Formation typique de 160 heures assortie de deux projets d'amélioration réels.
+
+### 9. Champion Lean Six Sigma
+
+- **Axes** : stratégique, humaine
+- **Source** : ASQ / IASSC Lean Six Sigma Body of Knowledge (rôle *Champion*).
+- **Descriptif orthodoxe** : Sponsor exécutif d'un portefeuille de projets Lean Six Sigma dans son périmètre. Sélectionne les chantiers d'amélioration prioritaires, alloue les ressources, lève les obstacles politiques, porte la visibilité des résultats auprès du comité de direction. Formation courte ciblée sur les enjeux de sponsorship.
+
+### 10. Value Stream Manager
+
+- **Axes** : méthodologique, projet, stratégique
+- **Source** : Mike Rother & John Shook *Learning to See* ; Jeffrey Liker *The Toyota Way* ; Mike Rother *Toyota Kata*.
+- **Descriptif orthodoxe** : Responsable d'une chaîne de valeur complète, du besoin client à sa satisfaction. Analyse le flux de bout en bout (cartographie VSM), identifie gaspillages et goulots, pilote des chantiers d'amélioration continue qui touchent plusieurs équipes ou fonctions. Posture typique aussi bien en industrie qu'en services.
+
+### 11. Architecte de solution
+
+- **Axes** : projet, méthodologique, stratégique
+- **Source** : TOGAF 9.2 (*Solution Architect*) ; SAFe 6.0 (*Solution Architect*).
+- **Descriptif orthodoxe** : Conçoit et garantit l'architecture d'une solution business de bout en bout, depuis les besoins fonctionnels jusqu'aux choix technologiques structurants. La solution traverse typiquement plusieurs systèmes applicatifs et plusieurs équipes. Dialogue étroit avec le chef de programme et le product manager pour arbitrer les compromis coût / délai / qualité structurelle.
+
+### 12. Architecte fonctionnel / organique
+
+- **Axes** : projet, méthodologique
+- **Source** : Urbanisation du SI — Christophe Longépé *Le projet d'urbanisation du SI* ; Club Urba-EA. BABOK v3 (IIBA) pour le volet fonctionnel.
+- **Descriptif orthodoxe** : Modélise les processus métier et leur traduction en capacités SI (volet *fonctionnel*), puis décompose le SI ou un bloc applicatif en composants, interfaces et flux techniques (volet *organique*). Certaines organisations distinguent nettement les deux rôles, d'autres les fusionnent en un seul architecte. Tradition francophone de l'urbanisation du SI, encore vivante dans le secteur public et les grandes DSI.
+
+### 13. Head of Data / Responsable données
+
+- **Axes** : stratégique, méthodologique
+- **Source** : DAMA-DMBOK (*Data Governance Council*) ; Thomas Davenport *Competing on Analytics*.
+- **Descriptif orthodoxe** : Porte la stratégie d'exploitation et de gouvernance des données à l'échelle d'un programme ou d'une direction métier. Définit les usages prioritaires, arbitre entre gouvernance, qualité et vélocité, outille les équipes data en standards et en plateforme. Interface avec les métiers sur la valeur attendue et avec la DSI sur la capacité technique.
+
+### 14. Directeur de service (fonction publique QC / CA)
+
+- **Axes** : humaine, stratégique
+- **Source** : Gouvernement du Québec — classification des cadres supérieurs ; gouvernement fédéral canadien — groupe *Executive* (EX-01 à EX-02).
+- **Descriptif orthodoxe** : Strate de gestion intermédiaire dans l'appareil d'État québécois ou fédéral canadien. Rattaché à un sous-ministre adjoint, il pilote un service ou une direction opérationnelle, porte les engagements du ministère sur son périmètre, et rend compte devant les instances de gouvernance publique. Horizon de pilotage annuel à biennal.
+
+---
+
+*Deux niveaux restants à produire : Portefeuille, Exécutif (entreprise).*
