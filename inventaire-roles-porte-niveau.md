@@ -279,4 +279,88 @@ Chaque fiche rôle porte :
 
 ---
 
-*Un niveau restant à produire : Exécutif (entreprise).*
+## Exécutif — strate entreprise (horizon 5 ans et plus)
+
+> Code interne `META.niveau = "entreprise"`. Libellé de surface *Exécutif*.
+
+### 1. Directeur général (CEO / PDG)
+
+- **Axes** : stratégique, humaine
+- **Source** : Peter Drucker *The Effective Executive* et *The Practice of Management* ; Jim Collins *Good to Great* (leadership de niveau 5) ; Alfred Chandler *Strategy and Structure*.
+- **Descriptif orthodoxe** : Responsable devant le conseil d'administration de la performance d'ensemble de l'organisation. Porte la mission, articule stratégie et structure, arbitre l'allocation des ressources entre directions, anime le comité de direction et incarne l'organisation devant ses parties prenantes externes. Variantes courantes : *CEO* (tradition anglo-saxonne) ; *PDG* (cumul présidence du conseil et direction générale, tradition française) ; *Directeur général* dans les modèles avec dissociation du Président du conseil.
+
+### 2. Directeur des opérations (COO)
+
+- **Axes** : humaine, projet, stratégique
+- **Source** : Harvard Business Review *Second in Command — The Misunderstood Role of the Chief Operating Officer* (Bennett & Miles, 2006) ; pratique industrielle des comités de direction américains.
+- **Descriptif orthodoxe** : Relaie le directeur général sur l'exécution opérationnelle de la stratégie. Porte la cohérence des chaînes de valeur, la productivité de l'organisation, l'intégration des directions métier autour de l'exécution. Rôle dont le périmètre varie fortement selon l'organisation — second du CEO sur tout, pilote exclusif du run, ou intégrateur des opérations après une croissance externe. Horizon pluriannuel.
+
+### 3. Directeur financier (CFO)
+
+- **Axes** : stratégique, méthodologique
+- **Source** : Peter Drucker *The Practice of Management* (contrôle de gestion) ; Anthony & Govindarajan *Management Control Systems* ; Charles Horngren *Cost Accounting*.
+- **Descriptif orthodoxe** : Responsable de la stratégie financière, du contrôle de gestion, de la structure du capital, du reporting financier et de la relation avec les analystes et les actionnaires. Instruit les décisions d'investissement et les arbitrages budgétaires devant le comité de direction. Horizon pluriannuel à mandat du conseil.
+
+### 4. Chief Product Officer (groupe multi-lignes)
+
+- **Axes** : stratégique, humaine
+- **Source** : Marty Cagan *Empowered — Ordinary People, Extraordinary Products* (product at scale) ; pratique des groupes produit multi-marchés.
+- **Descriptif orthodoxe** : Porte l'ensemble de l'activité produit d'un groupe opérant sur plusieurs lignes de business ou marchés distincts. Définit la vision produit consolidée, aligne les chefs de produit de chaque ligne, arbitre les investissements produit entre lignes, et rend compte au directeur général. Distinct du Chief Product Officer d'une ligne unique (posé en Portefeuille) par l'étendue du périmètre, pas par la personne. Horizon pluriannuel.
+
+### 5. Chief Technology Officer (CTO)
+
+- **Axes** : stratégique, méthodologique
+- **Source** : MIT Sloan *The CTO Handbook* ; Werner Vogels (Amazon) *All Things Distributed* ; James Stanier *Becoming a CTO*.
+- **Descriptif orthodoxe** : Porte la stratégie technologique du groupe — choix d'architecture à long terme, ambitions R&D, relation aux tendances technologiques (cloud, plateformes, IA). Interlocuteur du directeur général sur les arbitrages *construire, acheter, s'associer* en matière de capacités techniques, et sur la trajectoire d'innovation qui engage le groupe à cinq ans et plus. Distinct du CIO par l'orientation produit et innovation.
+
+### 6. Chief Information Officer (CIO / DSI groupe)
+
+- **Axes** : stratégique, humaine
+- **Source** : Gartner *CIO Agenda* ; Peter Weill & Jeanne Ross *IT Governance* ; CIGREF (référence francophone des DSI de grands comptes).
+- **Descriptif orthodoxe** : Dirige le système d'information du groupe — parc applicatif, infrastructures, *run* et *build*, relation aux directions métier sur leurs besoins numériques. Pilote un budget IT consolidé, une trajectoire d'urbanisation à l'échelle et la gouvernance des services partagés. Horizon pluriannuel. Distinct du CTO par l'orientation SI d'entreprise et opérations, quand le CTO porte la stratégie technologique et produit.
+
+### 7. Chief Architect
+
+- **Axes** : stratégique, méthodologique
+- **Source** : TOGAF ADM (*Chief Enterprise Architect*) ; International Association of Software Architects (IASA) *Chief Architect Forum* ; Zachman Framework.
+- **Descriptif orthodoxe** : Membre du comité de direction en charge de la cohérence architecturale d'ensemble — alignement de la trajectoire SI et technologique avec la stratégie d'affaires, arbitrage des standards et patterns à l'échelle du groupe, représentation de l'architecture devant les instances exécutives. Horizon pluriannuel à décennal. Distinct de l'Architecte d'entreprise (Portefeuille) par l'appartenance au comité de direction et le mandat stratégique direct, pas par l'expertise.
+
+### 8. Chief Information Security Officer (CISO)
+
+- **Axes** : stratégique, méthodologique
+- **Source** : NIST SP 800-53 *Security and Privacy Controls* ; ISO/IEC 27001 *Information Security Management Systems* ; Gartner *Security & Risk Management Leader*.
+- **Descriptif orthodoxe** : Porte la stratégie de sécurité de l'information du groupe — posture de risque, programme de cybersécurité, conformité aux cadres normatifs et réglementaires, relation aux régulateurs et aux autorités. Instruit les décisions d'arbitrage entre risque résiduel et coût de protection devant le comité de direction. Horizon pluriannuel, avec gestion de crise continue.
+
+### 9. Chief Human Resources Officer (CHRO / Chief People Officer)
+
+- **Axes** : humaine, stratégique
+- **Source** : Dave Ulrich *The HR Value Proposition* et *HR from the Outside In* ; SHRM *Body of Competency and Knowledge*.
+- **Descriptif orthodoxe** : Porte la stratégie humaine de l'organisation — modèle de talent, architecture des rôles, politique de rémunération et de développement, culture, dialogue social. Instruit les décisions d'arbitrage entre masse salariale, productivité et engagement devant le comité de direction. Horizon pluriannuel.
+
+### 10. Chief Data Officer (CDO, et Chief AI Officer émergent)
+
+- **Axes** : stratégique, méthodologique
+- **Source** : DAMA *Data Management Body of Knowledge (DMBOK)* ; *CDO Magazine* — *State of the CDO* ; MIT Sloan *Building the AI-Powered Organization*.
+- **Descriptif orthodoxe** : Porte la stratégie de valorisation des données et, de plus en plus, des capacités d'intelligence artificielle du groupe. Définit la trajectoire d'acculturation, les cadres de gouvernance des données, l'ambition analytique et les cas d'usage IA à enjeu stratégique. Variante émergente : *Chief AI Officer*, qui se distingue du CDO dans quelques organisations pionnières — distinction rarement stabilisée à ce jour, les deux rôles restent adjacents. Horizon pluriannuel.
+
+### 11. Chief Marketing Officer (CMO)
+
+- **Axes** : stratégique, humaine
+- **Source** : Philip Kotler *Marketing Management* ; Harvard Business Review *What Do CMOs Do?* ; CMO Council *State of Marketing Leadership*.
+- **Descriptif orthodoxe** : Porte la stratégie marketing de l'organisation — positionnement de marque, segmentation de marché, architecture des offres, plan média et relation client à l'échelle. Arbitre l'allocation du budget marketing entre marques, canaux et marchés devant le comité de direction. Horizon pluriannuel.
+
+### 12. Coach exécutif / Conseiller stratégique du CEO
+
+- **Axes** : méthodologique, humaine
+- **Source** : Marshall Goldsmith *What Got You Here Won't Get You There* ; Manfred Kets de Vries *The Leadership Mystique* ; International Coaching Federation (ICF) *Master Certified Coach*.
+- **Descriptif orthodoxe** : Accompagne individuellement le directeur général ou les membres du comité de direction dans leur exercice de direction — prise de recul, posture de leadership, arbitrages structurants, préparation des transitions. Posture d'accompagnement, pas d'exécution ni de décision. Horizon mandat, souvent contractuel et temporaire. Distinct du Coach Agile stratégique (Portefeuille) par le grain — la personne plutôt que l'organisation — et du Coach en transformation (Tactique) par la strate des personnes accompagnées.
+
+### 13. Sous-ministre en titre (SM / DM)
+
+- **Axes** : stratégique, humaine
+- **Source** : Gouvernement du Québec — classification des cadres supérieurs, *sous-ministre en titre* ; gouvernement fédéral canadien — *Deputy Minister* (DM), *Executive Group* niveaux DM-01 à DM-04.
+- **Descriptif orthodoxe** : Plus haut fonctionnaire d'un ministère, sous l'autorité directe du ministre. Dirige l'ensemble de l'appareil administratif du ministère, traduit les orientations politiques en programmes et en politiques publiques, rend des arbitrages structurants devant le Conseil exécutif et porte la représentation institutionnelle du ministère. Horizon mandat politique, strate charnière entre l'autorité politique et l'appareil administratif. Variantes : *Sous-ministre* (Québec, tradition française) et *Deputy Minister* (fédéral canadien, tradition anglo-saxonne) recouvrent le même rôle.
+
+---
+
+*Inventaire éditorial complet. Prochaine étape : 7.2a-code — extraction de `CM.Stepper` et construction de `CM.VuePorteNiveau` qui consomme cet inventaire.*
