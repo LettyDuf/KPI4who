@@ -774,6 +774,37 @@
       color: var(--ambre-texte); margin: 0;
     }
 
+    /* ═══ Chantier 7.6 — liens cliquables vers une autre fiche ═══
+       Cible uniquement les <a href="#fiche=xxx"> : style sobre, souligné
+       dotted indigo en lecture, hover en accent orange (solid).
+       Cmd/Ctrl+clic reste géré par le navigateur (nouvel onglet).
+       Règle posée ici une fois pour tout le fichier — pas de surcharge
+       à prévoir à chaque nouvel endroit où ce patron est utilisé. */
+    a[href^="#fiche="] {
+      color: var(--niv-1);
+      font-weight: 600;
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      cursor: pointer;
+      transition: color 0.18s ease, text-decoration-style 0.18s ease;
+    }
+    a[href^="#fiche="]:hover,
+    a[href^="#fiche="]:focus-visible {
+      color: var(--accent);
+      text-decoration-style: solid;
+    }
+    /* Dans l'encart vigilance (fond ambre), le lien adopte la teinte ambre
+       pour rester lisible sur fond doré — le hover reste accent orange. */
+    .fi-vigilance a[href^="#fiche="] {
+      color: var(--ambre-profond);
+    }
+    .fi-vigilance a[href^="#fiche="]:hover,
+    .fi-vigilance a[href^="#fiche="]:focus-visible {
+      color: var(--accent);
+    }
+
     /* ── Encart Terrain (Gemba) — triptyque par type d'indicateur ──
        Palette : ambre pâle / texte ambre foncé pour rester dans la grammaire pédagogique Lean.
        Distinct de .gemba-band (qui est utilisé sur l'accueil en fond indigo sombre). */
@@ -2938,7 +2969,7 @@ CM.Referentiel.ajouter([
     exemple_ent:'Bascule vers une stratégie produit « data-as-a-service ». Score ADKAR global à 52 % au T+2. Décomposition : conscience à 78 % (les gens ont compris), désir à 48 % (ils ne voient pas ce qu\'ils gagnent), capacité à 35 % (pas encore outillés). Conclusion board : la communication a fait son travail, mais le pourquoi individuel et les moyens d\'agir manquent. Ralentir le calendrier serait un mauvais réflexe ; renforcer l\'enveloppe formation et clarifier les contreparties individuelles est la bonne réponse stratégique.',
     exemple_eq:'Au niveau équipe, cette métrique n\'a pas sa place — les équipes ont leurs propres rituels de maturité au changement (rétrospectives, baromètres d\'équipe). Vigilance principale : ne <strong>jamais</strong> publier les scores ADKAR par équipe avec noms. Ce serait confondre « outil d\'éclairage du système » et « fiche de notation des managers », ce qui détruit la confiance et la qualité de la mesure.',
     risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Scoring individuel : appliquer ADKAR comme une évaluation des personnes (qui est au niveau 3, qui est au niveau 5). Déforme le modèle ADKAR qui est un diagnostic systémique, pas une fiche de notation. Repère Deming : 94 % des problèmes viennent du système, pas des personnes.">scoring individuel</span>, publication par équipe avec identification des managers, inclusion dans la rémunération variable (effet Goodhart garanti — les managers coachent la réponse à l\'enquête au lieu du changement lui-même), moyennes organisationnelles qui masquent des poches de blocage critique (toujours lire la distribution, pas la moyenne), confusion readiness et obéissance (un score bas peut signaler des questions légitimes non traitées). Vigilance coaching : un score ADKAR élevé peut masquer une <span class="term-def" data-def="Zone neutre (William Bridges) : période où l\'ancien est abandonné mais le nouveau n\'est pas encore incarné. Phase émotionnellement coûteuse, souvent invisible des indicateurs quantitatifs. Se manifeste par de la fatigue, de la confusion, une baisse de créativité.">zone neutre</span> collective non traversée (le deuil de l\'ancien avant l\'adoption du nouveau) — compléter par des groupes de parole et de l\'écoute terrain.',
-    alt:'Si l\'objectif est de mesurer la <strong>satisfaction au travail</strong> ou l\'<strong>engagement émotionnel</strong>, ce n\'est pas le bon indicateur — ADKAR mesure la préparation au changement, pas le bien-être. Préférer l\'indice de confiance organisationnelle (s8) ou un Happiness Index (Management 3.0), avec les mêmes précautions de non-individualisation.',
+    alt:'Si l\'objectif est de mesurer la <strong>satisfaction au travail</strong> ou l\'<strong>engagement émotionnel</strong>, ce n\'est pas le bon indicateur — ADKAR mesure la préparation au changement, pas le bien-être. Préférer l\'<a href="#fiche=s8">indice de confiance organisationnelle</a> ou un Happiness Index (Management 3.0), avec les mêmes précautions de non-individualisation.',
     roles:['direction'], prioritaire:true, fiabilite:'precaution', maturite_min:'intermediaire'
   },
   {
@@ -2950,7 +2981,7 @@ CM.Referentiel.ajouter([
     exemple_ent:'Turnover volontaire annuel à 11 %, en hausse de 3 points sur un an. Décomposition qualitative : 40 % des départs évoquent un manque de perspectives d\'évolution, 25 % un désaccord avec la direction stratégique, 20 % des raisons personnelles neutres, 15 % une meilleure offre externe. Conclusion board : la hausse n\'est pas un problème de « concurrence du marché » comme l\'hypothèse initiale le suggérait — c\'est un problème interne de lisibilité du chemin de progression et d\'adhésion à la stratégie. Action stratégique à prévoir, pas ajustement salarial ponctuel.',
     exemple_eq:'Au niveau équipe, ce chiffre doit être manipulé avec une extrême précaution. Un manager peut avoir 20 % de turnover parce qu\'il est <em>transparent</em> sur des départs négociés que d\'autres cachent — sanctionner ce chiffre encourage l\'opacité. Si l\'indicateur descend au niveau équipe, c\'est <strong>toujours</strong> avec entretien qualitatif, jamais en comparaison entre équipes ni en évaluation managériale.',
     risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Cible à 0 % de turnover : garantit un système sclérosé, sans renouvellement de compétences, sans mobilité, sans énergie nouvelle. Un taux sain se situe dans une fourchette par secteur, pas à zéro.">cible à zéro</span> (système sclérosé), lecture du chiffre brut sans entretiens qualitatifs (compteur sans boussole), usage en évaluation individuelle des managers (garantit l\'opacité — le manager transparent est pénalisé), confusion volontaire/subi (à distinguer absolument), absence de décomposition par profil (les talents critiques noyés dans la moyenne), <span class="term-def" data-def="Effet porte tournante inversé : turnover très faible par rétention malsaine (plafond de verre, peur, dépendance) plutôt que par engagement. Un turnover à 2 % peut signaler que plus personne n\'ose partir — c\'est une alarme, pas un succès.">effet porte tournante inversé</span> (un turnover très bas peut signaler que personne n\'ose partir, pas que tout va bien). <span class="term-def" data-def="Principe de Goodhart appliqué : viser un taux cible pousse à reclasser les départs (en fin de contrat, en départ subi, en mobilité interne fictive) plutôt qu\'à traiter les causes.">Effet Goodhart</span> : viser un taux cible pousse à reclasser les départs plutôt qu\'à traiter les causes.',
-    alt:'Si l\'objectif est de mesurer la <strong>santé actuelle</strong> du climat (indicateur avancé), ce n\'est pas le bon indicateur — le turnover arrive après coup. Préférer l\'indice de confiance organisationnelle (s8) ou un baromètre d\'engagement. À coupler systématiquement.',
+    alt:'Si l\'objectif est de mesurer la <strong>santé actuelle</strong> du climat (indicateur avancé), ce n\'est pas le bon indicateur — le turnover arrive après coup. Préférer l\'<a href="#fiche=s8">indice de confiance organisationnelle</a> ou un baromètre d\'engagement. À coupler systématiquement.',
     roles:['direction'], prioritaire:true, fiabilite:'precaution', maturite_min:'debutant'
   },
   {
@@ -3158,7 +3189,7 @@ CM.Referentiel.ajouter([
     frequence:'Trimestrielle — revue lors du comité de programme',
     exemple_ent:'Sur les 6 livraisons majeures du dernier trimestre, 4 ont été acceptées sans reprise, 2 ont nécessité des ajustements fonctionnels significatifs avant validation. Taux d\'acceptation au premier passage : 67 %. Lecture honnête : les 2 livraisons qui ont demandé des reprises partagent un point commun — le commanditaire n\'avait pas pu assister aux démonstrations intermédiaires. La conclusion programme n\'est pas « les équipes doivent faire mieux » mais « nos rituels de démonstration doivent s\'ajuster aux agendas commanditaires ».',
     exemple_eq:'Au niveau équipe, ce taux ne se mesure pas directement — il se décline en taux d\'acceptation des incréments par le responsable produit ou en qualité des revues de sprint. Vigilance principale : éviter qu\'il redescende sous forme de pression (« pourquoi votre incrément n\'a pas été accepté ? »). L\'équipe pilote ce qu\'elle maîtrise (qualité de la démonstration, clarté de la définition de « fini ») ; la clarté des attentes et l\'assiduité du commanditaire relèvent du programme.',
-    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Définition de « fini » négociée à la baisse en fin de livraison pour afficher un taux d\'acceptation élevé. Effet Goodhart classique : la métrique devient un objectif, on optimise l\'indicateur au lieu d\'améliorer l\'intention de qualité partagée.">définition de « fini » ajustée à la baisse</span> sous pression de calendrier, acceptation diplomatique sous contrainte suivie de demandes de correctifs en sous-marin, comptage comme « accepté au premier passage » d\'une livraison validée après trois vagues de retouches, usage <strong>descendant et accusatoire</strong> de la métrique (« pourquoi vos équipes n\'ont pas livré bon du premier coup ? ») — qui retourne l\'indicateur contre les équipes au lieu d\'éclairer le système de cadrage. <span class="term-def" data-def="Principe de Goodhart : dès qu\'une mesure devient un objectif, elle cesse d\'être une bonne mesure. Ici, viser un taux d\'acceptation élevé comme objectif pousse à négocier la définition de « fini » à la baisse plutôt qu\'à améliorer le cadrage.">Effet Goodhart</span> garanti si l\'on fixe une cible sans réviser les règles d\'acceptation. À lire toujours avec le taux de reprise post-livraison (p7) pour vérifier qu\'une acceptation « au premier passage » n\'est pas suivie de reprises silencieuses dans les mois qui suivent.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Définition de « fini » négociée à la baisse en fin de livraison pour afficher un taux d\'acceptation élevé. Effet Goodhart classique : la métrique devient un objectif, on optimise l\'indicateur au lieu d\'améliorer l\'intention de qualité partagée.">définition de « fini » ajustée à la baisse</span> sous pression de calendrier, acceptation diplomatique sous contrainte suivie de demandes de correctifs en sous-marin, comptage comme « accepté au premier passage » d\'une livraison validée après trois vagues de retouches, usage <strong>descendant et accusatoire</strong> de la métrique (« pourquoi vos équipes n\'ont pas livré bon du premier coup ? ») — qui retourne l\'indicateur contre les équipes au lieu d\'éclairer le système de cadrage. <span class="term-def" data-def="Principe de Goodhart : dès qu\'une mesure devient un objectif, elle cesse d\'être une bonne mesure. Ici, viser un taux d\'acceptation élevé comme objectif pousse à négocier la définition de « fini » à la baisse plutôt qu\'à améliorer le cadrage.">Effet Goodhart</span> garanti si l\'on fixe une cible sans réviser les règles d\'acceptation. À lire toujours avec le <a href="#fiche=p7">taux de reprise post-livraison</a> pour vérifier qu\'une acceptation « au premier passage » n\'est pas suivie de reprises silencieuses dans les mois qui suivent.',
     alt:'Si l\'objectif est de mesurer la <strong>conformité technique</strong> d\'une livraison, ce n\'est pas le bon indicateur — préférer les indicateurs d\'équipe (o3 Taux d\'échec de changement, o8 Défauts échappés, ti-d*). Ce taux mesure l\'<strong>alignement commanditaire/delivery</strong>, pas la qualité interne du produit.',
     roles:['programme','portefeuille'], prioritaire:true, fiabilite:'precaution', maturite_min:'intermediaire'
   },
@@ -3200,7 +3231,7 @@ CM.Referentiel.ajouter([
     frequence:'Continue — revue hebdomadaire',
     exemple_ent:'Passage d\'un Lead Time de 3 semaines à 48h pour les correctifs critiques — résultat d\'une refonte des étapes de revue et d\'un pipeline CI/CD automatisé. À croiser avec le délai <em>idéation → valeur</em> pour mesurer l\'impact métier.',
     exemple_eq:'Un Lead Time court indique un pipeline fluide côté ingénierie. Si le Lead Time est à 2 jours mais qu\'il faut 3 mois pour qu\'une demande utilisateur soit priorisée, le goulet est en amont — l\'indicateur DORA ne le voit pas.',
-    risque:'Un Lead Time court obtenu au prix de tests précipités, de revues superficielles ou de découpage artificiel dégrade la qualité — croiser systématiquement avec le <strong>taux d\'échec (o3)</strong>. Ne pas confondre avec « on livre de la valeur plus vite » : la valeur suppose aussi adoption et impact, qui se mesurent avec des indicateurs d\'<span class="term-def" data-def="Résultat réellement constaté côté utilisateur ou métier (adoption, satisfaction, conversion), par opposition à l\'output — ce que l\'équipe produit.">outcome</span>.',
+    risque:'Un Lead Time court obtenu au prix de tests précipités, de revues superficielles ou de découpage artificiel dégrade la qualité — croiser systématiquement avec le <a href="#fiche=o3"><strong>taux d\'échec</strong></a>. Ne pas confondre avec « on livre de la valeur plus vite » : la valeur suppose aussi adoption et impact, qui se mesurent avec des indicateurs d\'<span class="term-def" data-def="Résultat réellement constaté côté utilisateur ou métier (adoption, satisfaction, conversion), par opposition à l\'output — ce que l\'équipe produit.">outcome</span>.',
     roles:['chef-équipe','membre-équipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'intermediaire',
     branche:'ti', domaine:'dev'
   },
