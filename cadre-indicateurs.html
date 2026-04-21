@@ -2345,6 +2345,74 @@ CM.Html = (function() {
 })();
 </script>
 
+<!-- ══ MODULE : CM.Hash — Deep linking (URL ↔ fiche affichée) ══
+     Port hexagonal : l'app ignore le format du hash. Elle lit/écrit
+     l'id de fiche via cette interface. Si demain le format change
+     (ex: query string, history.pushState, fragment plus riche), seul
+     ce module change.
+
+     ═══ SÉCURITÉ — 3 règles non-négociables ═══
+     1. L'id du hash est validé par une regex stricte (ID_VALIDE).
+        Toute chaîne hors de ce jeu de caractères est REJETÉE — retour
+        null, aucune action. Cela ferme le vecteur d'attaque
+        « URL piégée envoyée à l'utilisateur » (ex: hash contenant du
+        balisage HTML avec onerror).
+     2. Le hash n'est JAMAIS réinjecté tel quel dans le DOM. Il sert
+        UNIQUEMENT de clé de lookup pour CM.Referentiel.chercher().
+        Si l'id existe, la fiche est rendue depuis les données internes
+        de confiance ; sinon, silence.
+     3. Les liens <a target="_blank"> (générés par Cmd/Ctrl+clic du
+        navigateur) doivent porter rel="noopener noreferrer" pour
+        prévenir le tabnabbing. Convention à appliquer partout où
+        target="_blank" est utilisé dans l'app.
+     ════════════════════════════════════════════ -->
+<script>
+CM.Hash = (function() {
+  'use strict';
+
+  /* Regex stricte : seuls les caractères autorisés pour un id de fiche
+     (ex: p5, ti-d2, x4, s8). 1 à 20 caractères, minuscules+chiffres+tiret. */
+  var ID_VALIDE = /^[a-z0-9-]{1,20}$/;
+  var PREFIX    = '#fiche=';
+
+  /* lireFicheId() : retourne l'id si le hash courant est valide, sinon null.
+     Exemple : location.hash = '#fiche=ti-d2' → 'ti-d2'.
+     Exemple : location.hash = '#fiche=<script>' → null (regex rejette). */
+  function lireFicheId() {
+    if (location.hash.indexOf(PREFIX) !== 0) return null;
+    var id = location.hash.slice(PREFIX.length);
+    return ID_VALIDE.test(id) ? id : null;
+  }
+
+  /* ecrireFicheId(id) : met à jour l'URL sans polluer l'historique
+     (replaceState plutôt que pushState — éviter que chaque ouverture
+     de fiche crée une entrée dans le bouton « retour » du navigateur). */
+  function ecrireFicheId(id) {
+    if (!id || !ID_VALIDE.test(id)) return;
+    try {
+      history.replaceState(null, '', PREFIX + id);
+    } catch (e) {
+      /* Contexte file:// sur certains navigateurs anciens : pas bloquant. */
+    }
+  }
+
+  /* effacer() : retire le fragment de fiche de l'URL quand le tiroir se ferme. */
+  function effacer() {
+    try {
+      history.replaceState(null, '', location.pathname + location.search);
+    } catch (e) {
+      /* idem : fallback silencieux. */
+    }
+  }
+
+  return {
+    lireFicheId:   lireFicheId,
+    ecrireFicheId: ecrireFicheId,
+    effacer:       effacer
+  };
+})();
+</script>
+
 <!-- ══ MODULE : CM.Referentiel — Stockage et requête des indicateurs ══ -->
 <script>
 CM.Referentiel = (function() {
@@ -4459,6 +4527,7 @@ CM.Composants = (function() {
   }
 
   // ouvrirTiroir(id) : orchestration — récupère la donnée, délègue le rendu HTML, ouvre le tiroir, gère le focus.
+  // Synchronise l'URL avec la fiche affichée (deep linking — chantier 7.6).
   function ouvrirTiroir(id) {
     var ind = CM.Referentiel.chercher(id);
     if (!ind) return;
@@ -4468,6 +4537,8 @@ CM.Composants = (function() {
     document.getElementById('tiroir').setAttribute('aria-hidden', 'false');
     /* Reset scroll en haut */
     document.getElementById('tiroir').scrollTop = 0;
+    /* Synchro URL : la fiche courante est dans le hash (partage + favoris + Cmd+clic). */
+    CM.Hash.ecrireFicheId(id);
     setTimeout(function() { var b = document.querySelector('.btn-fermer'); if (b) b.focus(); }, 300);
   }
 
@@ -4475,6 +4546,8 @@ CM.Composants = (function() {
     document.getElementById('fond-tiroir').classList.remove('ouvert');
     document.getElementById('tiroir').classList.remove('ouvert');
     document.getElementById('tiroir').setAttribute('aria-hidden', 'true');
+    /* Synchro URL : plus de fiche affichée, le hash est nettoyé. */
+    CM.Hash.effacer();
   }
 
   return { htmlCarte: htmlCarte, rendreFicheHtml: rendreFicheHtml, ouvrirTiroir: ouvrirTiroir, fermerTiroir: fermerTiroir };
@@ -5643,6 +5716,40 @@ CM.App = (function() {
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') CM.Composants.fermerTiroir();
     });
+
+    /* ═══ Chantier 7.6 — Liens cliquables vers les fiches du référentiel ═══
+       Event delegation globale : un clic SIMPLE sur un <a href="#fiche=xxx">
+       est intercepté, transformé en ouvrirTiroir(xxx) sans rechargement.
+       Un Cmd/Ctrl+clic (ou clic molette, ou shift+clic) passe à travers
+       l'intercepteur : le navigateur ouvre alors un nouvel onglet via le
+       mécanisme standard du web — c'est le comportement attendu pour
+       lire deux fiches côte à côte (cf. décision UX 2026-04-20).
+
+       SÉCURITÉ (cf. CM.Hash) : l'id issu du href n'est JAMAIS réinjecté
+       en HTML. Il passe uniquement en argument de ouvrirTiroir(), qui
+       appelle CM.Referentiel.chercher() — si l'id est invalide ou
+       inexistant, rien ne se passe. Pas de vecteur XSS par URL piégée. */
+    document.addEventListener('click', function(e) {
+      var a = e.target.closest('a[href^="#fiche="]');
+      if (!a) return;
+      /* Laisser passer : nouvel onglet via modifier keys ou clic auxiliaire. */
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      var id = a.getAttribute('href').slice('#fiche='.length);
+      /* Défense en profondeur : on passe par le lookup du référentiel.
+         Si l'id ne correspond à aucune fiche (cible absente, cas validé
+         le 2026-04-20 : silence éditorial), ouvrirTiroir ne fait rien. */
+      CM.Composants.ouvrirTiroir(id);
+    });
+
+    /* Deep linking au démarrage : si l'URL pointe déjà sur une fiche
+       (partage de lien, favori, rechargement de page, Cmd+clic précédent),
+       ouvrir la fiche automatiquement. Le lookup CM.Referentiel.chercher()
+       dans ouvrirTiroir() garantit qu'un id fantaisiste ne déclenche rien. */
+    var idInitial = CM.Hash.lireFicheId();
+    if (idInitial) {
+      CM.Composants.ouvrirTiroir(idInitial);
+    }
   }
 
   /* API publique */
