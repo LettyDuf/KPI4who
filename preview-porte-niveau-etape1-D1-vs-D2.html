@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Preview — Porte niveau · étape 1 · D1 vs D2</title>
+<style>
+  /* ══════════════════════════════════════════════
+     Tokens — identiques à cadre-indicateurs.html
+     (copiés depuis :root lignes 11-64 du fichier réel)
+  ══════════════════════════════════════════════ */
+  :root {
+    --niv-1:        #1a237e;
+    --niv-1-clair:  #e8eaf6;
+    --niv-1-moyen:  #3949ab;
+    --niv-2:        #01579b;
+    --niv-2-clair:  #e1f5fe;
+    --niv-2-moyen:  #0288d1;
+    --niv-3:        #004d40;
+    --niv-3-clair:  #e0f2f1;
+    --niv-3-moyen:  #00897b;
+    --accent:       #e65100;
+    --fond:         #f5f6fa;
+    --fond-2:       #ffffff;
+    --texte:        #1a1a2e;
+    --texte-2:      #607d8b;
+    --bordure:      #e0e4eb;
+    --ombre:        0 2px 12px rgba(26,35,126,0.08);
+    --ombre-forte:  0 8px 32px rgba(26,35,126,0.14);
+    --rayon:        14px;
+    --trans:        0.22s ease;
+    --fs-meta: 0.75rem;
+    --fs-sm:   0.875rem;
+    --fs-base: 1rem;
+    --lh-tight:   1.2;
+    --lh-normal:  1.5;
+    --lh-relaxed: 1.55;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'Segoe UI', system-ui, 'Helvetica Neue', sans-serif;
+    background: var(--fond); color: var(--texte);
+    font-size: 15px; line-height: 1.6;
+    padding: 1.5rem 2rem 3rem;
+  }
+
+  /* En-tête du preview — repérage, pas un vrai header de l'outil */
+  .preview-entete {
+    max-width: 1200px; margin: 0 auto 1.25rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--bordure);
+  }
+  .preview-entete h1 {
+    font-size: 1.05rem; font-weight: 800; color: var(--niv-1);
+    letter-spacing: -0.2px;
+  }
+  .preview-entete p {
+    font-size: var(--fs-sm); color: var(--texte-2);
+    margin-top: 0.35rem;
+  }
+
+  /* Grille deux colonnes pour la comparaison D1 / D2 */
+  .grille-comparaison {
+    max-width: 1400px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.75rem;
+    align-items: start;
+  }
+  @media (max-width: 1100px) {
+    .grille-comparaison { grid-template-columns: 1fr; }
+  }
+
+  .colonne-mockup {
+    background: var(--fond-2);
+    border: 1px solid var(--bordure);
+    border-radius: var(--rayon);
+    padding: 1.5rem 1.5rem 1.75rem;
+    box-shadow: var(--ombre);
+  }
+  .colonne-mockup > .etiquette-variante {
+    display: inline-flex; align-items: baseline; gap: 0.5rem;
+    font-size: 0.72rem; font-weight: 800; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 0.85rem;
+  }
+  .colonne-mockup > .etiquette-variante .variante-sous {
+    font-size: 0.7rem; letter-spacing: 0.3px;
+    text-transform: none; color: var(--texte-2);
+    font-weight: 500;
+  }
+
+  /* ══════════════════════════════════════════════
+     Cadre de l'étape 1 (porte niveau)
+  ══════════════════════════════════════════════ */
+  .etape-titre {
+    font-size: 1.08rem; font-weight: 700;
+    margin: 0.4rem 0 0.35rem; color: var(--texte);
+  }
+  .etape-aide {
+    font-size: var(--fs-sm); color: var(--texte-2);
+    margin-bottom: 1rem;
+  }
+
+  /* ══════════════════════════════════════════════
+     Accordéon — repris de #vue-porte-cadre .famille-accordeon
+     (lignes 1357-1427 du fichier réel)
+  ══════════════════════════════════════════════ */
+  .niv-accordeon {
+    position: relative;
+    background: var(--fond-2);
+    border: 1px solid var(--bordure);
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+    --niv-teinte: #78909c;
+    --niv-fond: var(--fond-2);
+  }
+  .niv-accordeon::before {
+    content: ''; position: absolute;
+    left: 0; top: 0; bottom: 0; width: 4px;
+    background: var(--niv-teinte);
+  }
+  /* Teintes par niveau — palette cohérente avec la pyramide actuelle (lignes 328-330 + 356) */
+  .niv-accordeon.niv-operationnel { --niv-teinte: #00897b; }  /* turquoise — équipe */
+  .niv-accordeon.niv-tactique     { --niv-teinte: #00acc1; }  /* cyan — programme */
+  .niv-accordeon.niv-portefeuille { --niv-teinte: #0288d1; }  /* bleu — portefeuille */
+  .niv-accordeon.niv-executif     { --niv-teinte: #3949ab; }  /* indigo — entreprise */
+
+  .niv-titre {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; gap: 0.9rem;
+    padding: 0.95rem 1.1rem 0.95rem 1.35rem;
+    background: var(--niv-fond);
+    font-weight: 700; color: var(--niv-1);
+    transition: background 0.2s ease;
+    user-select: none;
+  }
+  .niv-titre::-webkit-details-marker { display: none; }
+  .niv-titre:hover {
+    background: color-mix(in srgb, var(--niv-fond) 80%, var(--niv-teinte) 15%);
+  }
+  .niv-titre-libelle {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 0.15rem;
+  }
+  .niv-titre-nom { font-size: 0.98rem; letter-spacing: -0.2px; }
+  .niv-titre-alias {
+    font-size: 0.74rem; font-weight: 500; color: var(--texte-2);
+    letter-spacing: 0.1px;
+  }
+  .niv-chevron {
+    margin-left: auto;
+    width: 1.75rem; height: 1.75rem;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #eceff1;
+    border: 1px solid transparent; border-radius: 50%;
+    color: var(--niv-1);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background 0.2s ease, border-color 0.2s ease;
+    flex-shrink: 0;
+  }
+  details[open] > .niv-titre .niv-chevron {
+    transform: rotate(180deg);
+    background: var(--niv-1-clair);
+    border-color: var(--niv-1-moyen);
+  }
+  .niv-chevron svg { display: block; }
+
+  .niv-corps {
+    padding: 0.9rem 1.1rem 1.1rem 1.35rem;
+    background: var(--fond);
+    border-top: 1px solid var(--bordure);
+  }
+  .niv-contexte {
+    font-size: var(--fs-sm); color: var(--texte-2);
+    margin-bottom: 0.9rem; line-height: var(--lh-relaxed);
+    font-style: italic;
+  }
+  .niv-roles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+  }
+
+  /* ══════════════════════════════════════════════
+     Tuile de rôle — reprend le langage .option-btn
+     de la porte cadre (lignes 1430-1449)
+  ══════════════════════════════════════════════ */
+  .role-tuile {
+    padding: 0.85rem 0.9rem;
+    border: 2px solid var(--bordure); border-radius: 12px;
+    background: var(--fond-2); cursor: pointer; text-align: left;
+    transition: var(--trans); color: var(--texte); font-family: inherit;
+    display: flex; flex-direction: column; gap: 0.45rem;
+  }
+  .role-tuile:hover {
+    border-color: var(--niv-teinte, var(--niv-2-moyen));
+    transform: translateY(-1px); box-shadow: var(--ombre);
+  }
+  .role-tuile:focus-visible {
+    outline: 2px solid var(--niv-teinte, var(--niv-2)); outline-offset: 2px;
+  }
+  .role-nom {
+    font-size: 0.92rem; font-weight: 700; line-height: 1.25;
+    color: var(--texte);
+  }
+  .role-desc {
+    font-size: 0.78rem; color: var(--texte-2);
+    line-height: var(--lh-relaxed);
+  }
+  .role-qualificatif {
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.3px;
+    color: var(--texte-2); text-transform: uppercase;
+    margin-top: 0.15rem;
+  }
+
+  /* ══════════════════════════════════════════════
+     Chips d'axes de responsabilité
+  ══════════════════════════════════════════════ */
+  .chips-axes {
+    display: flex; flex-wrap: wrap; gap: 0.35rem;
+    margin-top: 0.1rem;
+  }
+  .chip-axe {
+    display: inline-flex; align-items: center;
+    padding: 0.15rem 0.55rem;
+    border-radius: 20px;
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.3px;
+    border: 1px solid transparent;
+    text-transform: lowercase;
+  }
+  /* D1 et D2 partagent les mêmes 2 axes humaine/projet, couleurs identiques */
+  .chip-humaine {
+    background: #fce4ec; color: #880e4f; border-color: #f8bbd0;
+  }
+  .chip-projet {
+    background: #e3f2fd; color: #0d47a1; border-color: #bbdefb;
+  }
+  /* D2 ajoute méthodologique et stratégique */
+  .chip-methodo {
+    background: #e0f2f1; color: #004d40; border-color: #b2dfdb;
+  }
+  .chip-strategique {
+    background: #fff3e0; color: #bf360c; border-color: #ffe0b2;
+  }
+
+  /* Légende d'axes en pied de colonne */
+  .legende-axes {
+    margin-top: 1.25rem;
+    padding: 0.75rem 0.9rem;
+    border-top: 1px dashed var(--bordure);
+    font-size: 0.78rem;
+    color: var(--texte-2);
+    line-height: var(--lh-relaxed);
+  }
+  .legende-axes strong { color: var(--texte); font-weight: 700; }
+  .legende-axes .chip-axe { margin: 0 0.25rem; vertical-align: baseline; }
+
+  /* Note pédagogique sous la grille comparative */
+  .note-preview {
+    max-width: 1200px; margin: 1.75rem auto 0;
+    background: var(--niv-3-clair); border-left: 4px solid var(--niv-3-moyen);
+    padding: 0.95rem 1.2rem; border-radius: 0 10px 10px 0;
+    font-size: var(--fs-sm); line-height: var(--lh-relaxed);
+    color: var(--niv-3);
+  }
+  .note-preview strong { font-weight: 800; }
+  .note-preview em { color: var(--texte); font-style: normal; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="preview-entete">
+  <h1>Preview — Porte niveau · étape 1 · grille D à arbitrer</h1>
+  <p>
+    Mise en regard fidèle (tokens CSS identiques à <code>cadre-indicateurs.html</code>). Même structure d'accordéon, mêmes rôles dans les deux colonnes — seuls <strong>les descriptifs d'axe changent</strong>. Cliquez sur chaque cartouche pour la déplier. Ouvrez Tactique en premier, c'est là que la différence D1 / D2 est la plus parlante.
+  </p>
+</div>
+
+<div class="grille-comparaison">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       COLONNE GAUCHE — D1 : axe binaire humaine / projet
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="colonne-mockup">
+    <div class="etiquette-variante">
+      D1 · binaire
+      <span class="variante-sous">humaine ou projet, un seul axe par rôle</span>
+    </div>
+
+    <h2 class="etape-titre">À quel niveau jouez-vous ?</h2>
+    <p class="etape-aide">Ouvrez le cartouche qui vous ressemble, puis cliquez le rôle dans lequel vous vous reconnaissez.</p>
+
+    <!-- Opérationnel -->
+    <details class="niv-accordeon niv-operationnel">
+      <summary class="niv-titre">
+        <div class="niv-titre-libelle">
+          <span class="niv-titre-nom">Opérationnel</span>
+          <span class="niv-titre-alias">Niveau équipe · horizon 1 jour à 1 an</span>
+        </div>
+        <span class="niv-chevron" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5,8 10,13 15,8"/></svg>
+        </span>
+      </summary>
+      <div class="niv-corps">
+        <p class="niv-contexte">Tâches du jour, du sprint, du trimestre. On livre, on règle les obstacles, on tient la promesse de l'équipe.</p>
+        <div class="niv-roles">
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Scrum Master</span>
+            <span class="role-desc">Facilite une équipe Agile, protège le flux, lève les obstacles.</span>
+            <div class="chips-axes"><span class="chip-axe chip-projet">projet</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Chef d'équipe</span>
+            <span class="role-desc">Encadre une équipe hiérarchique, porte les entretiens annuels.</span>
+            <div class="chips-axes"><span class="chip-axe chip-humaine">humaine</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">PO (équipe)</span>
+            <span class="role-desc">Priorise le backlog d'une équipe, tranche sur les tickets.</span>
+            <div class="chips-axes"><span class="chip-axe chip-projet">projet</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Ceinture verte</span>
+            <span class="role-desc">Conduit un projet Lean Six Sigma à l'échelle d'un service.</span>
+            <div class="chips-axes"><span class="chip-axe chip-projet">projet</span></div>
+          </button>
+        </div>
+      </div>
+    </details>
+
+    <!-- Tactique — ouvert par défaut pour montrer la différence -->
+    <details class="niv-accordeon niv-tactique" open>
+      <summary class="niv-titre">
+        <div class="niv-titre-libelle">
+          <span class="niv-titre-nom">Tactique</span>
+          <span class="niv-titre-alias">Niveau programme · horizon 1 à 2 ans</span>
+        </div>
+        <span class="niv-chevron" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5,8 10,13 15,8"/></svg>
+        </span>
+      </summary>
+      <div class="niv-corps">
+        <p class="niv-contexte">Plusieurs équipes à synchroniser, un produit ou un train à tenir, les trimestres qui s'enchaînent sans perdre la direction.</p>
+        <div class="niv-roles">
+          <button class="role-tuile" type="button">
+            <span class="role-nom">RTE</span>
+            <span class="role-desc">Release Train Engineer — orchestre un Agile Release Train.</span>
+            <div class="chips-axes"><span class="chip-axe chip-projet">projet</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">PO senior · PM produit</span>
+            <span class="role-desc">Porte un produit sur plusieurs équipes, arbitre la roadmap.</span>
+            <span class="role-qualificatif">aussi listé en Opérationnel (PO équipe)</span>
+            <div class="chips-axes"><span class="chip-axe chip-projet">projet</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Coordinateur de livraison</span>
+            <span class="role-desc">Synchronise plusieurs équipes sur un livrable partagé.</span>
+            <div class="chips-axes"><span class="chip-axe chip-projet">projet</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Ceinture noire</span>
+            <span class="role-desc">Conduit des projets Lean Six Sigma complexes, forme les ceintures vertes.</span>
+            <div class="chips-axes"><span class="chip-axe chip-projet">projet</span></div>
+          </button>
+        </div>
+      </div>
+    </details>
+
+    <!-- Portefeuille -->
+    <details class="niv-accordeon niv-portefeuille">
+      <summary class="niv-titre">
+        <div class="niv-titre-libelle">
+          <span class="niv-titre-nom">Portefeuille</span>
+          <span class="niv-titre-alias">Niveau portefeuille · horizon 2 à 5 ans</span>
+        </div>
+        <span class="niv-chevron" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5,8 10,13 15,8"/></svg>
+        </span>
+      </summary>
+      <div class="niv-corps">
+        <p class="niv-contexte">Plusieurs initiatives en parallèle, des budgets pluriannuels, la capacité globale de livraison à tenir.</p>
+        <div class="niv-roles">
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Directeur de programme</span>
+            <span class="role-desc">Arbitre entre plusieurs initiatives majeures, tient les jalons.</span>
+            <div class="chips-axes"><span class="chip-axe chip-projet">projet</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Portfolio Manager</span>
+            <span class="role-desc">Gère un portefeuille d'investissements stratégiques.</span>
+            <div class="chips-axes"><span class="chip-axe chip-projet">projet</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Architecte d'entreprise</span>
+            <span class="role-desc">Aligne les capacités techniques sur la stratégie.</span>
+            <div class="chips-axes"><span class="chip-axe chip-projet">projet</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">VP Delivery</span>
+            <span class="role-desc">Pilote la capacité de livraison globale à l'échelle.</span>
+            <div class="chips-axes"><span class="chip-axe chip-humaine">humaine</span></div>
+          </button>
+        </div>
+      </div>
+    </details>
+
+    <!-- Exécutif -->
+    <details class="niv-accordeon niv-executif">
+      <summary class="niv-titre">
+        <div class="niv-titre-libelle">
+          <span class="niv-titre-nom">Exécutif</span>
+          <span class="niv-titre-alias">Niveau entreprise · horizon 5 ans et plus</span>
+        </div>
+        <span class="niv-chevron" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5,8 10,13 15,8"/></svg>
+        </span>
+      </summary>
+      <div class="niv-corps">
+        <p class="niv-contexte">La mission, le modèle économique, l'identité de l'entreprise. On décide de la direction, pas des chemins.</p>
+        <div class="niv-roles">
+          <button class="role-tuile" type="button">
+            <span class="role-nom">DG · CEO</span>
+            <span class="role-desc">Décide de la mission et des grandes orientations.</span>
+            <div class="chips-axes"><span class="chip-axe chip-humaine">humaine</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">CTO · CPO · CFO</span>
+            <span class="role-desc">Pilote une fonction clé au comex, membre de la direction.</span>
+            <div class="chips-axes"><span class="chip-axe chip-humaine">humaine</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Directeur général adjoint</span>
+            <span class="role-desc">Déploie la stratégie d'un pôle ou d'une filière.</span>
+            <div class="chips-axes"><span class="chip-axe chip-humaine">humaine</span></div>
+          </button>
+        </div>
+      </div>
+    </details>
+
+    <div class="legende-axes">
+      <strong>Deux axes binaires.</strong>
+      <span class="chip-axe chip-humaine">humaine</span> pour l'encadrement de personnes ;
+      <span class="chip-axe chip-projet">projet</span> pour la conduite d'une livraison. Un rôle = un axe dominant.
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       COLONNE DROITE — D2 : quatre axes Mintzberg
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="colonne-mockup">
+    <div class="etiquette-variante">
+      D2 · quatre axes Mintzberg
+      <span class="variante-sous">humaine, projet, méthodologique, stratégique — cumulables</span>
+    </div>
+
+    <h2 class="etape-titre">À quel niveau jouez-vous ?</h2>
+    <p class="etape-aide">Ouvrez le cartouche qui vous ressemble, puis cliquez le rôle dans lequel vous vous reconnaissez.</p>
+
+    <!-- Opérationnel -->
+    <details class="niv-accordeon niv-operationnel">
+      <summary class="niv-titre">
+        <div class="niv-titre-libelle">
+          <span class="niv-titre-nom">Opérationnel</span>
+          <span class="niv-titre-alias">Niveau équipe · horizon 1 jour à 1 an</span>
+        </div>
+        <span class="niv-chevron" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5,8 10,13 15,8"/></svg>
+        </span>
+      </summary>
+      <div class="niv-corps">
+        <p class="niv-contexte">Tâches du jour, du sprint, du trimestre. On livre, on règle les obstacles, on tient la promesse de l'équipe.</p>
+        <div class="niv-roles">
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Scrum Master</span>
+            <span class="role-desc">Facilite une équipe Agile, protège le flux, lève les obstacles.</span>
+            <div class="chips-axes"><span class="chip-axe chip-methodo">méthodologique</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Chef d'équipe</span>
+            <span class="role-desc">Encadre une équipe hiérarchique, porte les entretiens annuels.</span>
+            <div class="chips-axes"><span class="chip-axe chip-humaine">humaine</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">PO (équipe)</span>
+            <span class="role-desc">Priorise le backlog d'une équipe, tranche sur les tickets.</span>
+            <div class="chips-axes"><span class="chip-axe chip-projet">projet</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Ceinture verte</span>
+            <span class="role-desc">Conduit un projet Lean Six Sigma à l'échelle d'un service.</span>
+            <div class="chips-axes"><span class="chip-axe chip-methodo">méthodologique</span><span class="chip-axe chip-projet">projet</span></div>
+          </button>
+        </div>
+      </div>
+    </details>
+
+    <!-- Tactique — ouvert par défaut -->
+    <details class="niv-accordeon niv-tactique" open>
+      <summary class="niv-titre">
+        <div class="niv-titre-libelle">
+          <span class="niv-titre-nom">Tactique</span>
+          <span class="niv-titre-alias">Niveau programme · horizon 1 à 2 ans</span>
+        </div>
+        <span class="niv-chevron" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5,8 10,13 15,8"/></svg>
+        </span>
+      </summary>
+      <div class="niv-corps">
+        <p class="niv-contexte">Plusieurs équipes à synchroniser, un produit ou un train à tenir, les trimestres qui s'enchaînent sans perdre la direction.</p>
+        <div class="niv-roles">
+          <button class="role-tuile" type="button">
+            <span class="role-nom">RTE</span>
+            <span class="role-desc">Release Train Engineer — orchestre un Agile Release Train.</span>
+            <div class="chips-axes"><span class="chip-axe chip-methodo">méthodologique</span><span class="chip-axe chip-projet">projet</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">PO senior · PM produit</span>
+            <span class="role-desc">Porte un produit sur plusieurs équipes, arbitre la roadmap.</span>
+            <span class="role-qualificatif">aussi listé en Opérationnel (PO équipe)</span>
+            <div class="chips-axes"><span class="chip-axe chip-projet">projet</span><span class="chip-axe chip-strategique">stratégique</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Coordinateur de livraison</span>
+            <span class="role-desc">Synchronise plusieurs équipes sur un livrable partagé.</span>
+            <div class="chips-axes"><span class="chip-axe chip-projet">projet</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Ceinture noire</span>
+            <span class="role-desc">Conduit des projets Lean Six Sigma complexes, forme les ceintures vertes.</span>
+            <div class="chips-axes"><span class="chip-axe chip-methodo">méthodologique</span><span class="chip-axe chip-projet">projet</span></div>
+          </button>
+        </div>
+      </div>
+    </details>
+
+    <!-- Portefeuille -->
+    <details class="niv-accordeon niv-portefeuille">
+      <summary class="niv-titre">
+        <div class="niv-titre-libelle">
+          <span class="niv-titre-nom">Portefeuille</span>
+          <span class="niv-titre-alias">Niveau portefeuille · horizon 2 à 5 ans</span>
+        </div>
+        <span class="niv-chevron" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5,8 10,13 15,8"/></svg>
+        </span>
+      </summary>
+      <div class="niv-corps">
+        <p class="niv-contexte">Plusieurs initiatives en parallèle, des budgets pluriannuels, la capacité globale de livraison à tenir.</p>
+        <div class="niv-roles">
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Directeur de programme</span>
+            <span class="role-desc">Arbitre entre plusieurs initiatives majeures, tient les jalons.</span>
+            <div class="chips-axes"><span class="chip-axe chip-projet">projet</span><span class="chip-axe chip-strategique">stratégique</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Portfolio Manager</span>
+            <span class="role-desc">Gère un portefeuille d'investissements stratégiques.</span>
+            <div class="chips-axes"><span class="chip-axe chip-strategique">stratégique</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Architecte d'entreprise</span>
+            <span class="role-desc">Aligne les capacités techniques sur la stratégie.</span>
+            <div class="chips-axes"><span class="chip-axe chip-methodo">méthodologique</span><span class="chip-axe chip-strategique">stratégique</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">VP Delivery</span>
+            <span class="role-desc">Pilote la capacité de livraison globale à l'échelle.</span>
+            <div class="chips-axes"><span class="chip-axe chip-humaine">humaine</span><span class="chip-axe chip-strategique">stratégique</span></div>
+          </button>
+        </div>
+      </div>
+    </details>
+
+    <!-- Exécutif -->
+    <details class="niv-accordeon niv-executif">
+      <summary class="niv-titre">
+        <div class="niv-titre-libelle">
+          <span class="niv-titre-nom">Exécutif</span>
+          <span class="niv-titre-alias">Niveau entreprise · horizon 5 ans et plus</span>
+        </div>
+        <span class="niv-chevron" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="5,8 10,13 15,8"/></svg>
+        </span>
+      </summary>
+      <div class="niv-corps">
+        <p class="niv-contexte">La mission, le modèle économique, l'identité de l'entreprise. On décide de la direction, pas des chemins.</p>
+        <div class="niv-roles">
+          <button class="role-tuile" type="button">
+            <span class="role-nom">DG · CEO</span>
+            <span class="role-desc">Décide de la mission et des grandes orientations.</span>
+            <div class="chips-axes"><span class="chip-axe chip-strategique">stratégique</span><span class="chip-axe chip-humaine">humaine</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">CTO · CPO · CFO</span>
+            <span class="role-desc">Pilote une fonction clé au comex, membre de la direction.</span>
+            <div class="chips-axes"><span class="chip-axe chip-strategique">stratégique</span><span class="chip-axe chip-humaine">humaine</span></div>
+          </button>
+          <button class="role-tuile" type="button">
+            <span class="role-nom">Directeur général adjoint</span>
+            <span class="role-desc">Déploie la stratégie d'un pôle ou d'une filière.</span>
+            <div class="chips-axes"><span class="chip-axe chip-humaine">humaine</span><span class="chip-axe chip-strategique">stratégique</span></div>
+          </button>
+        </div>
+      </div>
+    </details>
+
+    <div class="legende-axes">
+      <strong>Quatre axes cumulables.</strong>
+      <span class="chip-axe chip-humaine">humaine</span> encadrement de personnes ;
+      <span class="chip-axe chip-projet">projet</span> conduite d'une livraison ;
+      <span class="chip-axe chip-methodo">méthodologique</span> coach, qualité, process ;
+      <span class="chip-axe chip-strategique">stratégique</span> arbitrages de direction.
+    </div>
+  </div>
+
+</div>
+
+<p class="note-preview">
+  <strong>Ce que le mockup met en évidence.</strong> Dans <em>D1</em>, la quasi-totalité des rôles livrent-projet portent la même pastille bleue « projet » — on ne distingue pas un Scrum Master d'un PO ni d'une ceinture noire. Dans <em>D2</em>, la dimension <em>méthodologique</em> fait émerger le rôle de coach / process (Scrum Master, ceinture, RTE, Architecte d'entreprise), et la dimension <em>stratégique</em> singularise le niveau exécutif et le haut du portefeuille. L'utilisateur se reconnaît plus finement, au prix d'une pastille supplémentaire à lire. Le coût éditorial de D2 est plus lourd pour le chantier 7.2b (quatre axes à arbitrer par rôle au lieu de deux), mais le service rendu à l'utilisateur qui découvre est tangiblement plus riche.
+</p>
+
+</body>
+</html>
