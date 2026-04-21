@@ -195,4 +195,88 @@ Chaque fiche rôle porte :
 
 ---
 
-*Deux niveaux restants à produire : Portefeuille, Exécutif (entreprise).*
+## Portefeuille — strate portefeuille (horizon 2 à 5 ans)
+
+> Code interne `META.niveau = "portefeuille"`. Libellé de surface *Portefeuille*.
+
+### 1. Lean Portfolio Manager (LPM)
+
+- **Axes** : stratégique, méthodologique
+- **Source** : SAFe 6.0 (*Lean Portfolio Management*).
+- **Descriptif orthodoxe** : Responsable de la gestion Lean d'un portefeuille de valeur dans une organisation à l'échelle. Pilote l'investissement par chaînes de valeur, déploie le Lean Budgets, arbitre les Epics de portefeuille et tient la cadence de revue stratégique. Triade d'animation avec l'Enterprise Architect et le Business Owner de portefeuille.
+
+### 2. Solution Train Engineer (STE)
+
+- **Axes** : méthodologique, projet
+- **Source** : SAFe 6.0 (*Solution Train Engineer*).
+- **Descriptif orthodoxe** : Chef d'orchestre d'un *Solution Train*, c'est-à-dire d'un ensemble de plusieurs Agile Release Trains qui collaborent à la livraison d'une solution complexe (typiquement 50 à 125 personnes). Facilite la synchronisation inter-trains, la planification des incréments de solution et la levée des obstacles transverses à l'échelle de la solution. Équivalent du RTE d'un cran au-dessus.
+
+### 3. Portfolio Manager
+
+- **Axes** : stratégique, projet
+- **Source** : PMI *Standard for Portfolio Management* (4e édition).
+- **Descriptif orthodoxe** : Gestionnaire d'un portefeuille de projets, de programmes et d'initiatives opérationnelles qui concourent aux objectifs stratégiques de l'organisation. Arbitre la composition du portefeuille (sélection, priorisation, équilibrage), suit la performance agrégée et pilote les réallocations en cours d'exercice. Travaille en étroite relation avec les sponsors exécutifs et le bureau de gouvernance.
+
+### 4. VP Product / Chief Product Officer (multi-produits)
+
+- **Axes** : stratégique, projet
+- **Source** : Marty Cagan & Chris Jones *Empowered* ; Ben Horowitz *The Hard Thing About Hard Things*.
+- **Descriptif orthodoxe** : Responsable d'un portefeuille de produits dans une ligne métier ou une filiale. Anime une équipe de Product Managers, arbitre la cohérence de l'offre, porte la vision produit à l'échelle du portefeuille et interagit directement avec le comité de direction. Distinct du Chief Product Officer de groupe (strate exécutive) par l'étendue de la ligne couverte, jamais par la séniorité de la personne.
+
+### 5. Architecte d'entreprise
+
+- **Axes** : stratégique, méthodologique
+- **Source** : TOGAF 9.2 (*Enterprise Architect*) ; SAFe 6.0 (*Enterprise Architect*) ; Zachman Framework.
+- **Descriptif orthodoxe** : Garant de la cohérence architecturale de l'entreprise — architecture métier, applicative, de données, technologique. Définit les principes structurants, anime la trajectoire d'urbanisation à moyen terme, arbitre les choix technologiques qui engagent plusieurs domaines. Travaille avec les Architectes de solution pour ancrer les principes dans les livraisons concrètes.
+
+### 6. Master Black Belt (MBB)
+
+- **Axes** : méthodologique, humaine, stratégique
+- **Source** : ASQ / IASSC Lean Six Sigma Body of Knowledge (niveau *Master Black Belt*).
+- **Descriptif orthodoxe** : Expert de plus haut niveau technique et pédagogique dans le déploiement Lean Six Sigma d'une organisation. Définit la stratégie d'amélioration continue, forme et mentore les Black Belts, pilote les chantiers de transformation les plus complexes. Porte la cohérence méthodologique à l'échelle de l'entreprise et conseille les Champions et le comité de direction.
+
+### 7. Coach Agile stratégique / Business Agility Coach
+
+- **Axes** : méthodologique, stratégique, humaine
+- **Source** : Michael Sahota *Emerging Leadership* ; Karim Harbott *The 6 Enablers of Business Agility* ; Business Agility Institute (*Domains of Business Agility*) ; Mike Burrows *Agendashift*.
+- **Descriptif orthodoxe** : Accompagne le comité de direction et la structure organisationnelle dans une évolution vers l'agilité d'affaires. Intervient sur les leviers structurels — stratégie, culture, leadership, architecture organisationnelle, modèle de financement — avec un horizon de trois à cinq ans. Posture *évolutionnaire* distincte de la posture *transitionnelle* du Coach en transformation tactique : ne déploie pas un cadre méthodologique, conçoit le chemin adapté au contexte.
+
+### 8. Directeur de portefeuille (EPMO)
+
+- **Axes** : méthodologique, stratégique
+- **Source** : PMI *Enterprise PMO Frameworks* ; Association for Project Management (APM) *Directing Change*.
+- **Descriptif orthodoxe** : Responsable du bureau de pilotage de portefeuille à l'échelle de l'entreprise (*Enterprise Project Management Office*). Définit les standards de gouvernance, consolide le reporting exécutif, instruit les dossiers d'investissement pour le comité stratégique, et arbitre les ressources transverses. Distinct du PMO Tactique par son horizon et son interlocuteur — il rend compte au comité de direction, pas à un chef de programme.
+
+### 9. Directeur de transformation (CxT)
+
+- **Axes** : stratégique, humaine, méthodologique
+- **Source** : John Kotter *Leading Change* ; McKinsey *The CTO's role in transformation* ; Prosci ADKAR.
+- **Descriptif orthodoxe** : Porte une transformation structurelle de l'organisation — modèle opérationnel, digital, culturel — sur un horizon pluriannuel. Oriente les chantiers majeurs, coordonne les directions métiers et transverses, rend compte au comité de direction. Rôle souvent temporaire (trois à cinq ans) qui s'éteint une fois les nouveaux modes de fonctionnement ancrés.
+
+### 10. Directeur général de Business Unit / Directeur de domaine métier
+
+- **Axes** : humaine, stratégique
+- **Source** : Peter Drucker *The Practice of Management* (management par objectifs) ; Henry Mintzberg *Structure in Fives* (ligne hiérarchique haute) ; Alfred Chandler *Strategy and Structure*.
+- **Descriptif orthodoxe** : Pilote une filiale, une business unit ou un domaine métier d'une grande organisation. Deux variantes courantes : le *Directeur général de Business Unit* porte un compte de résultat autonome sur un marché donné ; le *Directeur de domaine métier* pilote une fonction transverse (Marketing, Logistique, Opérations) dans une structure matricielle. Dans les deux cas, horizon pluriannuel, arbitrage budget et feuille de route, animation d'une équipe de direction propre.
+
+### 11. Directeur principal (secteur coopératif / parapublic QC)
+
+- **Axes** : humaine, stratégique
+- **Source** : Classifications internes des grandes coopératives financières québécoises (Mouvement Desjardins, SSQ, La Capitale) et de certaines sociétés d'État du Québec (Caisse de dépôt et placement, Hydro-Québec).
+- **Descriptif orthodoxe** : Strate de cadre supérieur spécifique à l'écosystème coopératif et parapublic québécois, située entre le Directeur et le Vice-président. Pilote un regroupement de directions ou un pôle stratégique transverse, rapporte à un vice-président et participe aux comités stratégiques. Horizon de pilotage pluriannuel, portée d'arbitrage qui dépasse une direction unique.
+
+### 12. Directeur général (fonction publique QC / CA)
+
+- **Axes** : stratégique, humaine
+- **Source** : Gouvernement du Québec — classification des cadres supérieurs, classe 2 ; gouvernement fédéral canadien — groupe *Executive*, niveau EX-03.
+- **Descriptif orthodoxe** : Pilote une direction générale rassemblant plusieurs directions, au sein d'un secteur ministériel. Rattaché à un sous-ministre adjoint, porte les orientations stratégiques d'un pan du ministère, anime une équipe de directeurs et rend compte devant les instances de gouvernance publique. Horizon pluriannuel, arbitrage des priorités et des ressources du périmètre.
+
+### 13. Sous-ministre adjoint (SMA / ADM)
+
+- **Axes** : stratégique, humaine
+- **Source** : Gouvernement du Québec — classification des cadres supérieurs, classe 1 ; gouvernement fédéral canadien — groupe *Executive*, niveaux EX-04 et EX-05 (*Assistant Deputy Minister*).
+- **Descriptif orthodoxe** : Pilote un secteur ministériel — ensemble de directions générales — sous l'autorité d'un sous-ministre. Traduit les orientations gouvernementales en programmes et en politiques publiques, rend des arbitrages structurants et porte la représentation institutionnelle du secteur devant les instances de gouvernance. Horizon pluriannuel à mandat politique, strate charnière entre l'appareil administratif et l'autorité politique.
+
+---
+
+*Un niveau restant à produire : Exécutif (entreprise).*
