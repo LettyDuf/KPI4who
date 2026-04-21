@@ -223,12 +223,27 @@ Chantier **7.6 livré** le 20/04/2026. Les noms de métriques cités dans les en
 
 **Instruction à porter dans 7.2 quand il sera ouvert** (validée le 20/04/2026) : le futur `CM.Stepper` générique devra accepter **un nombre variable d'étapes** (tableau ordonné). But : pouvoir activer plus tard 7.3 (type de décision en 4e étape) ou 7.4 (disponibilité des données en 5e étape) sans réécrire le stepper, seulement en ajoutant une entrée dans la liste. Consigné dans la colonne *Évolution* du 7.2 et dans ses points d'ancrage code.
 
+### Généralisation 7.6 — progression par lots éditoriaux
+
+La généralisation de 7.6 (liens cliquables sur toutes les fiches) est découpée en lots thématiques de manière à préserver le contrôle éditorial à chaque palier. Inventaire initial : 20 paires (fiche, champ) × ~31 liens candidats, regroupés en 4 lots.
+
+| Lot | Axe | Liens posés | État | Commit |
+|---|---|---|---|---|
+| A | Flux / DORA / livraison (cohérences internes o/x/p/t) | 17 liens sur 9 champs de 6 fiches | ✅ 21/04/2026 | `422b0a3` |
+| B | Customer / Commerce (af-* entre elles) | ~10 candidats | ⏸ À lancer |  |
+| C | Support client / Qualité | ~4 candidats | ⏸ À lancer |  |
+| D | Sécurité / Incident (ambiguïtés à trancher : `s9.alt → MTTR` = o4 ou ti-s2 ?) | ~2 candidats + arbitrages | ⏸ À lancer |  |
+
+**Lot A livré** : 9 champs enrichis sur x1, x2, x3, p5, p7, t4 ; 17 liens vers o3, o4, o5, o6, o7, o8, o9, p4, p5, p6, s4. Une reformulation éditoriale ciblée sur `p5.alt` pour lever l'ambiguïté *OKR stratégique vs OKR d'équipe* — désormais les deux cibles sont nommées et liées, ce qui ferme l'anti-pattern du programme qui s'invente un OKR local déconnecté.
+
 ### Prochaine session — ordre à trancher
 
-1. **Généraliser 7.6 à toutes les fiches** (🟢). Le patron technique est en place et démontré sur 4 fiches ; il reste une passe éditoriale pour repérer et enrichir les autres références croisées dans les champs `alt` et `risque` de toutes les fiches. Petit chantier de contenu, à vitesse constante.
-2. **6.7b — Enrichissement `familleInformelle`** (🟢). À activer si l'usage terrain confirme qu'on s'ampute de bonnes suggestions en excluant `generique` du calcul de voisinage.
-3. **6.7c — Cas particulier `generique`, bloc dédié** (🟡). Inversion éditoriale : *« Ces cadres spécifiques éclairent les mêmes indicateurs »*. Petit chantier cohérent à empiler sur 6.7a.
-4. **7.2 — Stepper générique extensible** (🟡). Chantier structurant, à coupler avec la symétrisation des portes *problème* et *niveau*.
+1. **Lot B — Customer / Commerce** (🟢). Une dizaine de liens entre fiches `af-*`. Même rythme et même patron technique que le Lot A. Session courte.
+2. **Lot C — Support client / Qualité** (🟢). Quatre liens, dont `ti-o2.risque ↔ af-sc4` qui croise les deux cultures (TI / Affaires). Session très courte.
+3. **Lot D — Sécurité / Incident** (🟡). Deux liens mais un arbitrage sur `s9.alt → MTTR` : pointe-t-on vers o4 (DORA générique) ou ti-s2 (MTTR Sécurité) ? À décider par lecture contextuelle du champ.
+4. **6.7b — Enrichissement `familleInformelle`** (🟢). À activer si l'usage terrain confirme qu'on s'ampute de bonnes suggestions en excluant `generique` du calcul de voisinage.
+5. **6.7c — Cas particulier `generique`, bloc dédié** (🟡). Inversion éditoriale : *« Ces cadres spécifiques éclairent les mêmes indicateurs »*. Petit chantier cohérent à empiler sur 6.7a.
+6. **7.2 — Stepper générique extensible** (🟡). Chantier structurant, à coupler avec la symétrisation des portes *problème* et *niveau*.
 
 ### Pistes alternatives
 
