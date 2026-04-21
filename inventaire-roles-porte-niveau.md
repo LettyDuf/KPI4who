@@ -187,11 +187,11 @@ Chaque fiche rôle porte :
 - **Source** : DAMA-DMBOK (*Data Governance Council*) ; Thomas Davenport *Competing on Analytics*.
 - **Descriptif orthodoxe** : Porte la stratégie d'exploitation et de gouvernance des données à l'échelle d'un programme ou d'une direction métier. Définit les usages prioritaires, arbitre entre gouvernance, qualité et vélocité, outille les équipes data en standards et en plateforme. Interface avec les métiers sur la valeur attendue et avec la DSI sur la capacité technique.
 
-### 14. Directeur de service (fonction publique QC / CA)
+### 14. Directeur (fonction publique QC / CA)
 
 - **Axes** : humaine, stratégique
-- **Source** : Gouvernement du Québec — classification des cadres supérieurs ; gouvernement fédéral canadien — groupe *Executive* (EX-01 à EX-02).
-- **Descriptif orthodoxe** : Strate de gestion intermédiaire dans l'appareil d'État québécois ou fédéral canadien. Rattaché à un sous-ministre adjoint, il pilote un service ou une direction opérationnelle, porte les engagements du ministère sur son périmètre, et rend compte devant les instances de gouvernance publique. Horizon de pilotage annuel à biennal.
+- **Source** : Gouvernement du Québec — classification des cadres supérieurs, classe 3 ; gouvernement fédéral canadien — groupe *Executive*, niveaux EX-01 et EX-02.
+- **Descriptif orthodoxe** : Strate de gestion intermédiaire dans l'appareil d'État québécois ou fédéral canadien. Pilote une direction qui rassemble plusieurs services, porte les engagements du ministère sur son périmètre, et rend compte à un directeur général ou à un sous-ministre adjoint selon la taille du ministère. Horizon de pilotage annuel à biennal.
 
 ---
 
