@@ -3400,7 +3400,7 @@ CM.Referentiel.ajouter([
     frequence:'Sur événement — revue mensuelle',
     exemple_ent:'MTTR réduit de 6 heures a 45 minutes grace a l\'automatisation des alertes et aux procédures documentees.',
     exemple_eq:'Un temps court reflète de bonnes pratiques : observabilite, runbooks, automatisation des retours arriere.',
-    risque:'Se concentrer sur la rapidite de rétablissement sans analyser les causes profondes revient à traiter les symptomes. Pratiquer systematiquement l\'analyse post-incident.',
+    risque:'Se concentrer sur la rapidite de rétablissement sans analyser les causes profondes revient à traiter les symptomes. Pratiquer systematiquement l\'<a href="#fiche=ti-o4">analyse post-incident</a>.',
     roles:['chef-équipe','membre-équipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
     branche:'ti', domaine:'ops-support'
   },
@@ -3423,8 +3423,8 @@ CM.Referentiel.ajouter([
     objectif:'Mesurer l\'efficacite et la qualité des interventions de l\'équipe de support.',
     frequence:'Hebdomadaire',
     exemple_ent:'FCR a 74 % — les 26 % de rer ouvertures sont principalement liés a des solutions provisoires documentees comme definitives.',
-    exemple_eq:'Un FCR élevé reflete une base de connaissances riche, une bonne formation et une resolution de cause profonde plutôt que de cause symptomatique.',
-    risque:'Fermer un ticket "resolu" sans verification aupres de l\'utilisateur gonfle artificiellement le FCR. Mesurer aussi la satisfaction post-resolution.',
+    exemple_eq:'Un <a href="#fiche=af-sc4">FCR</a> élevé reflete une base de connaissances riche, une bonne formation et une resolution de cause profonde plutôt que de cause symptomatique.',
+    risque:'Fermer un ticket "resolu" sans verification aupres de l\'utilisateur gonfle artificiellement le FCR. Mesurer aussi la <a href="#fiche=af-sc1">satisfaction</a> post-resolution.',
     roles:['chef-équipe','membre-équipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant',
     branche:'ti', domaine:'ops-support'
   },
@@ -3447,7 +3447,7 @@ CM.Referentiel.ajouter([
     objectif:'Mesurer l\'efficacite des corrections permanentes et de la pratique d\'analyse des causes profondes.',
     frequence:'Mensuelle',
     exemple_ent:'Taux de recurrence a 22 % — signale que les corrections sont souvent provisoires. Lancement d\'une initiative d\'analyse post-incident systematique.',
-    exemple_eq:'Chaque incident recurrent represente un échec de la correction précédente. Ce taux mesure la qualité de la resolution, pas juste la rapidite.',
+    exemple_eq:'Chaque incident recurrent represente un échec de la correction précédente. Ce taux mesure la qualité de la resolution, pas juste la <a href="#fiche=o4">rapidite</a>.',
     risque:'Un taux de recurrence faible peut refleter un sous-signalement ou une categorisation inadaptee des incidents, pas une resolution systematique.',
     roles:['chef-équipe','membre-équipe'], prioritaire:false, fiabilite:'fiable', maturite_min:'intermediaire',
     branche:'ti', domaine:'ops-support'
