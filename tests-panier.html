@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Tests — CM.Panier (9.A)</title>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       Harnais de consolidation — chantier 9.A
+
+       Intention : vérifier le socle hexagonal du panier personnel —
+       service CM.Panier (API publique), adapter MemoireDepot (port Depot),
+       règles d'invariance (timestamp stable, immuabilité des sorties,
+       validation à la frontière, notification des abonnés).
+
+       Mécanique : charge cadre-indicateurs.html dans un iframe caché,
+       accède au module CM.Panier par window.contentWindow, et exerce
+       exclusivement l'API publique. Aucune fonction interne privée
+       n'est auditée — ce qui survit aux refactors internes.
+
+       Architecture hexagonale : le domaine (CM.Panier) est pur (zéro DOM).
+       Ce harnais joue le rôle d'adapter driver qui consomme le domaine
+       par ses ports publics. Zéro couplage avec l'implémentation interne,
+       zéro duplication du code de prod.
+
+       Isolation des scénarios : reinitialiserPanier() remplace l'adapter
+       courant par un MemoireDepot neuf avant chaque suite qui le nécessite.
+       Les abonnés sont désabonnés explicitement dans chaque it qui en pose.
+
+       Ouverture : ouvrir ce fichier dans un navigateur. Les résultats
+       s'affichent automatiquement. Aucune dépendance externe, aucun
+       framework à installer. ══════════════════════════════════════════ -->
+
+  <style>
+    :root {
+      --ok:   #2a7f2a;
+      --ko:   #b00020;
+      --muted:#6b6b6b;
+      --bord: #dcdcdc;
+      --fond-ok: #ecf7ec;
+      --fond-ko: #fbeaec;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 960px;
+      margin: 2em auto;
+      padding: 0 1.5em 3em;
+      color: #222;
+      line-height: 1.5;
+    }
+    h1 { margin-bottom: 0.3em; font-size: 1.5em; }
+    .sous-titre { color: var(--muted); margin-top: 0; }
+    .lead { color: #444; font-size: 0.95em; }
+    code { background: #f3f3f3; padding: 0.05em 0.3em; border-radius: 3px; font-size: 0.9em; }
+
+    .resume {
+      padding: 0.8em 1.2em;
+      border-radius: 6px;
+      font-weight: 600;
+      margin: 1.5em 0 1em;
+      border: 1px solid var(--bord);
+    }
+    .resume.pending { background: #f7f7f7; color: var(--muted); }
+    .resume.ok      { background: var(--fond-ok); color: var(--ok); border-color: #cfe5cf; }
+    .resume.ko      { background: var(--fond-ko); color: var(--ko); border-color: #f0cfd4; }
+
+    details.suite {
+      border: 1px solid var(--bord);
+      border-radius: 6px;
+      margin: 0.8em 0;
+      padding: 0 1em;
+      background: #fff;
+    }
+    details.suite[open]     { padding-bottom: 0.6em; }
+    details.suite > summary {
+      padding: 0.6em 0;
+      cursor: pointer;
+      font-weight: 600;
+      list-style: none;
+    }
+    details.suite > summary::-webkit-details-marker { display: none; }
+    details.suite > summary::before { content: '▸ '; color: var(--muted); }
+    details.suite[open] > summary::before { content: '▾ '; }
+    details.suite.ok > summary { color: var(--ok); }
+    details.suite.ko > summary { color: var(--ko); }
+
+    .test {
+      padding: 0.35em 0;
+      border-top: 1px dotted #eee;
+      display: grid;
+      grid-template-columns: 1.4em 1fr;
+      gap: 0.6em;
+      align-items: start;
+      font-size: 0.92em;
+    }
+    .test.pass { color: var(--ok); }
+    .test.fail { color: var(--ko); }
+    .test-detail {
+      grid-column: 2;
+      color: #555;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.85em;
+      background: #fafafa;
+      padding: 0.4em 0.6em;
+      border-radius: 3px;
+      margin-top: 0.3em;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    iframe#sut {
+      /* L'iframe reste dans le flux mais invisible : certaines
+         mises en page d'accessibilité iOS refusent de peupler
+         une iframe avec `display: none`. */
+      position: absolute; left: -10000px; width: 800px; height: 600px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Tests — <code>CM.Panier</code> (9.A)</h1>
+<p class="sous-titre">Harnais de consolidation du chantier <code>9.A.2</code>.</p>
+
+<p class="lead">
+  Charge <code>cadre-indicateurs.html</code> dans un iframe caché, exerce l'API publique
+  <code>CM.Panier</code> puis vérifie les retours. Le service est pur (zéro DOM) — ce
+  harnais valide le socle hexagonal avant que les tranches 9.B/9.C/9.D/9.E le consomment.
+</p>
+
+<div id="resume" class="resume pending">Chargement de l'iframe de test…</div>
+<div id="resultats"></div>
+
+<iframe id="sut" src="cadre-indicateurs.html" title="Système sous test"></iframe>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ══════ Micro-framework d'assertions ═══════════════════════════════
+     Même patron que tests-porte-niveau.html. Trois verbes —
+     describe / it / expect. Les expect(...) lèvent une Error
+     descriptive quand l'assertion échoue ; it l'attrape et
+     enregistre l'échec avec le message. */
+
+  var suites = [];
+  var suiteCourante = null;
+
+  function describe(nom, fn) {
+    suiteCourante = { nom: nom, tests: [] };
+    suites.push(suiteCourante);
+    try {
+      fn();
+    } catch (e) {
+      suiteCourante.tests.push({
+        nom:    '(initialisation de la suite)',
+        ok:     false,
+        detail: (e && e.message) ? e.message : String(e)
+      });
+    }
+    suiteCourante = null;
+  }
+
+  function it(nom, fn) {
+    var test = { nom: nom, ok: true, detail: '' };
+    try {
+      fn();
+    } catch (e) {
+      test.ok     = false;
+      test.detail = (e && e.message) ? e.message : String(e);
+    }
+    suiteCourante.tests.push(test);
+  }
+
+  function expect(actuel) {
+    return {
+      toBe: function(attendu) {
+        if (actuel !== attendu) {
+          throw new Error(
+            'attendu ' + JSON.stringify(attendu)
+            + ', obtenu ' + JSON.stringify(actuel)
+          );
+        }
+      },
+      toBeNull: function() {
+        if (actuel !== null) {
+          throw new Error('attendu null, obtenu ' + JSON.stringify(actuel));
+        }
+      },
+      toBeTruthy: function() {
+        if (!actuel) {
+          throw new Error('attendu truthy, obtenu ' + JSON.stringify(actuel));
+        }
+      },
+      toBeFalsy: function() {
+        if (actuel) {
+          throw new Error('attendu falsy, obtenu ' + JSON.stringify(actuel));
+        }
+      },
+      toBeGreaterThan: function(borne) {
+        if (!(actuel > borne)) {
+          throw new Error('attendu > ' + borne + ', obtenu ' + JSON.stringify(actuel));
+        }
+      },
+      toBeTypeOf: function(type) {
+        if (typeof actuel !== type) {
+          throw new Error('attendu typeof ' + type + ', obtenu ' + typeof actuel
+            + ' (' + JSON.stringify(actuel) + ')');
+        }
+      },
+      toEqualArray: function(attendu) {
+        var a = (actuel || []).slice().sort();
+        var b = (attendu || []).slice().sort();
+        if (a.length !== b.length || a.join('\u0001') !== b.join('\u0001')) {
+          throw new Error(
+            'attendu [' + b.join(', ') + '] (' + b.length + ' élt), '
+            + 'obtenu [' + a.join(', ') + '] (' + a.length + ' élt)'
+          );
+        }
+      },
+      toEqualOrderedArray: function(attendu) {
+        var a = actuel || [];
+        var b = attendu || [];
+        if (a.length !== b.length || a.join('\u0001') !== b.join('\u0001')) {
+          throw new Error(
+            'attendu (ordre) [' + b.join(', ') + '], '
+            + 'obtenu [' + a.join(', ') + ']'
+          );
+        }
+      }
+    };
+  }
+
+  /* ══════ Adapters vers le système sous test ═══════════════════════════
+     Un seul point de couplage avec l'implémentation : le nommage
+     des modules (CM.Panier, CM.Panier.MemoireDepot). Les tests
+     portent sur la sémantique documentée dans doc-contrats-panier.md. */
+
+  var iframe = document.getElementById('sut');
+  var W;       /* raccourci vers iframe.contentWindow après load */
+  var P;       /* raccourci vers W.CM.Panier */
+
+  /* Remplace l'adapter du service par un MemoireDepot neuf — état vierge.
+     À appeler en début de chaque suite qui manipule des lignes. */
+  function reinitialiserPanier() {
+    P.utiliserDepot(P.MemoireDepot());
+  }
+
+  /* ══════ Orchestration ════════════════════════════════════════════════ */
+
+  iframe.addEventListener('load', function() {
+    W = iframe.contentWindow;
+    try {
+      if (!W.CM || !W.CM.Panier) {
+        throw new Error('CM.Panier introuvable dans l\'iframe — la prod n\'a pas chargé.');
+      }
+      P = W.CM.Panier;
+      executerSuites();
+    } catch (e) {
+      var r = document.getElementById('resume');
+      r.className   = 'resume ko';
+      r.textContent = 'Erreur inattendue pendant l\'exécution : '
+        + ((e && e.message) ? e.message : String(e));
+      return;
+    }
+    rendreRapport();
+  });
+
+  function executerSuites() {
+
+    /* ─── Suite 1 : Sanity — modules et signatures ──────────────────── */
+    describe('Sanity — module et API publique', function() {
+      it('CM.Panier est défini', function() {
+        expect(P).toBeTruthy();
+      });
+      it('CM.Panier.MemoireDepot est une fonction (factory)', function() {
+        expect(typeof P.MemoireDepot).toBe('function');
+      });
+      it('Méthodes service présentes : ajouter, retirer, basculer, modifierNote', function() {
+        expect(typeof P.ajouter).toBe('function');
+        expect(typeof P.retirer).toBe('function');
+        expect(typeof P.basculer).toBe('function');
+        expect(typeof P.modifierNote).toBe('function');
+      });
+      it('Méthodes lecture présentes : statut, trouver, lister, estVide, taille', function() {
+        expect(typeof P.statut).toBe('function');
+        expect(typeof P.trouver).toBe('function');
+        expect(typeof P.lister).toBe('function');
+        expect(typeof P.estVide).toBe('function');
+        expect(typeof P.taille).toBe('function');
+      });
+      it('Méthodes gestion présentes : reinitialiser, abonner, utiliserDepot', function() {
+        expect(typeof P.reinitialiser).toBe('function');
+        expect(typeof P.abonner).toBe('function');
+        expect(typeof P.utiliserDepot).toBe('function');
+      });
+    });
+
+    /* ─── Suite 2 : Contrat Depot — MemoireDepot respecte le port ───── */
+    describe('Contrat Depot — MemoireDepot respecte le port', function() {
+      var d;
+      it('Factory retourne un objet neuf (pas de singleton)', function() {
+        var d1 = P.MemoireDepot();
+        var d2 = P.MemoireDepot();
+        expect(d1 !== d2).toBeTruthy();
+      });
+      it('Expose les 5 méthodes du port', function() {
+        d = P.MemoireDepot();
+        expect(typeof d.lister).toBe('function');
+        expect(typeof d.trouver).toBe('function');
+        expect(typeof d.poser).toBe('function');
+        expect(typeof d.retirer).toBe('function');
+        expect(typeof d.vider).toBe('function');
+      });
+      it('lister() retourne [] à l\'instanciation', function() {
+        d = P.MemoireDepot();
+        expect(d.lister().length).toBe(0);
+      });
+      it('trouver(id) retourne null si absent', function() {
+        d = P.MemoireDepot();
+        expect(d.trouver('ti-o4')).toBeNull();
+      });
+      it('poser + trouver : upsert par ficheId', function() {
+        d = P.MemoireDepot();
+        d.poser({ ficheId:'ti-o4', statut:'en-place', note:'', ajouteeLe:1 });
+        expect(d.trouver('ti-o4').statut).toBe('en-place');
+      });
+      it('poser deux fois même ficheId : remplace', function() {
+        d = P.MemoireDepot();
+        d.poser({ ficheId:'x1', statut:'en-place', note:'', ajouteeLe:1 });
+        d.poser({ ficheId:'x1', statut:'a-envisager', note:'', ajouteeLe:2 });
+        expect(d.lister().length).toBe(1);
+        expect(d.trouver('x1').statut).toBe('a-envisager');
+      });
+      it('retirer(id) : true si présent, false sinon', function() {
+        d = P.MemoireDepot();
+        d.poser({ ficheId:'x1', statut:'en-place', note:'', ajouteeLe:1 });
+        expect(d.retirer('x1')).toBe(true);
+        expect(d.retirer('x1')).toBe(false);
+      });
+      it('vider() retire tout', function() {
+        d = P.MemoireDepot();
+        d.poser({ ficheId:'x1', statut:'en-place', note:'', ajouteeLe:1 });
+        d.poser({ ficheId:'x2', statut:'a-envisager', note:'', ajouteeLe:2 });
+        d.vider();
+        expect(d.lister().length).toBe(0);
+      });
+      it('Deux instances ne partagent pas leur stockage (isolation)', function() {
+        var d1 = P.MemoireDepot();
+        var d2 = P.MemoireDepot();
+        d1.poser({ ficheId:'x1', statut:'en-place', note:'', ajouteeLe:1 });
+        expect(d1.lister().length).toBe(1);
+        expect(d2.lister().length).toBe(0);
+      });
+    });
+
+    /* ─── Suite 3 : ajouter() — flux nominal ────────────────────────── */
+    describe('ajouter() — flux nominal', function() {
+      it('ajouter sur fiche absente : action ajoute', function() {
+        reinitialiserPanier();
+        var r = P.ajouter('ti-o4', 'en-place');
+        expect(r.action).toBe('ajoute');
+        expect(r.ligneAvant).toBeNull();
+        expect(r.ligneApres.ficheId).toBe('ti-o4');
+        expect(r.ligneApres.statut).toBe('en-place');
+        expect(r.ligneApres.note).toBe('');
+        expect(r.ligneApres.ajouteeLe).toBeTypeOf('number');
+        expect(r.ligneApres.ajouteeLe).toBeGreaterThan(0);
+      });
+      it('ajouter avec note : note posée', function() {
+        reinitialiserPanier();
+        var r = P.ajouter('p5', 'a-envisager', 'À ouvrir en revue Q3');
+        expect(r.ligneApres.note).toBe('À ouvrir en revue Q3');
+      });
+      it('ajouter identique (statut+note) : action inchange', function() {
+        reinitialiserPanier();
+        P.ajouter('ti-o4', 'en-place', 'contexte');
+        var r = P.ajouter('ti-o4', 'en-place', 'contexte');
+        expect(r.action).toBe('inchange');
+      });
+      it('ajouter sur fiche existante autre statut : action bascule', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        var r = P.ajouter('x1', 'a-envisager');
+        expect(r.action).toBe('bascule');
+        expect(r.ligneAvant.statut).toBe('en-place');
+        expect(r.ligneApres.statut).toBe('a-envisager');
+      });
+      it('ajouter sans note (undefined) sur fiche existante : note préservée', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place', 'déjà là');
+        var r = P.ajouter('x1', 'a-envisager');  /* note undefined */
+        expect(r.ligneApres.note).toBe('déjà là');
+      });
+      it('ajouter avec note "" (chaîne vide) sur fiche existante : note effacée', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place', 'à effacer');
+        var r = P.ajouter('x1', 'en-place', '');
+        expect(r.action).toBe('modifie-note');
+        expect(r.ligneApres.note).toBe('');
+      });
+      it('ajouteeLe stable après bascule de statut', function() {
+        reinitialiserPanier();
+        var r1 = P.ajouter('x1', 'en-place');
+        var r2 = P.ajouter('x1', 'a-envisager');
+        expect(r2.ligneApres.ajouteeLe).toBe(r1.ligneApres.ajouteeLe);
+      });
+      it('ajouteeLe stable après modification de note (via ajouter)', function() {
+        reinitialiserPanier();
+        var r1 = P.ajouter('x1', 'en-place', 'note1');
+        var r2 = P.ajouter('x1', 'en-place', 'note2');
+        expect(r2.action).toBe('modifie-note');
+        expect(r2.ligneApres.ajouteeLe).toBe(r1.ligneApres.ajouteeLe);
+      });
+    });
+
+    /* ─── Suite 4 : retirer() ───────────────────────────────────────── */
+    describe('retirer()', function() {
+      it('retirer une fiche présente : action retire + ligneAvant retournée', function() {
+        reinitialiserPanier();
+        P.ajouter('ti-o4', 'en-place');
+        var r = P.retirer('ti-o4');
+        expect(r.action).toBe('retire');
+        expect(r.ligneAvant.ficheId).toBe('ti-o4');
+        expect(r.ligneApres).toBeNull();
+      });
+      it('retirer une fiche absente : action absent', function() {
+        reinitialiserPanier();
+        var r = P.retirer('ti-o4');
+        expect(r.action).toBe('absent');
+        expect(r.ligneAvant).toBeNull();
+      });
+      it('estVide() true après retrait de la dernière fiche', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        P.retirer('x1');
+        expect(P.estVide()).toBe(true);
+      });
+    });
+
+    /* ─── Suite 5 : basculer() ──────────────────────────────────────── */
+    describe('basculer()', function() {
+      it('basculer une fiche existante vers autre statut : action bascule', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        var r = P.basculer('x1', 'a-envisager');
+        expect(r.action).toBe('bascule');
+        expect(r.ligneApres.statut).toBe('a-envisager');
+      });
+      it('basculer une fiche existante vers même statut : action inchange', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        var r = P.basculer('x1', 'en-place');
+        expect(r.action).toBe('inchange');
+      });
+      it('basculer une fiche absente : action ajoute, note vide', function() {
+        reinitialiserPanier();
+        var r = P.basculer('x1', 'en-place');
+        expect(r.action).toBe('ajoute');
+        expect(r.ligneApres.note).toBe('');
+      });
+      it('basculer préserve la note existante', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place', 'ma note');
+        var r = P.basculer('x1', 'a-envisager');
+        expect(r.ligneApres.note).toBe('ma note');
+      });
+      it('basculer préserve ajouteeLe', function() {
+        reinitialiserPanier();
+        var r1 = P.ajouter('x1', 'en-place');
+        var r2 = P.basculer('x1', 'a-envisager');
+        expect(r2.ligneApres.ajouteeLe).toBe(r1.ligneApres.ajouteeLe);
+      });
+    });
+
+    /* ─── Suite 6 : modifierNote() ──────────────────────────────────── */
+    describe('modifierNote()', function() {
+      it('modifier une note différente : action modifie-note', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place', 'ancienne');
+        var r = P.modifierNote('x1', 'nouvelle');
+        expect(r.action).toBe('modifie-note');
+        expect(r.ligneApres.note).toBe('nouvelle');
+      });
+      it('modifier vers même note : action inchange', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place', 'idem');
+        var r = P.modifierNote('x1', 'idem');
+        expect(r.action).toBe('inchange');
+      });
+      it('modifierNote sur fiche absente : action absent', function() {
+        reinitialiserPanier();
+        var r = P.modifierNote('x1', 'contexte');
+        expect(r.action).toBe('absent');
+      });
+      it('modifierNote ne touche pas au statut', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        var r = P.modifierNote('x1', 'contexte');
+        expect(r.ligneApres.statut).toBe('en-place');
+      });
+      it('modifierNote ne touche pas à ajouteeLe', function() {
+        reinitialiserPanier();
+        var r1 = P.ajouter('x1', 'en-place');
+        var r2 = P.modifierNote('x1', 'contexte');
+        expect(r2.ligneApres.ajouteeLe).toBe(r1.ligneApres.ajouteeLe);
+      });
+    });
+
+    /* ─── Suite 7 : lecture (statut, trouver) ───────────────────────── */
+    describe('Lecture — statut() et trouver()', function() {
+      it('statut sur fiche présente', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        expect(P.statut('x1')).toBe('en-place');
+      });
+      it('statut sur fiche absente : null', function() {
+        reinitialiserPanier();
+        expect(P.statut('x1')).toBeNull();
+      });
+      it('trouver renvoie la ligne figée', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place', 'n');
+        var l = P.trouver('x1');
+        expect(l.ficheId).toBe('x1');
+        expect(l.statut).toBe('en-place');
+        expect(l.note).toBe('n');
+      });
+      it('trouver sur fiche absente : null', function() {
+        reinitialiserPanier();
+        expect(P.trouver('x1')).toBeNull();
+      });
+    });
+
+    /* ─── Suite 8 : lister() avec filtres et tris ───────────────────── */
+    describe('lister() — filtres et tris', function() {
+      it('lister() vide sur panier vide', function() {
+        reinitialiserPanier();
+        expect(P.lister().length).toBe(0);
+      });
+      it('lister() retourne toutes les lignes', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        P.ajouter('x2', 'a-envisager');
+        P.ajouter('x3', 'en-place');
+        expect(P.lister().length).toBe(3);
+      });
+      it('filtre statut=en-place', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        P.ajouter('x2', 'a-envisager');
+        P.ajouter('x3', 'en-place');
+        var ids = P.lister({statut:'en-place'}).map(function(l){ return l.ficheId; });
+        expect(ids.length).toBe(2);
+      });
+      it('filtre statut=a-envisager', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        P.ajouter('x2', 'a-envisager');
+        expect(P.lister({statut:'a-envisager'}).length).toBe(1);
+      });
+      it('tri fiche : ordre alphabétique des ficheId', function() {
+        reinitialiserPanier();
+        P.ajouter('x3', 'en-place');
+        P.ajouter('x1', 'en-place');
+        P.ajouter('x2', 'en-place');
+        var ids = P.lister({tri:'fiche'}).map(function(l){ return l.ficheId; });
+        expect(ids).toEqualOrderedArray(['x1','x2','x3']);
+      });
+    });
+
+    /* ─── Suite 9 : estVide / taille / reinitialiser ────────────────── */
+    describe('estVide(), taille(), reinitialiser()', function() {
+      it('panier neuf : estVide=true, taille=0', function() {
+        reinitialiserPanier();
+        expect(P.estVide()).toBe(true);
+        expect(P.taille()).toBe(0);
+      });
+      it('après 3 ajouts : taille=3, estVide=false', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        P.ajouter('x2', 'a-envisager');
+        P.ajouter('x3', 'en-place');
+        expect(P.taille()).toBe(3);
+        expect(P.estVide()).toBe(false);
+      });
+      it('reinitialiser : action reinitialise + lignesAvant contient tout', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        P.ajouter('x2', 'a-envisager');
+        var r = P.reinitialiser();
+        expect(r.action).toBe('reinitialise');
+        expect(r.lignesAvant.length).toBe(2);
+        expect(r.ligneApres).toBeNull();
+        expect(P.estVide()).toBe(true);
+      });
+      it('reinitialiser panier vide : action inchange', function() {
+        reinitialiserPanier();
+        var r = P.reinitialiser();
+        expect(r.action).toBe('inchange');
+      });
+    });
+
+    /* ─── Suite 10 : abonner() / pub-sub ────────────────────────────── */
+    describe('abonner() — pub/sub', function() {
+      it('abonné notifié sur ajout réussi', function() {
+        reinitialiserPanier();
+        var recu = null;
+        var stop = P.abonner(function(r){ recu = r; });
+        P.ajouter('x1', 'en-place');
+        expect(recu).toBeTruthy();
+        expect(recu.action).toBe('ajoute');
+        stop();
+      });
+      it('abonné pas notifié sur inchange', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        var appels = 0;
+        var stop = P.abonner(function(){ appels++; });
+        P.ajouter('x1', 'en-place');  /* inchange */
+        expect(appels).toBe(0);
+        stop();
+      });
+      it('abonné pas notifié sur action invalide', function() {
+        reinitialiserPanier();
+        var appels = 0;
+        var stop = P.abonner(function(){ appels++; });
+        P.ajouter('<bad>', 'en-place');
+        expect(appels).toBe(0);
+        stop();
+      });
+      it('desabonner() arrête les notifications', function() {
+        reinitialiserPanier();
+        var appels = 0;
+        var stop = P.abonner(function(){ appels++; });
+        P.ajouter('x1', 'en-place');
+        stop();
+        P.ajouter('x2', 'en-place');
+        expect(appels).toBe(1);
+      });
+      it('plusieurs abonnés reçoivent tous la notif', function() {
+        reinitialiserPanier();
+        var a=0, b=0;
+        var s1 = P.abonner(function(){ a++; });
+        var s2 = P.abonner(function(){ b++; });
+        P.ajouter('x1', 'en-place');
+        expect(a).toBe(1);
+        expect(b).toBe(1);
+        s1(); s2();
+      });
+      it('exception dans un abonné ne casse pas les autres', function() {
+        reinitialiserPanier();
+        var autre = 0;
+        var s1 = P.abonner(function(){ throw new Error('boom'); });
+        var s2 = P.abonner(function(){ autre++; });
+        P.ajouter('x1', 'en-place');
+        expect(autre).toBe(1);
+        s1(); s2();
+      });
+      it('abonner avec non-fonction : warn et retourne un no-op sûr', function() {
+        reinitialiserPanier();
+        var stop = P.abonner('pas une fonction');
+        expect(typeof stop).toBe('function');
+        stop();  /* ne doit pas lever */
+      });
+      it('abonné notifié sur reinitialise avec lignesAvant', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        var recu = null;
+        var stop = P.abonner(function(r){ recu = r; });
+        P.reinitialiser();
+        expect(recu.action).toBe('reinitialise');
+        expect(recu.lignesAvant.length).toBe(1);
+        stop();
+      });
+    });
+
+    /* ─── Suite 11 : Immuabilité des sorties ────────────────────────── */
+    describe('Immuabilité — sorties figées', function() {
+      it('ligne retournée par ajouter est Object.isFrozen', function() {
+        reinitialiserPanier();
+        var r = P.ajouter('x1', 'en-place');
+        expect(Object.isFrozen(r.ligneApres)).toBe(true);
+      });
+      it('ligne retournée par trouver est figée', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        expect(Object.isFrozen(P.trouver('x1'))).toBe(true);
+      });
+      it('lignes retournées par lister sont figées', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        P.ajouter('x2', 'a-envisager');
+        var lignes = P.lister();
+        expect(Object.isFrozen(lignes[0])).toBe(true);
+        expect(Object.isFrozen(lignes[1])).toBe(true);
+      });
+      it('array retourné par lister est figé', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        expect(Object.isFrozen(P.lister())).toBe(true);
+      });
+      it('mutation directe d\'un champ figé : ignorée (ou throw en strict)', function() {
+        reinitialiserPanier();
+        var r = P.ajouter('x1', 'en-place');
+        var avant = r.ligneApres.statut;
+        try { r.ligneApres.statut = 'a-envisager'; } catch (e) { /* strict : TypeError */ }
+        /* Le service relu confirme que l'état interne n'a pas bougé */
+        expect(P.statut('x1')).toBe('en-place');
+        expect(avant).toBe('en-place');
+      });
+    });
+
+    /* ─── Suite 12 : Validation à la frontière ──────────────────────── */
+    describe('Validation — ficheId, statut, note', function() {
+      it('ficheId avec majuscule : invalide', function() {
+        reinitialiserPanier();
+        var r = P.ajouter('Ti-O4', 'en-place');
+        expect(r.action).toBe('invalide');
+        expect(P.estVide()).toBe(true);
+      });
+      it('ficheId avec caractère spécial : invalide', function() {
+        reinitialiserPanier();
+        var r = P.ajouter('<script>', 'en-place');
+        expect(r.action).toBe('invalide');
+      });
+      it('ficheId vide : invalide', function() {
+        reinitialiserPanier();
+        var r = P.ajouter('', 'en-place');
+        expect(r.action).toBe('invalide');
+      });
+      it('ficheId trop long : invalide', function() {
+        reinitialiserPanier();
+        var tropLong = 'a'.repeat(21);
+        var r = P.ajouter(tropLong, 'en-place');
+        expect(r.action).toBe('invalide');
+      });
+      it('ficheId non-chaîne : invalide', function() {
+        reinitialiserPanier();
+        var r = P.ajouter(42, 'en-place');
+        expect(r.action).toBe('invalide');
+      });
+      it('statut hors whitelist : invalide', function() {
+        reinitialiserPanier();
+        var r = P.ajouter('x1', 'a-retirer');
+        expect(r.action).toBe('invalide');
+      });
+      it('statut non-chaîne : invalide', function() {
+        reinitialiserPanier();
+        var r = P.ajouter('x1', null);
+        expect(r.action).toBe('invalide');
+      });
+      it('note non-chaîne : invalide', function() {
+        reinitialiserPanier();
+        var r = P.ajouter('x1', 'en-place', 42);
+        expect(r.action).toBe('invalide');
+        expect(P.estVide()).toBe(true);
+      });
+      it('note > 500 caractères : invalide', function() {
+        reinitialiserPanier();
+        var tropLongue = 'a'.repeat(501);
+        var r = P.ajouter('x1', 'en-place', tropLongue);
+        expect(r.action).toBe('invalide');
+      });
+      it('note = 500 caractères : acceptée', function() {
+        reinitialiserPanier();
+        var limite = 'a'.repeat(500);
+        var r = P.ajouter('x1', 'en-place', limite);
+        expect(r.action).toBe('ajoute');
+      });
+      it('statut() sur ficheId invalide : null (pas de throw)', function() {
+        reinitialiserPanier();
+        expect(P.statut('<bad>')).toBeNull();
+      });
+      it('trouver() sur ficheId invalide : null (pas de throw)', function() {
+        reinitialiserPanier();
+        expect(P.trouver('<bad>')).toBeNull();
+      });
+      it('basculer avec statut invalide : action invalide', function() {
+        reinitialiserPanier();
+        var r = P.basculer('x1', 'a-retirer');
+        expect(r.action).toBe('invalide');
+      });
+      it('modifierNote avec note invalide : action invalide', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        var r = P.modifierNote('x1', 99);
+        expect(r.action).toBe('invalide');
+      });
+    });
+
+    /* ─── Suite 13 : utiliserDepot() ────────────────────────────────── */
+    describe('utiliserDepot() — substitution d\'adapter', function() {
+      it('Substitution d\'un adapter valide : OK', function() {
+        var d = P.MemoireDepot();
+        P.utiliserDepot(d);
+        P.ajouter('x1', 'en-place');
+        expect(P.taille()).toBe(1);
+      });
+      it('Substitution isole du dépôt précédent', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        P.utiliserDepot(P.MemoireDepot());   /* depot neuf */
+        expect(P.estVide()).toBe(true);
+      });
+      it('Adapter sans une méthode : rejet, depot courant inchangé', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        P.utiliserDepot({ lister:function(){return [];}, trouver:function(){return null;} });
+        expect(P.taille()).toBe(1);   /* l'ancien depot est toujours là */
+      });
+      it('Adapter null : rejet silencieux', function() {
+        reinitialiserPanier();
+        P.ajouter('x1', 'en-place');
+        P.utiliserDepot(null);
+        expect(P.taille()).toBe(1);
+      });
+      it('Substitution ne notifie pas les abonnés', function() {
+        reinitialiserPanier();
+        var appels = 0;
+        var stop = P.abonner(function(){ appels++; });
+        P.utiliserDepot(P.MemoireDepot());
+        expect(appels).toBe(0);
+        stop();
+      });
+    });
+
+    /* ─── Suite 14 : Invariants consolidés — scénarios de bout en bout ── */
+    describe('Scénarios de bout en bout', function() {
+      it('Parcours voie rapide : 3 fiches en-place + 2 à-envisager + retirer', function() {
+        reinitialiserPanier();
+        P.basculer('x1', 'en-place');
+        P.basculer('x2', 'en-place');
+        P.basculer('x3', 'en-place');
+        P.basculer('p5', 'a-envisager');
+        P.basculer('t4', 'a-envisager');
+        expect(P.taille()).toBe(5);
+        expect(P.lister({statut:'en-place'}).length).toBe(3);
+        expect(P.lister({statut:'a-envisager'}).length).toBe(2);
+        P.retirer('x2');
+        expect(P.taille()).toBe(4);
+      });
+      it('Parcours voie lente : ajouter avec note, modifier note, basculer, relire', function() {
+        reinitialiserPanier();
+        P.ajouter('af-sc1', 'en-place', 'au daily');
+        var avant = P.trouver('af-sc1').ajouteeLe;
+        P.modifierNote('af-sc1', 'au daily + revue Q3');
+        P.basculer('af-sc1', 'a-envisager');
+        var final = P.trouver('af-sc1');
+        expect(final.statut).toBe('a-envisager');
+        expect(final.note).toBe('au daily + revue Q3');
+        expect(final.ajouteeLe).toBe(avant);  /* invariant stabilité */
+      });
+      it('Mixer clic rapide et clic lent : la note posée par ajouter survit à une bascule rapide', function() {
+        reinitialiserPanier();
+        P.ajouter('o4', 'en-place', 'ma justification');
+        P.basculer('o4', 'a-envisager');   /* voie rapide sans note */
+        expect(P.trouver('o4').note).toBe('ma justification');
+      });
+    });
+  }
+
+  /* ══════ Rendu du rapport ═════════════════════════════════════════════ */
+
+  function rendreRapport() {
+    var totalTests = 0;
+    var totalFails = 0;
+    var html       = '';
+
+    for (var i = 0; i < suites.length; i++) {
+      var s     = suites[i];
+      var fails = 0;
+      for (var j = 0; j < s.tests.length; j++) if (!s.tests[j].ok) fails++;
+      totalTests += s.tests.length;
+      totalFails += fails;
+
+      var classeSuite = fails === 0 ? 'ok' : 'ko';
+      var marqueur    = fails === 0 ? '✓' : '✗';
+      var ouvert      = fails > 0 ? ' open' : '';
+      html += '<details class="suite ' + classeSuite + '"' + ouvert + '>';
+      html += '<summary>' + marqueur + ' ' + escapeHtml(s.nom)
+            + ' — ' + (s.tests.length - fails) + '/' + s.tests.length + '</summary>';
+      for (var k = 0; k < s.tests.length; k++) {
+        var t = s.tests[k];
+        html += '<div class="test ' + (t.ok ? 'pass' : 'fail') + '">';
+        html += '<span>' + (t.ok ? '✓' : '✗') + '</span>';
+        html += '<span>' + escapeHtml(t.nom) + '</span>';
+        if (!t.ok) {
+          html += '<div class="test-detail">' + escapeHtml(t.detail) + '</div>';
+        }
+        html += '</div>';
+      }
+      html += '</details>';
+    }
+    document.getElementById('resultats').innerHTML = html;
+
+    var resume = document.getElementById('resume');
+    if (totalFails === 0) {
+      resume.className = 'resume ok';
+      resume.textContent = '✓ ' + totalTests + ' tests — tous verts';
+    } else {
+      resume.className = 'resume ko';
+      resume.textContent = '✗ ' + totalFails + ' échec'
+        + (totalFails > 1 ? 's' : '') + ' sur ' + totalTests + ' tests';
+    }
+  }
+
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+})();
+</script>
+</body>
+</html>
