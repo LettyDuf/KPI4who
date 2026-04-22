@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **22 avril 2026** (introduction du bloc *État courant* en tête — reprise express par défaut, mot-clé `reprise complète` pour forcer la relecture complète).
+Dernière mise à jour : **22 avril 2026** (consolidation C.1 par harnais de tests de filtrage — 70 assertions vertes couvrant les 53 rôles de l'inventaire, commit `d4fed38`).
 
 ---
 
@@ -9,9 +9,9 @@ Dernière mise à jour : **22 avril 2026** (introduction du bloc *État courant*
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Chantier actif** : 7.2a-code.3 — construction de la porte niveau (`CM.VuePorteNiveau`). Étapes livrées : A (contrat d'API), B.1 (coquille DOM/CSS), B.2 (squelette module), B.3 (accordéon 4 cartouches + CSS cran 3 Doux), C.1 (`_etapeProbleme` filtré par niveau dérivé du rôle).
-- **Dernier SHA sur `main`** : `d645970` — *docs(7.2a-code.3): acte C.1 livré dans le backlog*.
-- **Prochain pas** : étape post-C.1 du stepper `CM.VuePorteNiveau`, à caler depuis `doc-contrats-stepper-roles.md`. *À préciser par Lætitia à l'ouverture de la prochaine session.*
+- **Chantier actif** : 7.2a-code.3 — construction de la porte niveau (`CM.VuePorteNiveau`). Étapes livrées : A (contrat d'API), B.1 (coquille DOM/CSS), B.2 (squelette module), B.3 (accordéon 4 cartouches + CSS cran 3 Doux), C.1 (`_etapeProbleme` filtré par niveau dérivé du rôle), **C.1-tests (harnais `tests-porte-niveau.html` — 70 assertions vertes sur 53 rôles + doctrine N1 + cas défensifs)**.
+- **Dernier SHA sur `main`** : `d4fed38` — *feat(7.2a-code.3): harnais de tests de filtrage — consolidation C.1*.
+- **Prochain pas** : C.2 — `_etapeCadre(roleId, problemeId)` — grille des cadres méthodologiques filtrée par le couple (niveau dérivé × problème). Iso-pattern avec `CM.VuePorteCadre`. Décision éditoriale à trancher au démarrage : affiche-t-on toutes les familles d'écoles (comme la porte cadre), ou seulement les cadres cohérents avec le couple déjà validé&nbsp;?
 - **Fiches mémoire pertinentes** : `project_porte_niveau_roles`, `project_porte_niveau_doctrine_editoriale`, `project_porte_niveau_rendu_visuel`, `project_7_2a_code_2_livre`, `project_document_compagnon_contrats`.
 - **Blocages / questions ouvertes** : aucun.
 
@@ -255,7 +255,7 @@ Audit complet livré dans [`AUDIT-UNIFORMITE-PORTES.md`](./AUDIT-UNIFORMITE-PORT
 
 ## Prochaine action recommandée
 
-Chantier **7.2a-code.3 en cours** (⏳). Commits livrés à la date du 22/04/2026 : A `0e08f37` (contrat d'API compagnon) · B.1 `238d679` (coquille DOM + CSS scope `#vue-porte-niveau`) · B.2 `098bb33` (squelette module + façade + stubs) · B.3 `215e9d6` (_etapeRole accordéon 4 cartouches + CSS cran 3 Doux pour axes Mintzberg) · **C.1 `3e3f105`** (_etapeProbleme filtré par niveau dérivé du rôle, introduit la table locale `ROLE_NIVEAU_VERS_DIAG` qui traduit les canons `CM.Roles` vers les canons historiques de `CM.DiagnosticProbleme`). Invariant de dérivation respecté : le niveau n'est jamais un choix utilisateur dans la porte niveau, c'est une projection du rôle.
+Chantier **7.2a-code.3 en cours** (⏳). Commits livrés à la date du 22/04/2026 : A `0e08f37` (contrat d'API compagnon) · B.1 `238d679` (coquille DOM + CSS scope `#vue-porte-niveau`) · B.2 `098bb33` (squelette module + façade + stubs) · B.3 `215e9d6` (_etapeRole accordéon 4 cartouches + CSS cran 3 Doux pour axes Mintzberg) · **C.1 `3e3f105`** (_etapeProbleme filtré par niveau dérivé du rôle, introduit la table locale `ROLE_NIVEAU_VERS_DIAG` qui traduit les canons `CM.Roles` vers les canons historiques de `CM.DiagnosticProbleme`) · **C.1-tests `d4fed38`** (harnais `tests-porte-niveau.html`, 70 assertions vertes : 4 sanity + 4 doctrine N1 + 55 filtrage par rôle + 4 posture avec libellé de surface + 3 cas défensifs ; zéro intrusion dans le code de prod, adapter driver sur l'API publique). Invariant de dérivation respecté : le niveau n'est jamais un choix utilisateur dans la porte niveau, c'est une projection du rôle.
 
 **Prochain commit : C.2 — `_etapeCadre(roleId, problemeId)`** — grille des cadres méthodologiques, filtrée par le couple (niveau dérivé × problème choisi). Iso-pattern avec `CM.VuePorteCadre` pour la grille en accordéon par famille d'école de pensée, mais décision éditoriale à trancher : affiche-t-on *toutes* les familles dès l'étape 3 (comme la porte cadre), ou ne montre-t-on que les cadres cohérents avec le couple (niveau × problème) déjà validé ? À arbitrer au démarrage de C.2.
 
