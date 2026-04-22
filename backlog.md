@@ -267,11 +267,11 @@ Audit complet livré dans [`AUDIT-UNIFORMITE-PORTES.md`](./AUDIT-UNIFORMITE-PORT
 - **Deux statuts par indicateur** : *en place* et *à envisager*. Pas d'état *« à retirer »* en v1 — la suppression se fait simplement en retirant l'indicateur du panier.
 - **Saisie du panier par le référentiel (Chemin A).** L'utilisateur parcourt les fiches de l'outil et les marque *« en place »* ou *« à envisager »*. Pas de saisie libre d'indicateurs *« maison »*. Cela aligne l'utilisateur sur le vocabulaire de l'outil.
 - **Recherche globale avec 1-2 filtres contextuels optionnels.** Permet de retrouver rapidement une fiche par son nom.
-- **Impression comme sortie canonique.** Pas d'export vers un format étranger. L'outil garde la main sur la forme.
+- **Vue imprimable : one-pager A4 minimaliste.** *Arbitrée le 22/04/2026 après mockup-preview côte à côte ([`preview-panier-impression.html`](./preview-panier-impression.html), commit `494a4b9`).* Une seule page qu'on tend en réunion : tableau *en place* + tableau *à envisager*, pastille fiabilité, chip niveau, bandeau terrain, trois questions à poser à l'équipe. Outil de conversation, pas document autonome. Rendu volontairement dense pour tenir sur une page sans respirer mal.
+- **Sortie canonique : impression + export PDF du même rendu.** Le PDF est une copie fidèle du one-pager imprimable, pas une transposition vers un autre format. Il sert la personne qui ne peut pas imprimer physiquement ou qui veut envoyer le scorecard à un collègue. Pas d'export vers Excel, Word ou un format tiers — l'outil garde la main sur la forme parce que la forme sert la lisibilité, et la lisibilité sert la conversation.
 
 **Questions résiduelles à trancher au démarrage.**
 
-- Vue imprimable : *one-pager A4 minimaliste* (outil de décision pour la conversation) ou *rapport multi-pages avec fiches détaillées annexées* (support de partage) ? Les deux se défendent, appellent des mises en page différentes.
 - Interaction d'ajout au panier : poignée *« ajouter »* sur la fiche du tiroir, ou case à cocher sur la liste, ou les deux ?
 - Persistance : localStorage dans le navigateur (simple mais lié à la machine) ou rien (le panier vit le temps de la session) ? La persistance locale semble raisonnable en v1.
 
