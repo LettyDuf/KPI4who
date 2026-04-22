@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **22 avril 2026 — fin de journée** (clôture du cadrage chantier 9 : trois arbitrages majeurs actés — vue imprimable, persistance, interaction d'ajout — après six mockups-preview).
+Dernière mise à jour : **22 avril 2026 — soir** (clôture de la tranche 9.A — socle hexagonal `CM.Panier` + harnais de tests vert, après refonte du patron de test suite à la découverte d'un blocage cross-origin Chrome/`file://`).
 
 ---
 
@@ -9,12 +9,12 @@ Dernière mise à jour : **22 avril 2026 — fin de journée** (clôture du cadr
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événement majeur de la session** : clôture du cadrage du chantier 9 (panier personnel). Les trois arbitrages majeurs sont actés en Décisions fermes — vue imprimable (one-pager A4 + export PDF, commit `494a4b9`), persistance (session éphémère v1, commit `dd804ac`), interaction d'ajout (hybride A + icônes nues coche + ampoule rayonnante, tranché ce 22/04 après six itérations de mockup-preview). En amont : clarification de mission consignée dans [`MISSION.md`](./MISSION.md) (commit `d3bfaf9`) — cinq prises de conscience, posture socratique, charpente à 4 onglets complémentaires. Deux chantiers corrélés restent ouverts : **10** (bandeau de navigation persistant) et **11** (refonte future de Cascade, en pause).
-- **Chantier actif** : **chantier 9 — code du panier**. Cadrage clos, plus de questions résiduelles. Prochain démarrage = architecture hexagonale du panier (port `CM.Panier.Depot` + adapter `MemoireDepot`, vue liste, vue fiche ouverte avec zone d'ajout, vue imprimable one-pager, export PDF, garde-fou `beforeunload`).
-- **Dernier SHA sur `main`** : `439699f` — *docs(chantier-9): tranche Q2 — hybride A + icônes nues coche + ampoule*. Derniers commits du 22/04 (cadrage chantier 9) : `494a4b9` (vue imprimable), `98af397` (tranche Q1), `69d7d61` (nice-to-have PDF cliquable), `9dd2ef5` (mockup interaction A/B/C), `dd804ac` (tranche persistance), `02f52d3` (option E), `e2ae1bf` (A+E vs cases), `41a0cf8` (ampoule vs engrenage), `33586e4` (ampoule rayonnante), `0cc8a49` (taille d'icône), `439699f` (tranche Q2 + clôture cadrage).
-- **Règles UX établies en chantier 9** à garder en tête pour les futurs écrans : *deux signaux suffisent* (fond coloré + icône active = pas de chip textuelle redondante, fiche mémoire `feedback_redondance_signaux_statut.md`) ; *tons chromatiques discrets désaturés* pour les états actifs ; *icônes nues 22 px + cercle teinté au hover* pour l'affordance minimale.
-- **Fiches mémoire pertinentes pour le chantier 9 code** : `project_regles_refactoring_progressif` (boy scout), `project_outillage_generation_donnees` (patron générateur Node.js si données référentiel), `feedback_redondance_signaux_statut`, `feedback_mockup_preview_ux` ; et bien sûr [`MISSION.md`](./MISSION.md) comme boussole.
-- **Blocages / questions ouvertes** : aucun. Le code du panier peut démarrer.
+- **Événement majeur de la session** : tranche **9.A livrée et verte**. Socle hexagonal `CM.Panier` (port `Depot`, adapter `MemoireDepot`, service) écrit dans `cadre-indicateurs.html`, contrats d'API fixés dans [`doc-contrats-panier.md`](./doc-contrats-panier.md), harnais `tests-panier.html` exécutant 14 suites sur l'API publique. **Imprévu traité en cours de tranche** : le patron de test iframe + `contentWindow` est bloqué par Chrome moderne sur `file://` (origines `null` distinctes = cross-origin). Refonte actée en 9.A.3 : générateur `outils/construire-tests-panier.js` qui inline le bloc `CM.Panier` dans le harnais, même-origine garantie. `tests-porte-niveau.html` souffre du même blocage — dette consignée section 9, à refondre sur le même patron après la fin du chantier 9.
+- **Chantier actif** : **chantier 9 — code du panier**. 9.A clos (vert). Prochain démarrage = **9.B — vue panier dans *Mon tableau de bord*** (remplacer le contenu actuel de l'onglet par deux sections *En place* / *À envisager*, bouton *réinitialiser* avec confirmation, état vide).
+- **Dernier SHA sur `main`** : `268e3f8` — *feat(chantier-9): régénère tests-panier.html + doc "régénérer le harnais"*. Commits de la session (9.A complète) : `82af82f` (contrats) · `5e31c7e` (socle CM.Panier) · `f51b874` (harnais initial) · `83a0c32` (backlog dérive) · `9a44f93` (marqueurs BEGIN/END) · `1bfa321` (générateur) · `84f5098` (wrapper script) · `1064163` (harnais remanié) · `268e3f8` (régénération + doc).
+- **Règle d'or ajoutée cette session** : après toute modif de `CM.Panier`, relancer `node outils/construire-tests-panier.js` pour régénérer `tests-panier.html`. Détaillé dans `doc-contrats-panier.md` section *Régénérer le harnais de tests*.
+- **Fiches mémoire pertinentes pour la suite du chantier 9** : `project_regles_refactoring_progressif` (boy scout), `project_outillage_generation_donnees` (patron générateur Node.js — confirmé à nouveau ici), `project_document_compagnon_contrats` (doc-contrats-panier.md), `feedback_redondance_signaux_statut`, `feedback_mockup_preview_ux` ; et [`MISSION.md`](./MISSION.md) comme boussole.
+- **Blocages / questions ouvertes** : aucun. 9.B peut démarrer.
 
 ---
 
