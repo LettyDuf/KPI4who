@@ -107,6 +107,7 @@ retoucher le stepper — seulement en ajoutant un descripteur au tableau.
 | `Instance.retourAccueil()` | `void` | Quitte le parcours, restaure l'accueil de l'outil. |
 | `Instance.retourA(indexEtape)` | `void` | Revient en arrière sur une étape déjà faite (chip cliquable). Efface tous les choix postérieurs. |
 | `Instance.setChoix(indexEtape, valeur)` | `void` | Note le choix de l'utilisateur à une étape, transitionne automatiquement vers l'étape suivante ou vers les résultats. |
+| `Instance.remplacerChoix(indexEtape, valeur)` | `void` | Met à jour un choix **sans** transitionner ni effacer les choix postérieurs. Primitive bas-niveau pour le pivot à étage constant — cf. section dédiée ci-dessous. |
 | `Instance.reset()` | `void` | Repart de l'étape 1 en effaçant tous les choix. Déclenché par le bouton *↻ Recommencer* en pied d'étape finale. |
 | `Instance.etatCourant()` | `{ etape, choix }` | Lecture de l'état — utile pour le deep-linking de 7.7. |
 
@@ -138,6 +139,26 @@ retoucher le stepper — seulement en ajoutant un descripteur au tableau.
   ]
 }
 ```
+
+### Distinguer `setChoix` / `remplacerChoix` / `retourA`
+
+Les trois primitives manipulent l'état de l'instance mais servent des
+intentions utilisateur différentes. Les confondre produit des régressions
+subtiles de parcours, d'où cette clarification.
+
+| Primitive | Effet sur le choix cible | Effet sur `etat.etape` | Effet sur les choix postérieurs | Cas d'usage typique |
+|---|---|---|---|---|
+| `setChoix(n, v)` | met à jour `choix[n-1]` | `etat.etape = n + 1` (transition) | inchangés | Flux normal : l'utilisateur valide une étape, on passe à la suivante. |
+| `remplacerChoix(n, v)` | met à jour `choix[n-1]` | inchangé | inchangés | Pivot à étage constant : l'utilisateur est sur les résultats et change un choix antérieur sans vouloir quitter les résultats. |
+| `retourA(n)` | inchangé | `etat.etape = n` | effacés (`null`) pour les index ≥ n | L'utilisateur clique sur une chip d'étape antérieure pour rouvrir le choix. |
+
+Exemple concret — **bloc « Cadres voisins »** de la porte cadre : l'utilisateur
+est à l'étape 3 avec `(cadre=scrum, niveau=équipe)` et clique sur un cadre voisin.
+L'intention est de recalculer les résultats pour `(cadre=kanban, niveau=équipe)`
+**sans** revenir à l'étape 2. C'est exactement `remplacerChoix(1, 'kanban')`.
+Si on avait appelé `setChoix(1, 'kanban')` l'utilisateur serait renvoyé à l'étape 2
+(choix du niveau) — mauvais. Si on avait appelé `retourA(1)`, le choix du niveau
+serait effacé — mauvais aussi.
 
 ### Points d'extension respectant le contrat de cohérence
 
