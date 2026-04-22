@@ -2844,6 +2844,567 @@ CM.IndicateursMeta = (function() {
 </script>
 
 
+<!-- ══ MODULE : CM.Roles — Inventaire des rôles par niveau (porte niveau) ══
+     Source éditoriale : inventaire-roles-porte-niveau.md (53 fiches, 4 niveaux).
+     La zone de données `CM._rolesData` est régénérée par tools/generer-roles.js ;
+     ne pas éditer à la main entre les balises CM.ROLES-DATA:BEGIN/END.
+
+     Port hexagonal exposé :
+       · tousLesRoles()              — array complet (figé, immutable)
+       · parNiveau(canon)            — filtre par niveau canonique
+       · parId(id)                   — recherche par id stable, retourne null si absent
+       · niveauxCanoniques()         — liste ordonnée des canons
+       · libelleDeSurface(canon)     — canon → libellé porte niveau (décision N1)
+       · axesValides()               — whitelist des axes Mintzberg (décision D2)
+
+     Validation légère au boot : toute fiche malformée déclenche un console.warn,
+     sans faire crasher l'outil — la porte niveau continue d'afficher les rôles
+     correctement typés et signale ceux qui posent problème. -->
+<script>
+/* CM.ROLES-DATA:BEGIN — généré par tools/generer-roles.js, ne pas éditer à la main */
+CM._rolesData = [
+  {
+    id: "op-developpeur",
+    niveau: "équipe",
+    titre: "Développeur / Ingénieur logiciel",
+    axes: ["projet","méthodologique"],
+    source: "Scrum Guide 2020 (*Developers*) ; IEEE SWEBOK pour le socle d'ingénierie.",
+    descriptif: "Membre de l'équipe de réalisation, engagé sur un incrément livrable à chaque itération. Responsable de la qualité technique, des estimations, du respect des critères de « terminé », et de l'adaptation continue du plan de sprint."
+  },
+  {
+    id: "op-po-mono-equipe",
+    niveau: "équipe",
+    titre: "Product Owner (produit mono-équipe)",
+    axes: ["projet","stratégique"],
+    source: "Scrum Guide 2020 (*Product Owner*) ; Marty Cagan *Inspired* pour la posture produit.",
+    descriptif: "Seul responsable de la valeur produite par l'équipe sur un produit dont le périmètre tient dans une équipe. Arbitre le backlog, ordonne les éléments selon la valeur, et porte la décision du *quoi* livrer."
+  },
+  {
+    id: "op-scrum-master",
+    niveau: "équipe",
+    titre: "Scrum Master (équipe)",
+    axes: ["méthodologique","humaine"],
+    source: "Scrum Guide 2020 (*Scrum Master*).",
+    descriptif: "Responsable de l'efficacité de l'équipe Scrum, coach sur les pratiques et lève les obstacles transverses. Ne dirige pas l'équipe hiérarchiquement et ne décide pas du contenu du backlog."
+  },
+  {
+    id: "op-tech-lead",
+    niveau: "équipe",
+    titre: "Tech Lead / Team Lead technique",
+    axes: ["projet","méthodologique"],
+    source: "pratique industrielle large (Google Engineering Practices, GitLab Handbook, ThoughtWorks) ; absent du Scrum Guide.",
+    descriptif: "Référent technique d'une équipe, garant de la cohérence d'architecture locale, du mentorat des développeurs, et des choix techniques non-triviaux. Contribue à la réalisation (ne se désengage pas du code)."
+  },
+  {
+    id: "op-analyste-metier",
+    niveau: "équipe",
+    titre: "Analyste métier / Business Analyst",
+    axes: ["projet","méthodologique"],
+    source: "BABOK v3 (IIBA).",
+    descriptif: "Modélise les besoins métier, facilite leur élicitation auprès des parties prenantes, assure la traçabilité entre objectifs business et exigences. Outille le PO et l'équipe, sans se substituer à la décision produit."
+  },
+  {
+    id: "op-designer",
+    niveau: "équipe",
+    titre: "Designer UX / UI",
+    axes: ["projet","méthodologique"],
+    source: "Don Norman *The Design of Everyday Things* ; IxDA ; Nielsen Norman Group.",
+    descriptif: "Conçoit l'expérience utilisateur, conduit la recherche et les tests d'utilisabilité, prototype et documente les patterns d'interaction. Intervient en continu, du problème à la validation terrain."
+  },
+  {
+    id: "op-sre",
+    niveau: "équipe",
+    titre: "Ingénieur SRE / DevOps (équipe)",
+    axes: ["projet","méthodologique"],
+    source: "Google *Site Reliability Engineering* (Beyer et al., 2016) ; *The DevOps Handbook* (Kim, Humble).",
+    descriptif: "Co-responsable avec l'équipe de la fiabilité du service en production — automatisation du déploiement, instrumentation (SLI/SLO), réponse aux incidents. Partage les astreintes et la charge cognitive du run."
+  },
+  {
+    id: "op-qa",
+    niveau: "équipe",
+    titre: "Testeur / Ingénieur qualité (QA)",
+    axes: ["méthodologique","projet"],
+    source: "ISTQB ; Scrum Guide 2020 (qualité = responsabilité collective des *Developers*).",
+    descriptif: "Conçoit la stratégie de test, automatise les scénarios à forte valeur, et pousse la qualité en amont (test-driven, contract testing). La qualité reste une responsabilité partagée de toute l'équipe."
+  },
+  {
+    id: "op-chef-equipe",
+    niveau: "équipe",
+    titre: "Chef d'équipe (management de proximité)",
+    axes: ["humaine"],
+    source: "management classique (Drucker *The Practice of Management*) ; Mintzberg *Structure in Fives* (ligne hiérarchique).",
+    descriptif: "Manager hiérarchique direct des membres de l'équipe. Porte les décisions administratives (évaluation, développement, congés, arbitrages de charge), et soutient le développement professionnel des personnes."
+  },
+  {
+    id: "op-yellow-belt",
+    niveau: "équipe",
+    titre: "Ceinture jaune (Yellow Belt)",
+    axes: ["méthodologique"],
+    source: "ASQ / IASSC Lean Six Sigma Body of Knowledge.",
+    descriptif: "Sensibilisé aux outils fondamentaux Lean Six Sigma (DMAIC, 5S, cartographie de flux), contribue à des chantiers d'amélioration simples dans son équipe. Formation typique de 1 à 2 jours, sans projet individuel formel."
+  },
+  {
+    id: "op-green-belt",
+    niveau: "équipe",
+    titre: "Ceinture verte (Green Belt)",
+    axes: ["méthodologique","projet"],
+    source: "ASQ / IASSC Lean Six Sigma Body of Knowledge.",
+    descriptif: "Pilote des projets DMAIC de taille moyenne dans son périmètre métier, maîtrise les outils statistiques de base (Pareto, cartes de contrôle, capacité de processus). Formation typique de 40 à 80 heures assortie d'un projet d'amélioration réel, soutenu devant un jury."
+  },
+  {
+    id: "op-coordinateur-livraison",
+    niveau: "équipe",
+    titre: "Coordinateur de livraison",
+    axes: ["projet"],
+    source: "pratique industrielle (organisations matricielles) ; dérivé des notions PMI de coordination de programme appliquées à l'échelle d'une équipe.",
+    descriptif: "Orchestre les dépendances de livraison d'une équipe avec son environnement — autres équipes, intégration, mise en production. Lève les obstacles transverses sans se substituer au PO sur le *quoi*."
+  },
+  {
+    id: "op-data",
+    niveau: "équipe",
+    titre: "Ingénieur data (data engineer / analyste data)",
+    axes: ["projet","méthodologique"],
+    source: "pratique industrielle (DAMA-DMBOK pour la gouvernance, Fundamentals of Data Engineering de Reis & Housley).",
+    descriptif: "Construit et fiabilise les pipelines de données (data engineer) ou produit des analyses actionnables pour les décisions de l'équipe (analyste data). Intégré à l'équipe produit, contribue aux décisions par la donnée."
+  },
+  {
+    id: "ta-rte",
+    niveau: "programme",
+    titre: "Release Train Engineer (RTE)",
+    axes: ["méthodologique","projet"],
+    source: "SAFe 6.0 (*Release Train Engineer*).",
+    descriptif: "Chef d'orchestre d'un Agile Release Train, c'est-à-dire d'un ensemble d'équipes synchronisées (typiquement 5 à 12 équipes) qui livrent ensemble à un rythme trimestriel. Facilite la planification d'incréments de programme, lève les obstacles transverses entre équipes, assure la cadence et l'alignement avec les engagements de valeur."
+  },
+  {
+    id: "ta-coach-transformation",
+    niveau: "programme",
+    titre: "Coach en transformation",
+    axes: ["méthodologique","humaine"],
+    source: "ICAgile ICP-ENT (*Enterprise Coaching for Agility*), SAFe SPC (*SAFe Program Consultant*) ; Michael Sahota *Emerging Leadership* ; Kotter *Leading Change* pour la conduite du changement.",
+    descriptif: "Accompagne une organisation ou un programme dans un changement d'ampleur vers un mode de fonctionnement plus agile ou plus lean. Intervient auprès des managers intermédiaires, des équipes et des communautés de pratique, mobilise la conduite du changement et la dynamique systémique. Mission typique de un à trois ans, centrée sur la structure et la culture organisationnelles."
+  },
+  {
+    id: "ta-pm-multi-equipes",
+    niveau: "programme",
+    titre: "Product Manager (produit multi-équipes)",
+    axes: ["stratégique","projet"],
+    source: "Marty Cagan & Chris Jones *Empowered* ; SAFe 6.0 (*Product Manager*).",
+    descriptif: "Responsable de la valeur d'un produit dont le périmètre dépasse une seule équipe. Arbitre la vision, les priorités et les engagements stratégiques du produit, tient la cohérence du parcours utilisateur à travers les équipes contributrices. Distinct du Product Owner par l'ampleur du produit, jamais par la séniorité de la personne."
+  },
+  {
+    id: "ta-business-owner",
+    niveau: "programme",
+    titre: "Business Owner",
+    axes: ["stratégique","projet"],
+    source: "SAFe 6.0 (*Business Owner*).",
+    descriptif: "Représentant des parties prenantes exécutives au sein d'un Agile Release Train. Porte la responsabilité business de la livraison du programme, valide les engagements de valeur à chaque incrément, sponsorise les arbitrages d'investissement et de périmètre."
+  },
+  {
+    id: "ta-chef-programme",
+    niveau: "programme",
+    titre: "Chef de programme",
+    axes: ["projet","stratégique"],
+    source: "PMBOK *Standard for Program Management* (PMI) ; *Managing Successful Programmes* (MSP / PRINCE2).",
+    descriptif: "Coordonne un ensemble de projets interdépendants qui concourent à un bénéfice stratégique commun pour l'organisation. Responsable de la feuille de route du programme, de l'allocation des ressources entre projets, des arbitrages de périmètre et du reporting aux instances de direction."
+  },
+  {
+    id: "ta-chef-service",
+    niveau: "programme",
+    titre: "Chef de service / Responsable d'unité",
+    axes: ["humaine","stratégique"],
+    source: "Peter Drucker *The Practice of Management* ; Henry Mintzberg *Structure in Fives* (ligne hiérarchique intermédiaire) ; management classique.",
+    descriptif: "Manager hiérarchique d'une unité rassemblant plusieurs équipes ou plusieurs métiers. Porte les décisions d'organisation de son périmètre — effectifs, trajectoires individuelles, budget de fonctionnement — et assure l'alignement sur les orientations de la direction générale."
+  },
+  {
+    id: "ta-pmo",
+    niveau: "programme",
+    titre: "PMO (Project / Program Management Officer)",
+    axes: ["méthodologique","projet"],
+    source: "PMI *PMO Frameworks* ; Association for Project Management (APM) *Body of Knowledge*.",
+    descriptif: "Garant des méthodes, des standards et du reporting à l'échelle d'un portefeuille de projets ou d'un programme. Outille les chefs de projet et de programme, consolide les indicateurs de pilotage, veille à la cohérence des pratiques sans se substituer aux décisions opérationnelles."
+  },
+  {
+    id: "ta-black-belt",
+    niveau: "programme",
+    titre: "Black Belt (Lean Six Sigma)",
+    axes: ["méthodologique","projet"],
+    source: "ASQ / IASSC Lean Six Sigma Body of Knowledge (niveau *Black Belt*).",
+    descriptif: "Pilote des projets DMAIC transverses de grande ampleur, sur des problèmes complexes qui dépassent une seule équipe. Maîtrise les outils statistiques avancés (plans d'expérience, analyse de capabilité de processus), mentore les Green Belts et intervient pour le compte de plusieurs unités. Formation typique de 160 heures assortie de deux projets d'amélioration réels."
+  },
+  {
+    id: "ta-champion",
+    niveau: "programme",
+    titre: "Champion Lean Six Sigma",
+    axes: ["stratégique","humaine"],
+    source: "ASQ / IASSC Lean Six Sigma Body of Knowledge (rôle *Champion*).",
+    descriptif: "Sponsor exécutif d'un portefeuille de projets Lean Six Sigma dans son périmètre. Sélectionne les chantiers d'amélioration prioritaires, alloue les ressources, lève les obstacles politiques, porte la visibilité des résultats auprès du comité de direction. Formation courte ciblée sur les enjeux de sponsorship."
+  },
+  {
+    id: "ta-value-stream-manager",
+    niveau: "programme",
+    titre: "Value Stream Manager",
+    axes: ["méthodologique","projet","stratégique"],
+    source: "Mike Rother & John Shook *Learning to See* ; Jeffrey Liker *The Toyota Way* ; Mike Rother *Toyota Kata*.",
+    descriptif: "Responsable d'une chaîne de valeur complète, du besoin client à sa satisfaction. Analyse le flux de bout en bout (cartographie VSM), identifie gaspillages et goulots, pilote des chantiers d'amélioration continue qui touchent plusieurs équipes ou fonctions. Posture typique aussi bien en industrie qu'en services."
+  },
+  {
+    id: "ta-architecte-solution",
+    niveau: "programme",
+    titre: "Architecte de solution",
+    axes: ["projet","méthodologique","stratégique"],
+    source: "TOGAF 9.2 (*Solution Architect*) ; SAFe 6.0 (*Solution Architect*).",
+    descriptif: "Conçoit et garantit l'architecture d'une solution business de bout en bout, depuis les besoins fonctionnels jusqu'aux choix technologiques structurants. La solution traverse typiquement plusieurs systèmes applicatifs et plusieurs équipes. Dialogue étroit avec le chef de programme et le product manager pour arbitrer les compromis coût / délai / qualité structurelle."
+  },
+  {
+    id: "ta-architecte-fonctionnel",
+    niveau: "programme",
+    titre: "Architecte fonctionnel / organique",
+    axes: ["projet","méthodologique"],
+    source: "Urbanisation du SI — Christophe Longépé *Le projet d'urbanisation du SI* ; Club Urba-EA. BABOK v3 (IIBA) pour le volet fonctionnel.",
+    descriptif: "Modélise les processus métier et leur traduction en capacités SI (volet *fonctionnel*), puis décompose le SI ou un bloc applicatif en composants, interfaces et flux techniques (volet *organique*). Certaines organisations distinguent nettement les deux rôles, d'autres les fusionnent en un seul architecte. Tradition francophone de l'urbanisation du SI, encore vivante dans le secteur public et les grandes DSI."
+  },
+  {
+    id: "ta-head-of-data",
+    niveau: "programme",
+    titre: "Head of Data / Responsable données",
+    axes: ["stratégique","méthodologique"],
+    source: "DAMA-DMBOK (*Data Governance Council*) ; Thomas Davenport *Competing on Analytics*.",
+    descriptif: "Porte la stratégie d'exploitation et de gouvernance des données à l'échelle d'un programme ou d'une direction métier. Définit les usages prioritaires, arbitre entre gouvernance, qualité et vélocité, outille les équipes data en standards et en plateforme. Interface avec les métiers sur la valeur attendue et avec la DSI sur la capacité technique."
+  },
+  {
+    id: "ta-directeur-fp",
+    niveau: "programme",
+    titre: "Directeur (fonction publique QC / CA)",
+    axes: ["humaine","stratégique"],
+    source: "Gouvernement du Québec — classification des cadres supérieurs, classe 3 ; gouvernement fédéral canadien — groupe *Executive*, niveaux EX-01 et EX-02.",
+    descriptif: "Strate de gestion intermédiaire dans l'appareil d'État québécois ou fédéral canadien. Pilote une direction qui rassemble plusieurs services, porte les engagements du ministère sur son périmètre, et rend compte à un directeur général ou à un sous-ministre adjoint selon la taille du ministère. Horizon de pilotage annuel à biennal."
+  },
+  {
+    id: "po-lpm",
+    niveau: "portefeuille",
+    titre: "Lean Portfolio Manager (LPM)",
+    axes: ["stratégique","méthodologique"],
+    source: "SAFe 6.0 (*Lean Portfolio Management*).",
+    descriptif: "Responsable de la gestion Lean d'un portefeuille de valeur dans une organisation à l'échelle. Pilote l'investissement par chaînes de valeur, déploie le Lean Budgets, arbitre les Epics de portefeuille et tient la cadence de revue stratégique. Triade d'animation avec l'Enterprise Architect et le Business Owner de portefeuille."
+  },
+  {
+    id: "po-ste",
+    niveau: "portefeuille",
+    titre: "Solution Train Engineer (STE)",
+    axes: ["méthodologique","projet"],
+    source: "SAFe 6.0 (*Solution Train Engineer*).",
+    descriptif: "Chef d'orchestre d'un *Solution Train*, c'est-à-dire d'un ensemble de plusieurs Agile Release Trains qui collaborent à la livraison d'une solution complexe (typiquement 50 à 125 personnes). Facilite la synchronisation inter-trains, la planification des incréments de solution et la levée des obstacles transverses à l'échelle de la solution. Équivalent du RTE d'un cran au-dessus."
+  },
+  {
+    id: "po-portfolio-manager",
+    niveau: "portefeuille",
+    titre: "Portfolio Manager",
+    axes: ["stratégique","projet"],
+    source: "PMI *Standard for Portfolio Management* (4e édition).",
+    descriptif: "Gestionnaire d'un portefeuille de projets, de programmes et d'initiatives opérationnelles qui concourent aux objectifs stratégiques de l'organisation. Arbitre la composition du portefeuille (sélection, priorisation, équilibrage), suit la performance agrégée et pilote les réallocations en cours d'exercice. Travaille en étroite relation avec les sponsors exécutifs et le bureau de gouvernance."
+  },
+  {
+    id: "po-cpo-multi-produits",
+    niveau: "portefeuille",
+    titre: "VP Product / Chief Product Officer (multi-produits)",
+    axes: ["stratégique","projet"],
+    source: "Marty Cagan & Chris Jones *Empowered* ; Ben Horowitz *The Hard Thing About Hard Things*.",
+    descriptif: "Responsable d'un portefeuille de produits dans une ligne métier ou une filiale. Anime une équipe de Product Managers, arbitre la cohérence de l'offre, porte la vision produit à l'échelle du portefeuille et interagit directement avec le comité de direction. Distinct du Chief Product Officer de groupe (strate exécutive) par l'étendue de la ligne couverte, jamais par la séniorité de la personne."
+  },
+  {
+    id: "po-architecte-entreprise",
+    niveau: "portefeuille",
+    titre: "Architecte d'entreprise",
+    axes: ["stratégique","méthodologique"],
+    source: "TOGAF 9.2 (*Enterprise Architect*) ; SAFe 6.0 (*Enterprise Architect*) ; Zachman Framework.",
+    descriptif: "Garant de la cohérence architecturale de l'entreprise — architecture métier, applicative, de données, technologique. Définit les principes structurants, anime la trajectoire d'urbanisation à moyen terme, arbitre les choix technologiques qui engagent plusieurs domaines. Travaille avec les Architectes de solution pour ancrer les principes dans les livraisons concrètes."
+  },
+  {
+    id: "po-master-black-belt",
+    niveau: "portefeuille",
+    titre: "Master Black Belt (MBB)",
+    axes: ["méthodologique","humaine","stratégique"],
+    source: "ASQ / IASSC Lean Six Sigma Body of Knowledge (niveau *Master Black Belt*).",
+    descriptif: "Expert de plus haut niveau technique et pédagogique dans le déploiement Lean Six Sigma d'une organisation. Définit la stratégie d'amélioration continue, forme et mentore les Black Belts, pilote les chantiers de transformation les plus complexes. Porte la cohérence méthodologique à l'échelle de l'entreprise et conseille les Champions et le comité de direction."
+  },
+  {
+    id: "po-coach-agile-strategique",
+    niveau: "portefeuille",
+    titre: "Coach Agile stratégique / Business Agility Coach",
+    axes: ["méthodologique","stratégique","humaine"],
+    source: "Michael Sahota *Emerging Leadership* ; Karim Harbott *The 6 Enablers of Business Agility* ; Business Agility Institute (*Domains of Business Agility*) ; Mike Burrows *Agendashift*.",
+    descriptif: "Accompagne le comité de direction et la structure organisationnelle dans une évolution vers l'agilité d'affaires. Intervient sur les leviers structurels — stratégie, culture, leadership, architecture organisationnelle, modèle de financement — avec un horizon de trois à cinq ans. Posture *évolutionnaire* distincte de la posture *transitionnelle* du Coach en transformation tactique : ne déploie pas un cadre méthodologique, conçoit le chemin adapté au contexte."
+  },
+  {
+    id: "po-directeur-portefeuille",
+    niveau: "portefeuille",
+    titre: "Directeur de portefeuille (EPMO)",
+    axes: ["méthodologique","stratégique"],
+    source: "PMI *Enterprise PMO Frameworks* ; Association for Project Management (APM) *Directing Change*.",
+    descriptif: "Responsable du bureau de pilotage de portefeuille à l'échelle de l'entreprise (*Enterprise Project Management Office*). Définit les standards de gouvernance, consolide le reporting exécutif, instruit les dossiers d'investissement pour le comité stratégique, et arbitre les ressources transverses. Distinct du PMO Tactique par son horizon et son interlocuteur — il rend compte au comité de direction, pas à un chef de programme."
+  },
+  {
+    id: "po-directeur-transformation",
+    niveau: "portefeuille",
+    titre: "Directeur de transformation (CxT)",
+    axes: ["stratégique","humaine","méthodologique"],
+    source: "John Kotter *Leading Change* ; McKinsey *The CTO's role in transformation* ; Prosci ADKAR.",
+    descriptif: "Porte une transformation structurelle de l'organisation — modèle opérationnel, digital, culturel — sur un horizon pluriannuel. Oriente les chantiers majeurs, coordonne les directions métiers et transverses, rend compte au comité de direction. Rôle souvent temporaire (trois à cinq ans) qui s'éteint une fois les nouveaux modes de fonctionnement ancrés."
+  },
+  {
+    id: "po-dg-bu",
+    niveau: "portefeuille",
+    titre: "Directeur général de Business Unit / Directeur de domaine métier",
+    axes: ["humaine","stratégique"],
+    source: "Peter Drucker *The Practice of Management* (management par objectifs) ; Henry Mintzberg *Structure in Fives* (ligne hiérarchique haute) ; Alfred Chandler *Strategy and Structure*.",
+    descriptif: "Pilote une filiale, une business unit ou un domaine métier d'une grande organisation. Deux variantes courantes : le *Directeur général de Business Unit* porte un compte de résultat autonome sur un marché donné ; le *Directeur de domaine métier* pilote une fonction transverse (Marketing, Logistique, Opérations) dans une structure matricielle. Dans les deux cas, horizon pluriannuel, arbitrage budget et feuille de route, animation d'une équipe de direction propre."
+  },
+  {
+    id: "po-directeur-principal",
+    niveau: "portefeuille",
+    titre: "Directeur principal (secteur coopératif / parapublic QC)",
+    axes: ["humaine","stratégique"],
+    source: "Classifications internes des grandes coopératives financières québécoises (Mouvement Desjardins, SSQ, La Capitale) et de certaines sociétés d'État du Québec (Caisse de dépôt et placement, Hydro-Québec).",
+    descriptif: "Strate de cadre supérieur spécifique à l'écosystème coopératif et parapublic québécois, située entre le Directeur et le Vice-président. Pilote un regroupement de directions ou un pôle stratégique transverse, rapporte à un vice-président et participe aux comités stratégiques. Horizon de pilotage pluriannuel, portée d'arbitrage qui dépasse une direction unique."
+  },
+  {
+    id: "po-dg-fp",
+    niveau: "portefeuille",
+    titre: "Directeur général (fonction publique QC / CA)",
+    axes: ["stratégique","humaine"],
+    source: "Gouvernement du Québec — classification des cadres supérieurs, classe 2 ; gouvernement fédéral canadien — groupe *Executive*, niveau EX-03.",
+    descriptif: "Pilote une direction générale rassemblant plusieurs directions, au sein d'un secteur ministériel. Rattaché à un sous-ministre adjoint, porte les orientations stratégiques d'un pan du ministère, anime une équipe de directeurs et rend compte devant les instances de gouvernance publique. Horizon pluriannuel, arbitrage des priorités et des ressources du périmètre."
+  },
+  {
+    id: "po-sma",
+    niveau: "portefeuille",
+    titre: "Sous-ministre adjoint (SMA / ADM)",
+    axes: ["stratégique","humaine"],
+    source: "Gouvernement du Québec — classification des cadres supérieurs, classe 1 ; gouvernement fédéral canadien — groupe *Executive*, niveaux EX-04 et EX-05 (*Assistant Deputy Minister*).",
+    descriptif: "Pilote un secteur ministériel — ensemble de directions générales — sous l'autorité d'un sous-ministre. Traduit les orientations gouvernementales en programmes et en politiques publiques, rend des arbitrages structurants et porte la représentation institutionnelle du secteur devant les instances de gouvernance. Horizon pluriannuel à mandat politique, strate charnière entre l'appareil administratif et l'autorité politique."
+  },
+  {
+    id: "ex-ceo",
+    niveau: "entreprise",
+    titre: "Directeur général (CEO / PDG)",
+    axes: ["stratégique","humaine"],
+    source: "Peter Drucker *The Effective Executive* et *The Practice of Management* ; Jim Collins *Good to Great* (leadership de niveau 5) ; Alfred Chandler *Strategy and Structure*.",
+    descriptif: "Responsable devant le conseil d'administration de la performance d'ensemble de l'organisation. Porte la mission, articule stratégie et structure, arbitre l'allocation des ressources entre directions, anime le comité de direction et incarne l'organisation devant ses parties prenantes externes. Variantes courantes : *CEO* (tradition anglo-saxonne) ; *PDG* (cumul présidence du conseil et direction générale, tradition française) ; *Directeur général* dans les modèles avec dissociation du Président du conseil."
+  },
+  {
+    id: "ex-coo",
+    niveau: "entreprise",
+    titre: "Directeur des opérations (COO)",
+    axes: ["humaine","projet","stratégique"],
+    source: "Harvard Business Review *Second in Command — The Misunderstood Role of the Chief Operating Officer* (Bennett & Miles, 2006) ; pratique industrielle des comités de direction américains.",
+    descriptif: "Relaie le directeur général sur l'exécution opérationnelle de la stratégie. Porte la cohérence des chaînes de valeur, la productivité de l'organisation, l'intégration des directions métier autour de l'exécution. Rôle dont le périmètre varie fortement selon l'organisation — second du CEO sur tout, pilote exclusif du run, ou intégrateur des opérations après une croissance externe. Horizon pluriannuel."
+  },
+  {
+    id: "ex-cfo",
+    niveau: "entreprise",
+    titre: "Directeur financier (CFO)",
+    axes: ["stratégique","méthodologique"],
+    source: "Peter Drucker *The Practice of Management* (contrôle de gestion) ; Anthony & Govindarajan *Management Control Systems* ; Charles Horngren *Cost Accounting*.",
+    descriptif: "Responsable de la stratégie financière, du contrôle de gestion, de la structure du capital, du reporting financier et de la relation avec les analystes et les actionnaires. Instruit les décisions d'investissement et les arbitrages budgétaires devant le comité de direction. Horizon pluriannuel à mandat du conseil."
+  },
+  {
+    id: "ex-cpo-groupe",
+    niveau: "entreprise",
+    titre: "Chief Product Officer (groupe multi-lignes)",
+    axes: ["stratégique","humaine"],
+    source: "Marty Cagan *Empowered — Ordinary People, Extraordinary Products* (product at scale) ; pratique des groupes produit multi-marchés.",
+    descriptif: "Porte l'ensemble de l'activité produit d'un groupe opérant sur plusieurs lignes de business ou marchés distincts. Définit la vision produit consolidée, aligne les chefs de produit de chaque ligne, arbitre les investissements produit entre lignes, et rend compte au directeur général. Distinct du Chief Product Officer d'une ligne unique (posé en Portefeuille) par l'étendue du périmètre, pas par la personne. Horizon pluriannuel."
+  },
+  {
+    id: "ex-cto",
+    niveau: "entreprise",
+    titre: "Chief Technology Officer (CTO)",
+    axes: ["stratégique","méthodologique"],
+    source: "MIT Sloan *The CTO Handbook* ; Werner Vogels (Amazon) *All Things Distributed* ; James Stanier *Becoming a CTO*.",
+    descriptif: "Porte la stratégie technologique du groupe — choix d'architecture à long terme, ambitions R&D, relation aux tendances technologiques (cloud, plateformes, IA). Interlocuteur du directeur général sur les arbitrages *construire, acheter, s'associer* en matière de capacités techniques, et sur la trajectoire d'innovation qui engage le groupe à cinq ans et plus. Distinct du CIO par l'orientation produit et innovation."
+  },
+  {
+    id: "ex-cio",
+    niveau: "entreprise",
+    titre: "Chief Information Officer (CIO / DSI groupe)",
+    axes: ["stratégique","humaine"],
+    source: "Gartner *CIO Agenda* ; Peter Weill & Jeanne Ross *IT Governance* ; CIGREF (référence francophone des DSI de grands comptes).",
+    descriptif: "Dirige le système d'information du groupe — parc applicatif, infrastructures, *run* et *build*, relation aux directions métier sur leurs besoins numériques. Pilote un budget IT consolidé, une trajectoire d'urbanisation à l'échelle et la gouvernance des services partagés. Horizon pluriannuel. Distinct du CTO par l'orientation SI d'entreprise et opérations, quand le CTO porte la stratégie technologique et produit."
+  },
+  {
+    id: "ex-chief-architect",
+    niveau: "entreprise",
+    titre: "Chief Architect",
+    axes: ["stratégique","méthodologique"],
+    source: "TOGAF ADM (*Chief Enterprise Architect*) ; International Association of Software Architects (IASA) *Chief Architect Forum* ; Zachman Framework.",
+    descriptif: "Membre du comité de direction en charge de la cohérence architecturale d'ensemble — alignement de la trajectoire SI et technologique avec la stratégie d'affaires, arbitrage des standards et patterns à l'échelle du groupe, représentation de l'architecture devant les instances exécutives. Horizon pluriannuel à décennal. Distinct de l'Architecte d'entreprise (Portefeuille) par l'appartenance au comité de direction et le mandat stratégique direct, pas par l'expertise."
+  },
+  {
+    id: "ex-ciso",
+    niveau: "entreprise",
+    titre: "Chief Information Security Officer (CISO)",
+    axes: ["stratégique","méthodologique"],
+    source: "NIST SP 800-53 *Security and Privacy Controls* ; ISO/IEC 27001 *Information Security Management Systems* ; Gartner *Security & Risk Management Leader*.",
+    descriptif: "Porte la stratégie de sécurité de l'information du groupe — posture de risque, programme de cybersécurité, conformité aux cadres normatifs et réglementaires, relation aux régulateurs et aux autorités. Instruit les décisions d'arbitrage entre risque résiduel et coût de protection devant le comité de direction. Horizon pluriannuel, avec gestion de crise continue."
+  },
+  {
+    id: "ex-chro",
+    niveau: "entreprise",
+    titre: "Chief Human Resources Officer (CHRO / Chief People Officer)",
+    axes: ["humaine","stratégique"],
+    source: "Dave Ulrich *The HR Value Proposition* et *HR from the Outside In* ; SHRM *Body of Competency and Knowledge*.",
+    descriptif: "Porte la stratégie humaine de l'organisation — modèle de talent, architecture des rôles, politique de rémunération et de développement, culture, dialogue social. Instruit les décisions d'arbitrage entre masse salariale, productivité et engagement devant le comité de direction. Horizon pluriannuel."
+  },
+  {
+    id: "ex-cdo",
+    niveau: "entreprise",
+    titre: "Chief Data Officer (CDO, et Chief AI Officer émergent)",
+    axes: ["stratégique","méthodologique"],
+    source: "DAMA *Data Management Body of Knowledge (DMBOK)* ; *CDO Magazine* — *State of the CDO* ; MIT Sloan *Building the AI-Powered Organization*.",
+    descriptif: "Porte la stratégie de valorisation des données et, de plus en plus, des capacités d'intelligence artificielle du groupe. Définit la trajectoire d'acculturation, les cadres de gouvernance des données, l'ambition analytique et les cas d'usage IA à enjeu stratégique. Variante émergente : *Chief AI Officer*, qui se distingue du CDO dans quelques organisations pionnières — distinction rarement stabilisée à ce jour, les deux rôles restent adjacents. Horizon pluriannuel."
+  },
+  {
+    id: "ex-cmo",
+    niveau: "entreprise",
+    titre: "Chief Marketing Officer (CMO)",
+    axes: ["stratégique","humaine"],
+    source: "Philip Kotler *Marketing Management* ; Harvard Business Review *What Do CMOs Do?* ; CMO Council *State of Marketing Leadership*.",
+    descriptif: "Porte la stratégie marketing de l'organisation — positionnement de marque, segmentation de marché, architecture des offres, plan média et relation client à l'échelle. Arbitre l'allocation du budget marketing entre marques, canaux et marchés devant le comité de direction. Horizon pluriannuel."
+  },
+  {
+    id: "ex-coach-executif",
+    niveau: "entreprise",
+    titre: "Coach exécutif / Conseiller stratégique du CEO",
+    axes: ["méthodologique","humaine"],
+    source: "Marshall Goldsmith *What Got You Here Won't Get You There* ; Manfred Kets de Vries *The Leadership Mystique* ; International Coaching Federation (ICF) *Master Certified Coach*.",
+    descriptif: "Accompagne individuellement le directeur général ou les membres du comité de direction dans leur exercice de direction — prise de recul, posture de leadership, arbitrages structurants, préparation des transitions. Posture d'accompagnement, pas d'exécution ni de décision. Horizon mandat, souvent contractuel et temporaire. Distinct du Coach Agile stratégique (Portefeuille) par le grain — la personne plutôt que l'organisation — et du Coach en transformation (Tactique) par la strate des personnes accompagnées."
+  },
+  {
+    id: "ex-sm",
+    niveau: "entreprise",
+    titre: "Sous-ministre en titre (SM / DM)",
+    axes: ["stratégique","humaine"],
+    source: "Gouvernement du Québec — classification des cadres supérieurs, *sous-ministre en titre* ; gouvernement fédéral canadien — *Deputy Minister* (DM), *Executive Group* niveaux DM-01 à DM-04.",
+    descriptif: "Plus haut fonctionnaire d'un ministère, sous l'autorité directe du ministre. Dirige l'ensemble de l'appareil administratif du ministère, traduit les orientations politiques en programmes et en politiques publiques, rend des arbitrages structurants devant le Conseil exécutif et porte la représentation institutionnelle du ministère. Horizon mandat politique, strate charnière entre l'autorité politique et l'appareil administratif. Variantes : *Sous-ministre* (Québec, tradition française) et *Deputy Minister* (fédéral canadien, tradition anglo-saxonne) recouvrent le même rôle."
+  }
+];
+/* CM.ROLES-DATA:END */
+
+CM.Roles = (function() {
+  'use strict';
+
+  /* Canons internes ↔ libellés de surface (décision N1 du 21/04/2026).
+     Le code continue de parler équipe/programme/portefeuille/entreprise ;
+     la porte niveau affiche Opérationnel/Tactique/Portefeuille/Exécutif. */
+  var LIBELLES = {
+    'équipe':       'Opérationnel',
+    'programme':    'Tactique',
+    'portefeuille': 'Portefeuille',
+    'entreprise':   'Exécutif'
+  };
+
+  var NIVEAUX_CANONIQUES = ['équipe', 'programme', 'portefeuille', 'entreprise'];
+  var AXES_VALIDES = ['humaine', 'projet', 'méthodologique', 'stratégique'];
+  var REGEX_ID = /^(op|ta|po|ex)-[a-z0-9-]+$/;
+
+  /* Cache interne : chargé à la première requête, figé ensuite. */
+  var _roles = null;
+
+  function _charger() {
+    if (_roles !== null) return;
+    var brut = (window.CM && window.CM._rolesData) || [];
+    _roles = brut.map(function(r) {
+      /* Gel superficiel : empêche les consommateurs de muter une fiche
+         par inadvertance. CM._rolesData lui-même reste mutable (c'est la
+         zone générée), mais les fiches retournées par l'API sont figées. */
+      var fige = {
+        id:          r.id,
+        niveau:      r.niveau,
+        titre:       r.titre,
+        axes:        Object.freeze((r.axes || []).slice()),
+        source:      r.source,
+        descriptif:  r.descriptif
+      };
+      return Object.freeze(fige);
+    });
+    _valider();
+  }
+
+  /* Validation non-bloquante. Un outil en main d'un éditeur non-technique
+     doit rester utilisable même si une fiche a un défaut éditorial ;
+     on signale bruyamment dans la console, on continue. */
+  function _valider() {
+    var idsVus = {};
+    _roles.forEach(function(r) {
+      if (!r.id || !REGEX_ID.test(r.id)) {
+        console.warn('CM.Roles : id malformé', r);
+      } else if (idsVus[r.id]) {
+        console.warn('CM.Roles : id dupliqué', r.id);
+      }
+      if (r.id) idsVus[r.id] = true;
+
+      if (NIVEAUX_CANONIQUES.indexOf(r.niveau) < 0) {
+        console.warn('CM.Roles : niveau inconnu', r.niveau, 'pour', r.id);
+      }
+      if (!r.titre) {
+        console.warn('CM.Roles : titre manquant pour', r.id);
+      }
+      if (!Array.isArray(r.axes) || r.axes.length === 0 || r.axes.length > 3) {
+        console.warn('CM.Roles : axes invalides pour', r.id, r.axes);
+      } else {
+        r.axes.forEach(function(a) {
+          if (AXES_VALIDES.indexOf(a) < 0) {
+            console.warn('CM.Roles : axe inconnu', a, 'pour', r.id);
+          }
+        });
+      }
+      if (!r.source)     console.warn('CM.Roles : source manquante pour', r.id);
+      if (!r.descriptif) console.warn('CM.Roles : descriptif manquant pour', r.id);
+    });
+  }
+
+  function tousLesRoles() {
+    _charger();
+    return _roles.slice();
+  }
+
+  function parNiveau(niveauCanonique) {
+    _charger();
+    return _roles.filter(function(r) { return r.niveau === niveauCanonique; });
+  }
+
+  function parId(id) {
+    _charger();
+    for (var i = 0; i < _roles.length; i++) {
+      if (_roles[i].id === id) return _roles[i];
+    }
+    return null;
+  }
+
+  function niveauxCanoniques() {
+    return NIVEAUX_CANONIQUES.slice();
+  }
+
+  function libelleDeSurface(niveauCanonique) {
+    return LIBELLES[niveauCanonique] || niveauCanonique;
+  }
+
+  function axesValides() {
+    return AXES_VALIDES.slice();
+  }
+
+  return {
+    tousLesRoles:       tousLesRoles,
+    parNiveau:          parNiveau,
+    parId:              parId,
+    niveauxCanoniques:  niveauxCanoniques,
+    libelleDeSurface:   libelleDeSurface,
+    axesValides:        axesValides
+  };
+})();
+</script>
+
+
 <!-- ══ MODULE : CM.Preferences — Lecture/écriture des préférences utilisateur ══
      Source de vérité avec priorité :
        1. URL hash  (override explicite, partageable, debug)  → ex : cadre-indicateurs.html#portes
