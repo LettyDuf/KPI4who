@@ -147,18 +147,26 @@ function main() {
     process.exit(1);
   }
 
-  /* ─── 4. Injection ───────────────────────────────────────────── */
+  /* ─── 4. Composition HTML (wrapper <script> + prélude CM) ───────
+     La zone d'injection vit entre deux commentaires HTML dans le harnais,
+     donc le bloc JS doit être enveloppé dans ses propres balises <script>.
+     Le prélude déclare `window.CM` avant que le bloc ne pose `CM.Panier`. */
+  var injection =
+    '<script>window.CM = window.CM || {};</script>\n' +
+    '<script>\n' + bloc + '\n</script>';
+
+  /* ─── 5. Injection ───────────────────────────────────────────── */
   var resultat;
   try {
     resultat = injecterBloc(
-      cible, MARQUEUR_CIBLE_BEGIN, MARQUEUR_CIBLE_END, bloc, 'tests-panier.html'
+      cible, MARQUEUR_CIBLE_BEGIN, MARQUEUR_CIBLE_END, injection, 'tests-panier.html'
     );
   } catch (e) {
     process.stderr.write(e.message + '\n');
     process.exit(1);
   }
 
-  /* ─── 5. Écriture ────────────────────────────────────────────── */
+  /* ─── 6. Écriture ────────────────────────────────────────────── */
   try {
     fs.writeFileSync(CIBLE_HARNAIS, resultat, 'utf8');
   } catch (e) {
@@ -166,7 +174,7 @@ function main() {
     process.exit(2);
   }
 
-  /* ─── 6. Rapport ─────────────────────────────────────────────── */
+  /* ─── 7. Rapport ─────────────────────────────────────────────── */
   var lignes = bloc.split('\n').length;
   process.stdout.write(
     'OK — bloc CM.Panier injecté dans tests-panier.html (' + lignes + ' lignes, '
