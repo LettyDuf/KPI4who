@@ -12,15 +12,27 @@
        règles d'invariance (timestamp stable, immuabilité des sorties,
        validation à la frontière, notification des abonnés).
 
-       Mécanique : charge cadre-indicateurs.html dans un iframe caché,
-       accède au module CM.Panier par window.contentWindow, et exerce
-       exclusivement l'API publique. Aucune fonction interne privée
-       n'est auditée — ce qui survit aux refactors internes.
+       Mécanique : le bloc CM.Panier de cadre-indicateurs.html est inliné
+       directement dans ce harnais, entre les marqueurs
+       CM.PANIER-INJECTION-BEGIN / END ci-dessous. Le bloc est recopié
+       automatiquement par outils/construire-tests-panier.js ; il ne
+       faut JAMAIS le modifier à la main. Pour régénérer après une
+       modification de CM.Panier, lancer :
+
+           node outils/construire-tests-panier.js
+
+       Pourquoi cette mécanique : en Chrome moderne sur file://, un
+       iframe local a une origine "null" distincte du parent, donc
+       l'ancienne approche iframe + contentWindow est bloquée par la
+       politique de même-origine. Inliner le bloc dans la même page
+       lève cette barrière — le harnais et le code testé partagent
+       la même origine.
 
        Architecture hexagonale : le domaine (CM.Panier) est pur (zéro DOM).
        Ce harnais joue le rôle d'adapter driver qui consomme le domaine
        par ses ports publics. Zéro couplage avec l'implémentation interne,
-       zéro duplication du code de prod.
+       zéro duplication : le code testé reste écrit une seule fois dans
+       cadre-indicateurs.html, le générateur garantit qu'il est à jour.
 
        Isolation des scénarios : reinitialiserPanier() remplace l'adapter
        courant par un MemoireDepot neuf avant chaque suite qui le nécessite.
@@ -108,12 +120,6 @@
       word-break: break-word;
     }
 
-    iframe#sut {
-      /* L'iframe reste dans le flux mais invisible : certaines
-         mises en page d'accessibilité iOS refusent de peupler
-         une iframe avec `display: none`. */
-      position: absolute; left: -10000px; width: 800px; height: 600px;
-    }
   </style>
 </head>
 <body>
@@ -122,15 +128,19 @@
 <p class="sous-titre">Harnais de consolidation du chantier <code>9.A.2</code>.</p>
 
 <p class="lead">
-  Charge <code>cadre-indicateurs.html</code> dans un iframe caché, exerce l'API publique
-  <code>CM.Panier</code> puis vérifie les retours. Le service est pur (zéro DOM) — ce
-  harnais valide le socle hexagonal avant que les tranches 9.B/9.C/9.D/9.E le consomment.
+  Le bloc <code>CM.Panier</code> est inliné dans ce fichier depuis
+  <code>cadre-indicateurs.html</code> par <code>outils/construire-tests-panier.js</code>.
+  Le harnais exerce l'API publique puis vérifie les retours. Le service est pur
+  (zéro DOM) — il valide le socle hexagonal avant que les tranches
+  9.B / 9.C / 9.D / 9.E le consomment.
 </p>
 
-<div id="resume" class="resume pending">Chargement de l'iframe de test…</div>
+<div id="resume" class="resume pending">Exécution des tests…</div>
 <div id="resultats"></div>
 
-<iframe id="sut" src="cadre-indicateurs.html" title="Système sous test"></iframe>
+<!-- CM.PANIER-INJECTION-BEGIN -->
+<!-- Zone régénérée par outils/construire-tests-panier.js — NE PAS ÉDITER À LA MAIN -->
+<!-- CM.PANIER-INJECTION-END -->
 
 <script>
 (function() {
@@ -230,14 +240,15 @@
     };
   }
 
-  /* ══════ Adapters vers le système sous test ═══════════════════════════
+  /* ══════ Adapter vers le système sous test ════════════════════════════
      Un seul point de couplage avec l'implémentation : le nommage
-     des modules (CM.Panier, CM.Panier.MemoireDepot). Les tests
-     portent sur la sémantique documentée dans doc-contrats-panier.md. */
+     du module (CM.Panier, CM.Panier.MemoireDepot). Les tests
+     portent sur la sémantique documentée dans doc-contrats-panier.md.
+     Le module est chargé dans la même page que le harnais (zone
+     d'injection ci-dessus), donc `window.CM.Panier` est disponible
+     directement — pas d'iframe, pas d'attente de load. */
 
-  var iframe = document.getElementById('sut');
-  var W;       /* raccourci vers iframe.contentWindow après load */
-  var P;       /* raccourci vers W.CM.Panier */
+  var P;  /* raccourci vers window.CM.Panier */
 
   /* Remplace l'adapter du service par un MemoireDepot neuf — état vierge.
      À appeler en début de chaque suite qui manipule des lignes. */
@@ -247,13 +258,15 @@
 
   /* ══════ Orchestration ════════════════════════════════════════════════ */
 
-  iframe.addEventListener('load', function() {
-    W = iframe.contentWindow;
+  function demarrer() {
     try {
-      if (!W.CM || !W.CM.Panier) {
-        throw new Error('CM.Panier introuvable dans l\'iframe — la prod n\'a pas chargé.');
+      if (!window.CM || !window.CM.Panier) {
+        throw new Error(
+          'CM.Panier introuvable — la zone d\'injection est vide. ' +
+          'As-tu lancé `node outils/construire-tests-panier.js` ?'
+        );
       }
-      P = W.CM.Panier;
+      P = window.CM.Panier;
       executerSuites();
     } catch (e) {
       var r = document.getElementById('resume');
@@ -263,7 +276,15 @@
       return;
     }
     rendreRapport();
-  });
+  }
+
+  /* Si le DOM est déjà prêt (cas normal en fin de <body>), on démarre
+     immédiatement ; sinon on attend DOMContentLoaded. */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', demarrer);
+  } else {
+    demarrer();
+  }
 
   function executerSuites() {
 
