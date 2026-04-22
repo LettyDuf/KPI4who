@@ -5304,8 +5304,12 @@ CM.Stepper = (function() {
         var etape = conf.etapes[idxCourant];
         html = etape.rendreOptions(etat.choix.slice());
       } else {
-        /* Étape résultats : appel à rendreResultats + concaténation des blocs
-           transversaux + bouton recommencer. */
+        /* Étape résultats : délègue entièrement à rendreResultats, puis
+           concatène les blocs transversaux optionnels. Le bouton « Recommencer »
+           est volontairement **de la responsabilité de rendreResultats** —
+           chaque porte décide de le placer dans sa <div class="carte-etape">
+           pour bénéficier du cadre visuel, ou de le sortir pour un autre
+           agencement. Le stepper reste neutre sur la question du rendu. */
         html = conf.rendreResultats(etat.choix.slice());
         for (var i = 0; i < conf.blocsSousResultats.length; i++) {
           var bloc = conf.blocsSousResultats[i];
@@ -5314,8 +5318,6 @@ CM.Stepper = (function() {
             if (morceau) html += morceau;
           }
         }
-        html += '<button type="button" class="bouton-recommencer"'
-              + ' onclick="' + conf.idFacade + '.reset()">↻ Recommencer</button>';
       }
       zone.innerHTML = html;
     }
