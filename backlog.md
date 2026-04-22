@@ -45,6 +45,7 @@ Principes récemment posés : **ambre** = pédagogie Lean/Gemba, **violet** = ty
 | Largeur du tiroir sur mobile / tablette | 🟢 | `max-width: 96vw` posé, à retester sur écran < 700 px |
 | Grille cartes — breakpoint trop conservateur | ✅ (18/04/2026) | minmax 252→215 px, bascule 1 colonne 640→520 px. 2 colonnes dès 520 px viewport |
 | Audit visuel de la porte « Par mon problème » sur mobile / tablette | 🟡 | Vérifier stepper 1→2→3 sur < 600 px, contraste des cartes de recommandation |
+| Audit WCAG AA des couleurs d'axes Mintzberg (cran 3 Doux) sur la porte niveau | 🟢 | À conduire **après livraison 7.2a-code.3**. Mesurer le contraste réel des quatre tokens `--axe-humaine:#5d7fa6`, `--axe-projet:#4f7e74`, `--axe-methodologique:#7d6b96`, `--axe-strategique:#917a55` sur le fond de cartouche, en corps de texte et en italique (`.role-qualificatif`). La doctrine actée le 21/04/2026 annonçait « limite AA » sans vérification formalisée — à instrumenter avec un contrast-checker avant mise en production durable. Ajuster les tokens d'un cran plus foncé si AA raté ; re-valider sur le preview `preview-porte-niveau-texte-tons-clairs.html`. ~30 min. |
 
 ---
 
