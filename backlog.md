@@ -276,6 +276,10 @@ Audit complet livré dans [`AUDIT-UNIFORMITE-PORTES.md`](./AUDIT-UNIFORMITE-PORT
 
 *Aucune en attente. Le cadrage du chantier 9 est clos. Les trois arbitrages majeurs (vue imprimable, persistance, interaction d'ajout) sont tous actés en Décisions fermes. Le code peut démarrer.*
 
+**Dette technique identifiée en cours de chantier (hors scope, à refondre après 9).**
+
+- **`tests-porte-niveau.html` KO** — découvert le 22/04/2026 en livrant le harnais de `CM.Panier`. Le patron de test *« iframe caché qui charge cadre-indicateurs.html + accès à `contentWindow.CM` »* ne fonctionne pas en Chrome moderne sur `file://` : chaque fichier a une origine `null` distincte, la politique de même-origine bloque l'accès. Le chantier **7.2a-code.3** a donc été fermé sur un harnais jamais validé vert — dette silencieuse remontée par `tests-panier.html`. Refonte prévue sur le même patron que 9.A.3 (générateur Node `outils/construire-tests-*.js` qui inline le module testé dans le harnais). Déclencheur : après clôture du chantier 9.
+
 **Articulations.** La mission de cet onglet, telle qu'elle est posée dans `MISSION.md`, est *voir ce qui est présent dans ma réalité actuelle et ce que je devrais mesurer sans le mesurer*. Il devient le *miroir* de l'utilisateur. Il ne remplace pas la pyramide — il capitalise dessus : la pyramide sert désormais à explorer le référentiel pour y puiser, le panier est la sélection retenue.
 
 **Pistes futures (nice-to-have, hors v1).**
