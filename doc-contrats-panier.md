@@ -331,4 +331,49 @@ Distillés des fiches mémoire et des règles de refactoring progressif.
 
 ---
 
-*Rédigé en tranche 9.A.0. Relu par Lætitia avant engagement du code.*
+## Régénérer le harnais de tests
+
+Ajouté en tranche **9.A.3** suite à la découverte que le patron iframe
+(charger `cadre-indicateurs.html` dans un iframe caché, accéder à
+`iframe.contentWindow.CM.Panier`) est bloqué par Chrome moderne en
+`file://` — chaque fichier local a une origine `null` distincte, ce
+que la politique de même-origine interprète comme cross-origin.
+
+La réponse est de **déplacer le code testé dans la même page que le
+harnais**, plutôt que de le charger à côté. Pour éviter la duplication,
+le code reste écrit une seule fois dans `cadre-indicateurs.html`, et un
+générateur Node recopie le bloc dans `tests-panier.html` à la demande.
+
+**Règle d'or :** après toute modification de `CM.Panier` dans
+`cadre-indicateurs.html`, lancer :
+
+```
+node outils/construire-tests-panier.js
+```
+
+Le générateur :
+
+1. Lit `cadre-indicateurs.html`.
+2. Extrait le bloc `CM.Panier` entre les marqueurs JS
+   `/* ══ CM.Panier — BEGIN ══ */` et `/* ══ CM.Panier — END ══ */`.
+3. Lit `tests-panier.html`, trouve la zone balisée
+   `<!-- CM.PANIER-INJECTION-BEGIN -->` / `<!-- CM.PANIER-INJECTION-END -->`.
+4. Remplace le contenu de la zone par le bloc extrait, enveloppé dans
+   un `<script>` avec un prélude `window.CM = window.CM || {};` pour
+   permettre au bloc de poser `CM.Panier`.
+5. Réécrit `tests-panier.html`.
+
+Le harnais s'exécute ensuite dans la même origine que le code — plus de
+blocage cross-origin. Le contrat reste inchangé pour le reste du monde :
+les vues continuent d'importer `CM.Panier` via `cadre-indicateurs.html`,
+seul le harnais passe par l'inlining.
+
+**Si le générateur crie** (marqueurs manquants, erreur d'E/S), il sort
+en code ≠ 0 avec un message descriptif sur `stderr`. Ne jamais éditer
+la zone d'injection à la main : toute modif serait écrasée à la
+prochaine régénération.
+
+---
+
+*Rédigé en tranche 9.A.0. Relu par Lætitia avant engagement du code.
+Section « Régénérer le harnais de tests » ajoutée en tranche 9.A.3.*

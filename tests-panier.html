@@ -139,7 +139,333 @@
 <div id="resultats"></div>
 
 <!-- CM.PANIER-INJECTION-BEGIN -->
-<!-- Zone régénérée par outils/construire-tests-panier.js — NE PAS ÉDITER À LA MAIN -->
+<script>window.CM = window.CM || {};</script>
+<script>
+/* ══ CM.Panier — BEGIN (zone extractible par outils/construire-tests-panier.js) ══ */
+CM.Panier = (function() {
+  'use strict';
+
+  /* ─── Configuration (frontière de validation) ─────────────────── */
+  var REGEX_FICHE_ID  = /^[a-z0-9-]{1,20}$/;
+  var STATUTS_VALIDES = ['en-place', 'a-envisager'];
+  var NOTE_MAX        = 500;
+
+  /* ─── Adapter mémoire (implémentation v1 du port Depot) ───────── */
+  /* Exemple : var depot = CM.Panier.MemoireDepot(); depot.poser(ligne); */
+  function MemoireDepot() {
+    var lignes = {};   /* { [ficheId]: LigneDuPanier figée } */
+
+    function listerValeurs() {
+      var keys = Object.keys(lignes);
+      var out  = [];
+      for (var i = 0; i < keys.length; i++) out.push(lignes[keys[i]]);
+      return out;
+    }
+
+    return {
+      lister:  function()          { return listerValeurs(); },
+      trouver: function(ficheId)   { return lignes.hasOwnProperty(ficheId) ? lignes[ficheId] : null; },
+      poser:   function(ligne)     { lignes[ligne.ficheId] = ligne; },
+      retirer: function(ficheId)   {
+        if (!lignes.hasOwnProperty(ficheId)) return false;
+        delete lignes[ficheId];
+        return true;
+      },
+      vider:   function()          { lignes = {}; }
+    };
+  }
+
+  /* ─── État du service (adapter courant + abonnés) ─────────────── */
+  var depot    = MemoireDepot();
+  var abonnes  = [];
+
+  /* ─── Validations privées ─────────────────────────────────────── */
+  function estFicheIdValide(ficheId) {
+    return typeof ficheId === 'string' && REGEX_FICHE_ID.test(ficheId);
+  }
+  function estStatutValide(statut) {
+    return STATUTS_VALIDES.indexOf(statut) !== -1;
+  }
+  function estNoteValide(note) {
+    return typeof note === 'string' && note.length <= NOTE_MAX;
+  }
+
+  /* ─── Construction d'une ligne figée ──────────────────────────── */
+  function creerLigneFigee(ficheId, statut, note, ajouteeLe) {
+    return Object.freeze({
+      ficheId:   ficheId,
+      statut:    statut,
+      note:      note,
+      ajouteeLe: ajouteeLe
+    });
+  }
+
+  /* ─── Notification des abonnés (après mutation réussie) ───────── */
+  function notifier(resultat) {
+    for (var i = 0; i < abonnes.length; i++) {
+      try {
+        abonnes[i](resultat);
+      } catch (e) {
+        console.error('[CM.Panier] Erreur dans un abonné, ignorée :', e);
+      }
+    }
+  }
+
+  /* ─── Retour standard pour paramètre invalide ─────────────────── */
+  function retourInvalide(raison) {
+    console.warn('[CM.Panier] ' + raison);
+    return { action: 'invalide', ligneAvant: null, ligneApres: null };
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     API publique du service
+     ════════════════════════════════════════════════════════════════ */
+
+  /* ajouter(ficheId, statut, note?) — pose ou bascule une ligne.
+     Exemple : CM.Panier.ajouter('ti-o4', 'en-place')
+               → { action:'ajoute', ligneAvant:null, ligneApres:{...} }
+     La note est optionnelle : undefined = ne pas toucher à la note
+     existante ; "" (chaîne vide) = effacer la note. */
+  function ajouter(ficheId, statut, note) {
+    if (!estFicheIdValide(ficheId)) return retourInvalide('ficheId invalide : ' + ficheId);
+    if (!estStatutValide(statut))   return retourInvalide('statut invalide : ' + statut);
+    if (note !== undefined && !estNoteValide(note)) return retourInvalide('note invalide (type ou longueur)');
+
+    var existante = depot.trouver(ficheId);
+
+    if (!existante) {
+      var nouvelle = creerLigneFigee(
+        ficheId,
+        statut,
+        (note === undefined) ? '' : note,
+        Date.now()
+      );
+      depot.poser(nouvelle);
+      var resultatAjout = { action: 'ajoute', ligneAvant: null, ligneApres: nouvelle };
+      notifier(resultatAjout);
+      return resultatAjout;
+    }
+
+    var noteFinale = (note === undefined) ? existante.note : note;
+
+    if (existante.statut === statut && existante.note === noteFinale) {
+      return { action: 'inchange', ligneAvant: existante, ligneApres: existante };
+    }
+
+    var miseAJour = creerLigneFigee(
+      ficheId,
+      statut,
+      noteFinale,
+      existante.ajouteeLe   /* STABLE : jamais écrasé */
+    );
+    depot.poser(miseAJour);
+
+    var action = (existante.statut !== statut) ? 'bascule' : 'modifie-note';
+    var resultatMaj = { action: action, ligneAvant: existante, ligneApres: miseAJour };
+    notifier(resultatMaj);
+    return resultatMaj;
+  }
+
+  /* retirer(ficheId) — supprime une ligne si elle existe.
+     Exemple : CM.Panier.retirer('ti-o4')
+               → { action:'retire', ligneAvant:{...}, ligneApres:null } */
+  function retirer(ficheId) {
+    if (!estFicheIdValide(ficheId)) return retourInvalide('ficheId invalide : ' + ficheId);
+
+    var existante = depot.trouver(ficheId);
+    if (!existante) {
+      return { action: 'absent', ligneAvant: null, ligneApres: null };
+    }
+    depot.retirer(ficheId);
+    var resultat = { action: 'retire', ligneAvant: existante, ligneApres: null };
+    notifier(resultat);
+    return resultat;
+  }
+
+  /* basculer(ficheId, versStatut) — change le statut.
+     Si absente, crée avec note vide (note = "") et timestamp frais.
+     Exemple : CM.Panier.basculer('ti-o4', 'a-envisager') */
+  function basculer(ficheId, versStatut) {
+    if (!estFicheIdValide(ficheId))     return retourInvalide('ficheId invalide : ' + ficheId);
+    if (!estStatutValide(versStatut))   return retourInvalide('statut invalide : ' + versStatut);
+
+    var existante = depot.trouver(ficheId);
+    if (!existante) {
+      var nouvelle = creerLigneFigee(ficheId, versStatut, '', Date.now());
+      depot.poser(nouvelle);
+      var resultatCreation = { action: 'ajoute', ligneAvant: null, ligneApres: nouvelle };
+      notifier(resultatCreation);
+      return resultatCreation;
+    }
+
+    if (existante.statut === versStatut) {
+      return { action: 'inchange', ligneAvant: existante, ligneApres: existante };
+    }
+
+    var miseAJour = creerLigneFigee(
+      ficheId,
+      versStatut,
+      existante.note,
+      existante.ajouteeLe
+    );
+    depot.poser(miseAJour);
+    var resultatBascule = { action: 'bascule', ligneAvant: existante, ligneApres: miseAJour };
+    notifier(resultatBascule);
+    return resultatBascule;
+  }
+
+  /* modifierNote(ficheId, note) — met à jour la note seule.
+     Exemple : CM.Panier.modifierNote('ti-o4', 'On l\'utilise au daily') */
+  function modifierNote(ficheId, note) {
+    if (!estFicheIdValide(ficheId)) return retourInvalide('ficheId invalide : ' + ficheId);
+    if (!estNoteValide(note))       return retourInvalide('note invalide (type ou longueur)');
+
+    var existante = depot.trouver(ficheId);
+    if (!existante) {
+      return { action: 'absent', ligneAvant: null, ligneApres: null };
+    }
+    if (existante.note === note) {
+      return { action: 'inchange', ligneAvant: existante, ligneApres: existante };
+    }
+
+    var miseAJour = creerLigneFigee(
+      ficheId,
+      existante.statut,
+      note,
+      existante.ajouteeLe
+    );
+    depot.poser(miseAJour);
+    var resultat = { action: 'modifie-note', ligneAvant: existante, ligneApres: miseAJour };
+    notifier(resultat);
+    return resultat;
+  }
+
+  /* statut(ficheId) — retourne le statut courant ou null si absente.
+     Exemple : CM.Panier.statut('ti-o4') → 'en-place' | 'a-envisager' | null */
+  function statut(ficheId) {
+    if (!estFicheIdValide(ficheId)) return null;
+    var ligne = depot.trouver(ficheId);
+    return ligne ? ligne.statut : null;
+  }
+
+  /* trouver(ficheId) — retourne la ligne figée ou null.
+     Exemple : CM.Panier.trouver('ti-o4') → LigneDuPanier | null */
+  function trouver(ficheId) {
+    if (!estFicheIdValide(ficheId)) return null;
+    return depot.trouver(ficheId);
+  }
+
+  /* lister(options?) — retourne toutes les lignes, triées et filtrées.
+     Exemple : CM.Panier.lister()
+               → [toutes les lignes, tri ajout-asc]
+     Exemple : CM.Panier.lister({statut:'en-place', tri:'fiche'})
+               → [lignes en-place triées par ficheId] */
+  function lister(options) {
+    options = options || {};
+    var lignes = depot.lister();
+
+    if (options.statut) {
+      var filtrees = [];
+      for (var i = 0; i < lignes.length; i++) {
+        if (lignes[i].statut === options.statut) filtrees.push(lignes[i]);
+      }
+      lignes = filtrees;
+    }
+
+    var tri = options.tri || 'ajout-asc';
+    if (tri === 'ajout-asc') {
+      lignes.sort(function(a, b) { return a.ajouteeLe - b.ajouteeLe; });
+    } else if (tri === 'ajout-desc') {
+      lignes.sort(function(a, b) { return b.ajouteeLe - a.ajouteeLe; });
+    } else if (tri === 'fiche') {
+      lignes.sort(function(a, b) { return a.ficheId < b.ficheId ? -1 : (a.ficheId > b.ficheId ? 1 : 0); });
+    }
+
+    return Object.freeze(lignes);
+  }
+
+  /* estVide() — true si aucune ligne, tous statuts confondus.
+     Exemple : CM.Panier.estVide() → true | false */
+  function estVide() {
+    return depot.lister().length === 0;
+  }
+
+  /* taille() — nombre total de lignes, tous statuts confondus.
+     Exemple : CM.Panier.taille() → 12 */
+  function taille() {
+    return depot.lister().length;
+  }
+
+  /* reinitialiser() — vide tout le panier.
+     Exemple : CM.Panier.reinitialiser()
+               → { action:'reinitialise', lignesAvant:[...], ligneApres:null } */
+  function reinitialiser() {
+    var lignesAvant = Object.freeze(depot.lister());
+    if (lignesAvant.length === 0) {
+      return { action: 'inchange', lignesAvant: lignesAvant, ligneApres: null };
+    }
+    depot.vider();
+    var resultat = { action: 'reinitialise', lignesAvant: lignesAvant, ligneApres: null };
+    notifier(resultat);
+    return resultat;
+  }
+
+  /* abonner(callback) — s'abonne aux mutations réussies.
+     Exemple : var stop = CM.Panier.abonner(function(r){ rafraichir(); });
+               stop(); // plus tard */
+  function abonner(callback) {
+    if (typeof callback !== 'function') {
+      console.warn('[CM.Panier] abonner : le callback doit être une fonction');
+      return function() {};
+    }
+    abonnes.push(callback);
+    return function desabonner() {
+      var i = abonnes.indexOf(callback);
+      if (i !== -1) abonnes.splice(i, 1);
+    };
+  }
+
+  /* utiliserDepot(adapter) — remplace l'adapter courant.
+     Pour tests (harness) et futur branchement LocalStorageDepot.
+     La substitution ne notifie pas les abonnés.
+     Exemple : CM.Panier.utiliserDepot(CM.Panier.MemoireDepot()) */
+  function utiliserDepot(adapter) {
+    var methodesRequises = ['lister', 'trouver', 'poser', 'retirer', 'vider'];
+    if (!adapter) {
+      console.warn('[CM.Panier] utiliserDepot : adapter absent');
+      return;
+    }
+    for (var i = 0; i < methodesRequises.length; i++) {
+      if (typeof adapter[methodesRequises[i]] !== 'function') {
+        console.warn('[CM.Panier] utiliserDepot : contrat Depot non respecté — méthode manquante : ' + methodesRequises[i]);
+        return;
+      }
+    }
+    depot = adapter;
+  }
+
+  /* ─── Exports ─────────────────────────────────────────────────── */
+  return {
+    /* Factory d'adapter (exposée pour tests et futurs LocalStorageDepot) */
+    MemoireDepot:   MemoireDepot,
+
+    /* Service — API publique consommée par les vues */
+    ajouter:        ajouter,
+    retirer:        retirer,
+    basculer:       basculer,
+    modifierNote:   modifierNote,
+    statut:         statut,
+    trouver:        trouver,
+    lister:         lister,
+    estVide:        estVide,
+    taille:         taille,
+    reinitialiser:  reinitialiser,
+    abonner:        abonner,
+    utiliserDepot:  utiliserDepot
+  };
+})();
+/* ══ CM.Panier — END ══ */
+</script>
 <!-- CM.PANIER-INJECTION-END -->
 
 <script>
