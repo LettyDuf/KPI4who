@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **22 avril 2026** (C.3 livrée — `_etapeResultats` intersection rôle→niveau × problème × cadre, commits `fef6280` feat + `7d16cd7` test ; Suites 8 & 9 ajoutées au harnais ; dérive 7.8 navigation transverse consignée en `286763a`).
+Dernière mise à jour : **22 avril 2026 — après-midi** (clarification de mission livrée — [`MISSION.md`](./MISSION.md) en `d3bfaf9` ; chantiers 9/10/11 ouverts ; fix accès *Maturité & Recommandations* en `b08118e`).
 
 ---
 
@@ -9,11 +9,12 @@ Dernière mise à jour : **22 avril 2026** (C.3 livrée — `_etapeResultats` in
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Chantier actif** : 7.2a-code.3 — construction de la porte niveau (`CM.VuePorteNiveau`). Étapes livrées : A (contrat d'API), B.1 (coquille DOM/CSS), B.2 (squelette module), B.3 (accordéon 4 cartouches + CSS cran 3 Doux), C.1 (`_etapeProbleme` filtré par niveau dérivé du rôle), C.1-tests (harnais `tests-porte-niveau.html`), C.2 (`_etapeCadre` accordéon iso porte cadre), **C.3 (`_etapeResultats` — intersection par id des deux recommanders, conseil pédagogique iso porte problème, bouton Recommencer routé sur `CM.VuePorteNiveau.reset()`, message vide dédié)**. Reste : **D — câblage de la tuile d'accueil porte niveau** (actuellement la tuile pointe sur l'accueil générique, à brancher sur `CM.VuePorteNiveau.demarrer()`).
-- **Dernier SHA sur `main`** : `7d16cd7` — *test(7.2a-code.3): harnais — couvre C.3 (Suites 8 & 9 : rendu intersection + cas défensifs)*. Commits C.3 : `fef6280` (feat) et `7d16cd7` (test). À vérifier : lancer `tests-porte-niveau.html` dans le navigateur pour confirmer que les 13 nouvelles assertions (Suites 8 & 9) passent.
-- **Prochain pas** : D — câbler la tuile d'accueil « Par mon niveau » pour ouvrir la porte. Repérer dans le HTML l'handler actuel de la tuile (typiquement `CM.App.ouvrirPorteNiveau` ou équivalent), router vers `CM.VuePorteNiveau.demarrer()`, vérifier que le retour « ← Accueil » de la porte reste cohérent (cf. dérive 7.8 documentée en `286763a`, à traiter plus tard).
-- **Fiches mémoire pertinentes** : `project_porte_niveau_roles`, `project_porte_niveau_doctrine_editoriale`, `project_porte_niveau_rendu_visuel`, `project_7_2a_code_2_livre`, `project_document_compagnon_contrats`, `project_deux_systemes_canons_niveaux`.
-- **Blocages / questions ouvertes** : aucun bloquant. À garder en tête pour plus tard : dérive **7.8 navigation transverse** (consignée `286763a`) — pas d'impact direct sur D mais à traiter avant de déclarer la porte niveau « livrée en production ».
+- **Événement majeur de la session** : clarification de mission du 22/04/2026 après-midi. Document de référence posé en [`MISSION.md`](./MISSION.md) (commit `d3bfaf9`) — cinq prises de conscience, posture socratique, charpente à 4 onglets complémentaires, livrable central = impression pour discussion. Trois chantiers ouverts en conséquence : **9** (vue panier personnel, refonte de *Mon tableau de bord*), **10** (bandeau de navigation persistant), **11** (refonte future de Cascade stratégique, en pause). Correctif rapide livré en passant : fix accès *Maturité & Recommandations* (typo `'maturité'` → `'maturite'` dans l'onclick) en commit `b08118e`.
+- **Chantier actif — à arbitrer à la reprise** : deux options. **Option A** — poursuivre 7.2a-code.3 étape D (câblage tuile porte niveau), qui était le chantier actif avant la clarification. **Option B** — basculer sur le chantier 9 (panier), qui traduit directement la mission consignée. La mission ne rend pas D caduc, mais elle rend 9 plus central. Décision à prendre avec Lætitia.
+- **Dernier SHA sur `main`** : `d133422` — *docs(backlog): consigne chantiers 10 et 11 — bandeau de navigation persistant + refonte Cascade stratégique*. Commits de la session : `d3bfaf9` (MISSION.md), `b08118e` (fix Maturité), `4a1bd86` (chantier 9), `d133422` (chantiers 10 et 11).
+- **Rappel 7.2a-code.3 (si reprise en option A)** : étapes A/B.1/B.2/B.3/C.1/C.1-tests/C.2/C.3 livrées, reste D — câbler la tuile d'accueil « Par mon niveau » pour ouvrir la porte via `CM.VuePorteNiveau.demarrer()`. Commits C.3 : `fef6280` (feat) + `7d16cd7` (test harnais).
+- **Fiches mémoire pertinentes** : `project_porte_niveau_roles`, `project_porte_niveau_doctrine_editoriale`, `project_7_2a_code_2_livre`, `project_document_compagnon_contrats`, `project_deux_systemes_canons_niveaux`. Pour le chantier 9 et au-delà : `MISSION.md` à la racine du projet devient la boussole de référence.
+- **Blocages / questions ouvertes** : aucun bloquant technique. Arbitrage D vs 9 à trancher. Les questions résiduelles du chantier 9 (format d'impression, interaction d'ajout, persistance) seront traitées à son démarrage, pas avant.
 
 ---
 
