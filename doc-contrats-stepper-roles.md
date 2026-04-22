@@ -221,6 +221,240 @@ Entre les balises :
 
 Toute violation sort le script en code d'erreur 1, sans toucher au HTML.
 
+## `CM.VuePorteNiveau` — à construire (7.2a-code.3)
+
+### Raison d'être
+
+Vue de la porte *Par mon niveau*. Troisième porte d'entrée de l'outil,
+à côté des portes *Par mon problème* et *Par mon cadre*. Rejoint le
+parcours guidé — mêmes mécaniques de stepper, barre d'étapes, scroll,
+retour accueil, pivot à étage constant. Se distingue par sa
+**taxonomie de première étape** (contrat de cohérence, cf. section
+*Points d'extension* de `CM.Stepper`) : accordéon à 4 cartouches
+(Opérationnel / Tactique / Portefeuille / Exécutif), chaque cartouche
+énumérant les rôles de sa strate. Le clic sur un rôle vaut validation
+de l'étape 1.
+
+### Parcours et grain de choix
+
+Trois étapes cumulées, résultats calculés à la fin :
+
+| Étape | Clé stepper | Choix utilisateur | Dérivation |
+|---|---|---|---|
+| 1 | `role` | id de rôle (`op-…`, `ta-…`, `po-…`, `ex-…`) | `niveau = CM.Roles.parId(role).niveau` |
+| 2 | `probleme` | id de problème parmi ceux légitimes au niveau dérivé | — |
+| 3 | `cadre` | id de cadre parmi la grille de la porte cadre | — |
+| — | (résultats) | — | `rendreResultats(choix)` produit les recos |
+
+**Invariant de dérivation.** Le niveau n'est **pas** un choix séparé,
+c'est une dérivation pure de l'id de rôle. Toute logique aval
+(filtrage des problèmes à l'étape 2, construction du `ctx` des recos)
+lit le niveau par `CM.Roles.parId(role).niveau`, jamais par une
+variable dupliquée dans l'état du stepper. Conséquence : pas de
+désynchronisation possible entre rôle et niveau, l'un des deux étant
+la source de vérité, l'autre un calcul.
+
+### Surface d'API publique (façade iso-pattern)
+
+Même patron que les deux autres portes : IIFE + `_stepper` interne +
+façade nommée qui délègue aux primitives du stepper. Conservée pour
+la lisibilité des `onclick` HTML et la symétrie avec
+`CM.VuePorteProbleme` (`setNiveau` / `setProbleme`) et
+`CM.VuePorteCadre` (`setCadre` / `setNiveau`).
+
+| Signature | Retour | Comportement |
+|---|---|---|
+| `ouvrir()` | `void` | Délègue à `_stepper.ouvrir()`. Affiche l'étape 1, accordéons fermés. |
+| `retourAccueil()` | `void` | Délègue à `_stepper.retourAccueil()`. |
+| `setRole(id)` | `void` | Façade vers `_stepper.setChoix(1, id)`. Cible des `onclick` générés dans la liste de rôles. |
+| `setProbleme(id)` | `void` | Façade vers `_stepper.setChoix(2, id)`. |
+| `setCadre(id)` | `void` | Façade vers `_stepper.setChoix(3, id)`. |
+| `retourA(numEtape)` | `void` | Délègue à `_stepper.retourA(numEtape)`. |
+| `reset()` | `void` | Délègue à `_stepper.reset()`. |
+
+La primitive `_stepper.remplacerChoix(n, valeur)` reste disponible en
+interne si une évolution future (pivot à étage constant sur un bloc
+transversal, comme *Cadres voisins* dans la porte cadre) en a besoin ;
+elle n'est pas exposée dans la façade publique à ce stade.
+
+### Configuration du stepper (`CM.Stepper.creer`)
+
+```js
+var _stepper = CM.Stepper.creer({
+  etiquettePorte: 'Par mon niveau',
+  idFacade:       'CM.VuePorteNiveau',
+  ids: {
+    vue:     'vue-porte-niveau',
+    stepper: 'porte-niveau-stepper',
+    etapes:  'porte-niveau-etapes'
+  },
+  etapes: [
+    {
+      cle:           'role',
+      defaut:        'Mon rôle',
+      valeur:        _labelRole,              // ex. « Opérationnel — Développeur »
+      rendreOptions: function() { return _etapeRole(); }
+    },
+    {
+      cle:           'probleme',
+      defaut:        'Mon problème',
+      valeur:        _labelProbleme,
+      rendreOptions: function(choix) { return _etapeProbleme(choix[0]); }
+    },
+    {
+      cle:           'cadre',
+      defaut:        'Mon cadre',
+      valeur:        _labelCadre,
+      rendreOptions: function(choix) { return _etapeCadre(choix[0], choix[1]); }
+    }
+  ],
+  libelleResultats: 'Mes indicateurs',
+  rendreResultats:  function(choix) { return _etapeResultats(choix[0], choix[1], choix[2]); }
+});
+```
+
+Le patron suit la signature observée dans `CM.VuePorteProbleme` et
+`CM.VuePorteCadre` : `idFacade` pour référencer la façade dans les
+`onclick` générés par le stepper (bouton *↻ Recommencer*, chips de
+navigation), `ids.*` pour les ancres DOM, `etapes[].valeur(choix)`
+pour le libellé de chip après validation.
+
+### Étape 1 — accordéon à 4 cartouches
+
+Rendu produit par `_etapeRole()`. Aucun argument — la donnée est lue
+sur `CM.Roles`, pas transportée dans l'état du stepper.
+
+- Enveloppe `<div class="carte-etape">` avec `q-numero`, `q-texte`, `q-aide`, identique aux deux autres portes.
+- Boucle sur `CM.Roles.niveauxCanoniques()` (retourne `['équipe', 'programme', 'portefeuille', 'entreprise']` dans cet ordre). Pour chaque canon, un `<details class="niv-accordeon niv-{code}">` où `{code}` vaut `op` / `ta` / `po` / `ex` selon la table interne du module.
+- `<summary class="niv-titre">` avec libellé de surface via `CM.Roles.libelleDeSurface(canon)` + mention canon en micro-méta (`<span class="niv-titre-interne">équipe</span>`, etc.), conformément au double-libellé décidé en N1.
+- **À l'arrivée, toutes les cartouches sont fermées** — aucune n'a l'attribut `open`. Principe : carte d'ensemble d'abord, ouverture ciblée ensuite. Décision validée pour la porte cadre (20/04/2026), appliquée à l'identique ici.
+- Corps d'une cartouche = `<div class="niv-corps"><div class="roles-liste">` qui boucle sur `CM.Roles.parNiveau(canon)` pour générer un `<button class="role-btn" onclick="CM.VuePorteNiveau.setRole('…')">` par rôle.
+
+Le chevron d'accordéon, l'animation d'ouverture et les états survol /
+ouvert s'appuient sur l'élément `<details>` natif — accessible clavier
+par défaut (Entrée / Espace sur le `<summary>`), pas de gestionnaire
+custom à coder.
+
+### Cartouche de rôle — typographie cran 3 Doux
+
+Le patron de rendu d'un rôle découle directement du mockup
+`preview-porte-niveau-texte-tons-clairs.html`, validé le 22/04/2026
+(réf. commit `a9298ce`). Doctrine portée par
+`project_porte_niveau_rendu_visuel.md` — à considérer comme source de
+vérité en cas de divergence avec la présente section.
+
+Squelette attendu pour chaque rôle :
+
+```html
+<button type="button" class="role-btn" onclick="CM.VuePorteNiveau.setRole('op-developpeur')">
+  <div class="role-entete">
+    <span class="role-titre">Développeur / Ingénieur logiciel</span>
+  </div>
+  <div class="role-descriptif">Membre de l'équipe de réalisation, engagé sur un incrément …</div>
+  <div class="role-axes-meta">
+    Axes&nbsp;:
+    <span class="axe projet">projet</span>
+    <span class="sep">·</span>
+    <span class="axe methodologique">méthodologique</span>
+  </div>
+</button>
+```
+
+Pour un rôle dont le titre porte un qualificatif entre parenthèses
+(`Product Manager (produit multi-équipes)`, `Scrum Master (équipe)`,
+`Black Belt (Lean Six Sigma)`, …), la balise `.role-titre` enveloppe
+deux segments :
+
+```html
+<span class="role-titre">
+  Product Manager
+  <span class="role-qualificatif">(produit multi-équipes)</span>
+</span>
+```
+
+**Parsing du qualificatif.** Un regex `^(.+?)\s*\(([^)]+)\)\s*$`
+appliqué au titre stocké détecte la forme. Si match, rendu en deux
+segments (base + qualificatif italique grise). Sinon, rendu en un
+segment. Le parsing est une **opération de rendu**, jamais une
+modification des données : `CM._rolesData[i].titre` reste la chaîne
+complète, conformément à l'invariant d'ids et de titres stables.
+
+Le rendu est uniforme pour tous les parenthèses finaux, qu'il
+s'agisse de la règle R2 stricte (rôle à cheval, `Product Owner
+(produit mono-équipe)`) ou d'une précision non-R2 (abréviation,
+discipline, synonyme). La distinction sémantique reste éditoriale,
+portée par l'inventaire, pas matérialisée dans le HTML.
+
+### Tokens CSS ajoutés au `:root`
+
+Cran 3 Doux — limite AA WCAG (~4.5:1 à 12 px sur blanc). Ces tokens
+sont les **seules** teintes d'axes autorisées dans l'outil. Toute
+saturation supérieure passe par une décision de doctrine explicite,
+jamais par une modification silencieuse.
+
+```css
+:root {
+  --axe-humaine:        #5d7fa6;  /* bleu désaturé    */
+  --axe-projet:         #4f7e74;  /* vert désaturé    */
+  --axe-methodologique: #7d6b96;  /* violet désaturé  */
+  --axe-strategique:    #917a55;  /* ambre désaturé   */
+}
+
+.axe                { font-weight: var(--fw-medium); white-space: nowrap; }
+.axe.humaine        { color: var(--axe-humaine); }
+.axe.projet         { color: var(--axe-projet); }
+.axe.methodologique { color: var(--axe-methodologique); }
+.axe.strategique    { color: var(--axe-strategique); }
+
+.role-qualificatif {
+  font-style:  italic;
+  color:       var(--texte-tertiaire);
+  font-weight: var(--fw-medium);
+}
+
+.sep { color: var(--texte-tertiaire); }
+```
+
+La classe CSS `.axe.methodologique` est **sans accent** pour rester
+dans le jeu des sélecteurs ASCII usuels ; le libellé visible conserve
+l'accent (`méthodologique`). Aucune couleur en dur dans le JS — toute
+teinte passe par une variable CSS. Une évolution future (mode sombre,
+redesign de charte) reste locale au bloc de tokens.
+
+### Règles d'invariance
+
+- **Dépendances déclarées.** `CM.VuePorteNiveau` consomme `CM.Roles`
+  (rôles, libellés de surface, ordre canonique) et `CM.Stepper`
+  (orchestration). L'étape 2 consomme
+  `CM.DiagnosticProbleme.problemesPourNiveau(niveauCanon)` avec le
+  niveau dérivé du rôle. L'étape 3 et le rendu des résultats
+  consomment `CM.DiagnosticCadre` et `CM.DiagnosticProbleme` selon le
+  patron déjà en place dans les deux autres portes.
+- **Pas d'accès DOM au *parse time*.** L'instance stepper est
+  construite à l'exécution de l'IIFE, mais aucun accès DOM n'a lieu
+  avant le premier `ouvrir()`. Patron déjà respecté par les deux
+  portes existantes, à préserver ici.
+- **Libellés de surface ≠ canons internes.** L'étape 1 affiche les
+  libellés de surface (*Opérationnel* / *Tactique* / *Portefeuille* /
+  *Exécutif*) via `CM.Roles.libelleDeSurface`. Les canons internes
+  (`équipe`, `programme`, `portefeuille`, `entreprise`) restent la
+  seule valeur transportée dans les `ctx` de recommandation et les
+  `META.niveau` des fiches indicateurs. Pas de fuite de canon dans
+  les libellés, pas de fuite de libellé dans les données.
+- **Accordéons fermés à l'arrivée.** Aucun `open` par défaut sur les
+  quatre `<details>`. Préserve la lecture *carte d'ensemble avant
+  ouverture ciblée*, symétrique à la porte cadre.
+- **Qualificatif parsé côté rendu, pas côté données.** Le titre
+  stocké dans `CM._rolesData` reste la forme éditoriale complète.
+  Le parsing en segments base / qualificatif est une opération de
+  rendu portée par `CM.VuePorteNiveau` (ou un helper interne
+  `_htmlRole`). Conséquence : une réécriture éditoriale en 7.2b ne
+  touche ni le parseur, ni la structure de données, ni les ids.
+- **Contrat de cohérence entre portes respecté.** Taxonomie de
+  première étape propre à la porte, aides pédagogiques libres, blocs
+  transversaux sous les résultats au choix. Aucune de ces surfaces
+  n'est imposée ni factorisée au niveau du stepper.
+
 ## Invariants architecturaux consolidés (7.2a-code)
 
 Ces points, distillés des mémoires projet, doivent être respectés par
