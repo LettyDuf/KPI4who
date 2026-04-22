@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mockup-preview — Variante 1 ajustée : ampoule vs engrenage</title>
+  <style>
+    :root {
+      --niv-1:        #1a237e;
+      --niv-1-clair:  #e8eaf6;
+      --accent:       #e65100;
+      --fond:         #f5f6fa;
+      --fond-2:       #ffffff;
+      --texte:        #1a1a2e;
+      --texte-2:      #607d8b;
+      --texte-3:      #9ca3af;
+      --bordure:      #e0e4eb;
+      --bordure-2:    #f1f3f8;
+
+      --vert-discret-fond:   #f3f8f4;
+      --vert-discret-bord:   #d7e6da;
+      --vert-discret-texte:  #3c6c44;
+
+      --ambre-discret-fond:  #fbf6ed;
+      --ambre-discret-bord:  #eadec2;
+      --ambre-discret-texte: #8a6a1a;
+
+      --rayon:        10px;
+      --rayon-sm:     6px;
+      --ombre:        0 2px 12px rgba(26,35,126,0.06);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, 'Segoe UI', system-ui, 'Helvetica Neue', sans-serif;
+      background: var(--fond);
+      color: var(--texte);
+      line-height: 1.55;
+      padding: 2rem 1.5rem 4rem;
+      font-size: 15px;
+    }
+    .mockup-header {
+      max-width: 1100px;
+      margin: 0 auto 2rem;
+      text-align: center;
+    }
+    .mockup-header .eyebrow {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--niv-1);
+      background: var(--niv-1-clair);
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+    .mockup-header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--niv-1);
+      margin-bottom: 0.5rem;
+    }
+    .mockup-header p {
+      font-size: 0.95rem;
+      color: var(--texte-2);
+      max-width: 820px;
+      margin: 0.4rem auto 0;
+    }
+    .mockup-header p em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+    .comparateur {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .colonne {
+      background: var(--fond-2);
+      border-radius: 12px;
+      box-shadow: var(--ombre);
+      overflow: hidden;
+    }
+    .colonne-header {
+      padding: 1.2rem 1.4rem 0.8rem;
+      border-bottom: 1px solid var(--bordure-2);
+    }
+    .colonne-header .label {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .colonne-header h2 {
+      font-size: 1.15rem;
+      color: var(--niv-1);
+      margin-top: 0.3rem;
+      font-weight: 700;
+    }
+    .colonne-header p {
+      font-size: 0.85rem;
+      color: var(--texte-2);
+      margin-top: 0.3rem;
+    }
+    .colonne-header p em { color: var(--ambre-discret-texte); font-style: normal; font-weight: 600; }
+
+    .liste {
+      padding: 0.6rem 1rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .fiche {
+      background: var(--fond-2);
+      border: 1px solid var(--bordure);
+      border-radius: var(--rayon);
+      padding: 0.7rem 0.9rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.7rem;
+      align-items: center;
+      transition: border-color 0.15s;
+    }
+    .fiche:hover { border-color: #c5cbd6; }
+    .fiche.etat-en-place {
+      background: var(--vert-discret-fond);
+      border-color: var(--vert-discret-bord);
+    }
+    .fiche.etat-a-envisager {
+      background: var(--ambre-discret-fond);
+      border-color: var(--ambre-discret-bord);
+    }
+
+    .fiche-texte { min-width: 0; }
+    .fiche-titre-ligne {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .fiche-titre {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--texte);
+    }
+    .fiche-meta {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--texte-3);
+    }
+    .fiche-desc {
+      font-size: 0.82rem;
+      color: var(--texte-2);
+      line-height: 1.4;
+      margin-top: 0.2rem;
+    }
+    .fiche-statut-inline {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      letter-spacing: 0.02em;
+    }
+    .fiche.etat-en-place .fiche-statut-inline {
+      background: #e7efe9;
+      color: var(--vert-discret-texte);
+    }
+    .fiche.etat-a-envisager .fiche-statut-inline {
+      background: #f4ecd8;
+      color: var(--ambre-discret-texte);
+    }
+
+    .icones {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      align-items: center;
+    }
+    .btn-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid var(--bordure);
+      background: var(--fond-2);
+      color: var(--texte-3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+    }
+    .btn-icon:hover {
+      border-color: var(--texte-3);
+      color: var(--texte-2);
+    }
+    .btn-icon.actif-coche {
+      background: #e7efe9;
+      border-color: var(--vert-discret-bord);
+      color: var(--vert-discret-texte);
+    }
+    .btn-icon.actif-idee {
+      background: #f4ecd8;
+      border-color: var(--ambre-discret-bord);
+      color: var(--ambre-discret-texte);
+    }
+    .btn-icon svg { width: 14px; height: 14px; }
+
+    .btn-icon[data-tip]::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      right: 0;
+      background: var(--texte);
+      color: white;
+      font-size: 0.7rem;
+      padding: 0.3rem 0.55rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+      z-index: 10;
+    }
+    .btn-icon[data-tip]:hover::after,
+    .btn-icon.forcer-tip[data-tip]::after { opacity: 1; }
+
+    .bilan {
+      max-width: 1280px;
+      margin: 2rem auto 0;
+      background: var(--fond-2);
+      border-radius: 12px;
+      box-shadow: var(--ombre);
+      padding: 1.6rem 2rem;
+    }
+    .bilan h3 {
+      color: var(--niv-1);
+      font-size: 1.05rem;
+      margin-bottom: 0.8rem;
+    }
+    .bilan table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+    }
+    .bilan th, .bilan td {
+      text-align: left;
+      padding: 0.55rem 0.8rem;
+      border-bottom: 1px solid var(--bordure-2);
+      vertical-align: top;
+    }
+    .bilan th {
+      background: var(--bordure-2);
+      font-weight: 700;
+      color: var(--niv-1);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .bilan td strong { color: var(--texte); }
+
+    .recommandation {
+      max-width: 1280px;
+      margin: 1.5rem auto 0;
+      background: linear-gradient(135deg, #fff8f0 0%, #fff 100%);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 12px 12px 0;
+      padding: 1.3rem 1.6rem;
+    }
+    .recommandation h3 {
+      color: var(--accent);
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .recommandation p { color: var(--texte); font-size: 0.92rem; margin-bottom: 0.6rem; }
+    .recommandation p:last-child { margin-bottom: 0; }
+    .recommandation em { color: var(--accent); font-style: normal; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <div class="mockup-header">
+    <span class="eyebrow">Chantier 9 — Q2 interaction d'ajout (itération)</span>
+    <h1>Variante 1 ajustée — ampoule <em>vs</em> engrenage</h1>
+    <p>Même structure d'icônes. À gauche, <em>ampoule</em> pour « à envisager » (idée à explorer). À droite, <em>engrenage</em> (mécanisme à examiner). Descriptions désormais ramenées à <em>une phrase</em>.</p>
+  </div>
+
+  <div class="comparateur">
+
+    <!-- ═══════ COLONNE GAUCHE : AMPOULE ═══════ -->
+    <div class="colonne">
+      <div class="colonne-header">
+        <div class="label">Option α — ampoule</div>
+        <h2>Coche + ampoule</h2>
+        <p>Ampoule &rarr; <em>idée à explorer</em>. Évoque l'éclaircissement, cohérent avec la métaphore de la <em>lunette</em> de la mission.</p>
+      </div>
+      <div class="liste">
+
+        <!-- Fiche 1 : vide -->
+        <div class="fiche">
+          <div class="fiche-texte">
+            <div class="fiche-titre-ligne">
+              <span class="fiche-titre">Lead Time</span>
+              <span class="fiche-meta">Flux</span>
+            </div>
+            <div class="fiche-desc">Délai entre la demande du client et la livraison effective.</div>
+          </div>
+          <div class="icones">
+            <button class="btn-icon" data-tip="Marquer comme en place" aria-label="Marquer comme en place">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+            <button class="btn-icon" data-tip="À envisager — idée à explorer" aria-label="À envisager">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-4 12.7c.7.6 1 1.5 1 2.3v1h6v-1c0-.8.3-1.7 1-2.3A7 7 0 0 0 12 2z"></path></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Fiche 2 : en place -->
+        <div class="fiche etat-en-place">
+          <div class="fiche-texte">
+            <div class="fiche-titre-ligne">
+              <span class="fiche-titre">NPS global</span>
+              <span class="fiche-meta">Client</span>
+              <span class="fiche-statut-inline">✓ En place</span>
+            </div>
+            <div class="fiche-desc">Part de promoteurs moins part de détracteurs ; proxy de satisfaction.</div>
+          </div>
+          <div class="icones">
+            <button class="btn-icon actif-coche" data-tip="Retirer du panier" aria-label="Retirer du panier">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+            <button class="btn-icon" data-tip="Basculer en « à envisager »" aria-label="Basculer en à envisager">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-4 12.7c.7.6 1 1.5 1 2.3v1h6v-1c0-.8.3-1.7 1-2.3A7 7 0 0 0 12 2z"></path></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Fiche 3 : à envisager -->
+        <div class="fiche etat-a-envisager">
+          <div class="fiche-texte">
+            <div class="fiche-titre-ligne">
+              <span class="fiche-titre">FCR</span>
+              <span class="fiche-meta">Support</span>
+              <span class="fiche-statut-inline">💡 À envisager</span>
+            </div>
+            <div class="fiche-desc">Sollicitations résolues au premier contact, sans relance ni escalade.</div>
+          </div>
+          <div class="icones">
+            <button class="btn-icon" data-tip="Basculer en « en place »" aria-label="Basculer en en place">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+            <button class="btn-icon actif-idee" data-tip="Retirer du panier" aria-label="Retirer du panier">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-4 12.7c.7.6 1 1.5 1 2.3v1h6v-1c0-.8.3-1.7 1-2.3A7 7 0 0 0 12 2z"></path></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Fiche 4 : vide -->
+        <div class="fiche">
+          <div class="fiche-texte">
+            <div class="fiche-titre-ligne">
+              <span class="fiche-titre">Velocity</span>
+              <span class="fiche-meta">Scrum</span>
+            </div>
+            <div class="fiche-desc">Points livrés par sprint &mdash; <strong>attention aux anti-patterns</strong>.</div>
+          </div>
+          <div class="icones">
+            <button class="btn-icon" data-tip="Marquer comme en place" aria-label="Marquer comme en place">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+            <button class="btn-icon" data-tip="À envisager — idée à explorer" aria-label="À envisager">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-4 12.7c.7.6 1 1.5 1 2.3v1h6v-1c0-.8.3-1.7 1-2.3A7 7 0 0 0 12 2z"></path></svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════ COLONNE DROITE : ENGRENAGE ═══════ -->
+    <div class="colonne">
+      <div class="colonne-header">
+        <div class="label">Option β — engrenage</div>
+        <h2>Coche + engrenage</h2>
+        <p>Engrenage &rarr; <em>mécanisme à examiner</em>. Évoque le processus, le réglage, l'artisanat. Plus technique et moins émotionnel.</p>
+      </div>
+      <div class="liste">
+
+        <!-- Fiche 1 : vide -->
+        <div class="fiche">
+          <div class="fiche-texte">
+            <div class="fiche-titre-ligne">
+              <span class="fiche-titre">Lead Time</span>
+              <span class="fiche-meta">Flux</span>
+            </div>
+            <div class="fiche-desc">Délai entre la demande du client et la livraison effective.</div>
+          </div>
+          <div class="icones">
+            <button class="btn-icon" data-tip="Marquer comme en place" aria-label="Marquer comme en place">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+            <button class="btn-icon" data-tip="À envisager — mécanisme à examiner" aria-label="À envisager">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Fiche 2 : en place -->
+        <div class="fiche etat-en-place">
+          <div class="fiche-texte">
+            <div class="fiche-titre-ligne">
+              <span class="fiche-titre">NPS global</span>
+              <span class="fiche-meta">Client</span>
+              <span class="fiche-statut-inline">✓ En place</span>
+            </div>
+            <div class="fiche-desc">Part de promoteurs moins part de détracteurs ; proxy de satisfaction.</div>
+          </div>
+          <div class="icones">
+            <button class="btn-icon actif-coche" data-tip="Retirer du panier" aria-label="Retirer du panier">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+            <button class="btn-icon" data-tip="Basculer en « à envisager »" aria-label="Basculer en à envisager">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Fiche 3 : à envisager -->
+        <div class="fiche etat-a-envisager">
+          <div class="fiche-texte">
+            <div class="fiche-titre-ligne">
+              <span class="fiche-titre">FCR</span>
+              <span class="fiche-meta">Support</span>
+              <span class="fiche-statut-inline">⚙ À envisager</span>
+            </div>
+            <div class="fiche-desc">Sollicitations résolues au premier contact, sans relance ni escalade.</div>
+          </div>
+          <div class="icones">
+            <button class="btn-icon" data-tip="Basculer en « en place »" aria-label="Basculer en en place">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+            <button class="btn-icon actif-idee" data-tip="Retirer du panier" aria-label="Retirer du panier">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Fiche 4 : vide -->
+        <div class="fiche">
+          <div class="fiche-texte">
+            <div class="fiche-titre-ligne">
+              <span class="fiche-titre">Velocity</span>
+              <span class="fiche-meta">Scrum</span>
+            </div>
+            <div class="fiche-desc">Points livrés par sprint &mdash; <strong>attention aux anti-patterns</strong>.</div>
+          </div>
+          <div class="icones">
+            <button class="btn-icon" data-tip="Marquer comme en place" aria-label="Marquer comme en place">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+            <button class="btn-icon" data-tip="À envisager — mécanisme à examiner" aria-label="À envisager">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bilan">
+    <h3>Lecture comparée des deux symboles</h3>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 22%;">Dimension</th>
+          <th style="width: 39%;">Ampoule 💡</th>
+          <th style="width: 39%;">Engrenage ⚙</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Sémantique portée</strong></td>
+          <td>Idée, insight, éclaircissement. Posture exploratoire.</td>
+          <td>Mécanisme, réglage, processus en examen. Posture analytique.</td>
+        </tr>
+        <tr>
+          <td><strong>Cohérence avec la mission</strong></td>
+          <td>Forte. Écho à la <em>lunette</em> qui éclaire une question.</td>
+          <td>Moyenne. Peut être confondu avec un bouton <em>paramètres</em> classique.</td>
+        </tr>
+        <tr>
+          <td><strong>Confusion potentielle</strong></td>
+          <td>Faible. Peu d'applications posent une ampoule comme action de liste.</td>
+          <td>Élevée. L'engrenage signifie partout « réglages », pas « à envisager ».</td>
+        </tr>
+        <tr>
+          <td><strong>Ton émotionnel</strong></td>
+          <td>Léger, curieux, invitant.</td>
+          <td>Neutre à froid, rigoureux, distant.</td>
+        </tr>
+        <tr>
+          <td><strong>Lisibilité à petite taille</strong></td>
+          <td>Bonne &mdash; silhouette reconnaissable à 14 px.</td>
+          <td>Correcte mais dense : 8 dents qui s'empâtent à 14 px.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="recommandation">
+    <h3>Ma lecture</h3>
+    <p>L'<em>ampoule</em> gagne sur trois axes : elle évoque l'idée à explorer (exactement ce que porte « à envisager »), elle résonne avec la métaphore centrale de l'outil — <em>la métrique est une lunette pour se questionner</em> —, et elle ne risque pas d'être confondue avec un bouton de paramètres.</p>
+    <p>L'engrenage porterait mieux un onglet <em>configurer mon scorecard</em> ou <em>paramétrer les seuils</em>. Il n'est pas taillé pour dire « idée à explorer » ; il est trop ancré dans la convention UI des réglages.</p>
+    <p><strong>Recommandation :</strong> <em>option α — coche + ampoule</em>, avec descriptions synthétiques tenant sur une phrase comme dans ce preview. On peut poser l'engrenage en réserve pour un futur onglet de configuration s'il en émerge un.</p>
+  </div>
+
+</body>
+</html>
