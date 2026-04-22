@@ -5826,124 +5826,68 @@ CM.DiagnosticCadre = (function() {
 CM.VuePorteCadre = (function() {
   'use strict';
 
-  /* État interne : volontairement minimal (étape + deux choix). */
-  var etat = { etape: 1, cadre: null, niveau: null };
+  /* ─── Instance Stepper ──────────────────────────────────────────
+     Une seule instance pour cette porte, configurée au parse time.
+     Aucun accès DOM dans creer() — l'instance est utilisable même avant
+     DOMContentLoaded. Les premiers accès DOM ont lieu dans ouvrir(). */
+  var _stepper = CM.Stepper.creer({
+    etiquettePorte: 'Par mon cadre',
+    idFacade:       'CM.VuePorteCadre',
+    ids: {
+      vue:     'vue-porte-cadre',
+      stepper: 'porte-cadre-stepper',
+      etapes:  'porte-cadre-etapes'
+    },
+    etapes: [
+      {
+        cle:           'cadre',
+        defaut:        'Mon cadre',
+        valeur:        _labelCadre,
+        rendreOptions: function() { return _etapeCadre(); }
+      },
+      {
+        cle:           'niveau',
+        defaut:        'Mon niveau',
+        valeur:        _labelNiveau,
+        rendreOptions: function(choix) { return _etapeNiveau(choix[0]); }
+      }
+    ],
+    libelleResultats: 'Mes indicateurs',
+    rendreResultats:  function(choix) { return _etapeResultats(choix[0], choix[1]); }
+  });
 
-  /* Ids des zones DOM — centralisés, sans accent (doivent matcher l'HTML). */
-  var ID_STEPPER = 'porte-cadre-stepper';
-  var ID_ETAPES  = 'porte-cadre-etapes';
-  var ID_VUE     = 'vue-porte-cadre';
-
-  /* ─── API publique ────────────────────────────────────────────── */
+  /* ─── API publique (façade iso-comportement) ──────────────────── */
 
   // Exemple : CM.VuePorteCadre.ouvrir() → masque les accueils + affiche la vue
-  function ouvrir() {
-    _cacherAccueils();
-    var vue = document.getElementById(ID_VUE);
-    if (vue) vue.hidden = false;
-    _reinitialiserEtat();
-    _rendre();
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }
+  function ouvrir()        { _stepper.ouvrir(); }
 
-  function retourAccueil() {
-    var vue = document.getElementById(ID_VUE);
-    if (vue) vue.hidden = true;
-    _reinitialiserEtat();
-    var mode = CM.Preferences.lire('accueil', 'pyramide');
-    CM.App.afficherAccueil(mode);
-  }
+  // Exemple : retourAccueil() → cache la vue et rebascule sur l'accueil préféré
+  function retourAccueil() { _stepper.retourAccueil(); }
 
-  function setCadre(cadreId) {
-    etat.cadre = cadreId;
-    etat.etape = 2;
-    _rendre();
-    _scrollEnHaut();
-  }
+  /* setCadre et setNiveau conservées comme façades nommées : elles
+     préservent les onclick HTML générés dans _etapeCadre / _etapeNiveau
+     (pattern actuel : onclick="CM.VuePorteCadre.setCadre('...')").
+     En interne, chacune appelle setChoix(n, valeur) avec son index 1-based. */
+  function setCadre(cadreId)   { _stepper.setChoix(1, cadreId);  }
+  function setNiveau(niveauId) { _stepper.setChoix(2, niveauId); }
 
-  function setNiveau(niveauId) {
-    etat.niveau = niveauId;
-    etat.etape = 3;
-    _rendre();
-    _scrollEnHaut();
-  }
+  // Exemple : retourA(2) → revient à l'étape 2, efface les choix postérieurs
+  function retourA(numEtape) { _stepper.retourA(numEtape); }
 
-  // Exemple : retourA(2) → revient à l'étape 2 et efface les choix ultérieurs
-  function retourA(numEtape) {
-    etat.etape = numEtape;
-    if (numEtape <= 2) etat.niveau = null;
-    if (numEtape <= 1) etat.cadre  = null;
-    _rendre();
-  }
-
-  function reset() {
-    _reinitialiserEtat();
-    _rendre();
-  }
+  // Exemple : reset() → repart de l'étape 1, choix vidés
+  function reset() { _stepper.reset(); }
 
   /* ── Pivot depuis l'étape résultats (chantier 6.7a) ──
      Chemin rapide pour rebondir d'un cadre à un autre sans repartir de zéro.
      Préserve le niveau et maintient l'utilisateur à l'étape 3 — l'intention
-     utilisateur est de voir les indicateurs du cadre voisin pour le même étage
-     de pilotage. Fonction distincte de setCadre() volontairement : setCadre()
-     redémarre le parcours à l'étape 2 (choix du niveau), ce qui n'est pas
-     l'intention ici. Explicite beat implicit. */
+     utilisateur est de voir les indicateurs du cadre voisin pour le même
+     étage de pilotage. Implémenté via la primitive bas-niveau
+     CM.Stepper.Instance.remplacerChoix, introduite par le commit 6509fd0
+     précisément pour ce cas. Fonction distincte de setCadre() volontairement :
+     setCadre() redémarre le parcours à l'étape 2 (choix du niveau), ce qui
+     n'est pas l'intention ici. Explicite beat implicit. */
   function pivoterVersCadre(cadreId) {
-    etat.cadre = cadreId;
-    /* etat.niveau et etat.etape préservés à dessein. */
-    _rendre();
-    _scrollEnHaut();
-  }
-
-  /* ─── Rendu (pas de logique métier ici) ───────────────────────── */
-  function _rendre() {
-    _rendreStepper();
-    _rendreEtapes();
-  }
-
-  function _rendreStepper() {
-    var zone = document.getElementById(ID_STEPPER);
-    if (!zone) return;
-    var steps = [
-      { num:1, defaut:'Mon cadre',      valeur: _labelCadre()  },
-      { num:2, defaut:'Mon niveau',     valeur: _labelNiveau() },
-      { num:3, defaut:'Mes indicateurs', valeur: null }
-    ];
-    var html = '<div class="stepper">';
-    for (var i = 0; i < steps.length; i++) {
-      var s = steps[i];
-      var estActif = s.num === etat.etape;
-      var estFait  = s.num < etat.etape;
-      var classe   = estActif ? 'actif' : (estFait ? 'fait' : '');
-      var contenu  = s.valeur
-        ? '<span class="step-num">' + s.num + '.</span>'
-          + '<span class="step-icone">' + s.valeur.icone + '</span>'
-          + '<span class="step-valeur">' + s.valeur.label + '</span>'
-        : '<span class="step-num">' + s.num + '.</span> ' + s.defaut;
-      if (estFait) {
-        html += '<button type="button" class="step ' + classe + '"'
-              + ' onclick="CM.VuePorteCadre.retourA(' + s.num + ')"'
-              + ' aria-label="Revenir à l\'étape ' + s.num + '">'
-              + contenu + '</button>';
-      } else {
-        html += '<div class="step ' + classe + '"'
-              + ' aria-current="' + (estActif ? 'step' : 'false') + '">'
-              + contenu + '</div>';
-      }
-      if (i < steps.length - 1) html += '<span class="step-fleche" aria-hidden="true">→</span>';
-    }
-    html += '</div>';
-    zone.innerHTML = html;
-  }
-
-  function _rendreEtapes() {
-    var zone = document.getElementById(ID_ETAPES);
-    if (!zone) return;
-    var html = '';
-    if (etat.etape === 1) html = _etapeCadre();
-    else if (etat.etape === 2) html = _etapeNiveau();
-    else if (etat.etape === 3) html = _etapeResultats();
-    zone.innerHTML = html;
+    _stepper.remplacerChoix(1, cadreId);
   }
 
   /* ─── Étape 1 : accordéon par famille d'école de pensée ─── */
@@ -6007,9 +5951,9 @@ CM.VuePorteCadre = (function() {
   }
 
   /* ─── Étape 2 : choix du niveau de pilotage ─── */
-  function _etapeNiveau() {
+  function _etapeNiveau(cadreChoisi) {
     var niveaux = CM.DiagnosticCadre.niveauxTous();
-    var cadre   = CM.DiagnosticCadre.cadreInfo(etat.cadre);
+    var cadre   = CM.DiagnosticCadre.cadreInfo(cadreChoisi);
     var html = '<div class="carte-etape">';
     if (cadre) {
       html += '<div class="encart-posture"><strong>Cadre choisi — ' + cadre.label + '&nbsp;:</strong> '
@@ -6036,21 +5980,24 @@ CM.VuePorteCadre = (function() {
     return html;
   }
 
-  /* ─── Étape 3 : résultats (cartes indicateurs) ─── */
-  function _etapeResultats() {
-    var ctx = { cadre: etat.cadre, niveau: etat.niveau };
+  /* ─── Étape 3 : résultats + bloc voisins + bouton recommencer
+     Le bouton « ↻ Recommencer » est inclus ici (le stepper ne le génère pas)
+     pour rester DANS la <div class="carte-etape">, ce qui préserve son
+     rendu visuel (cadre, padding) à l'identique de la version pré-refacto. ─── */
+  function _etapeResultats(cadreChoisi, niveauChoisi) {
+    var ctx   = { cadre: cadreChoisi, niveau: niveauChoisi };
     var recos = CM.DiagnosticCadre.recommander(ctx);
-    var n     = CM.DiagnosticCadre.niveauInfo(etat.niveau);
-    var c     = CM.DiagnosticCadre.cadreInfo(etat.cadre);
+    var n     = CM.DiagnosticCadre.niveauInfo(niveauChoisi);
+    var c     = CM.DiagnosticCadre.cadreInfo(cadreChoisi);
 
     var html = '<div class="carte-etape">';
     html += '<div class="resultat-titre">✅ Indicateurs revendiqués par '
-          + (c ? c.label : etat.cadre) + ' pour le niveau '
-          + (n ? n.label.toLowerCase() : etat.niveau)
+          + (c ? c.label : cadreChoisi) + ' pour le niveau '
+          + (n ? n.label.toLowerCase() : niveauChoisi)
           + ' (' + recos.length + ')</div>';
 
     if (recos.length === 0) {
-      html += _htmlMessageVide(c, n);
+      html += _htmlMessageVide(c, n, cadreChoisi, niveauChoisi);
     } else {
       html += '<div class="grille-cartes">';
       for (var i = 0; i < recos.length; i++) {
@@ -6060,7 +6007,7 @@ CM.VuePorteCadre = (function() {
       /* Bloc « Cadres voisins » (chantier 6.7a) : uniquement quand il y a des
          résultats — inutile (voire trompeur) de suggérer de pivoter vers un
          voisin depuis un contexte où le cadre actuel n'a rien à proposer. */
-      html += _htmlBlocVoisins(etat.cadre);
+      html += _htmlBlocVoisins(cadreChoisi);
     }
 
     html += '<button type="button" class="bouton-recommencer"'
@@ -6114,9 +6061,9 @@ CM.VuePorteCadre = (function() {
   /* Message pédagogique quand un couple (cadre, niveau) n'a aucun indicateur
      dans le référentiel. Posture : ne pas fabriquer de métrique pour remplir
      la case, mais questionner la légitimité du cadre à cet étage. */
-  function _htmlMessageVide(c, n) {
-    var nomCadre  = c ? c.label  : etat.cadre;
-    var nomNiveau = n ? n.label  : etat.niveau;
+  function _htmlMessageVide(c, n, cadreChoisi, niveauChoisi) {
+    var nomCadre  = c ? c.label  : cadreChoisi;
+    var nomNiveau = n ? n.label  : niveauChoisi;
     var html = '<div class="message-vide">';
     html += '<p class="message-vide-chapeau">Aucun indicateur de <strong>'
          + nomCadre + '</strong> n\'est défini pour le niveau <strong>'
@@ -6132,42 +6079,28 @@ CM.VuePorteCadre = (function() {
     return html;
   }
 
-  /* ─── Helpers internes ─── */
-  function _labelCadre() {
-    if (!etat.cadre) return null;
-    var c = CM.DiagnosticCadre.cadreInfo(etat.cadre);
+  /* ─── Helpers — adapteurs choix → label affiché dans le stepper ───
+     Reçoivent un id de choix (ou null), retournent { icone, label } ou null.
+     Appelés par CM.Stepper via les descripteurs config.etapes[i].valeur. */
+  function _labelCadre(choix) {
+    if (!choix) return null;
+    var c = CM.DiagnosticCadre.cadreInfo(choix);
     return c ? { icone: c.icone, label: c.label } : null;
   }
-  function _labelNiveau() {
-    if (!etat.niveau) return null;
-    var n = CM.DiagnosticCadre.niveauInfo(etat.niveau);
+  function _labelNiveau(choix) {
+    if (!choix) return null;
+    var n = CM.DiagnosticCadre.niveauInfo(choix);
     return n ? { icone: n.icone, label: n.label } : null;
   }
 
-  function _reinitialiserEtat() {
-    etat = { etape: 1, cadre: null, niveau: null };
-  }
-
-  function _cacherAccueils() {
-    var a = document.getElementById('accueil');
-    var b = document.getElementById('accueil-portes');
-    if (a) a.hidden = true;
-    if (b) b.hidden = true;
-  }
-
-  function _scrollEnHaut() {
-    try { window.scrollTo({ top: 0, behavior: 'smooth' }); }
-    catch (e) { /* navigateurs anciens : ignorer */ }
-  }
-
   return {
-    ouvrir:             ouvrir,
-    retourAccueil:      retourAccueil,
-    setCadre:           setCadre,
-    setNiveau:          setNiveau,
-    pivoterVersCadre:   pivoterVersCadre,
-    retourA:            retourA,
-    reset:              reset
+    ouvrir:           ouvrir,
+    retourAccueil:    retourAccueil,
+    setCadre:         setCadre,
+    setNiveau:        setNiveau,
+    pivoterVersCadre: pivoterVersCadre,
+    retourA:          retourA,
+    reset:            reset
   };
 })();
 </script>
