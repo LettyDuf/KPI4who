@@ -264,6 +264,37 @@
     return el ? el.textContent.trim() : null;
   }
 
+  /* Ids des familles d'école de pensée rendues à l'étape 3.
+     Lecture stricte : uniquement les <details> au premier niveau de la
+     carte-etape, pour éviter de compter des accordéons imbriqués que
+     _etapeCadre pourrait introduire plus tard dans une sous-zone. */
+  function famillesRendues() {
+    var zone = zoneEtapes();
+    if (!zone) return [];
+    var details = zone.querySelectorAll('details.famille-accordeon');
+    return Array.prototype.map.call(details, function(d) {
+      var classes = (d.getAttribute('class') || '').split(/\s+/);
+      for (var i = 0; i < classes.length; i++) {
+        if (classes[i].indexOf('famille-') === 0 && classes[i] !== 'famille-accordeon') {
+          return classes[i].slice('famille-'.length);
+        }
+      }
+      return null;
+    }).filter(Boolean);
+  }
+
+  /* Valeurs brutes des attributs onclick des boutons de choix de cadre
+     rendus à l'étape 3. Permet de vérifier le routage vers la bonne
+     façade (CM.VuePorteNiveau.setCadre, pas CM.VuePorteCadre.setCadre). */
+  function onclicksEtape3() {
+    var zone = zoneEtapes();
+    if (!zone) return [];
+    var boutons = zone.querySelectorAll('.option-btn');
+    return Array.prototype.map.call(boutons, function(b) {
+      return b.getAttribute('onclick') || '';
+    }).filter(function(s) { return s.length > 0; });
+  }
+
   /* ══════ Orchestration ════════════════════════════════════════════════ */
 
   iframe.addEventListener('load', function() {
@@ -412,7 +443,7 @@
        n'importe quelle valeur (pas de `valider` sur l'étape rôle) —
        la défense vit donc dans _etapeProbleme, et on l'exerce via
        setRole qui transite automatiquement vers l'étape 2. */
-    describe('Cas défensifs', function() {
+    describe('Cas défensifs C.1 — setRole', function() {
       var V = W.CM.VuePorteNiveau;
       it('setRole(null) → « Rôle inconnu. »', function() {
         V.ouvrir();
@@ -427,6 +458,133 @@
       it('setRole("id-inexistant-xyz") → « Rôle inconnu. »', function() {
         V.ouvrir();
         V.setRole('id-inexistant-xyz');
+        expect(texteMessageVide()).toBe('Rôle inconnu.');
+      });
+    });
+
+    /* ─── Suite 6 : C.2 — rendu _etapeCadre iso porte cadre ────────────
+       Après setRole + setProbleme sur des valeurs valides, le stepper
+       passe à l'étape 3 et _etapeCadre rend les familles d'école de
+       pensée. Décision éditoriale : taxonomie complète, non filtrée par
+       le couple (niveau × problème). On vérifie donc que la cardinalité
+       et l'ordre des familles rendues correspondent exactement à ce que
+       CM.DiagnosticCadre.famillesAvecCadres() renvoie, sans coupe. */
+    describe('C.2 — rendu _etapeCadre (taxonomie complète, iso porte cadre)', function() {
+      var V     = W.CM.VuePorteNiveau;
+      var Roles = W.CM.Roles;
+      var Diag  = W.CM.DiagnosticProbleme;
+      var DC    = W.CM.DiagnosticCadre;
+
+      /* Choix d'un couple (rôle, problème) valide et stable pour ces tests :
+         premier rôle d'équipe + premier problème opérationnel. Ce choix
+         n'est pas spécifique au filtrage (la taxonomie est complète), il
+         sert juste à amener le stepper à l'étape 3. */
+      function amenerEtape3() {
+        var rRef = Roles.parNiveau('équipe')[0];
+        var pRef = Diag.problemesPourNiveau('operationnel')[0];
+        V.ouvrir();
+        V.setRole(rRef.id);
+        V.setProbleme(pRef.id);
+        return { role: rRef, probleme: pRef };
+      }
+
+      it('setProbleme transite vers l\'étape 3 (familles rendues)', function() {
+        amenerEtape3();
+        expect(famillesRendues().length > 0).toBeTruthy();
+      });
+
+      it('cardinalité et ordre identiques à famillesAvecCadres()', function() {
+        amenerEtape3();
+        var attendu = DC.famillesAvecCadres().map(function(f) { return f.id; });
+        var obtenu  = famillesRendues();
+        if (obtenu.join(',') !== attendu.join(',')) {
+          throw new Error(
+            'attendu [' + attendu.join(', ') + '], '
+            + 'obtenu [' + obtenu.join(', ') + ']'
+          );
+        }
+      });
+
+      it('tous les boutons routent vers CM.VuePorteNiveau.setCadre', function() {
+        amenerEtape3();
+        var clicks = onclicksEtape3();
+        expect(clicks.length > 0).toBeTruthy();
+        for (var i = 0; i < clicks.length; i++) {
+          if (clicks[i].indexOf('CM.VuePorteNiveau.setCadre(') === -1) {
+            throw new Error('bouton ' + i + ' : onclick = « ' + clicks[i] + ' »');
+          }
+        }
+      });
+
+      it('aucun bouton ne route vers la porte cadre (bug de copie iso)', function() {
+        amenerEtape3();
+        var clicks = onclicksEtape3();
+        for (var i = 0; i < clicks.length; i++) {
+          if (clicks[i].indexOf('CM.VuePorteCadre.setCadre(') !== -1) {
+            throw new Error('bouton ' + i + ' route vers CM.VuePorteCadre : « ' + clicks[i] + ' »');
+          }
+        }
+      });
+
+      it('toutes les familles sont fermées à l\'arrivée (pas d\'attribut open)', function() {
+        amenerEtape3();
+        var zone = zoneEtapes();
+        var ouverts = zone.querySelectorAll('details.famille-accordeon[open]');
+        if (ouverts.length !== 0) {
+          throw new Error(ouverts.length + ' famille(s) ouverte(s) à l\'arrivée, attendu 0');
+        }
+      });
+
+      /* L'encart posture de l'étape 3 doit rappeler les deux choix amont
+         pour que l'utilisateur garde le contexte sous les yeux. On teste
+         le libellé de surface du rôle (pas le canon interne) et le label
+         du problème (qui peut contenir du HTML éditorial — on teste le
+         textContent dépouillé). */
+      it('l\'encart-posture rappelle le libellé de surface du rôle', function() {
+        var ctx = amenerEtape3();
+        var surface = Roles.libelleDeSurface(ctx.role.niveau);
+        expect(textePosture()).toContain(surface);
+      });
+
+      it('l\'encart-posture rappelle le titre du rôle', function() {
+        var ctx = amenerEtape3();
+        expect(textePosture()).toContain(ctx.role.titre);
+      });
+    });
+
+    /* ─── Suite 7 : C.2 — cas défensifs ────────────────────────────────
+       setProbleme peut être appelé avec une valeur invalide après un
+       setRole valide. _etapeCadre doit afficher un message-vide court,
+       sans throw. On teste aussi la régression depuis un rôle invalide :
+       on ne devrait jamais atteindre « Problème inconnu » depuis un rôle
+       déjà cassé — le message « Rôle inconnu » doit prévaloir. */
+    describe('Cas défensifs C.2 — setProbleme', function() {
+      var V     = W.CM.VuePorteNiveau;
+      var Roles = W.CM.Roles;
+      var roleValide = Roles.parNiveau('équipe')[0].id;
+
+      it('rôle valide + setProbleme(null) → « Problème inconnu. »', function() {
+        V.ouvrir();
+        V.setRole(roleValide);
+        V.setProbleme(null);
+        expect(texteMessageVide()).toBe('Problème inconnu.');
+      });
+
+      it('rôle valide + setProbleme("id-inexistant") → « Problème inconnu. »', function() {
+        V.ouvrir();
+        V.setRole(roleValide);
+        V.setProbleme('probleme-pseudo-xyz');
+        expect(texteMessageVide()).toBe('Problème inconnu.');
+      });
+
+      it('rôle invalide puis problème valide → « Rôle inconnu. » prévaut', function() {
+        V.ouvrir();
+        V.setRole('role-pseudo-abc');
+        /* À ce stade, étape 2 affiche « Rôle inconnu. ». Si on tente
+           quand même un setProbleme, le stepper passe à l'étape 3 et
+           _etapeCadre reçoit (roleId=invalide, problemeId=...). La
+           défense de _etapeCadre doit trancher sur roleId en premier. */
+        V.setProbleme('flux');
         expect(texteMessageVide()).toBe('Rôle inconnu.');
       });
     });
