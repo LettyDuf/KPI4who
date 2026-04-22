@@ -269,17 +269,18 @@ Audit complet livré dans [`AUDIT-UNIFORMITE-PORTES.md`](./AUDIT-UNIFORMITE-PORT
 - **Recherche globale avec 1-2 filtres contextuels optionnels.** Permet de retrouver rapidement une fiche par son nom.
 - **Vue imprimable : one-pager A4 minimaliste.** *Arbitrée le 22/04/2026 après mockup-preview côte à côte ([`preview-panier-impression.html`](./preview-panier-impression.html), commit `494a4b9`).* Une seule page qu'on tend en réunion : tableau *en place* + tableau *à envisager*, pastille fiabilité, chip niveau, bandeau terrain, trois questions à poser à l'équipe. Outil de conversation, pas document autonome. Rendu volontairement dense pour tenir sur une page sans respirer mal.
 - **Sortie canonique : impression + export PDF du même rendu.** Le PDF est une copie fidèle du one-pager imprimable, pas une transposition vers un autre format. Il sert la personne qui ne peut pas imprimer physiquement ou qui veut envoyer le scorecard à un collègue. Pas d'export vers Excel, Word ou un format tiers — l'outil garde la main sur la forme parce que la forme sert la lisibilité, et la lisibilité sert la conversation.
+- **Persistance : session éphémère en v1.** *Arbitrée le 22/04/2026.* Le panier vit dans un objet JS en mémoire et disparaît au F5 ou à la fermeture de l'onglet. Aligne avec la posture socratique de `MISSION.md` : chaque visite est un exercice rituel, l'occasion de reposer la question *« qu'est-ce que je mesure, et pourquoi ? »*. Garde-fou à coder quand même : confirmation `beforeunload` si le panier n'est pas vide — empêche le F5 accidentel punitif sans transformer la session en persistance déguisée. Architecture préparatoire en revanche : port hexagonal `CM.Panier.Depot` posé dès v1 avec une implémentation `MemoireDepot`, pour que l'ajout d'un futur `LocalStorageDepot` (voir *Pistes futures*) soit une bascule d'adapter, pas une refonte.
 
 **Questions résiduelles à trancher au démarrage.**
 
-- Interaction d'ajout au panier : poignée *« ajouter »* sur la fiche du tiroir, ou case à cocher sur la liste, ou les deux ?
-- Persistance : localStorage dans le navigateur (simple mais lié à la machine) ou rien (le panier vit le temps de la session) ? La persistance locale semble raisonnable en v1.
+- Interaction d'ajout au panier : zone d'ajout dans la fiche ouverte, case à cocher sur la liste, ou les deux ? *Mockup-preview posé le 22/04/2026 — [`preview-panier-interaction-ajout.html`](./preview-panier-interaction-ajout.html), commit `9dd2ef5`.* Arbitrage en attente.
 
 **Articulations.** La mission de cet onglet, telle qu'elle est posée dans `MISSION.md`, est *voir ce qui est présent dans ma réalité actuelle et ce que je devrais mesurer sans le mesurer*. Il devient le *miroir* de l'utilisateur. Il ne remplace pas la pyramide — il capitalise dessus : la pyramide sert désormais à explorer le référentiel pour y puiser, le panier est la sélection retenue.
 
 **Pistes futures (nice-to-have, hors v1).**
 
 - **Liens cliquables dans le PDF exporté.** Rendre chaque nom d'indicateur du PDF ouvrable d'un clic pour revenir sur la fiche correspondante dans l'outil en ligne. *Pas prioritaire en v1* : la barre de recherche globale du panier permet déjà de retrouver une fiche par son nom, ce qui couvre 90% du besoin. À rouvrir si un retour terrain montre que la friction de la recherche est un frein réel à la conversation. *Consigné le 22/04/2026 suite à l'arbitrage de la question 1.*
+- **Persistance du panier par localStorage (éventuelle v2).** Le panier survit à F5, à la fermeture de l'onglet, au redémarrage du navigateur. Branche d'adapter : nouveau `CM.Panier.LocalStorageDepot` qui remplace le `MemoireDepot` v1 via l'interface `Depot` déjà posée. Clé versionnée (`cm-panier-v1`) dès le début pour gérer proprement les futurs changements de schéma. *Pas prioritaire en v1* : la décision produit v1 est la session éphémère, dont la friction de F5 sert l'exercice rituel de repose-toi-la-question. À rouvrir si retour terrain montre que refaire le panier à chaque visite est un frein plus grand que l'exercice de relecture qu'il provoque. *Consigné le 22/04/2026 suite à l'arbitrage de la persistance.*
 
 ---
 
