@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mockup-preview — Option E : deux icônes sémantiques (coche + chariot)</title>
+  <style>
+    :root {
+      --niv-1:        #1a237e;
+      --niv-1-clair:  #e8eaf6;
+      --niv-2:        #01579b;
+      --niv-2-clair:  #e1f5fe;
+      --niv-3:        #004d40;
+      --niv-3-clair:  #e0f2f1;
+      --accent:       #e65100;
+      --fond:         #f5f6fa;
+      --fond-2:       #ffffff;
+      --texte:        #1a1a2e;
+      --texte-2:      #607d8b;
+      --texte-3:      #9ca3af;
+      --bordure:      #e0e4eb;
+      --bordure-2:    #f1f3f8;
+      --ambre:        #FFD180;
+      --ambre-profond: #b7791f;
+      --ambre-texte:  #6b4a00;
+      --ambre-fond:   #fffaf0;
+      --ambre-bord:   #f3e3b8;
+      --vert-fond:    #e8f5e9;
+      --vert-fond-light: #f1f8f3;
+      --vert-profond: #2e7d32;
+      --vert-bord:    #c8e6c9;
+      --rayon:        10px;
+      --rayon-sm:     6px;
+      --ombre:        0 2px 12px rgba(26,35,126,0.08);
+      --ombre-forte:  0 8px 32px rgba(26,35,126,0.14);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, 'Segoe UI', system-ui, 'Helvetica Neue', sans-serif;
+      background: var(--fond);
+      color: var(--texte);
+      line-height: 1.55;
+      padding: 2rem 1.5rem 4rem;
+      font-size: 15px;
+    }
+
+    /* ── En-tête ── */
+    .mockup-header {
+      max-width: 1100px;
+      margin: 0 auto 2rem;
+      text-align: center;
+    }
+    .mockup-header .eyebrow {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--niv-1);
+      background: var(--niv-1-clair);
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+    .mockup-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--niv-1);
+      margin-bottom: 0.5rem;
+    }
+    .mockup-header p {
+      font-size: 1rem;
+      color: var(--texte-2);
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    .mockup-header p em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+    /* ── Conteneur général ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section {
+      background: var(--fond-2);
+      border: 1px solid var(--bordure);
+      border-radius: var(--rayon);
+      box-shadow: var(--ombre);
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .section h2 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--niv-1);
+      margin-bottom: 1rem;
+    }
+    .section .legende {
+      font-size: 0.85rem;
+      color: var(--texte-2);
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    /* ═══════════════════════════════════════════════
+       ICÔNES SVG (coche + chariot) — composants réutilisables
+    ═══════════════════════════════════════════════ */
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--fond);
+      border: 1.5px solid var(--bordure);
+      color: var(--texte-3);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .btn-icon:hover {
+      background: white;
+      border-color: var(--texte-2);
+      color: var(--texte);
+      box-shadow: 0 2px 6px rgba(26,35,126,0.08);
+    }
+    .btn-icon svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* État actif — coche (en place) */
+    .btn-icon.coche-actif {
+      background: var(--vert-profond);
+      border-color: var(--vert-profond);
+      color: white;
+    }
+    .btn-icon.coche-actif:hover {
+      background: #256629;
+      border-color: #256629;
+      color: white;
+    }
+
+    /* État actif — chariot (à envisager) */
+    .btn-icon.chariot-actif {
+      background: var(--ambre-profond);
+      border-color: var(--ambre-profond);
+      color: white;
+    }
+    .btn-icon.chariot-actif:hover {
+      background: #9a6519;
+      border-color: #9a6519;
+      color: white;
+    }
+
+    /* Tooltip au survol */
+    .btn-icon[data-tip] {
+      position: relative;
+    }
+    .btn-icon[data-tip]::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a2e;
+      color: white;
+      font-size: 0.7rem;
+      padding: 0.35rem 0.6rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      z-index: 20;
+    }
+    .btn-icon[data-tip]::before {
+      content: '';
+      position: absolute;
+      bottom: calc(100% + 3px);
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: #1a1a2e;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease;
+      z-index: 20;
+    }
+    .btn-icon[data-tip]:hover::after,
+    .btn-icon[data-tip]:hover::before {
+      opacity: 1;
+    }
+    .btn-icon.forcer-tooltip::after,
+    .btn-icon.forcer-tooltip::before {
+      opacity: 1;
+    }
+
+    /* ═══════════════════════════════════════════════
+       CARTE INDICATEUR (simulée liste de résultats)
+    ═══════════════════════════════════════════════ */
+    .carte-indic {
+      background: var(--fond-2);
+      border: 1px solid var(--bordure);
+      border-radius: var(--rayon-sm);
+      padding: 0.85rem 1rem;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    .carte-indic:hover { box-shadow: var(--ombre); }
+    .carte-indic.en-place {
+      background: var(--vert-fond-light);
+      border-color: var(--vert-bord);
+    }
+    .carte-indic.envisager {
+      background: var(--ambre-fond);
+      border-color: var(--ambre-bord);
+    }
+    .carte-indic .corps {
+      flex: 1;
+      min-width: 0;
+    }
+    .carte-indic .nom {
+      font-weight: 600;
+      color: var(--texte);
+      margin-bottom: 0.25rem;
+      font-size: 0.95rem;
+    }
+    .carte-indic .meta {
+      font-size: 0.78rem;
+      color: var(--texte-2);
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .carte-indic .chip {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.15rem 0.45rem;
+      border-radius: 3px;
+      letter-spacing: 0.04em;
+    }
+    .chip.equipe { background: var(--niv-3-clair); color: var(--niv-3); }
+    .chip.programme { background: var(--niv-2-clair); color: var(--niv-2); }
+    .chip.entreprise { background: var(--niv-1-clair); color: var(--niv-1); }
+    .chip.dora { background: #ede7f6; color: #4527a0; }
+    .chip.affaires { background: #fff3e0; color: #e65100; }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    /* Annotation : pastille orange numérotée */
+    .annot {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      font-size: 0.7rem;
+      text-align: center;
+      line-height: 22px;
+      box-shadow: 0 2px 6px rgba(230,81,0,0.4);
+      z-index: 15;
+    }
+
+    /* ═══════════════════════════════════════════════
+       TABLEAU COMPORTEMENTS
+    ═══════════════════════════════════════════════ */
+    .tableau-compo {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    .tableau-compo thead th {
+      text-align: left;
+      font-weight: 700;
+      color: var(--niv-1);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.7rem;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1.5px solid var(--niv-1-clair);
+    }
+    .tableau-compo tbody td {
+      padding: 0.85rem 0.75rem;
+      border-bottom: 1px solid var(--bordure-2);
+      vertical-align: middle;
+      color: var(--texte);
+      line-height: 1.45;
+    }
+    .tableau-compo .etat-depart {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      font-size: 0.82rem;
+    }
+    .tableau-compo .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .tableau-compo .dot.vide { background: var(--bordure); border: 1.5px solid var(--texte-3); }
+    .tableau-compo .dot.en-place { background: var(--vert-profond); }
+    .tableau-compo .dot.envisager { background: var(--ambre-profond); }
+    .tableau-compo .geste {
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .tableau-compo .resultat {
+      color: var(--texte);
+    }
+
+    /* ═══════════════════════════════════════════════
+       TRADE-OFFS
+    ═══════════════════════════════════════════════ */
+    .trade-offs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    @media (max-width: 720px) {
+      .trade-offs { grid-template-columns: 1fr; }
+    }
+    .trade-offs .cell {
+      background: var(--fond);
+      border-left: 3px solid var(--bordure);
+      padding: 0.75rem 1rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--texte);
+    }
+    .trade-offs .plus { border-left-color: var(--vert-profond); }
+    .trade-offs .moins { border-left-color: var(--ambre-profond); }
+    .trade-offs .tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-right: 0.35rem;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    .trade-offs .plus .tag { color: var(--vert-profond); }
+    .trade-offs .moins .tag { color: var(--ambre-profond); }
+
+    /* ── Recommandation ── */
+    .recommandation {
+      background: var(--niv-1-clair);
+      border: 1px solid #c5cae9;
+      border-radius: var(--rayon);
+      padding: 1.25rem 1.5rem;
+    }
+    .recommandation h2 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--niv-1);
+      margin-bottom: 0.6rem;
+    }
+    .recommandation p {
+      font-size: 0.95rem;
+      color: var(--texte);
+      line-height: 1.55;
+      margin-bottom: 0.5rem;
+    }
+    .recommandation p strong { color: var(--niv-1); font-weight: 700; }
+
+  </style>
+</head>
+<body>
+
+  <div class="mockup-header">
+    <span class="eyebrow">Chantier 9 — option E</span>
+    <h1>Deux icônes sémantiques par carte : coche + chariot</h1>
+    <p>
+      Variante affinée de l'option B. Au lieu d'<em>une case à cocher qui ouvre un micro-menu</em>,
+      chaque carte porte <em>deux icônes</em> : une <strong>coche</strong> pour marquer « en place », un
+      <strong>chariot</strong> pour marquer « à envisager ». Un clic, une intention, pas de menu.
+    </p>
+  </div>
+
+  <div class="container">
+
+    <!-- ═══════════════ SECTION 1 : APERÇU DE LA LISTE ═══════════════ -->
+    <div class="section">
+      <h2>Aperçu de la liste — 5 cartes, 5 états</h2>
+      <p class="legende">
+        La même liste de résultats, avec chaque carte dans un état différent pour voir le rendu complet.
+        Le fond de la carte change subtilement pour refléter le statut sans rendre le repérage dépendant de la couleur
+        seule (bordure, fond, et icône active — triple signal, conforme WCAG).
+      </p>
+
+      <!-- Carte 1 : vide (aucun statut) -->
+      <div class="carte-indic">
+        <div class="corps">
+          <div class="nom">Lead Time (cycle time)</div>
+          <div class="meta">
+            <span class="chip dora">DORA</span>
+            <span class="chip equipe">Équipe</span>
+            <span>· Fiable</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-icon" data-tip="Marquer comme en place" aria-label="Marquer Lead Time comme en place">
+            <svg viewBox="0 0 24 24"><polyline points="5 12 10 17 19 7"/></svg>
+          </button>
+          <button class="btn-icon" data-tip="Ajouter à envisager" aria-label="Ajouter Lead Time à envisager">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 5h3l2.5 11h10l2-8H8" />
+              <circle cx="11" cy="20" r="1.2"/>
+              <circle cx="19" cy="20" r="1.2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Carte 2 : en place (coche pleine) -->
+      <div class="carte-indic en-place">
+        <div class="corps">
+          <div class="nom">NPS global</div>
+          <div class="meta">
+            <span class="chip affaires">Expérience client</span>
+            <span class="chip entreprise">Entreprise</span>
+            <span>· Précaution</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-icon coche-actif" data-tip="Déjà en place — cliquer pour retirer" aria-label="NPS global : en place. Cliquer pour retirer.">
+            <svg viewBox="0 0 24 24"><polyline points="5 12 10 17 19 7"/></svg>
+          </button>
+          <button class="btn-icon" data-tip="Basculer vers à envisager" aria-label="Basculer NPS global vers à envisager">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 5h3l2.5 11h10l2-8H8" />
+              <circle cx="11" cy="20" r="1.2"/>
+              <circle cx="19" cy="20" r="1.2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Carte 3 : à envisager (chariot plein) -->
+      <div class="carte-indic envisager">
+        <div class="corps">
+          <div class="nom">First Call Resolution</div>
+          <div class="meta">
+            <span class="chip affaires">Service client</span>
+            <span class="chip programme">Programme</span>
+            <span>· Précaution</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-icon" data-tip="Basculer vers en place" aria-label="Basculer FCR vers en place">
+            <svg viewBox="0 0 24 24"><polyline points="5 12 10 17 19 7"/></svg>
+          </button>
+          <button class="btn-icon chariot-actif" data-tip="Dans le panier à envisager — cliquer pour retirer" aria-label="FCR : à envisager. Cliquer pour retirer.">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 5h3l2.5 11h10l2-8H8" />
+              <circle cx="11" cy="20" r="1.2"/>
+              <circle cx="19" cy="20" r="1.2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Carte 4 : tooltip forcé sur coche (survol simulé) -->
+      <div class="carte-indic" style="border: 2px solid var(--accent); box-shadow: 0 0 0 3px rgba(230,81,0,0.1);">
+        <span class="annot" style="top: -8px; left: -8px;">1</span>
+        <div class="corps">
+          <div class="nom">Velocity d'équipe</div>
+          <div class="meta">
+            <span class="chip dora">DORA</span>
+            <span class="chip equipe">Équipe</span>
+            <span>· À risque</span>
+          </div>
+        </div>
+        <div class="actions" style="padding-top: 1.8rem;">
+          <button class="btn-icon forcer-tooltip" data-tip="Marquer comme en place" aria-label="Marquer Velocity comme en place">
+            <svg viewBox="0 0 24 24"><polyline points="5 12 10 17 19 7"/></svg>
+          </button>
+          <button class="btn-icon" data-tip="Ajouter à envisager" aria-label="Ajouter Velocity à envisager">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 5h3l2.5 11h10l2-8H8" />
+              <circle cx="11" cy="20" r="1.2"/>
+              <circle cx="19" cy="20" r="1.2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Carte 5 : tooltip forcé sur chariot (survol simulé) -->
+      <div class="carte-indic" style="border: 2px solid var(--accent); box-shadow: 0 0 0 3px rgba(230,81,0,0.1);">
+        <span class="annot" style="top: -8px; left: -8px;">2</span>
+        <div class="corps">
+          <div class="nom">Change Failure Rate</div>
+          <div class="meta">
+            <span class="chip dora">DORA</span>
+            <span class="chip equipe">Équipe</span>
+            <span>· Fiable</span>
+          </div>
+        </div>
+        <div class="actions" style="padding-top: 1.8rem;">
+          <button class="btn-icon" data-tip="Marquer comme en place" aria-label="Marquer Change Failure Rate comme en place">
+            <svg viewBox="0 0 24 24"><polyline points="5 12 10 17 19 7"/></svg>
+          </button>
+          <button class="btn-icon forcer-tooltip" data-tip="Ajouter à envisager" aria-label="Ajouter Change Failure Rate à envisager">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 5h3l2.5 11h10l2-8H8" />
+              <circle cx="11" cy="20" r="1.2"/>
+              <circle cx="19" cy="20" r="1.2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <p class="legende" style="margin-top: 1rem; margin-bottom: 0;">
+        <strong>Cartes 4 et 5</strong> : simulation du survol — les tooltips sont affichés de force pour l'illustration.
+        En vrai, ils n'apparaissent qu'au hover ou au focus clavier.
+      </p>
+    </div>
+
+    <!-- ═══════════════ SECTION 2 : COMPORTEMENTS ═══════════════ -->
+    <div class="section">
+      <h2>Micro-comportements au clic</h2>
+      <p class="legende">
+        Matrice des huit combinaisons possibles. Règle d'ensemble : un clic = une intention claire, pas de menu,
+        pas de confirmation. Le retrait du panier se fait en re-cliquant sur l'icône active — cohérent avec la
+        décision ferme <em>« la suppression se fait en retirant l'indicateur »</em>.
+      </p>
+      <table class="tableau-compo">
+        <thead>
+          <tr>
+            <th style="width: 25%">État de départ</th>
+            <th style="width: 15%">Geste</th>
+            <th style="width: 60%">Résultat</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="etat-depart"><span class="dot vide"></span>Vide (hors panier)</span></td>
+            <td><span class="geste">Clic coche</span></td>
+            <td class="resultat">La métrique passe <strong>en place</strong>. Coche verte pleine, fond de carte vert clair.</td>
+          </tr>
+          <tr>
+            <td><span class="etat-depart"><span class="dot vide"></span>Vide (hors panier)</span></td>
+            <td><span class="geste">Clic chariot</span></td>
+            <td class="resultat">La métrique passe <strong>à envisager</strong>. Chariot ambre plein, fond de carte ambre clair.</td>
+          </tr>
+          <tr>
+            <td><span class="etat-depart"><span class="dot en-place"></span>En place</span></td>
+            <td><span class="geste">Clic coche</span></td>
+            <td class="resultat"><strong>Retire</strong> la métrique du panier. Retour à l'état vide.</td>
+          </tr>
+          <tr>
+            <td><span class="etat-depart"><span class="dot en-place"></span>En place</span></td>
+            <td><span class="geste">Clic chariot</span></td>
+            <td class="resultat"><strong>Bascule</strong> vers <em>à envisager</em>. Pas besoin de retirer puis réajouter.</td>
+          </tr>
+          <tr>
+            <td><span class="etat-depart"><span class="dot envisager"></span>À envisager</span></td>
+            <td><span class="geste">Clic chariot</span></td>
+            <td class="resultat"><strong>Retire</strong> la métrique du panier. Retour à l'état vide.</td>
+          </tr>
+          <tr>
+            <td><span class="etat-depart"><span class="dot envisager"></span>À envisager</span></td>
+            <td><span class="geste">Clic coche</span></td>
+            <td class="resultat"><strong>Bascule</strong> vers <em>en place</em>.</td>
+          </tr>
+          <tr>
+            <td colspan="3" style="background: var(--fond); font-size: 0.82rem; color: var(--texte-2); padding: 0.75rem 1rem;">
+              <strong>Tooltips contextuels</strong> · état vide : <em>« Marquer comme en place »</em> / <em>« Ajouter à envisager »</em> ·
+              état en place : <em>« Déjà en place — cliquer pour retirer »</em> / <em>« Basculer vers à envisager »</em> ·
+              état à envisager : <em>« Basculer vers en place »</em> / <em>« Dans le panier à envisager — cliquer pour retirer »</em>.
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3" style="background: var(--fond); font-size: 0.82rem; color: var(--texte-2); padding: 0.75rem 1rem;">
+              <strong>Accessibilité</strong> · chaque icône est un <code>&lt;button&gt;</code> avec <code>aria-label</code> dynamique,
+              focusable au clavier, taille 36 × 36 px (confortable mobile). Fond de carte coloré + bordure + icône active
+              = triple signal du statut, indépendant de la couleur seule.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════════════ SECTION 3 : TRADE-OFFS ═══════════════ -->
+    <div class="section">
+      <h2>Gains et coûts vs option B</h2>
+      <div class="trade-offs">
+        <div class="cell plus">
+          <span class="tag">Gain UX 1</span>
+          Un clic = une intention claire. Pas de micro-menu à naviguer, pas de second clic pour choisir le statut.
+          Gesture plus fluide pour construire un panier initial.
+        </div>
+        <div class="cell plus">
+          <span class="tag">Gain UX 2</span>
+          Les deux intentions (<em>en place</em> et <em>à envisager</em>) deviennent visibles sur chaque carte.
+          L'outil montre les deux gestes possibles, pas un seul générique.
+        </div>
+        <div class="cell plus">
+          <span class="tag">Gain sémantique</span>
+          Le chariot porte la métaphore de l'intention (ce que je considère, pas encore pris).
+          La coche porte la métaphore de l'acquis (c'est fait, en place). Les icônes disent quelque chose.
+        </div>
+        <div class="cell moins">
+          <span class="tag">Coût visuel</span>
+          Deux icônes par carte = densité accrue, surtout en liste longue ou mobile étroit.
+          Nécessite un test sur des listes de 20+ résultats pour confirmer que ça respire.
+        </div>
+        <div class="cell moins">
+          <span class="tag">Coût UX restant</span>
+          Comme B : invite à ajouter sans ouvrir la fiche. La posture socratique s'appuie alors
+          sur d'autres signaux (badge fiabilité visible, chip niveau) pour faire lire avant l'acte.
+        </div>
+        <div class="cell moins">
+          <span class="tag">Coût code</span>
+          Deux boutons à câbler par carte, six combinaisons de comportement (table ci-dessus),
+          deux tooltips dynamiques par icône. Plus qu'une case + menu, mais encapsulable dans un
+          composant <code>CM.Composants.boutonsAjoutPanier(ind)</code>.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SECTION 4 : RECOMMANDATION ═══════════════ -->
+    <div class="recommandation">
+      <h2>Ma lecture</h2>
+      <p>
+        <strong>L'option E me semble meilleure que B.</strong> Elle règle le reproche principal de B
+        (le micro-menu de second niveau) tout en gardant sa vitesse. La sémantique est plus claire —
+        <em>coche = j'ai</em>, <em>chariot = je considère</em> — et ça se comprend sans explication.
+      </p>
+      <p>
+        <strong>Reste le compromis de fond vs A</strong> : E comme B invite à ajouter sans ouvrir la fiche.
+        Pour une personne qui connaît déjà son scorecard (« NPS, Velocity, Budget, je sais que je les ai »),
+        c'est un vrai gain. Pour une personne en découverte du référentiel, c'est une tentation de cochage
+        réflexe qui tourne le dos à la posture socratique.
+      </p>
+      <p>
+        <strong>Voie mixte v1 : E sur la liste + zone panier dans la fiche ouverte</strong> (comme l'option C
+        du premier mockup, mais avec les icônes E au lieu d'une case B). L'utilisateur qui connaît son
+        scorecard utilise les icônes de la liste ; celui qui découvre une fiche la lit puis clique le bouton
+        d'ajout en pied de tiroir. Les deux gestes co-existent sans se cannibaliser, parce qu'ils répondent
+        à deux moments du parcours utilisateur.
+      </p>
+    </div>
+
+  </div>
+
+</body>
+</html>
