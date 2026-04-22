@@ -1579,6 +1579,124 @@
     }
 
     /* ══════════════════════════════════════════════
+       VUE "PAR MON NIVEAU" (porte 4 — 7.2a-code.3)
+       Même grammaire visuelle que les portes problème et cadre. Scope sous
+       #vue-porte-niveau pour éviter les fuites. Ici : coquille commune
+       (base, header, intro, stepper, carte-etape, bouton-recommencer) pour
+       que la vue s'affiche pendant que le module est stubé. Les styles
+       spécifiques à l'accordéon de rôles (niv-accordeon, role-btn, axes
+       Mintzberg cran 3 Doux) arrivent en B.3 avec l'implémentation réelle
+       de _etapeRole(). Les styles pour les étapes 2/3 (options-grille,
+       encart-posture, resultat-titre, message-vide) arrivent avec leur
+       implémentation réelle en étape C.
+    ══════════════════════════════════════════════ */
+    #vue-porte-niveau {
+      min-height: 100vh;
+      background: var(--fond);
+      display: flex;
+      flex-direction: column;
+    }
+    #vue-porte-niveau .porte-en-tete {
+      background: var(--fond-2);
+      border-bottom: 1px solid var(--bordure);
+      padding: 0 1.75rem;
+      display: flex; align-items: center; gap: 1rem;
+      height: 58px;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    #vue-porte-niveau .porte-en-tete-titre {
+      font-weight: 800; font-size: 0.92rem;
+      color: var(--niv-1); letter-spacing: -0.3px;
+      margin-left: 0.5rem;
+    }
+    #vue-porte-niveau .porte-en-tete-spacer { flex: 1; }
+    #vue-porte-niveau .porte-en-tete .apropos-btn {
+      position: static; padding: 0.32rem 0.85rem; font-size: 0.8rem;
+    }
+    #vue-porte-niveau .porte-contenu {
+      flex: 1; padding: 2rem 1.75rem;
+      max-width: 1040px; width: 100%; margin: 0 auto;
+    }
+    #vue-porte-niveau .porte-intro h1 {
+      font-size: var(--fs-h2); font-weight: 800;
+      color: var(--texte); margin-bottom: 0.4rem; line-height: 1.25;
+    }
+    #vue-porte-niveau .porte-intro p {
+      font-size: 0.92rem; color: var(--texte-2);
+      max-width: 780px; line-height: 1.55;
+    }
+
+    /* Stepper (1 Rôle → 2 Problème → 3 Cadre → Indicateurs) */
+    #vue-porte-niveau .stepper {
+      display: flex; align-items: center; gap: 0.4rem;
+      margin: 1.75rem 0 1.25rem; flex-wrap: wrap;
+    }
+    #vue-porte-niveau .step {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      padding: 0.5rem 0.95rem; border-radius: 20px;
+      font-size: 0.82rem; font-weight: 600;
+      background: var(--fond-2); color: var(--texte-2);
+      border: 1.5px solid var(--bordure);
+      transition: var(--trans); font-family: inherit;
+    }
+    #vue-porte-niveau .step.actif {
+      background: var(--niv-2); color: white; border-color: var(--niv-2);
+    }
+    #vue-porte-niveau .step.fait {
+      background: var(--niv-3-clair); color: var(--niv-3); border-color: var(--niv-3-moyen);
+      cursor: pointer;
+    }
+    #vue-porte-niveau .step.fait:hover {
+      background: var(--niv-3-moyen); color: white; border-color: var(--niv-3);
+      transform: translateY(-1px); box-shadow: var(--ombre);
+    }
+    #vue-porte-niveau .step.fait:focus-visible {
+      outline: 2px solid var(--niv-3-moyen); outline-offset: 2px;
+    }
+    #vue-porte-niveau .step-num     { font-weight: 800; opacity: 0.75; }
+    #vue-porte-niveau .step-valeur  { font-weight: 700; }
+    #vue-porte-niveau .step-icone   { font-size: 0.95rem; }
+    #vue-porte-niveau .step-fleche  { color: var(--texte-2); font-size: 1rem; }
+
+    /* Carte d'étape (conteneur des questions) */
+    #vue-porte-niveau .carte-etape {
+      background: var(--fond-2); border-radius: var(--rayon);
+      padding: 1.75rem; box-shadow: var(--ombre);
+      margin-bottom: 1rem;
+      animation: porte-apparition 0.35s ease;
+    }
+    #vue-porte-niveau .q-numero {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.9px;
+      color: var(--texte-2); font-weight: 800;
+    }
+    #vue-porte-niveau .q-texte {
+      font-size: 1.08rem; font-weight: 700; margin: 0.4rem 0 0.35rem;
+    }
+    #vue-porte-niveau .q-aide {
+      font-size: 0.85rem; color: var(--texte-2); margin-bottom: 1rem;
+    }
+    #vue-porte-niveau abbr[title] {
+      text-decoration: underline dotted;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+      cursor: help;
+    }
+
+    /* Bouton recommencer */
+    #vue-porte-niveau .bouton-recommencer {
+      margin-top: 1.2rem; padding: 0.6rem 1.3rem;
+      background: var(--niv-1); color: white;
+      border: none; border-radius: 10px; cursor: pointer;
+      font-size: 0.86rem; font-weight: 700; font-family: inherit;
+      transition: var(--trans);
+    }
+    #vue-porte-niveau .bouton-recommencer:hover { background: var(--niv-1-moyen); }
+    #vue-porte-niveau .bouton-recommencer:focus-visible {
+      outline: 2px solid var(--niv-1-moyen); outline-offset: 2px;
+    }
+
+    /* ══════════════════════════════════════════════
        RESPONSIVE
     ══════════════════════════════════════════════ */
     @media (max-width: 730px) {
@@ -1924,6 +2042,40 @@
     <div id="porte-cadre-etapes" aria-live="polite"></div>
   </main>
 </div><!-- /vue-porte-cadre -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     VUE "PAR MON NIVEAU" (porte 4 — 7.2a-code.3)
+     Même pattern d'escape hatches que les portes 2 et 3 : ← Accueil + À propos
+     toujours visibles. Contenu rendu dynamiquement par CM.VuePorteNiveau.
+     Parcours : rôle → problème → cadre → résultats. Étape 1 en accordéon à
+     4 cartouches (Opérationnel / Tactique / Portefeuille / Exécutif),
+     consomme CM.Roles. Niveau = dérivation pure de l'id de rôle, jamais un
+     choix séparé. Voir doc-contrats-stepper-roles.md section CM.VuePorteNiveau.
+══════════════════════════════════════════════════════ -->
+<div id="vue-porte-niveau" hidden>
+  <header class="porte-en-tete" role="banner">
+    <button type="button" class="btn-changer"
+            onclick="CM.VuePorteNiveau.retourAccueil()"
+            aria-label="Retour à l'accueil">&larr; Accueil</button>
+    <span class="porte-en-tete-titre">&#x1F3DB;&#xFE0F; Par mon niveau</span>
+    <span class="porte-en-tete-spacer"></span>
+    <button type="button" class="apropos-btn"
+            onclick="CM.Apropos.ouvrir()"
+            aria-label="&Agrave; propos de cet outil">&Agrave; propos</button>
+  </header>
+  <main class="porte-contenu" role="main">
+    <div class="porte-intro">
+      <h1>Choisir mes indicateurs &mdash; par mon r&ocirc;le, puis par mon probl&egrave;me et mon cadre</h1>
+      <p>Le r&ocirc;le que vous occupez d&eacute;termine votre <strong>niveau de pilotage</strong>&nbsp;:
+         &eacute;quipe, programme, portefeuille ou entreprise. &Agrave; partir de l&agrave;, l'outil
+         ne vous propose que les <strong>probl&egrave;mes l&eacute;gitimes &agrave; votre &eacute;tage</strong>
+         et les <strong>cadres de travail qui les &eacute;clairent</strong>.</p>
+    </div>
+    <div id="porte-niveau-stepper" role="navigation" aria-label="Progression"></div>
+    <div id="porte-niveau-etapes" aria-live="polite"></div>
+  </main>
+</div><!-- /vue-porte-niveau -->
 
 
 <!-- ══════════════════════════════════════════════════════
