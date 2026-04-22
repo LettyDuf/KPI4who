@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **22 avril 2026** (C.2 livrée — `_etapeCadre` accordéon iso porte cadre, commits `528f929` feat + `029c31a` test ; 80 assertions vertes dont 10 nouvelles sur C.2 ; piste `_htmlFamille` consignée en `ff18013`).
+Dernière mise à jour : **22 avril 2026** (C.3 livrée — `_etapeResultats` intersection rôle→niveau × problème × cadre, commits `fef6280` feat + `7d16cd7` test ; Suites 8 & 9 ajoutées au harnais ; dérive 7.8 navigation transverse consignée en `286763a`).
 
 ---
 
@@ -9,11 +9,11 @@ Dernière mise à jour : **22 avril 2026** (C.2 livrée — `_etapeCadre` accord
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Chantier actif** : 7.2a-code.3 — construction de la porte niveau (`CM.VuePorteNiveau`). Étapes livrées : A (contrat d'API), B.1 (coquille DOM/CSS), B.2 (squelette module), B.3 (accordéon 4 cartouches + CSS cran 3 Doux), C.1 (`_etapeProbleme` filtré par niveau dérivé du rôle), C.1-tests (harnais `tests-porte-niveau.html`), **C.2 (`_etapeCadre` accordéon iso porte cadre — taxonomie complète des 7 familles, pédagogie du choix éclairé)**. Reste : C.3 (`_etapeResultats`).
-- **Dernier SHA sur `main`** : `ff18013` — *docs(backlog): consigne la piste de factorisation \_htmlFamille (repérée en C.2)*. Commits C.2 : `528f929` (feat) et `029c31a` (test, 80/80 vert).
-- **Prochain pas** : C.3 — `_etapeResultats(roleId, problemeId, cadreId)` — affiche les indicateurs recommandés pour le triplet (rôle → niveau dérivé, problème, cadre). Iso-pattern avec les vues porte problème / porte cadre. Posture rappelle les trois choix déjà validés en en-tête. Clôt l'étape D du chantier 7.2a-code.3. À couvrir par Suite 8 du harnais (rendu résultats) + Suite 9 (cas défensifs `setCadre`).
+- **Chantier actif** : 7.2a-code.3 — construction de la porte niveau (`CM.VuePorteNiveau`). Étapes livrées : A (contrat d'API), B.1 (coquille DOM/CSS), B.2 (squelette module), B.3 (accordéon 4 cartouches + CSS cran 3 Doux), C.1 (`_etapeProbleme` filtré par niveau dérivé du rôle), C.1-tests (harnais `tests-porte-niveau.html`), C.2 (`_etapeCadre` accordéon iso porte cadre), **C.3 (`_etapeResultats` — intersection par id des deux recommanders, conseil pédagogique iso porte problème, bouton Recommencer routé sur `CM.VuePorteNiveau.reset()`, message vide dédié)**. Reste : **D — câblage de la tuile d'accueil porte niveau** (actuellement la tuile pointe sur l'accueil générique, à brancher sur `CM.VuePorteNiveau.demarrer()`).
+- **Dernier SHA sur `main`** : `7d16cd7` — *test(7.2a-code.3): harnais — couvre C.3 (Suites 8 & 9 : rendu intersection + cas défensifs)*. Commits C.3 : `fef6280` (feat) et `7d16cd7` (test). À vérifier : lancer `tests-porte-niveau.html` dans le navigateur pour confirmer que les 13 nouvelles assertions (Suites 8 & 9) passent.
+- **Prochain pas** : D — câbler la tuile d'accueil « Par mon niveau » pour ouvrir la porte. Repérer dans le HTML l'handler actuel de la tuile (typiquement `CM.App.ouvrirPorteNiveau` ou équivalent), router vers `CM.VuePorteNiveau.demarrer()`, vérifier que le retour « ← Accueil » de la porte reste cohérent (cf. dérive 7.8 documentée en `286763a`, à traiter plus tard).
 - **Fiches mémoire pertinentes** : `project_porte_niveau_roles`, `project_porte_niveau_doctrine_editoriale`, `project_porte_niveau_rendu_visuel`, `project_7_2a_code_2_livre`, `project_document_compagnon_contrats`, `project_deux_systemes_canons_niveaux`.
-- **Blocages / questions ouvertes** : aucun. Décision éditoriale iso porte cadre (taxonomie complète, pas de filtrage par couple niveau × problème) déjà tranchée pour C.2 — à reconduire ou non pour C.3 selon ce que la grille de résultats doit montrer.
+- **Blocages / questions ouvertes** : aucun bloquant. À garder en tête pour plus tard : dérive **7.8 navigation transverse** (consignée `286763a`) — pas d'impact direct sur D mais à traiter avant de déclarer la porte niveau « livrée en production ».
 
 ---
 
