@@ -6670,15 +6670,106 @@ CM.VuePorteNiveau = (function() {
     return html;
   }
 
-  /* ─── Rendu d'étape : cadre (STUB B.2 — impl réelle étape C) ─── */
+  /* ─── Rendu d'étape : cadre (C.2 — accordéon par école de pensée) ──
+     Contrat : iso-comportement avec CM.VuePorteCadre._etapeCadre côté
+     grille de cadres (même découpage en 7 familles d'école de pensée,
+     même structure <details>/<summary>, toutes fermées à l'arrivée).
+
+     Décision éditoriale tranchée pour cette porte (22/04/2026) : on
+     affiche la taxonomie *complète* sans filtrer par le couple
+     (niveau dérivé × problème). La pédagogie porte sur le choix
+     éclairé, pas sur un pré-tri qui masquerait des cadres légitimes
+     et induirait un biais Goodhart (« on me montre, donc c'est
+     pertinent »). Le contexte rôle + problème est rappelé dans un
+     encart-posture en haut.
+
+     Point d'attention technique : l'onclick des boutons pointe vers
+     `CM.VuePorteNiveau.setCadre`, pas vers la porte cadre. La boucle
+     de rendu est donc dupliquée localement plutôt que réutilisée
+     depuis CM.VuePorteCadre (dont le _htmlFamille a `CM.VuePorteCadre`
+     en dur). Piste de refactoring notée : extraire un helper partagé
+     (CM.Composants.htmlFamilleAccordeon) paramétré par l'idFacade.
+     Hors scope 7.2a-code.3.
+
+     Gestion défensive : roleId ou problemeId manquant/inconnu →
+     message-vide court, symétrique de _etapeProbleme. */
   function _etapeCadre(roleId, problemeId) {
-    return '<div class="carte-etape">'
+    var r = roleId ? CM.Roles.parId(roleId) : null;
+    if (!r) return '<div class="message-vide">Rôle inconnu.</div>';
+    var p = problemeId ? CM.DiagnosticProbleme.problemeInfo(problemeId) : null;
+    if (!p) return '<div class="message-vide">Problème inconnu.</div>';
+
+    var libSurface = CM.Roles.libelleDeSurface(r.niveau);
+    var familles   = CM.DiagnosticCadre.famillesAvecCadres();
+
+    /* NB : p.label peut contenir du HTML éditorial (<abbr>, <em>) et r.titre
+       est une chaîne plate — _echapper appliqué à r.titre, p.label injecté
+       tel quel, même traitement que _etapeProbleme (p.label) et la porte
+       cadre (cadre.label). Les ids sont validés par la regex REGEX_ID des
+       modules amont, aucun risque d'injection côté attribut onclick. */
+    var html = '<div class="carte-etape">'
+      + '<div class="encart-posture"><strong>Contexte :</strong> '
+      + 'rôle <strong>' + _echapper(libSurface) + ' — ' + _echapper(r.titre) + '</strong>, '
+      + 'problème à éclairer <strong>' + p.label + '</strong>. '
+      + 'La taxonomie est présentée <em>en entier</em> — la pédagogie '
+      + 'porte sur le choix éclairé, pas sur un pré-tri qui masquerait '
+      + 'des cadres légitimes.</div>'
       + '<div class="q-numero">Étape 3</div>'
       + '<div class="q-texte">Quel cadre méthodologique mobilisez-vous&nbsp;?</div>'
-      + '<div class="q-aide">Stub B.2 · choix cumulés&nbsp;: rôle=<strong>' + (roleId || '—')
-      + '</strong>, problème=<strong>' + (problemeId || '—') + '</strong>. '
-      + 'Grille de cadres à venir en étape C.</div>'
-      + '</div>';
+      + '<div class="q-aide">Les cadres sont regroupés par <strong>école de pensée</strong>. '
+      + 'Ouvrez la famille qui vous parle et choisissez votre cadre. '
+      + 'Les tuiles grisées signalent des cadres <em>prévus</em> mais pas encore branchés au référentiel.</div>';
+    for (var i = 0; i < familles.length; i++) {
+      html += _htmlFamille(familles[i]);
+    }
+    html += '</div>';
+    return html;
+  }
+
+  /* Helper privé — rendu d'une famille d'école de pensée en accordéon.
+     Duplique volontairement CM.VuePorteCadre._htmlFamille, à ceci près
+     que les onclick pointent vers `CM.VuePorteNiveau.setCadre`. La
+     factorisation en helper partagé est notée dans le backlog comme
+     piste de refactoring (hors scope 7.2a-code.3). */
+  function _htmlFamille(f) {
+    var styleVar = 'style="--fam-teinte:' + f.teinte + '; --fam-fond:' + f.fond + ';"';
+    var html = '<details class="famille-accordeon famille-' + f.id + '" ' + styleVar + '>'
+      + '<summary class="famille-titre">'
+      + '<span class="famille-titre-libelle">' + f.label + '</span>'
+      + '<span class="famille-chevron" aria-hidden="true">'
+      +   '<svg viewBox="0 0 24 24" width="14" height="14">'
+      +     '<path d="M5 9 L12 16 L19 9" fill="none" stroke="currentColor"'
+      +       ' stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'
+      +   '</svg>'
+      + '</span>'
+      + '</summary>'
+      + '<div class="famille-corps">'
+      + '<div class="famille-cadres">';
+    for (var i = 0; i < f.actifs.length; i++) {
+      var c = f.actifs[i];
+      html += '<button type="button" class="option-btn"'
+        + ' onclick="CM.VuePorteNiveau.setCadre(\'' + c.id + '\')">'
+        + '<span class="option-icone" aria-hidden="true">' + c.icone + '</span>'
+        + '<span><span class="option-label">' + c.label + '</span>'
+        + (c.description ? '<span class="option-sous">' + c.description + '</span>' : '')
+        + '</span>'
+        + '</button>';
+    }
+    for (var j = 0; j < f.aVenir.length; j++) {
+      var v = f.aVenir[j];
+      html += '<div class="option-btn a-venir" role="note"'
+        + ' aria-disabled="true" tabindex="-1">'
+        + '<span class="option-icone" aria-hidden="true">' + v.icone + '</span>'
+        + '<span><span class="option-label">' + v.label + '</span>'
+        + (v.description ? '<span class="option-sous">' + v.description + '</span>' : '')
+        + '<span class="a-venir-badge">À venir</span></span>'
+        + '</div>';
+    }
+    if (f.actifs.length === 0 && f.aVenir.length === 0) {
+      html += '<div class="message-vide">Aucun cadre rattaché à cette famille pour le moment.</div>';
+    }
+    html += '</div></div></details>';
+    return html;
   }
 
   /* ─── Rendu d'étape : résultats (STUB B.2 — impl réelle étape C) ───
