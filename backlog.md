@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **22 avril 2026 — soir** (clôture de la tranche 9.A — socle hexagonal `CM.Panier` + harnais de tests vert, après refonte du patron de test suite à la découverte d'un blocage cross-origin Chrome/`file://`).
+Dernière mise à jour : **22 avril 2026 — soir** (tranche 9.B.1 livrée — squelette vue panier TDB + état vide E1 miroir ; test visuel a fait émerger une clarification structurante du chantier 10, consignée).
 
 ---
 
@@ -9,12 +9,13 @@ Dernière mise à jour : **22 avril 2026 — soir** (clôture de la tranche 9.A 
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événement majeur de la session** : tranche **9.A livrée et verte**. Socle hexagonal `CM.Panier` (port `Depot`, adapter `MemoireDepot`, service) écrit dans `cadre-indicateurs.html`, contrats d'API fixés dans [`doc-contrats-panier.md`](./doc-contrats-panier.md), harnais `tests-panier.html` exécutant 14 suites sur l'API publique. **Imprévu traité en cours de tranche** : le patron de test iframe + `contentWindow` est bloqué par Chrome moderne sur `file://` (origines `null` distinctes = cross-origin). Refonte actée en 9.A.3 : générateur `outils/construire-tests-panier.js` qui inline le bloc `CM.Panier` dans le harnais, même-origine garantie. `tests-porte-niveau.html` souffre du même blocage — dette consignée section 9, à refondre sur le même patron après la fin du chantier 9.
-- **Chantier actif** : **chantier 9 — code du panier**. 9.A clos (vert). Prochain démarrage = **9.B — vue panier dans *Mon tableau de bord*** (remplacer le contenu actuel de l'onglet par deux sections *En place* / *À envisager*, bouton *réinitialiser* avec confirmation, état vide).
-- **Dernier SHA sur `main`** : `268e3f8` — *feat(chantier-9): régénère tests-panier.html + doc "régénérer le harnais"*. Commits de la session (9.A complète) : `82af82f` (contrats) · `5e31c7e` (socle CM.Panier) · `f51b874` (harnais initial) · `83a0c32` (backlog dérive) · `9a44f93` (marqueurs BEGIN/END) · `1bfa321` (générateur) · `84f5098` (wrapper script) · `1064163` (harnais remanié) · `268e3f8` (régénération + doc).
+- **Événement majeur de la session** : **9.B.1 livrée — squelette vue panier TDB**. L'onglet *Mon tableau de bord* consomme `CM.Panier` : header + grille miroir deux colonnes (teal / ambre) + état vide E1 hybride avec invitation centrée sous les colonnes miroir. Pub/sub posé dans `init()` — rafraîchissement automatique à chaque mutation. Rendu de carte minimaliste (nom + × retirer) ; les chips type/niveau/fiabilité arrivent en 9.B.2. Bouton *Réinitialiser* présent mais désactivé (câblage en 9.B.3).
+- **Clarification structurante issue du test 9.B.1** : Lætitia a pointé un **cloisonnement entre les portes et l'app** (on entre dans l'une ou l'autre sans passerelle fluide, *Accueil* est une sortie de secours et non une navigation, et il existe des chemins jumeaux visuellement différents — notamment *Choisir mes indicateurs* vs porte *Par mon problème*). Arbitrage du 22/04 soir : **fusion portes + onglets au même étage** (pas juste un bandeau qui les énumère côte à côte), **doublon prioritaire à traiter** = *Choisir mes indicateurs* vs *Par mon problème*, **timing** = après clôture de 9.B. Détail consigné dans **chantier 10**.
+- **Chantier actif** : **chantier 9 — code du panier**. 9.A clos. **9.B.1 clos**. Prochaine tranche = **9.B.2 — enrichir la carte avec chips type / niveau / fiabilité** (lecture de la fiche via `CM.Referentiel.chercher`, rendu comme variante C du mockup-preview). Puis **9.B.3 — câbler le bouton réinitialiser** (confirm + `CM.Panier.reinitialiser()` + disabled conditionnel). Puis bascule sur **chantier 10 — refonte architecture de navigation** (fusion portes+onglets).
+- **Dernier SHA sur `main`** : `2a486cc` — *feat(chantier-9): 9.B.1 squelette vue panier TDB + état vide E1 miroir*. Commits récents : `4ed4962` (mockup-preview 9.B.0) · `139dcb9` (arbitrages 9.B.0) · `2a486cc` (9.B.1).
 - **Règle d'or ajoutée cette session** : après toute modif de `CM.Panier`, relancer `node outils/construire-tests-panier.js` pour régénérer `tests-panier.html`. Détaillé dans `doc-contrats-panier.md` section *Régénérer le harnais de tests*.
-- **Fiches mémoire pertinentes pour la suite du chantier 9** : `project_regles_refactoring_progressif` (boy scout), `project_outillage_generation_donnees` (patron générateur Node.js — confirmé à nouveau ici), `project_document_compagnon_contrats` (doc-contrats-panier.md), `feedback_redondance_signaux_statut`, `feedback_mockup_preview_ux` ; et [`MISSION.md`](./MISSION.md) comme boussole.
-- **Blocages / questions ouvertes** : aucun. 9.B peut démarrer.
+- **Fiches mémoire pertinentes pour la suite du chantier 9** : `project_regles_refactoring_progressif` (boy scout), `project_outillage_generation_donnees` (patron générateur Node.js), `project_document_compagnon_contrats` (doc-contrats-panier.md), `feedback_redondance_signaux_statut`, `feedback_mockup_preview_ux` ; et [`MISSION.md`](./MISSION.md) comme boussole.
+- **Blocages / questions ouvertes** : aucun. 9.B.1 en test visuel côté Lætitia. 9.B.2 peut démarrer dès validation.
 
 ---
 
@@ -290,13 +291,21 @@ Audit complet livré dans [`AUDIT-UNIFORMITE-PORTES.md`](./AUDIT-UNIFORMITE-PORT
 
 ---
 
-## 10. Bandeau de navigation persistant
+## 10. Refonte architecture de navigation — fusion portes + onglets
 
-**Origine.** Demande émise par Lætitia le 22/04/2026 au cours de la clarification de mission. Aujourd'hui, les 4 onglets (*Mon tableau de bord · Cascade · Choisir · Maturité*) ne sont visibles qu'**après** avoir quitté l'accueil (pyramide ou 4 portes). Sur les deux accueils, il n'y a aucun bandeau global : pas de point d'accès persistant au lexique, à l'À propos, ni aux autres onglets.
+*Titre historique : « Bandeau de navigation persistant ». Requalifié le 22/04/2026 soir suite à la clarification structurante pendant le test 9.B.1 — le chantier dépasse le simple bandeau, il revoit la topologie de la navigation.*
 
-*Formulation initiale en 7.8 (matin du 22/04), absorbée ici l'après-midi après la clarification de mission : les trois manques listés alors — absence de pontage entre portes, retour difficile au tableau de bord, deux accueils qui se masquent — sont tous adressés par le bandeau persistant + l'unification de l'expérience posée dans `MISSION.md`. 7.8 retiré du backlog ; trace historique préservée via `git log` (commit `286763a`).*
+**Origine.** Demande émise par Lætitia le 22/04/2026 au cours de la clarification de mission, **aiguisée le même jour en soirée** pendant le test visuel de 9.B.1 : l'outil se vit comme **deux territoires mal reliés** — d'un côté les portes (pyramide, niveau, problème, cadre) qui communiquent entre elles mais dont la seule sortie est un *Accueil* qui remet à zéro ; de l'autre l'app (les onglets : TDB, Choisir, Maturité) qui, une fois atteinte, est un enclos sans passerelle retour vers les portes. En prime, **des chemins jumeaux avec des dynamiques graphiques différentes** donnent l'impression de deux produits cousus ensemble — notamment *Choisir mes indicateurs* (onglet) et *Par mon problème* (porte) qui explorent le même référentiel avec des langages visuels différents.
 
-**Mission du chantier.** Créer un bandeau de navigation **présent sur toutes les pages** de l'outil — accueils compris — qui donne un accès stable et prévisible aux fonctionnalités centrales.
+*Formulation initiale en 7.8 (matin du 22/04), absorbée ici l'après-midi après la clarification de mission : les trois manques listés alors — absence de pontage entre portes, retour difficile au tableau de bord, deux accueils qui se masquent — sont tous adressés par la refonte posée ici. 7.8 retiré du backlog ; trace historique préservée via `git log` (commit `286763a`).*
+
+**Mission du chantier.** Refondre la topologie de navigation pour que **portes et onglets cohabitent au même étage** — accessibles depuis partout, sans enclos. Ramener l'outil à ce que prescrit `MISSION.md` : *« quatre outils complémentaires, dans lesquels on entre par n'importe lequel selon la situation. Pas de fil imposé, un cycle que l'on emprunte à son rythme. »*
+
+**Arbitrages structurants — 22/04/2026 soir.**
+
+- **Fusion, pas juxtaposition.** Les portes et les onglets sont au **même étage** de la navigation — pas un bandeau qui énumère « Accueil · Mon tableau de bord · Choisir · Maturité · Lexique · À propos » en laissant les portes dans un monde séparé. La nav unifiée doit inclure les portes comme entrées de premier rang, au même titre que les onglets.
+- **Doublon prioritaire à traiter : *Choisir mes indicateurs* vs porte *Par mon problème*.** Ce sont aujourd'hui deux chemins qui font un travail très proche (aider l'utilisateur à choisir des indicateurs) avec des langages graphiques différents. Le chantier doit **trancher** : fusion ? spécialisation assumée (chacun pour un usage distinct, clairement nommé) ? suppression d'un des deux ? C'est la décision fondatrice du chantier — toutes les autres en découlent.
+- **Timing.** Chantier **engagé après clôture de 9.B** (boucle 9.B.2 + 9.B.3 d'abord). Le panier est le bon moment pour stabiliser l'architecture de navigation parce qu'il est l'artéfact qui doit pouvoir être alimenté **depuis n'importe quelle porte et n'importe quel onglet** — sans panier, la refonte aurait moins de prise.
 
 **Contenu proposé (à valider au démarrage).**
 
@@ -334,11 +343,11 @@ Six entrées. *Cascade stratégique* n'apparaît pas dans cette v1, conformémen
 
 ## Prochaine action recommandée
 
-Chantier **7.2a-code.3 en cours** (⏳). Commits livrés à la date du 22/04/2026 : A `0e08f37` (contrat d'API compagnon) · B.1 `238d679` (coquille DOM + CSS scope `#vue-porte-niveau`) · B.2 `098bb33` (squelette module + façade + stubs) · B.3 `215e9d6` (_etapeRole accordéon 4 cartouches + CSS cran 3 Doux pour axes Mintzberg) · **C.1 `3e3f105`** (_etapeProbleme filtré par niveau dérivé du rôle, introduit la table locale `ROLE_NIVEAU_VERS_DIAG` qui traduit les canons `CM.Roles` vers les canons historiques de `CM.DiagnosticProbleme`) · **C.1-tests `d4fed38`** (harnais `tests-porte-niveau.html`, 70 assertions vertes : 4 sanity + 4 doctrine N1 + 55 filtrage par rôle + 4 posture avec libellé de surface + 3 cas défensifs ; zéro intrusion dans le code de prod, adapter driver sur l'API publique). Invariant de dérivation respecté : le niveau n'est jamais un choix utilisateur dans la porte niveau, c'est une projection du rôle.
+Chantier **9 — panier personnel** : **9.B.1 livré** (commit `2a486cc`), en test visuel côté Lætitia. À la validation du test, enchaîner **9.B.2 — enrichir la carte du panier** avec les chips *type · niveau · fiabilité* (lecture via `CM.Referentiel.chercher`, rendu iso-mockup variante C, a11y préservée). Puis **9.B.3 — câbler le bouton *Réinitialiser*** (confirmation + `CM.Panier.reinitialiser()` + `disabled` conditionnel si panier vide).
 
-**Prochain commit : C.2 — `_etapeCadre(roleId, problemeId)`** — grille des cadres méthodologiques, filtrée par le couple (niveau dérivé × problème choisi). Iso-pattern avec `CM.VuePorteCadre` pour la grille en accordéon par famille d'école de pensée, mais décision éditoriale à trancher : affiche-t-on *toutes* les familles dès l'étape 3 (comme la porte cadre), ou ne montre-t-on que les cadres cohérents avec le couple (niveau × problème) déjà validé ? À arbitrer au démarrage de C.2.
+**À la clôture de 9.B** : bascule sur **chantier 10 — refonte architecture de navigation**, **aiguisé ce jour** par le retour de Lætitia pendant le test 9.B.1. Trois arbitrages consignés en tête du chantier 10 : (1) fusion portes + onglets au même étage, (2) doublon prioritaire *Choisir mes indicateurs* vs porte *Par mon problème* à trancher, (3) timing après 9.B.
 
-**Puis C.3 — `_etapeResultats(roleId, problemeId, cadreId)`** — agrégation des recommandations, conseil pédagogique, zone de délégation le cas échéant. Enfin **D** — câblage de la tuile d'accueil (remplace la vue pyramide côté 4 portes).
+*Chantiers en sommeil (à rouvrir après 9 et 10)* : **7.2a-code.3 C.2 / C.3** (porte niveau — étapes cadre et résultats), et la dette **`tests-porte-niveau.html`** à refondre sur le patron générateur Node. Tous trois documentés plus bas.
 
 ### Historique — chantier 7.6 (réf. ci-dessous)
 
