@@ -277,6 +277,10 @@ Audit complet livré dans [`AUDIT-UNIFORMITE-PORTES.md`](./AUDIT-UNIFORMITE-PORT
 
 **Articulations.** La mission de cet onglet, telle qu'elle est posée dans `MISSION.md`, est *voir ce qui est présent dans ma réalité actuelle et ce que je devrais mesurer sans le mesurer*. Il devient le *miroir* de l'utilisateur. Il ne remplace pas la pyramide — il capitalise dessus : la pyramide sert désormais à explorer le référentiel pour y puiser, le panier est la sélection retenue.
 
+**Pistes futures (nice-to-have, hors v1).**
+
+- **Liens cliquables dans le PDF exporté.** Rendre chaque nom d'indicateur du PDF ouvrable d'un clic pour revenir sur la fiche correspondante dans l'outil en ligne. *Pas prioritaire en v1* : la barre de recherche globale du panier permet déjà de retrouver une fiche par son nom, ce qui couvre 90% du besoin. À rouvrir si un retour terrain montre que la friction de la recherche est un frein réel à la conversation. *Consigné le 22/04/2026 suite à l'arbitrage de la question 1.*
+
 ---
 
 ## 10. Bandeau de navigation persistant
