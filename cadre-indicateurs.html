@@ -5597,11 +5597,13 @@ CM.VuePorteProbleme = (function() {
      pour rester DANS la <div class="carte-etape">, ce qui préserve son
      rendu visuel (cadre, padding) à l'identique de la version pré-refacto. ─── */
   function _etapeResultats(niveauChoisi, problemeChoisi) {
-    /* Le champ `domaine` est passé à null pour préserver iso-comportement avec
-       l'ancien CM.DiagnosticProbleme.recommander(ctx). C'était un résidu jamais
-       setté côté ancienne porte ; il sera retiré des consommateurs au commit
-       de nettoyage 7.2a-code.2.4. */
-    var ctx       = { niveau: niveauChoisi, probleme: problemeChoisi, domaine: null };
+    /* Le ctx passé au domaine ne contient pas `domaine` : cette porte ne
+       demande pas ce choix à l'utilisateur. Le champ est optionnel côté
+       CM.DiagnosticProbleme.recommander (test `ctx.domaine &&` falsy si absent),
+       donc son omission est strictement iso-comportement. D'autres chemins
+       de navigation (CM.App) peuvent continuer à le renseigner quand c'est
+       pertinent — le contrat du domaine reste inchangé. */
+    var ctx       = { niveau: niveauChoisi, probleme: problemeChoisi };
     var recos     = CM.DiagnosticProbleme.recommander(ctx);
     var aDeleguer = CM.DiagnosticProbleme.aDeleguerPour(ctx);
     var n         = CM.DiagnosticProbleme.niveauInfo(niveauChoisi);
