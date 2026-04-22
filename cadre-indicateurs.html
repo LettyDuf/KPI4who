@@ -5239,6 +5239,35 @@ CM.Stepper = (function() {
       _scroll('smooth');
     }
 
+    /* remplacerChoix : primitive bas-niveau pour modifier un choix
+       sans déclencher la transition automatique vers l'étape suivante.
+       Usage typique — **pivot à étage constant** : l'utilisateur est à
+       l'étape résultats, il change un de ses choix antérieurs et veut
+       rester à l'étape résultats pour voir l'effet du changement.
+
+       Différence avec setChoix(n, v) : setChoix fait `etat.etape = n + 1`
+       (transition), remplacerChoix garde `etat.etape` inchangé.
+       Différence avec retourA(n) : retourA efface les choix postérieurs,
+       remplacerChoix les préserve.
+
+       Applique la validation d'étape si elle existe, re-rend, scroll smooth. */
+    // Exemple : remplacerChoix(1, 'scrum') depuis l'étape 3 → garde étape 3, change choix[0]
+    function remplacerChoix(indexEtape, valeur) {
+      var n = _normaliserIndex(indexEtape);
+      if (n === null || n > conf.etapes.length) return;
+      var i = n - 1;
+      var etape = conf.etapes[i];
+      if (etape.valider && !etape.valider(valeur)) {
+        _warn('valeur refusée par étape ' + n + ' (cle=' + etape.cle + ')');
+        return;
+      }
+      etat.choix[i] = valeur;
+      /* etat.etape préservé volontairement — c'est la raison d'être
+         de cette primitive par rapport à setChoix. */
+      _rendre();
+      _scroll('smooth');
+    }
+
     // Exemple : reset() → repart de l'étape 1, choix vidés
     function reset() {
       _reinitialiser();
@@ -5341,12 +5370,13 @@ CM.Stepper = (function() {
     }
 
     return {
-      ouvrir:        ouvrir,
-      retourAccueil: retourAccueil,
-      retourA:       retourA,
-      setChoix:      setChoix,
-      reset:         reset,
-      etatCourant:   etatCourant
+      ouvrir:         ouvrir,
+      retourAccueil:  retourAccueil,
+      retourA:        retourA,
+      setChoix:       setChoix,
+      remplacerChoix: remplacerChoix,
+      reset:          reset,
+      etatCourant:    etatCourant
     };
   }
 
@@ -5422,12 +5452,13 @@ CM.Stepper = (function() {
   function _instanceVide() {
     var noop = function() {};
     return {
-      ouvrir:        noop,
-      retourAccueil: noop,
-      retourA:       noop,
-      setChoix:      noop,
-      reset:         noop,
-      etatCourant:   function() { return { etape: 1, choix: [] }; }
+      ouvrir:         noop,
+      retourAccueil:  noop,
+      retourA:        noop,
+      setChoix:       noop,
+      remplacerChoix: noop,
+      reset:          noop,
+      etatCourant:    function() { return { etape: 1, choix: [] }; }
     };
   }
 
