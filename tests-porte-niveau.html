@@ -2,15 +2,17 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <title>Tests — Porte niveau (C.1 filtrage)</title>
+  <title>Tests — Porte niveau (C.1 + C.2 + C.3)</title>
 
   <!-- ══════════════════════════════════════════════════════════════════════
-       Harnais de consolidation C.1 — 7.2a-code.3
+       Harnais de consolidation — 7.2a-code.3
 
-       Intention : vérifier que _etapeProbleme filtre correctement les
-       problèmes en fonction du niveau dérivé du rôle validé à l'étape 1.
-       Scope strict C.1 — ni l'étape cadre, ni l'étape résultats (stubs B.2
-       encore en place à ce stade) ne sont couvertes ici.
+       Intention : vérifier le parcours complet de la porte niveau —
+       filtrage des problèmes par niveau dérivé (C.1), rendu de la
+       taxonomie des cadres iso porte cadre (C.2), et intersection des
+       trois filtres à l'étape résultats (C.3). Aucun stub ne reste à
+       couvrir : la porte est fonctionnellement complète à partir de ce
+       harnais.
 
        Mécanique : le harnais charge cadre-indicateurs.html dans un iframe
        caché, accède aux modules CM.* par window.contentWindow, et exerce
@@ -293,6 +295,35 @@
     return Array.prototype.map.call(boutons, function(b) {
       return b.getAttribute('onclick') || '';
     }).filter(function(s) { return s.length > 0; });
+  }
+
+  /* Nombre de cartes indicateurs rendues à l'étape résultats. Utilise
+     la classe `.carte-ind` posée par CM.Composants.htmlCarte — c'est le
+     même sélecteur qu'utilisent les deux autres portes. */
+  function nbCartesRendues() {
+    var zone = zoneEtapes();
+    if (!zone) return 0;
+    return zone.querySelectorAll('.grille-cartes .carte-ind').length;
+  }
+
+  /* Attribut onclick du bouton « ↻ Recommencer » rendu à l'étape
+     résultats. Permet de vérifier qu'il route vers la bonne façade
+     (CM.VuePorteNiveau.reset), pas celle d'une autre porte. */
+  function onclickRecommencer() {
+    var zone = zoneEtapes();
+    if (!zone) return null;
+    var b = zone.querySelector('.bouton-recommencer');
+    return b ? (b.getAttribute('onclick') || '') : null;
+  }
+
+  /* Dépouille les balises HTML d'une chaîne via le DOM de l'iframe.
+     Nécessaire pour les labels de problème/cadre qui peuvent contenir
+     du balisage éditorial (<abbr>, <em>), alors que textContent du DOM
+     rendu les a déjà dépouillés. */
+  function stripHtml(s) {
+    var d = W.document.createElement('div');
+    d.innerHTML = s || '';
+    return d.textContent || '';
   }
 
   /* ══════ Orchestration ════════════════════════════════════════════════ */
@@ -586,6 +617,225 @@
            défense de _etapeCadre doit trancher sur roleId en premier. */
         V.setProbleme('flux');
         expect(texteMessageVide()).toBe('Rôle inconnu.');
+      });
+    });
+
+    /* ─── Suite 8 : C.3 — rendu _etapeResultats (triplet valide) ────────
+       À l'étape résultats, la porte niveau croise *trois* filtres par
+       intersection : niveau dérivé du rôle × problème × cadre. Le test
+       reconstruit l'intersection indépendamment via les deux
+       recommanders du domaine (CM.DiagnosticProbleme.recommander et
+       CM.DiagnosticCadre.recommander) — oracle externe. Si le rendu
+       affiche un nombre de cartes différent de l'oracle, la formule de
+       calcul a bougé sans documentation.
+
+       Recherche d'un triplet non vide : plutôt qu'un triplet codé en
+       dur (fragile aux évolutions du référentiel), on parcourt le
+       catalogue jusqu'à tomber sur une combinaison qui donne au moins
+       un indicateur — et on exécute la suite sur cette combinaison. Si
+       le référentiel ne contient *aucun* triplet non vide, la suite
+       dégrade proprement : un test KO explicite plutôt qu'un silence
+       trompeur. */
+    describe('C.3 — rendu _etapeResultats (triplet valide, intersection oracle)', function() {
+      var V     = W.CM.VuePorteNiveau;
+      var Roles = W.CM.Roles;
+      var DP    = W.CM.DiagnosticProbleme;
+      var DC    = W.CM.DiagnosticCadre;
+      /* Oracle local : duplique intentionnellement la table
+         ROLE_NIVEAU_VERS_DIAG de CM.VuePorteNiveau. Si la table du code
+         bouge sans discussion, l'oracle le détecte via un décalage de
+         résultats. */
+      var ORACLE_MAPPING = {
+        'équipe':       'operationnel',
+        'programme':    'programme',
+        'portefeuille': 'tactique',
+        'entreprise':   'strategique'
+      };
+
+      function _intersectionParId(a, b) {
+        var ids = {};
+        for (var i = 0; i < b.length; i++) ids[b[i].id] = true;
+        return a.filter(function(x) { return !!ids[x.id]; });
+      }
+
+      function _tousCadresActifs() {
+        var familles = DC.famillesAvecCadres();
+        var out = [];
+        for (var i = 0; i < familles.length; i++) {
+          for (var j = 0; j < familles[i].actifs.length; j++) {
+            out.push(familles[i].actifs[j]);
+          }
+        }
+        return out;
+      }
+
+      /* Premier triplet (rôle, problème, cadre) dont l'intersection au
+         niveau dérivé est non vide. Retourne null si le référentiel
+         n'en contient aucun. Mémoïsé en clôture pour ne parcourir le
+         catalogue qu'une fois par exécution du harnais. */
+      var _cacheTripletNonVide = null;
+      function tripletNonVide() {
+        if (_cacheTripletNonVide !== null) return _cacheTripletNonVide;
+        var roles  = Roles.tousLesRoles();
+        var cadres = _tousCadresActifs();
+        for (var i = 0; i < roles.length; i++) {
+          var r         = roles[i];
+          var canonDiag = ORACLE_MAPPING[r.niveau];
+          var problemes = DP.problemesPourNiveau(canonDiag);
+          for (var j = 0; j < problemes.length; j++) {
+            var p = problemes[j];
+            for (var k = 0; k < cadres.length; k++) {
+              var c     = cadres[k];
+              var recoP = DP.recommander({ niveau: canonDiag, probleme: p.id });
+              var recoC = DC.recommander({ cadre: c.id, niveau: canonDiag });
+              var inter = _intersectionParId(recoP, recoC);
+              if (inter.length > 0) {
+                _cacheTripletNonVide = { role: r, probleme: p, cadre: c, nRecos: inter.length };
+                return _cacheTripletNonVide;
+              }
+            }
+          }
+        }
+        _cacheTripletNonVide = null;
+        return null;
+      }
+
+      function amenerEtape4(t) {
+        V.ouvrir();
+        V.setRole(t.role.id);
+        V.setProbleme(t.probleme.id);
+        V.setCadre(t.cadre.id);
+      }
+
+      it('le référentiel contient au moins un triplet non vide', function() {
+        expect(tripletNonVide()).toBeTruthy();
+      });
+
+      it('la grille rend exactement autant de cartes que l\'oracle d\'intersection', function() {
+        var t = tripletNonVide();
+        if (!t) throw new Error('pas de triplet non vide dans le référentiel');
+        amenerEtape4(t);
+        var obtenu = nbCartesRendues();
+        if (obtenu !== t.nRecos) {
+          throw new Error('attendu ' + t.nRecos + ' cartes (oracle), obtenu ' + obtenu);
+        }
+      });
+
+      it('l\'encart-posture rappelle le libellé de surface du rôle', function() {
+        var t = tripletNonVide();
+        if (!t) throw new Error('pas de triplet non vide dans le référentiel');
+        amenerEtape4(t);
+        var surface = Roles.libelleDeSurface(t.role.niveau);
+        expect(textePosture()).toContain(surface);
+      });
+
+      it('l\'encart-posture rappelle le titre du rôle', function() {
+        var t = tripletNonVide();
+        if (!t) throw new Error('pas de triplet non vide dans le référentiel');
+        amenerEtape4(t);
+        expect(textePosture()).toContain(t.role.titre);
+      });
+
+      it('l\'encart-posture rappelle le label du problème (HTML éditorial dépouillé)', function() {
+        var t = tripletNonVide();
+        if (!t) throw new Error('pas de triplet non vide dans le référentiel');
+        amenerEtape4(t);
+        expect(textePosture()).toContain(stripHtml(t.probleme.label));
+      });
+
+      it('l\'encart-posture rappelle le label du cadre (HTML éditorial dépouillé)', function() {
+        var t = tripletNonVide();
+        if (!t) throw new Error('pas de triplet non vide dans le référentiel');
+        amenerEtape4(t);
+        expect(textePosture()).toContain(stripHtml(t.cadre.label));
+      });
+
+      it('le bouton « ↻ Recommencer » route vers CM.VuePorteNiveau.reset', function() {
+        var t = tripletNonVide();
+        if (!t) throw new Error('pas de triplet non vide dans le référentiel');
+        amenerEtape4(t);
+        var oc = onclickRecommencer();
+        expect(oc).toBeTruthy();
+        expect(oc).toContain('CM.VuePorteNiveau.reset()');
+      });
+
+      it('le bouton « ↻ Recommencer » ne route vers aucune autre porte', function() {
+        var t = tripletNonVide();
+        if (!t) throw new Error('pas de triplet non vide dans le référentiel');
+        amenerEtape4(t);
+        var oc = onclickRecommencer() || '';
+        if (oc.indexOf('CM.VuePorteCadre.reset') !== -1
+         || oc.indexOf('CM.VuePorteProbleme.reset') !== -1
+         || oc.indexOf('CM.App.reset') !== -1) {
+          throw new Error('bouton Recommencer route vers une autre porte : « ' + oc + ' »');
+        }
+      });
+    });
+
+    /* ─── Suite 9 : C.3 — cas défensifs ─────────────────────────────────
+       setCadre peut être appelé avec une valeur invalide après un rôle
+       et un problème valides. _etapeResultats doit afficher un
+       message-vide court, sans throw.
+
+       Priorité des messages d'erreur : la hiérarchie rôle → problème
+       → cadre de _etapeResultats doit primer, pour que la remontée
+       d'un état cassé en amont soit toujours diagnostiquée au bon
+       endroit. Si un triplet cumule plusieurs invalidités, seul le
+       message le plus en amont apparaît. */
+    describe('Cas défensifs C.3 — setCadre', function() {
+      var V     = W.CM.VuePorteNiveau;
+      var Roles = W.CM.Roles;
+      var DP    = W.CM.DiagnosticProbleme;
+      var DC    = W.CM.DiagnosticCadre;
+      var roleValide     = Roles.parNiveau('équipe')[0].id;
+      var problemeValide = DP.problemesPourNiveau('operationnel')[0].id;
+      /* Cadre valide pris au premier cadre actif du catalogue — peu
+         importe lequel tant qu'il existe. */
+      var _cadres = DC.famillesAvecCadres().reduce(function(acc, f) {
+        return acc.concat(f.actifs);
+      }, []);
+      var cadreValide = _cadres.length > 0 ? _cadres[0].id : null;
+
+      it('triplet valide/valide/null → « Cadre inconnu. »', function() {
+        V.ouvrir();
+        V.setRole(roleValide);
+        V.setProbleme(problemeValide);
+        V.setCadre(null);
+        expect(texteMessageVide()).toBe('Cadre inconnu.');
+      });
+
+      it('triplet valide/valide/"" → « Cadre inconnu. »', function() {
+        V.ouvrir();
+        V.setRole(roleValide);
+        V.setProbleme(problemeValide);
+        V.setCadre('');
+        expect(texteMessageVide()).toBe('Cadre inconnu.');
+      });
+
+      it('triplet valide/valide/"id-inexistant" → « Cadre inconnu. »', function() {
+        V.ouvrir();
+        V.setRole(roleValide);
+        V.setProbleme(problemeValide);
+        V.setCadre('cadre-pseudo-xyz');
+        expect(texteMessageVide()).toBe('Cadre inconnu.');
+      });
+
+      it('rôle invalide puis chaîne complète valide → « Rôle inconnu. » prévaut', function() {
+        if (!cadreValide) throw new Error('aucun cadre actif dans le catalogue');
+        V.ouvrir();
+        V.setRole('role-pseudo-abc');
+        V.setProbleme(problemeValide);
+        V.setCadre(cadreValide);
+        expect(texteMessageVide()).toBe('Rôle inconnu.');
+      });
+
+      it('rôle valide + problème invalide + cadre valide → « Problème inconnu. » prévaut', function() {
+        if (!cadreValide) throw new Error('aucun cadre actif dans le catalogue');
+        V.ouvrir();
+        V.setRole(roleValide);
+        V.setProbleme('probleme-pseudo-xyz');
+        V.setCadre(cadreValide);
+        expect(texteMessageVide()).toBe('Problème inconnu.');
       });
     });
   }
