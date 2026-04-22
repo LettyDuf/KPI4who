@@ -6414,9 +6414,11 @@ CM.VuePorteCadre = (function() {
      État d'avancement 7.2a-code.3 (livraison par étapes atomiques) :
        B.1 — coquille DOM + CSS scope #vue-porte-niveau    ✅ 238d679
        B.2 — squelette module + façade + stubs             ✅ 098bb33
-       B.3 — _etapeRole() accordéon 4 cartouches + CSS     ← CE COMMIT
-       C   — _etapeProbleme / _etapeCadre / _etapeResultats
-             + câblage tuile d'accueil (remplace pyramide) ⏸ à venir
+       B.3 — _etapeRole() accordéon 4 cartouches + CSS     ✅ 215e9d6
+       C.1 — _etapeProbleme filtré par niveau dérivé        ✅ 3e3f105
+       C.2 — _etapeCadre accordéon taxonomie complète       ✅ 528f929
+       C.3 — _etapeResultats intersection des 3 filtres    ← CE COMMIT
+       D   — câblage tuile d'accueil (remplace pyramide)   ⏸ à venir
 
      Tant que les étapes ne sont pas toutes implémentées, la porte
      n'est PAS câblée dans la navigation. Accessible uniquement via
@@ -6772,21 +6774,119 @@ CM.VuePorteNiveau = (function() {
     return html;
   }
 
-  /* ─── Rendu d'étape : résultats (STUB B.2 — impl réelle étape C) ───
-     Le bouton « ↻ Recommencer » est inclus ici (le stepper ne le génère pas)
-     pour rester DANS la <div class="carte-etape">, ce qui préserve le cadre
-     visuel à l'identique des deux autres portes. */
+  /* ─── Rendu d'étape : résultats (C.3 — croisement des trois choix) ──
+     Contrat : iso-pattern structurel avec CM.VuePorteCadre._etapeResultats
+     et CM.VuePorteProbleme._etapeResultats (encart-posture, titre,
+     grille-cartes, message vide, bouton Recommencer). Spécificité propre
+     à la porte niveau : on compose *trois* filtres au lieu de deux.
+
+     Décision éditoriale 22/04/2026 — formule de calcul : intersection par
+     id des deux recommandations spécialisées. Les indicateurs retenus
+     sont ceux qui (1) sont pertinents pour le problème au niveau dérivé,
+     ET (2) sont revendiqués par le cadre au même niveau. Rationale : si
+     l'un des trois choix ne jouait pas de rôle de filtre, la porte
+     niveau serait redondante avec la porte problème ou cadre. Les deux
+     diagnostics filtrent déjà par niveau — l'intersection ne fait que
+     croiser le problème et le cadre sur ce niveau commun.
+
+     Message vide : sémantiquement différent de celui de la porte cadre
+     (couple vide) — ici c'est un *triplet* vide. Le texte invite à
+     élargir l'un des choix plutôt qu'à constater un trou.
+
+     Le bouton « ↻ Recommencer » est inclus ici (le stepper ne le génère
+     pas) pour rester DANS la <div class="carte-etape">, ce qui préserve
+     le cadre visuel à l'identique des deux autres portes.
+
+     Gestion défensive : hiérarchie rôle → problème → cadre (même ordre
+     que _etapeProbleme / _etapeCadre), pour que les messages d'erreur
+     restent prévisibles si l'utilisateur enchaîne des setX sur un état
+     cassé. */
   function _etapeResultats(roleId, problemeId, cadreId) {
+    var r = roleId ? CM.Roles.parId(roleId) : null;
+    if (!r) return '<div class="message-vide">Rôle inconnu.</div>';
+    var p = problemeId ? CM.DiagnosticProbleme.problemeInfo(problemeId) : null;
+    if (!p) return '<div class="message-vide">Problème inconnu.</div>';
+    var c = cadreId ? CM.DiagnosticCadre.cadreInfo(cadreId) : null;
+    if (!c) return '<div class="message-vide">Cadre inconnu.</div>';
+
+    var canonDiag = ROLE_NIVEAU_VERS_DIAG[r.niveau];
+    if (!canonDiag) return '<div class="message-vide">Niveau dérivé inconnu.</div>';
+
+    /* Intersection par id — les deux listes sont déjà filtrées par niveau
+       (DiagnosticProbleme par ctx.niveau, DiagnosticCadre par ctx.niveau).
+       L'ordre de sortie suit celui de recoProbleme (fiabilité décroissante),
+       qui est le même tri que la porte cadre — pas de divergence d'ordre
+       entre portes pour les indicateurs communs. */
+    var recoProbleme = CM.DiagnosticProbleme.recommander({
+      niveau:   canonDiag,
+      probleme: problemeId
+    });
+    var recoCadre = CM.DiagnosticCadre.recommander({
+      cadre:  cadreId,
+      niveau: canonDiag
+    });
+    var idsCadre = {};
+    for (var k = 0; k < recoCadre.length; k++) idsCadre[recoCadre[k].id] = true;
+    var recos = [];
+    for (var j = 0; j < recoProbleme.length; j++) {
+      if (idsCadre[recoProbleme[j].id]) recos.push(recoProbleme[j]);
+    }
+
+    var libSurface = CM.Roles.libelleDeSurface(r.niveau);
+
+    /* NB : p.label et c.label peuvent contenir du HTML éditorial
+       (<abbr>, <em>) — pas d'échappement, iso doctrine C.2. libSurface
+       et r.titre sont des chaînes plates, échappées. */
     var html = '<div class="carte-etape">'
-      + '<div class="resultat-titre">Résultats — stub B.2</div>'
-      + '<p>Parcours complet&nbsp;: rôle=<strong>' + (roleId || '—')
-      + '</strong>, problème=<strong>' + (problemeId || '—')
-      + '</strong>, cadre=<strong>' + (cadreId || '—') + '</strong>.</p>'
-      + '<p>Le calcul des recommandations (croisement niveau dérivé × problème × cadre) '
-      + 'arrive à l\'étape C via <code>CM.DiagnosticProbleme.recommander</code> et '
-      + '<code>CM.DiagnosticCadre.recommander</code>.</p>';
+      + '<div class="encart-posture"><strong>Contexte&nbsp;:</strong> '
+      + 'rôle <strong>' + _echapper(libSurface) + ' — ' + _echapper(r.titre) + '</strong>, '
+      + 'problème <strong>' + p.label + '</strong>, '
+      + 'cadre <strong>' + c.label + '</strong>.</div>'
+      + '<div class="resultat-titre">✅ Indicateurs recommandés '
+      + '(' + recos.length + ')</div>';
+
+    if (recos.length === 0) {
+      html += _htmlMessageVideResultats(p, c, libSurface);
+    } else {
+      html += '<div class="grille-cartes">';
+      for (var i = 0; i < recos.length; i++) {
+        html += CM.Composants.htmlCarte(recos[i], '#1a237e', true, false);
+      }
+      html += '</div>';
+      /* Conseil pédagogique iso porte problème — lu sur (niveau, problème).
+         Le cadre est passé pour préparer une variante future qui en
+         tiendrait compte, mais la signature actuelle de
+         conseilPedagogiquePour ne lit que niveau × problème. */
+      html += CM.Config.conseilPedagogiquePour({
+        niveau:   canonDiag,
+        probleme: problemeId,
+        cadre:    cadreId
+      });
+    }
+
     html += '<button type="button" class="bouton-recommencer"'
           + ' onclick="CM.VuePorteNiveau.reset()">↻ Recommencer</button>';
+    html += '</div>';
+    return html;
+  }
+
+  /* Message éditorial pour le cas *triplet vide* : les trois choix sont
+     individuellement légitimes mais leur intersection au référentiel est
+     vide. Posture : ne pas fabriquer d'indicateur — proposer un élargissement
+     ciblé plutôt qu'un constat d'échec. */
+  function _htmlMessageVideResultats(p, c, libSurface) {
+    var html = '<div class="message-vide">';
+    html += '<p class="message-vide-chapeau">Aucun indicateur ne couvre à la fois '
+          + 'le problème <strong>' + p.label + '</strong> et le cadre <strong>'
+          + c.label + '</strong> au niveau <strong>'
+          + _echapper(libSurface.toLowerCase()) + '</strong> dans le référentiel actuel.</p>';
+    html += '<p>Les trois choix sont légitimes individuellement — c\'est '
+          + 'leur croisement qui est vide. Deux lectures possibles&nbsp;: soit '
+          + 'ce cadre ne se déploie pas naturellement sur ce type de problème '
+          + 'à cet étage, soit le référentiel est à enrichir sur ce croisement.</p>';
+    html += '<p class="message-vide-appel">Pistes&nbsp;: revenir à l\'étape&nbsp;2 '
+          + 'pour explorer un autre problème, ou à l\'étape&nbsp;3 pour choisir '
+          + 'un autre cadre.</p>';
     html += '</div>';
     return html;
   }
