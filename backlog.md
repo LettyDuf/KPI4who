@@ -280,6 +280,44 @@ Audit complet livré dans [`AUDIT-UNIFORMITE-PORTES.md`](./AUDIT-UNIFORMITE-PORT
 
 ---
 
+## 10. Bandeau de navigation persistant
+
+**Origine.** Demande émise par Lætitia le 22/04/2026 au cours de la clarification de mission. Aujourd'hui, les 4 onglets (*Mon tableau de bord · Cascade · Choisir · Maturité*) ne sont visibles qu'**après** avoir quitté l'accueil (pyramide ou 4 portes). Sur les deux accueils, il n'y a aucun bandeau global : pas de point d'accès persistant au lexique, à l'À propos, ni aux autres onglets.
+
+**Mission du chantier.** Créer un bandeau de navigation **présent sur toutes les pages** de l'outil — accueils compris — qui donne un accès stable et prévisible aux fonctionnalités centrales.
+
+**Contenu proposé (à valider au démarrage).**
+
+Accueil · Mon tableau de bord · Choisir mes indicateurs · Maturité & Recommandations · Lexique · À propos.
+
+Six entrées. *Cascade stratégique* n'apparaît pas dans cette v1, conformément à sa mise en pause (voir chantier 11). L'ordre reflète le fil narratif naturel de la charpente consignée dans `MISSION.md`, sans imposer ce fil — l'utilisateur reste libre d'entrer par n'importe quel onglet.
+
+**Prérequis.** Chantier conditionné à l'appropriation de `MISSION.md`. Pas de dessin du bandeau tant que la mission n'est pas stabilisée — sinon on fige la charpente sur la structure actuelle.
+
+**Questions à trancher au démarrage.**
+
+- Remplace-t-il complètement la barre d'onglets actuelle (celle qui apparaît dans l'app après l'accueil), ou s'y superpose-t-il ?
+- Comportement responsive : bandeau horizontal unique, ou bandeau repliable sur petit écran ?
+- L'onglet actif doit-il être visuellement marqué dans le bandeau (feedback de position), et si oui avec quel traitement ?
+
+**Articulations.** Ce chantier dialogue directement avec le chantier 9 (panier) : le bandeau est ce qui permet à l'utilisateur de naviguer entre *son panier* et *les lentilles pour l'enrichir* sans se perdre. Il est aussi conditionné au chantier 11 (refonte Cascade) : si Cascade revient dans une v2 avec une nouvelle mission, le bandeau devra l'accueillir.
+
+---
+
+## 11. Refonte *Cascade stratégique*
+
+**Origine.** Clarification de mission du 22/04/2026. Lætitia a exprimé ne plus comprendre la mission de cet onglet dans le cadre posé.
+
+**Statut actuel.** Onglet en pause. Il n'est plus exposé dans la navigation principale (cf. chantier 10). Le code reste en place et la vue reste techniquement accessible, mais elle ne fait plus partie du parcours utilisateur v1.
+
+**Pourquoi la pause.** Dans sa forme actuelle, la vue empile les 4 niveaux avec leurs indicateurs en petites puces. C'est une cartographie dense qui fait doublon avec la pyramide, en version plus théorique. Aucune des cinq prises de conscience consignées dans `MISSION.md` ne la sert clairement.
+
+**Option de refonte à explorer plus tard.** Donner à la vue une mission alignée avec la charpente — par exemple *« voir comment les indicateurs à mon niveau s'articulent avec ceux du niveau au-dessus et du niveau en-dessous »*. Cela servirait directement le principe Druckerien d'alignement vertical des objectifs (MBO) et la logique OKR de cascade. Mais il faut d'abord vérifier, à l'usage des autres onglets, qu'une telle vue manque réellement — plutôt que de la réinventer par inertie.
+
+**Critère de réouverture.** Ce chantier ne s'engage que si un besoin utilisateur récurrent fait émerger le manque — pas par volonté de préserver l'existant.
+
+---
+
 ## Prochaine action recommandée
 
 Chantier **7.2a-code.3 en cours** (⏳). Commits livrés à la date du 22/04/2026 : A `0e08f37` (contrat d'API compagnon) · B.1 `238d679` (coquille DOM + CSS scope `#vue-porte-niveau`) · B.2 `098bb33` (squelette module + façade + stubs) · B.3 `215e9d6` (_etapeRole accordéon 4 cartouches + CSS cran 3 Doux pour axes Mintzberg) · **C.1 `3e3f105`** (_etapeProbleme filtré par niveau dérivé du rôle, introduit la table locale `ROLE_NIVEAU_VERS_DIAG` qui traduit les canons `CM.Roles` vers les canons historiques de `CM.DiagnosticProbleme`) · **C.1-tests `d4fed38`** (harnais `tests-porte-niveau.html`, 70 assertions vertes : 4 sanity + 4 doctrine N1 + 55 filtrage par rôle + 4 posture avec libellé de surface + 3 cas défensifs ; zéro intrusion dans le code de prod, adapter driver sur l'API publique). Invariant de dérivation respecté : le niveau n'est jamais un choix utilisateur dans la porte niveau, c'est une projection du rôle.
