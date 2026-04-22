@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Tests — Porte niveau (C.1 filtrage)</title>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       Harnais de consolidation C.1 — 7.2a-code.3
+
+       Intention : vérifier que _etapeProbleme filtre correctement les
+       problèmes en fonction du niveau dérivé du rôle validé à l'étape 1.
+       Scope strict C.1 — ni l'étape cadre, ni l'étape résultats (stubs B.2
+       encore en place à ce stade) ne sont couvertes ici.
+
+       Mécanique : le harnais charge cadre-indicateurs.html dans un iframe
+       caché, accède aux modules CM.* par window.contentWindow, et exerce
+       l'API publique (CM.VuePorteNiveau.ouvrir / setRole). Les assertions
+       portent sur le DOM rendu, pas sur des fonctions internes privées.
+       Ce choix est intentionnel : on teste le comportement observable
+       depuis un navigateur — ce qui survit aux refactors internes.
+
+       Architecture hexagonale : le domaine (CM.Roles, CM.DiagnosticProbleme,
+       CM.VuePorteNiveau) reste intact. Ce harnais joue le rôle d'adapter
+       driver qui consomme le domaine par ses ports publics. Zéro couplage
+       avec l'implémentation interne, zéro duplication du code de prod.
+
+       Ouverture : ouvrir ce fichier dans un navigateur. Les résultats
+       s'affichent automatiquement. Aucune dépendance externe, aucun
+       framework à installer. ══════════════════════════════════════════ -->
+
+  <style>
+    :root {
+      --ok:   #2a7f2a;
+      --ko:   #b00020;
+      --muted:#6b6b6b;
+      --bord: #dcdcdc;
+      --fond-ok: #ecf7ec;
+      --fond-ko: #fbeaec;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 960px;
+      margin: 2em auto;
+      padding: 0 1.5em 3em;
+      color: #222;
+      line-height: 1.5;
+    }
+    h1 { margin-bottom: 0.3em; font-size: 1.5em; }
+    .sous-titre { color: var(--muted); margin-top: 0; }
+    .lead { color: #444; font-size: 0.95em; }
+    code { background: #f3f3f3; padding: 0.05em 0.3em; border-radius: 3px; font-size: 0.9em; }
+
+    .resume {
+      padding: 0.8em 1.2em;
+      border-radius: 6px;
+      font-weight: 600;
+      margin: 1.5em 0 1em;
+      border: 1px solid var(--bord);
+    }
+    .resume.pending { background: #f7f7f7; color: var(--muted); }
+    .resume.ok      { background: var(--fond-ok); color: var(--ok); border-color: #cfe5cf; }
+    .resume.ko      { background: var(--fond-ko); color: var(--ko); border-color: #f0cfd4; }
+
+    details.suite {
+      border: 1px solid var(--bord);
+      border-radius: 6px;
+      margin: 0.8em 0;
+      padding: 0 1em;
+      background: #fff;
+    }
+    details.suite[open]     { padding-bottom: 0.6em; }
+    details.suite > summary {
+      padding: 0.6em 0;
+      cursor: pointer;
+      font-weight: 600;
+      list-style: none;
+    }
+    details.suite > summary::-webkit-details-marker { display: none; }
+    details.suite > summary::before { content: '▸ '; color: var(--muted); }
+    details.suite[open] > summary::before { content: '▾ '; }
+    details.suite.ok > summary { color: var(--ok); }
+    details.suite.ko > summary { color: var(--ko); }
+
+    .test {
+      padding: 0.35em 0;
+      border-top: 1px dotted #eee;
+      display: grid;
+      grid-template-columns: 1.4em 1fr;
+      gap: 0.6em;
+      align-items: start;
+      font-size: 0.92em;
+    }
+    .test.pass { color: var(--ok); }
+    .test.fail { color: var(--ko); }
+    .test-detail {
+      grid-column: 2;
+      color: #555;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.85em;
+      background: #fafafa;
+      padding: 0.4em 0.6em;
+      border-radius: 3px;
+      margin-top: 0.3em;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    iframe#sut {
+      /* L'iframe reste dans le flux mais invisible : certaines
+         mises en page d'accessibilité iOS refusent de peupler
+         une iframe avec `display: none`. */
+      position: absolute; left: -10000px; width: 800px; height: 600px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Tests — Porte niveau (C.1 filtrage)</h1>
+<p class="sous-titre">Harnais de consolidation du chantier <code>7.2a-code.3</code>, étape&nbsp;C.1.</p>
+
+<p class="lead">
+  Charge <code>cadre-indicateurs.html</code> dans un iframe caché, exerce l'API publique
+  <code>CM.VuePorteNiveau</code> puis vérifie le DOM rendu. Le niveau n'est jamais un choix
+  utilisateur dans la porte niveau&nbsp;: il se dérive du rôle validé à l'étape&nbsp;1.
+  Le harnais valide cette dérivation sur l'inventaire complet des rôles.
+</p>
+
+<div id="resume" class="resume pending">Chargement de l'iframe de test…</div>
+<div id="resultats"></div>
+
+<iframe id="sut" src="cadre-indicateurs.html" title="Système sous test"></iframe>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ══════ Micro-framework d'assertions ═══════════════════════════════
+     Zéro dépendance, trois verbes — describe / it / expect. Les
+     `expect(...)` lèvent une Error descriptive quand l'assertion échoue ;
+     `it` l'attrape et enregistre l'échec avec le message. */
+
+  var suites = [];
+  var suiteCourante = null;
+
+  function describe(nom, fn) {
+    suiteCourante = { nom: nom, tests: [] };
+    suites.push(suiteCourante);
+    try {
+      fn();
+    } catch (e) {
+      suiteCourante.tests.push({
+        nom:    '(initialisation de la suite)',
+        ok:     false,
+        detail: (e && e.message) ? e.message : String(e)
+      });
+    }
+    suiteCourante = null;
+  }
+
+  function it(nom, fn) {
+    var test = { nom: nom, ok: true, detail: '' };
+    try {
+      fn();
+    } catch (e) {
+      test.ok     = false;
+      test.detail = (e && e.message) ? e.message : String(e);
+    }
+    suiteCourante.tests.push(test);
+  }
+
+  function expect(actuel) {
+    return {
+      toBe: function(attendu) {
+        if (actuel !== attendu) {
+          throw new Error(
+            'attendu ' + JSON.stringify(attendu)
+            + ', obtenu ' + JSON.stringify(actuel)
+          );
+        }
+      },
+      toEqualArray: function(attendu) {
+        var a = (actuel || []).slice().sort();
+        var b = (attendu || []).slice().sort();
+        if (a.length !== b.length || a.join('\u0001') !== b.join('\u0001')) {
+          throw new Error(
+            'attendu [' + b.join(', ') + '] (' + b.length + ' éléments), '
+            + 'obtenu [' + a.join(', ') + '] (' + a.length + ' éléments)'
+          );
+        }
+      },
+      toContain: function(sous) {
+        if (typeof actuel === 'string' && actuel.indexOf(sous) === -1) {
+          throw new Error(
+            '« ' + sous + ' » absent de « '
+            + (actuel.length > 140 ? actuel.slice(0, 140) + '…' : actuel)
+            + ' »'
+          );
+        }
+        if (Array.isArray(actuel) && actuel.indexOf(sous) === -1) {
+          throw new Error('« ' + sous + ' » absent de [' + actuel.join(', ') + ']');
+        }
+      },
+      notToContain: function(sous) {
+        if (typeof actuel === 'string' && actuel.indexOf(sous) !== -1) {
+          throw new Error(
+            '« ' + sous + ' » devrait être absent mais est présent dans « '
+            + (actuel.length > 140 ? actuel.slice(0, 140) + '…' : actuel)
+            + ' »'
+          );
+        }
+      },
+      toBeTruthy: function() {
+        if (!actuel) {
+          throw new Error('attendu truthy, obtenu ' + JSON.stringify(actuel));
+        }
+      }
+    };
+  }
+
+  /* ══════ Adapters vers le système sous test ═══════════════════════════
+     Un seul point de couplage avec l'implémentation : les sélecteurs
+     DOM (#porte-niveau-etapes, .option-btn, .encart-posture, .message-vide).
+     Si ces sélecteurs bougent, ajuster ici — jamais dans les tests eux-mêmes. */
+
+  var iframe = document.getElementById('sut');
+  var W;  // raccourci vers iframe.contentWindow après l'événement load
+
+  function zoneEtapes() {
+    return W.document.getElementById('porte-niveau-etapes');
+  }
+
+  /* Liste des ids de problèmes effectivement rendus dans l'étape 2.
+     Extrait depuis l'attribut onclick (« setProbleme('<id>') ») plutôt
+     qu'en devinant depuis une meta CSS — seul l'onclick reflète le
+     comportement réel du bouton. */
+  function problemesRendus() {
+    var zone = zoneEtapes();
+    if (!zone) return [];
+    var boutons = zone.querySelectorAll('.option-btn');
+    var ids = [];
+    for (var i = 0; i < boutons.length; i++) {
+      var m = boutons[i].getAttribute('onclick') || '';
+      var debut = m.indexOf("setProbleme('");
+      if (debut === -1) continue;
+      debut += "setProbleme('".length;
+      var fin = m.indexOf("'", debut);
+      if (fin > debut) ids.push(m.slice(debut, fin));
+    }
+    return ids;
+  }
+
+  function texteMessageVide() {
+    var zone = zoneEtapes();
+    if (!zone) return null;
+    var el = zone.querySelector('.message-vide');
+    return el ? el.textContent.trim() : null;
+  }
+
+  function textePosture() {
+    var zone = zoneEtapes();
+    if (!zone) return null;
+    var el = zone.querySelector('.encart-posture');
+    return el ? el.textContent.trim() : null;
+  }
+
+  /* ══════ Orchestration ════════════════════════════════════════════════ */
+
+  iframe.addEventListener('load', function() {
+    W = iframe.contentWindow;
+    try {
+      executerSuites();
+    } catch (e) {
+      var r = document.getElementById('resume');
+      r.className   = 'resume ko';
+      r.textContent = 'Erreur inattendue pendant l\'exécution : '
+        + ((e && e.message) ? e.message : String(e));
+      return;
+    }
+    rendreRapport();
+  });
+
+  function executerSuites() {
+
+    /* ─── Suite 1 : sanity — les modules sont là ───────────────────── */
+    describe('Sanity : modules et DOM', function() {
+      it('CM.Roles est défini', function() {
+        expect(W.CM && W.CM.Roles).toBeTruthy();
+      });
+      it('CM.DiagnosticProbleme est défini', function() {
+        expect(W.CM && W.CM.DiagnosticProbleme).toBeTruthy();
+      });
+      it('CM.VuePorteNiveau est défini', function() {
+        expect(W.CM && W.CM.VuePorteNiveau).toBeTruthy();
+      });
+      it('#porte-niveau-etapes existe dans le DOM', function() {
+        W.CM.VuePorteNiveau.ouvrir();
+        expect(zoneEtapes()).toBeTruthy();
+      });
+    });
+
+    /* ─── Suite 2 : doctrine N1 — libellés de surface ──────────────── */
+    describe('Doctrine N1 — libellés de surface', function() {
+      var R = W.CM.Roles;
+      it('équipe → Opérationnel',        function() { expect(R.libelleDeSurface('équipe')).toBe('Opérationnel'); });
+      it('programme → Tactique',         function() { expect(R.libelleDeSurface('programme')).toBe('Tactique'); });
+      it('portefeuille → Portefeuille',  function() { expect(R.libelleDeSurface('portefeuille')).toBe('Portefeuille'); });
+      it('entreprise → Exécutif',        function() { expect(R.libelleDeSurface('entreprise')).toBe('Exécutif'); });
+    });
+
+    /* ─── Suite 3 : cœur C.1 — filtrage par niveau dérivé ───────────
+       Itère sur l'inventaire complet. Pour chaque rôle : ouvre la vue,
+       pose le rôle comme choix 1, lit les ids de problèmes rendus dans
+       l'étape 2, et compare avec problemesPourNiveau(canonDiag). Le
+       mapping role.niveau → canonDiag doit être la même table que
+       ROLE_NIVEAU_VERS_DIAG dans CM.VuePorteNiveau — cette table est
+       dupliquée ici intentionnellement pour que le test reste un
+       oracle externe (si le mapping du code bouge sans discussion, le
+       test le détecte). */
+    describe('Filtrage _etapeProbleme par niveau dérivé', function() {
+      var Roles = W.CM.Roles;
+      var Diag  = W.CM.DiagnosticProbleme;
+      var V     = W.CM.VuePorteNiveau;
+      var ORACLE_MAPPING = {
+        'équipe':       'operationnel',
+        'programme':    'programme',
+        'portefeuille': 'tactique',
+        'entreprise':   'strategique'
+      };
+
+      var roles = Roles.tousLesRoles();
+
+      it('l\'inventaire contient au moins un rôle', function() {
+        expect(roles.length > 0).toBeTruthy();
+      });
+
+      it('tous les niveaux canoniques sont couverts par l\'inventaire', function() {
+        var canons = {};
+        for (var i = 0; i < roles.length; i++) canons[roles[i].niveau] = true;
+        var attendus = Roles.niveauxCanoniques();
+        for (var j = 0; j < attendus.length; j++) {
+          if (!canons[attendus[j]]) {
+            throw new Error('aucun rôle au niveau « ' + attendus[j] + ' »');
+          }
+        }
+      });
+
+      roles.forEach(function(r) {
+        var canonDiag = ORACLE_MAPPING[r.niveau];
+        var libelle   = r.id + ' (' + r.niveau + ') → ' + canonDiag;
+        it(libelle, function() {
+          V.ouvrir();
+          V.setRole(r.id);
+          var attendu = Diag
+            .problemesPourNiveau(canonDiag)
+            .map(function(p) { return p.id; });
+          var obtenu  = problemesRendus();
+          expect(obtenu).toEqualArray(attendu);
+        });
+      });
+    });
+
+    /* ─── Suite 4 : doctrine éditoriale — posture en libellé de surface
+       _etapeProbleme doit rendre la posture avec le libellé porte-niveau
+       (ex. « Exécutif ») et non le libellé du diag (ex. « Stratégique »).
+       Invariant du document compagnon « libellés de surface ≠ canons internes ». */
+    describe('Posture utilise le libellé de surface, pas le libellé du diag', function() {
+      var V     = W.CM.VuePorteNiveau;
+      var Roles = W.CM.Roles;
+      /* Libellés des niveaux dans CM.DiagnosticProbleme.niveauInfo
+         — seul l'entreprise (« Stratégique ») et le portefeuille
+         (« Tactique ») diffèrent du libellé de surface. Les deux
+         autres coïncident, donc ne testent rien d'intéressant dans
+         l'optique de cette suite. On les inclut quand même pour tracer. */
+      var LIBELLE_DIAG = {
+        'équipe':       'Opérationnel',
+        'programme':    'Programme / Projet',
+        'portefeuille': 'Tactique',
+        'entreprise':   'Stratégique'
+      };
+      var LIBELLE_SURFACE = {
+        'équipe':       'Opérationnel',
+        'programme':    'Tactique',
+        'portefeuille': 'Portefeuille',
+        'entreprise':   'Exécutif'
+      };
+
+      Roles.niveauxCanoniques().forEach(function(canon) {
+        var roles = Roles.parNiveau(canon);
+        if (roles.length === 0) return;
+        var r       = roles[0];
+        var surface = LIBELLE_SURFACE[canon];
+        var diag    = LIBELLE_DIAG[canon];
+        it(canon + ' → « Posture ' + surface + ' »', function() {
+          V.ouvrir();
+          V.setRole(r.id);
+          var p = textePosture();
+          expect(p).toContain('Posture ' + surface);
+          /* Si le libellé diag diffère du libellé de surface, la chaîne
+             « Posture <libellé-diag> » ne doit pas apparaître — sinon
+             c'est qu'on a régressé sur l'invariant éditorial. */
+          if (diag !== surface) {
+            expect(p).notToContain('Posture ' + diag);
+          }
+        });
+      });
+    });
+
+    /* ─── Suite 5 : cas défensifs ──────────────────────────────────────
+       _etapeProbleme doit gérer tout rôle invalide sans throw, en
+       affichant un message-vide court. Le stepper lui-même accepte
+       n'importe quelle valeur (pas de `valider` sur l'étape rôle) —
+       la défense vit donc dans _etapeProbleme, et on l'exerce via
+       setRole qui transite automatiquement vers l'étape 2. */
+    describe('Cas défensifs', function() {
+      var V = W.CM.VuePorteNiveau;
+      it('setRole(null) → « Rôle inconnu. »', function() {
+        V.ouvrir();
+        V.setRole(null);
+        expect(texteMessageVide()).toBe('Rôle inconnu.');
+      });
+      it('setRole("") → « Rôle inconnu. »', function() {
+        V.ouvrir();
+        V.setRole('');
+        expect(texteMessageVide()).toBe('Rôle inconnu.');
+      });
+      it('setRole("id-inexistant-xyz") → « Rôle inconnu. »', function() {
+        V.ouvrir();
+        V.setRole('id-inexistant-xyz');
+        expect(texteMessageVide()).toBe('Rôle inconnu.');
+      });
+    });
+  }
+
+  /* ══════ Rendu du rapport ═════════════════════════════════════════════ */
+
+  function rendreRapport() {
+    var totalTests = 0;
+    var totalFails = 0;
+    var html       = '';
+
+    for (var i = 0; i < suites.length; i++) {
+      var s     = suites[i];
+      var fails = 0;
+      for (var j = 0; j < s.tests.length; j++) if (!s.tests[j].ok) fails++;
+      totalTests += s.tests.length;
+      totalFails += fails;
+
+      var classeSuite = fails === 0 ? 'ok' : 'ko';
+      var marqueur    = fails === 0 ? '✓' : '✗';
+      var ouvert      = fails > 0 ? ' open' : '';
+      html += '<details class="suite ' + classeSuite + '"' + ouvert + '>';
+      html += '<summary>' + marqueur + ' ' + escapeHtml(s.nom)
+            + ' — ' + (s.tests.length - fails) + '/' + s.tests.length + '</summary>';
+      for (var k = 0; k < s.tests.length; k++) {
+        var t = s.tests[k];
+        html += '<div class="test ' + (t.ok ? 'pass' : 'fail') + '">';
+        html += '<span>' + (t.ok ? '✓' : '✗') + '</span>';
+        html += '<span>' + escapeHtml(t.nom) + '</span>';
+        if (!t.ok) {
+          html += '<div class="test-detail">' + escapeHtml(t.detail) + '</div>';
+        }
+        html += '</div>';
+      }
+      html += '</details>';
+    }
+    document.getElementById('resultats').innerHTML = html;
+
+    var resume = document.getElementById('resume');
+    if (totalFails === 0) {
+      resume.className = 'resume ok';
+      resume.textContent = '✓ ' + totalTests + ' tests — tous verts';
+    } else {
+      resume.className = 'resume ko';
+      resume.textContent = '✗ ' + totalFails + ' échec'
+        + (totalFails > 1 ? 's' : '') + ' sur ' + totalTests + ' tests';
+    }
+  }
+
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+})();
+</script>
+</body>
+</html>
