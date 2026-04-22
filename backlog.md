@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **22 avril 2026** (consolidation C.1 par harnais de tests de filtrage — 70 assertions vertes couvrant les 53 rôles de l'inventaire, commit `d4fed38`).
+Dernière mise à jour : **22 avril 2026** (C.2 livrée — `_etapeCadre` accordéon iso porte cadre, commits `528f929` feat + `029c31a` test ; 80 assertions vertes dont 10 nouvelles sur C.2 ; piste `_htmlFamille` consignée en `ff18013`).
 
 ---
 
@@ -9,11 +9,11 @@ Dernière mise à jour : **22 avril 2026** (consolidation C.1 par harnais de tes
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Chantier actif** : 7.2a-code.3 — construction de la porte niveau (`CM.VuePorteNiveau`). Étapes livrées : A (contrat d'API), B.1 (coquille DOM/CSS), B.2 (squelette module), B.3 (accordéon 4 cartouches + CSS cran 3 Doux), C.1 (`_etapeProbleme` filtré par niveau dérivé du rôle), **C.1-tests (harnais `tests-porte-niveau.html` — 70 assertions vertes sur 53 rôles + doctrine N1 + cas défensifs)**.
-- **Dernier SHA sur `main`** : `d4fed38` — *feat(7.2a-code.3): harnais de tests de filtrage — consolidation C.1*.
-- **Prochain pas** : C.2 — `_etapeCadre(roleId, problemeId)` — grille des cadres méthodologiques filtrée par le couple (niveau dérivé × problème). Iso-pattern avec `CM.VuePorteCadre`. Décision éditoriale à trancher au démarrage : affiche-t-on toutes les familles d'écoles (comme la porte cadre), ou seulement les cadres cohérents avec le couple déjà validé&nbsp;?
-- **Fiches mémoire pertinentes** : `project_porte_niveau_roles`, `project_porte_niveau_doctrine_editoriale`, `project_porte_niveau_rendu_visuel`, `project_7_2a_code_2_livre`, `project_document_compagnon_contrats`.
-- **Blocages / questions ouvertes** : aucun.
+- **Chantier actif** : 7.2a-code.3 — construction de la porte niveau (`CM.VuePorteNiveau`). Étapes livrées : A (contrat d'API), B.1 (coquille DOM/CSS), B.2 (squelette module), B.3 (accordéon 4 cartouches + CSS cran 3 Doux), C.1 (`_etapeProbleme` filtré par niveau dérivé du rôle), C.1-tests (harnais `tests-porte-niveau.html`), **C.2 (`_etapeCadre` accordéon iso porte cadre — taxonomie complète des 7 familles, pédagogie du choix éclairé)**. Reste : C.3 (`_etapeResultats`).
+- **Dernier SHA sur `main`** : `ff18013` — *docs(backlog): consigne la piste de factorisation \_htmlFamille (repérée en C.2)*. Commits C.2 : `528f929` (feat) et `029c31a` (test, 80/80 vert).
+- **Prochain pas** : C.3 — `_etapeResultats(roleId, problemeId, cadreId)` — affiche les indicateurs recommandés pour le triplet (rôle → niveau dérivé, problème, cadre). Iso-pattern avec les vues porte problème / porte cadre. Posture rappelle les trois choix déjà validés en en-tête. Clôt l'étape D du chantier 7.2a-code.3. À couvrir par Suite 8 du harnais (rendu résultats) + Suite 9 (cas défensifs `setCadre`).
+- **Fiches mémoire pertinentes** : `project_porte_niveau_roles`, `project_porte_niveau_doctrine_editoriale`, `project_porte_niveau_rendu_visuel`, `project_7_2a_code_2_livre`, `project_document_compagnon_contrats`, `project_deux_systemes_canons_niveaux`.
+- **Blocages / questions ouvertes** : aucun. Décision éditoriale iso porte cadre (taxonomie complète, pas de filtrage par couple niveau × problème) déjà tranchée pour C.2 — à reconduire ou non pour C.3 selon ce que la grille de résultats doit montrer.
 
 ---
 
