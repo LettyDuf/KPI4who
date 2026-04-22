@@ -1,7 +1,21 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **21 avril 2026** (chantier **7.2a-inventaire clos** — niveau Exécutif livré avec `5ab22b8`, 13 fiches rôles couvrant Drucker / Collins / Chandler, Cagan *Empowered*, MIT Sloan *CTO Handbook*, Gartner CIO Agenda, TOGAF / Zachman / IASA, NIST SP 800-53 et ISO 27001, Ulrich, DAMA DMBOK, Kotler, Goldsmith / Kets de Vries / ICF, classifications sous-ministre en titre QC/CA. Arbitrages structurants : CTO + CIO en fiches distinctes ; CDO et Chief AI Officer fusionnés ; Coach exécutif retenu en symétrie de la triade de coaching ; Président de CA, Fondateur startup, Chief Happiness Officer et Chief Innovation Officer écartés. L'inventaire 7.2a-inventaire totalise désormais 53 fiches réparties sur Opérationnel 13, Tactique 14, Portefeuille 13, Exécutif 13. Ouvre la voie au chantier 7.2a-code — extraction de `CM.Stepper` et construction de `CM.VuePorteNiveau`).
+Dernière mise à jour : **22 avril 2026** (introduction du bloc *État courant* en tête — reprise express par défaut, mot-clé `reprise complète` pour forcer la relecture complète).
+
+---
+
+## État courant (reprise rapide)
+
+*Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
+
+- **Chantier actif** : 7.2a-code.3 — construction de la porte niveau (`CM.VuePorteNiveau`). Étapes livrées : A (contrat d'API), B.1 (coquille DOM/CSS), B.2 (squelette module), B.3 (accordéon 4 cartouches + CSS cran 3 Doux), C.1 (`_etapeProbleme` filtré par niveau dérivé du rôle).
+- **Dernier SHA sur `main`** : `d645970` — *docs(7.2a-code.3): acte C.1 livré dans le backlog*.
+- **Prochain pas** : étape post-C.1 du stepper `CM.VuePorteNiveau`, à caler depuis `doc-contrats-stepper-roles.md`. *À préciser par Lætitia à l'ouverture de la prochaine session.*
+- **Fiches mémoire pertinentes** : `project_porte_niveau_roles`, `project_porte_niveau_doctrine_editoriale`, `project_porte_niveau_rendu_visuel`, `project_7_2a_code_2_livre`, `project_document_compagnon_contrats`.
+- **Blocages / questions ouvertes** : aucun.
+
+---
 
 Légende : 🔴 priorité haute · 🟡 moyenne · 🟢 basse · ⚪ à décider · ✅ fait · ⏳ en cours
 
