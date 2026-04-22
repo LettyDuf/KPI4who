@@ -256,6 +256,30 @@ Audit complet livré dans [`AUDIT-UNIFORMITE-PORTES.md`](./AUDIT-UNIFORMITE-PORT
 
 ---
 
+## 9. Vue panier personnel — nouvelle mission de *Mon tableau de bord*
+
+**Origine.** Clarification de mission du 22/04/2026, consignée dans [`MISSION.md`](./MISSION.md). Le chantier traduit les décisions de cette session en éléments d'implémentation.
+
+**Mission du chantier.** Transformer l'onglet *Mon tableau de bord* en panier personnel qui matérialise l'écart entre *« ce que je mesure déjà »* et *« ce que j'envisage de mesurer »*. Livrable final : une impression que la personne emporte pour discuter son scorecard avec ses collaborateurs.
+
+**Décisions fermes (actées).**
+
+- **Un seul panier actif à la fois.** Pas de multi-panier en v1. Un bouton *réinitialiser* suffit pour repartir d'une feuille blanche.
+- **Deux statuts par indicateur** : *en place* et *à envisager*. Pas d'état *« à retirer »* en v1 — la suppression se fait simplement en retirant l'indicateur du panier.
+- **Saisie du panier par le référentiel (Chemin A).** L'utilisateur parcourt les fiches de l'outil et les marque *« en place »* ou *« à envisager »*. Pas de saisie libre d'indicateurs *« maison »*. Cela aligne l'utilisateur sur le vocabulaire de l'outil.
+- **Recherche globale avec 1-2 filtres contextuels optionnels.** Permet de retrouver rapidement une fiche par son nom.
+- **Impression comme sortie canonique.** Pas d'export vers un format étranger. L'outil garde la main sur la forme.
+
+**Questions résiduelles à trancher au démarrage.**
+
+- Vue imprimable : *one-pager A4 minimaliste* (outil de décision pour la conversation) ou *rapport multi-pages avec fiches détaillées annexées* (support de partage) ? Les deux se défendent, appellent des mises en page différentes.
+- Interaction d'ajout au panier : poignée *« ajouter »* sur la fiche du tiroir, ou case à cocher sur la liste, ou les deux ?
+- Persistance : localStorage dans le navigateur (simple mais lié à la machine) ou rien (le panier vit le temps de la session) ? La persistance locale semble raisonnable en v1.
+
+**Articulations.** La mission de cet onglet, telle qu'elle est posée dans `MISSION.md`, est *voir ce qui est présent dans ma réalité actuelle et ce que je devrais mesurer sans le mesurer*. Il devient le *miroir* de l'utilisateur. Il ne remplace pas la pyramide — il capitalise dessus : la pyramide sert désormais à explorer le référentiel pour y puiser, le panier est la sélection retenue.
+
+---
+
 ## Prochaine action recommandée
 
 Chantier **7.2a-code.3 en cours** (⏳). Commits livrés à la date du 22/04/2026 : A `0e08f37` (contrat d'API compagnon) · B.1 `238d679` (coquille DOM + CSS scope `#vue-porte-niveau`) · B.2 `098bb33` (squelette module + façade + stubs) · B.3 `215e9d6` (_etapeRole accordéon 4 cartouches + CSS cran 3 Doux pour axes Mintzberg) · **C.1 `3e3f105`** (_etapeProbleme filtré par niveau dérivé du rôle, introduit la table locale `ROLE_NIVEAU_VERS_DIAG` qui traduit les canons `CM.Roles` vers les canons historiques de `CM.DiagnosticProbleme`) · **C.1-tests `d4fed38`** (harnais `tests-porte-niveau.html`, 70 assertions vertes : 4 sanity + 4 doctrine N1 + 55 filtrage par rôle + 4 posture avec libellé de surface + 3 cas défensifs ; zéro intrusion dans le code de prod, adapter driver sur l'API publique). Invariant de dérivation respecté : le niveau n'est jamais un choix utilisateur dans la porte niveau, c'est une projection du rôle.
