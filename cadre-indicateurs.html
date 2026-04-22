@@ -6606,19 +6606,68 @@ CM.VuePorteNiveau = (function() {
       .replace(/'/g, '&#39;');
   }
 
-  /* ─── Rendu d'étape : problème (STUB B.2 — impl réelle étape C) ───
-     L'implémentation finale filtre les problèmes par `niveauCanon` dérivé
-     du rôle via `CM.DiagnosticProbleme.problemesPourNiveau(niveauCanon)`,
-     où `niveauCanon = CM.Roles.parId(roleId).niveau`. */
+  /* ─── Rendu d'étape : problème (C.1 — filtré par niveau dérivé du rôle) ──
+     Contrat : le niveau n'est PAS un choix séparé — il se dérive de l'id
+     de rôle validé à l'étape 1 (invariant documenté dans
+     doc-contrats-stepper-roles.md). On lit `r.niveau` (canon CM.Roles :
+     `équipe` / `programme` / `portefeuille` / `entreprise`), puis on
+     traduit vers le canon historique de CM.DiagnosticProbleme
+     (`operationnel` / `programme` / `tactique` / `strategique`) pour
+     appeler `problemesPourNiveau`.
+
+     Zone de contact entre deux systèmes de canons qui coexistent dans le
+     codebase. Le mapping ROLE_NIVEAU_VERS_DIAG reste local à cette porte :
+     ne pas le propager à CM.Roles (ignorant du diag par design) ni à
+     CM.DiagnosticProbleme (ignorant des rôles par design). Unification
+     des deux systèmes = chantier séparé, hors scope 7.2a-code.3.
+
+     Libellés : la posture et l'aide utilisent les libellés de surface
+     de la porte niveau (`CM.Roles.libelleDeSurface`, ex. « Exécutif »)
+     et non ceux du diag (ex. « Stratégique »). Invariant « libellés de
+     surface ≠ canons internes » du doc compagnon. */
+  var ROLE_NIVEAU_VERS_DIAG = {
+    'équipe':       'operationnel',
+    'programme':    'programme',
+    'portefeuille': 'tactique',
+    'entreprise':   'strategique'
+  };
+
   function _etapeProbleme(roleId) {
     var r = roleId ? CM.Roles.parId(roleId) : null;
-    var titre = r ? r.titre : '(rôle inconnu)';
-    return '<div class="carte-etape">'
+    if (!r) return '<div class="message-vide">Rôle inconnu.</div>';
+    var canonDiag = ROLE_NIVEAU_VERS_DIAG[r.niveau];
+    if (!canonDiag) return '<div class="message-vide">Rôle inconnu.</div>';
+
+    var n = CM.DiagnosticProbleme.niveauInfo(canonDiag);
+    if (!n) return '<div class="message-vide">Niveau dérivé inconnu.</div>';
+    var problemesLegitimes = CM.DiagnosticProbleme.problemesPourNiveau(canonDiag);
+    var libSurface         = CM.Roles.libelleDeSurface(r.niveau);
+
+    var html = '<div class="carte-etape">'
+      + '<div class="encart-posture"><strong>Posture ' + _echapper(libSurface) + ' :</strong> '
+      + _echapper(n.posture) + '</div>'
       + '<div class="q-numero">Étape 2</div>'
       + '<div class="q-texte">Quel problème cherchez-vous à éclairer&nbsp;?</div>'
-      + '<div class="q-aide">Stub B.2 · rôle choisi&nbsp;: <strong>' + titre + '</strong>. '
-      + 'Le filtrage par problèmes légitimes au niveau dérivé arrive à l\'étape C.</div>'
-      + '</div>';
+      + '<div class="q-aide">Pour un rôle de <strong>' + _echapper(r.titre) + '</strong>, '
+      + problemesLegitimes.length + ' familles de problèmes sont pertinentes à votre '
+      + 'niveau. Les autres relèvent d\'un étage différent (elles n\'apparaissent pas '
+      + 'ici <em>volontairement</em>).</div>'
+      + '<div class="options-grille">';
+    /* NB : p.label et p.sous peuvent contenir du HTML éditorial (<abbr>, <em>) —
+       pas d'échappement, iso-pattern avec CM.VuePorteProbleme._etapeProbleme.
+       Les ids (p.id) sont contrôlés par le vocabulaire fermé PROBLEMES du diag,
+       aucun risque d'injection côté attribut onclick. */
+    for (var i = 0; i < problemesLegitimes.length; i++) {
+      var p = problemesLegitimes[i];
+      html += '<button type="button" class="option-btn"'
+        + ' onclick="CM.VuePorteNiveau.setProbleme(\'' + p.id + '\')">'
+        + '<span class="option-icone" aria-hidden="true">' + p.icone + '</span>'
+        + '<span><span class="option-label">' + p.label + '</span>'
+        + '<span class="option-sous">' + p.sous + '</span></span>'
+        + '</button>';
+    }
+    html += '</div></div>';
+    return html;
   }
 
   /* ─── Rendu d'étape : cadre (STUB B.2 — impl réelle étape C) ─── */
