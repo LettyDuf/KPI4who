@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mockup-preview — Vue imprimable du panier (chantier 9)</title>
+  <style>
+    :root {
+      --niv-1:        #1a237e;
+      --niv-1-clair:  #e8eaf6;
+      --niv-2:        #01579b;
+      --niv-2-clair:  #e1f5fe;
+      --niv-3:        #004d40;
+      --niv-3-clair:  #e0f2f1;
+      --accent:       #e65100;
+      --fond:         #f5f6fa;
+      --fond-2:       #ffffff;
+      --texte:        #1a1a2e;
+      --texte-2:      #607d8b;
+      --bordure:      #e0e4eb;
+      --ambre:        #FFD180;
+      --ambre-profond: #b7791f;
+      --ambre-texte:  #6b4a00;
+      --ambre-fond:   #fffaf0;
+      --ambre-bord:   #f3e3b8;
+      --fiab-fiable:  #2e7d32;
+      --fiab-precaution: #b7791f;
+      --fiab-risque:  #c62828;
+      --rayon:        10px;
+      --ombre:        0 2px 12px rgba(26,35,126,0.08);
+      --ombre-forte:  0 8px 32px rgba(26,35,126,0.14);
+
+      /* Page A4 : 210 × 297 mm. À l'écran, on la rend à ~0.58 d'échelle
+         pour que deux pages tiennent côte à côte sur un 1440px. */
+      --a4-w: 210mm;
+      --a4-h: 297mm;
+      --a4-scale: 0.58;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, 'Segoe UI', system-ui, 'Helvetica Neue', sans-serif;
+      background: var(--fond);
+      color: var(--texte);
+      line-height: 1.55;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* ── En-tête du mockup ── */
+    .mockup-header {
+      max-width: 1400px;
+      margin: 0 auto 2rem;
+      text-align: center;
+    }
+    .mockup-header .eyebrow {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--niv-1);
+      background: var(--niv-1-clair);
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+    .mockup-header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--niv-1);
+      margin-bottom: 0.5rem;
+    }
+    .mockup-header p {
+      font-size: 1rem;
+      color: var(--texte-2);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .mockup-header .context {
+      font-size: 0.9rem;
+      color: var(--texte-2);
+      font-style: italic;
+      margin-top: 0.75rem;
+    }
+
+    /* ── Layout côte à côte ── */
+    .comparatif {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+    @media (max-width: 1200px) {
+      .comparatif { grid-template-columns: 1fr; }
+    }
+    .option {
+      background: var(--fond-2);
+      border: 1px solid var(--bordure);
+      border-radius: var(--rayon);
+      box-shadow: var(--ombre);
+      padding: 1.5rem;
+    }
+    .option-label {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      margin-bottom: 0.75rem;
+    }
+    .option.A .option-label { background: #e0f2f1; color: #004d40; }
+    .option.B .option-label { background: #e8eaf6; color: var(--niv-1); }
+    .option h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--texte);
+      margin-bottom: 0.4rem;
+    }
+    .option .pitch {
+      font-size: 0.9rem;
+      color: var(--texte-2);
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+    .option .trade-offs {
+      font-size: 0.85rem;
+      color: var(--texte);
+      margin-bottom: 1.25rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+    .option .trade-offs .cell {
+      background: var(--fond);
+      border-left: 3px solid var(--bordure);
+      padding: 0.5rem 0.7rem;
+      border-radius: 4px;
+      line-height: 1.4;
+    }
+    .option .trade-offs .plus { border-left-color: #2e7d32; }
+    .option .trade-offs .moins { border-left-color: #b7791f; }
+    .option .trade-offs .tag {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-right: 0.35rem;
+    }
+    .option .trade-offs .plus .tag { color: #2e7d32; }
+    .option .trade-offs .moins .tag { color: #b7791f; }
+
+    /* ── Page A4 rendue à l'échelle ── */
+    .page-wrap {
+      /* On scale avec transform, mais on réserve la hauteur réelle
+         pour que le flux du document reste cohérent. */
+      width: calc(var(--a4-w) * var(--a4-scale));
+      height: calc(var(--a4-h) * var(--a4-scale));
+      position: relative;
+      margin: 1.25rem auto 0.75rem;
+      box-shadow: var(--ombre-forte);
+      background: white;
+      overflow: hidden;
+    }
+    .page {
+      width: var(--a4-w);
+      height: var(--a4-h);
+      padding: 14mm 14mm;
+      background: white;
+      transform: scale(var(--a4-scale));
+      transform-origin: top left;
+      font-size: 10pt;
+      line-height: 1.4;
+      color: var(--texte);
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .page-label {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--texte-2);
+      font-style: italic;
+    }
+    .pages-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    /* ═══════════════════════════════════════════════
+       OPTION A — One-pager A4 minimaliste
+    ═══════════════════════════════════════════════ */
+    .onepager .entete {
+      border-bottom: 2px solid var(--niv-1);
+      padding-bottom: 5mm;
+      margin-bottom: 6mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .onepager .entete .titre {
+      font-size: 16pt;
+      font-weight: 700;
+      color: var(--niv-1);
+      letter-spacing: -0.3px;
+    }
+    .onepager .entete .sous-titre {
+      font-size: 9pt;
+      color: var(--texte-2);
+      margin-top: 1.5mm;
+    }
+    .onepager .entete .meta {
+      text-align: right;
+      font-size: 8pt;
+      color: var(--texte-2);
+    }
+    .onepager .entete .meta strong {
+      display: block;
+      font-size: 9pt;
+      color: var(--texte);
+      font-weight: 600;
+      margin-bottom: 1mm;
+    }
+    .onepager .section-titre {
+      font-size: 11pt;
+      font-weight: 700;
+      color: var(--niv-1);
+      margin: 6mm 0 3mm;
+      display: flex;
+      align-items: baseline;
+      gap: 2.5mm;
+    }
+    .onepager .section-titre .count {
+      font-size: 8pt;
+      font-weight: 500;
+      color: var(--texte-2);
+    }
+    .onepager table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9pt;
+    }
+    .onepager table th {
+      text-align: left;
+      font-weight: 600;
+      font-size: 7.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--texte-2);
+      padding: 1.5mm 1.5mm;
+      border-bottom: 1px solid var(--bordure);
+    }
+    .onepager table td {
+      padding: 2mm 1.5mm;
+      border-bottom: 1px solid #f1f3f8;
+      vertical-align: top;
+    }
+    .onepager .pastille {
+      display: inline-block;
+      width: 6pt;
+      height: 6pt;
+      border-radius: 50%;
+      margin-right: 1.5mm;
+      vertical-align: middle;
+    }
+    .onepager .pastille.fiable { background: var(--fiab-fiable); }
+    .onepager .pastille.precaution { background: var(--fiab-precaution); }
+    .onepager .pastille.risque { background: var(--fiab-risque); }
+    .onepager .nom-ind { font-weight: 600; color: var(--texte); }
+    .onepager .domaine {
+      font-size: 7.5pt;
+      color: var(--texte-2);
+      display: block;
+      margin-top: 0.5mm;
+    }
+    .onepager .pourquoi {
+      font-size: 8.5pt;
+      color: var(--texte);
+      line-height: 1.35;
+    }
+    .onepager .niveau-chip {
+      display: inline-block;
+      font-size: 7pt;
+      font-weight: 600;
+      padding: 0.5mm 1.5mm;
+      border-radius: 3pt;
+      letter-spacing: 0.04em;
+    }
+    .onepager .niveau-equipe { background: var(--niv-3-clair); color: var(--niv-3); }
+    .onepager .niveau-programme { background: var(--niv-2-clair); color: var(--niv-2); }
+    .onepager .niveau-entreprise { background: var(--niv-1-clair); color: var(--niv-1); }
+    .onepager .bandeau-terrain {
+      margin-top: 6mm;
+      background: var(--ambre-fond);
+      border-left: 3pt solid var(--ambre-profond);
+      padding: 3mm 4mm;
+      font-size: 8.5pt;
+      color: var(--ambre-texte);
+      line-height: 1.45;
+      font-style: italic;
+    }
+    .onepager .bandeau-terrain strong {
+      font-style: normal;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 1mm;
+      color: var(--ambre-texte);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 7pt;
+    }
+    .onepager .questions {
+      margin-top: 4mm;
+      font-size: 8.5pt;
+    }
+    .onepager .questions h3 {
+      font-size: 8.5pt;
+      font-weight: 700;
+      color: var(--texte);
+      margin-bottom: 2mm;
+    }
+    .onepager .questions ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .onepager .questions li {
+      padding: 1mm 0 1mm 5mm;
+      position: relative;
+      color: var(--texte);
+      line-height: 1.4;
+    }
+    .onepager .questions li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--niv-1);
+      font-weight: 700;
+    }
+    .onepager .pied {
+      position: absolute;
+      bottom: 14mm;
+      left: 14mm;
+      right: 14mm;
+      padding-top: 3mm;
+      border-top: 1px solid var(--bordure);
+      display: flex;
+      justify-content: space-between;
+      font-size: 7.5pt;
+      color: var(--texte-2);
+    }
+    .onepager .pied em {
+      font-style: italic;
+      color: var(--texte);
+    }
+
+    /* ═══════════════════════════════════════════════
+       OPTION B — Rapport multi-pages
+    ═══════════════════════════════════════════════ */
+    .rapport .couverture {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .rapport .cov-bandeau {
+      background: linear-gradient(145deg, #0d1b4f 0%, #1a237e 60%, #283593 100%);
+      color: white;
+      padding: 20mm 14mm 14mm;
+      margin: -14mm -14mm 0;
+    }
+    .rapport .cov-bandeau .eyebrow {
+      font-size: 8pt;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ambre);
+      margin-bottom: 6mm;
+      font-weight: 600;
+    }
+    .rapport .cov-bandeau h1 {
+      font-size: 22pt;
+      font-weight: 800;
+      letter-spacing: -0.6px;
+      line-height: 1.1;
+      margin-bottom: 4mm;
+    }
+    .rapport .cov-bandeau .sous {
+      font-size: 11pt;
+      color: var(--ambre);
+      font-style: italic;
+      line-height: 1.4;
+    }
+    .rapport .cov-meta {
+      margin-top: 8mm;
+      font-size: 9pt;
+      color: var(--texte-2);
+    }
+    .rapport .cov-meta .ligne {
+      display: flex;
+      justify-content: space-between;
+      padding: 1.5mm 0;
+      border-bottom: 1px solid #f1f3f8;
+    }
+    .rapport .cov-meta .ligne strong {
+      color: var(--texte);
+      font-weight: 600;
+    }
+    .rapport .sommaire {
+      margin-top: 8mm;
+      font-size: 9pt;
+    }
+    .rapport .sommaire h2 {
+      font-size: 10pt;
+      font-weight: 700;
+      color: var(--niv-1);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 3mm;
+    }
+    .rapport .sommaire ol {
+      list-style: none;
+      padding-left: 0;
+    }
+    .rapport .sommaire li {
+      display: flex;
+      justify-content: space-between;
+      padding: 1.5mm 0;
+      border-bottom: 1px dotted var(--bordure);
+      color: var(--texte);
+    }
+    .rapport .sommaire li .num { color: var(--texte-2); font-weight: 600; }
+    .rapport .fiche-detail {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .rapport .fiche-detail .fiche-en-tete {
+      border-bottom: 1.5pt solid var(--niv-1);
+      padding-bottom: 4mm;
+      margin-bottom: 5mm;
+    }
+    .rapport .fiche-detail .fiche-en-tete .ref {
+      font-size: 7.5pt;
+      color: var(--texte-2);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 2mm;
+    }
+    .rapport .fiche-detail .fiche-en-tete h1 {
+      font-size: 18pt;
+      font-weight: 700;
+      color: var(--niv-1);
+      letter-spacing: -0.3px;
+      line-height: 1.15;
+    }
+    .rapport .fiche-detail .fiche-en-tete .statut {
+      display: inline-block;
+      margin-top: 2mm;
+      font-size: 8pt;
+      font-weight: 600;
+      padding: 0.5mm 2mm;
+      border-radius: 3pt;
+      background: var(--niv-3-clair);
+      color: var(--niv-3);
+    }
+    .rapport .fiche-detail .fiche-en-tete .statut.envisager {
+      background: var(--ambre-fond);
+      color: var(--ambre-texte);
+      border: 1px solid var(--ambre-bord);
+    }
+    .rapport .fiche-detail .bloc {
+      margin-bottom: 4mm;
+      font-size: 9pt;
+      line-height: 1.45;
+    }
+    .rapport .fiche-detail .bloc h2 {
+      font-size: 9pt;
+      font-weight: 700;
+      color: var(--niv-1);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1.5mm;
+    }
+    .rapport .fiche-detail .bloc p {
+      color: var(--texte);
+    }
+    .rapport .fiche-detail .bloc.anti-patterns {
+      background: #fff5f5;
+      border-left: 2.5pt solid #c62828;
+      padding: 2.5mm 3mm;
+    }
+    .rapport .fiche-detail .bloc.anti-patterns h2 { color: #c62828; }
+    .rapport .fiche-detail .bloc.anti-patterns ul { list-style: disc; padding-left: 4mm; }
+    .rapport .fiche-detail .bloc.terrain {
+      background: var(--ambre-fond);
+      border-left: 2.5pt solid var(--ambre-profond);
+      padding: 2.5mm 3mm;
+      color: var(--ambre-texte);
+      font-style: italic;
+    }
+    .rapport .fiche-detail .bloc.terrain h2 {
+      color: var(--ambre-texte);
+      font-style: normal;
+    }
+    .rapport .fiche-detail .pied-page {
+      margin-top: auto;
+      padding-top: 3mm;
+      border-top: 1px solid var(--bordure);
+      display: flex;
+      justify-content: space-between;
+      font-size: 7.5pt;
+      color: var(--texte-2);
+    }
+
+    /* ── Questions qui découlent du format ── */
+    .post-decision {
+      max-width: 1400px;
+      margin: 3rem auto 0;
+      padding: 1.5rem 2rem;
+      background: var(--fond-2);
+      border: 1px solid var(--bordure);
+      border-radius: var(--rayon);
+    }
+    .post-decision h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--niv-1);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.75rem;
+    }
+    .post-decision p {
+      font-size: 0.95rem;
+      color: var(--texte-2);
+      margin-bottom: 0.75rem;
+      line-height: 1.55;
+    }
+    .post-decision p strong { color: var(--texte); font-weight: 600; }
+
+  </style>
+</head>
+<body>
+
+  <div class="mockup-header">
+    <span class="eyebrow">Chantier 9 — mockup-preview</span>
+    <h1>Vue imprimable du panier : deux options côte à côte</h1>
+    <p>
+      Objectif : trancher la forme du livrable central avant d'écrire une ligne de code.
+      Les deux pages ci-dessous sont rendues à l'échelle A4 réelle, avec les mêmes 5 métriques
+      du scénario <em>Prise de poste</em>.
+    </p>
+    <div class="context">
+      Scénario : Marie, nouvelle directrice produit. 3 métriques en place · 2 à envisager.
+    </div>
+  </div>
+
+  <div class="comparatif">
+
+    <!-- ═══════════════ OPTION A ═══════════════ -->
+    <section class="option A">
+      <span class="option-label">Option A</span>
+      <h2>One-pager A4 minimaliste</h2>
+      <p class="pitch">
+        Une seule page qu'on tend en réunion. Outil de décision pour la conversation.
+        Tout tient sous les yeux : les 5 métriques, un rappel terrain, trois questions à poser.
+      </p>
+      <div class="trade-offs">
+        <div class="cell plus">
+          <span class="tag">Privilégie</span> la lisibilité immédiate, la conversation, l'arbitrage en réunion.
+        </div>
+        <div class="cell moins">
+          <span class="tag">Sacrifie</span> la profondeur par métrique (anti-patterns, panel) — ils restent dans l'outil.
+        </div>
+      </div>
+      <div class="pages-group">
+        <div class="page-wrap">
+          <div class="page onepager">
+            <header class="entete">
+              <div>
+                <div class="titre">Mon scorecard</div>
+                <div class="sous-titre">Ce que je mesure déjà · ce que j'envisage de mesurer</div>
+              </div>
+              <div class="meta">
+                <strong>Marie Dubois</strong>
+                Directrice Produit · Niveau programme<br>
+                22 avril 2026
+              </div>
+            </header>
+
+            <h2 class="section-titre">
+              <span>En place</span>
+              <span class="count">3 métriques</span>
+            </h2>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 40%">Indicateur</th>
+                  <th style="width: 15%">Fiabilité</th>
+                  <th style="width: 15%">Niveau</th>
+                  <th style="width: 30%">Pourquoi je la suis</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <span class="nom-ind">NPS global</span>
+                    <span class="domaine">Affaires / Expérience client</span>
+                  </td>
+                  <td><span class="pastille precaution"></span>Précaution</td>
+                  <td><span class="niveau-chip niveau-entreprise">Entreprise</span></td>
+                  <td class="pourquoi">Suivi mensuel existant, mais corrélation faible à la rétention réelle.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="nom-ind">Velocity d'équipe</span>
+                    <span class="domaine">DevOps / Flux</span>
+                  </td>
+                  <td><span class="pastille risque"></span>À risque</td>
+                  <td><span class="niveau-chip niveau-equipe">Équipe</span></td>
+                  <td class="pourquoi">Héritée. À retirer ou requalifier — gaming documenté.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="nom-ind">Budget mensuel consommé</span>
+                    <span class="domaine">Affaires / Finance</span>
+                  </td>
+                  <td><span class="pastille fiable"></span>Fiable</td>
+                  <td><span class="niveau-chip niveau-programme">Programme</span></td>
+                  <td class="pourquoi">Signal clair pour le comité. Conservée.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h2 class="section-titre">
+              <span>À envisager</span>
+              <span class="count">2 métriques</span>
+            </h2>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 40%">Indicateur</th>
+                  <th style="width: 15%">Fiabilité</th>
+                  <th style="width: 15%">Niveau</th>
+                  <th style="width: 30%">Ce qu'elle éclairerait</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <span class="nom-ind">Lead Time (cycle time)</span>
+                    <span class="domaine">DevOps / Flux DORA</span>
+                  </td>
+                  <td><span class="pastille fiable"></span>Fiable</td>
+                  <td><span class="niveau-chip niveau-equipe">Équipe</span></td>
+                  <td class="pourquoi">Remplace la Velocity sans inviter au gaming individuel.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="nom-ind">First Call Resolution</span>
+                    <span class="domaine">Affaires / Service client</span>
+                  </td>
+                  <td><span class="pastille precaution"></span>Précaution</td>
+                  <td><span class="niveau-chip niveau-programme">Programme</span></td>
+                  <td class="pourquoi">Rendrait visible la qualité d'interaction — pas juste la quantité.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="bandeau-terrain">
+              <strong>Terrain</strong>
+              Le chiffre alerte. Le terrain explique. Aucune de ces cinq métriques n'est un verdict :
+              elles sont cinq invitations à questionner ce qui se joue vraiment dans mes équipes.
+            </div>
+
+            <div class="questions">
+              <h3>Trois questions à poser à mon équipe</h3>
+              <ul>
+                <li>La Velocity, on l'utilise pour quoi concrètement — et ça nous sert réellement ?</li>
+                <li>Qu'est-ce qu'on ne voit pas aujourd'hui que le Lead Time nous montrerait ?</li>
+                <li>Le NPS tombe chaque trimestre : qu'est-ce qu'il cache qu'un FCR révélerait ?</li>
+              </ul>
+            </div>
+
+            <div class="pied">
+              <span>cadre-indicateurs · panier v1</span>
+              <span><em>La métrique n'est pas un objectif. C'est une lunette.</em></span>
+              <span>1/1</span>
+            </div>
+          </div>
+        </div>
+        <div class="page-label">Une seule page A4 · tout visible d'un coup d'œil</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ OPTION B ═══════════════ -->
+    <section class="option B">
+      <span class="option-label">Option B</span>
+      <h2>Rapport multi-pages avec fiches détaillées</h2>
+      <p class="pitch">
+        Une couverture + une page par métrique. Support qui se partage, se lit seul,
+        se range dans un dossier. Chaque fiche embarque anti-patterns, terrain, alternatives.
+      </p>
+      <div class="trade-offs">
+        <div class="cell plus">
+          <span class="tag">Privilégie</span> la profondeur, l'autonomie du lecteur absent, la traçabilité du choix.
+        </div>
+        <div class="cell moins">
+          <span class="tag">Sacrifie</span> la vision synoptique et l'usage « à tendre en main ».
+        </div>
+      </div>
+      <div class="pages-group">
+        <!-- Page 1 — couverture -->
+        <div class="page-wrap">
+          <div class="page rapport">
+            <div class="couverture">
+              <div class="cov-bandeau">
+                <div class="eyebrow">Mon scorecard · panier de travail</div>
+                <h1>Ce que je mesure,<br>ce que je devrais regarder</h1>
+                <div class="sous">
+                  La métrique n'est pas un objectif.<br>C'est une lunette pour se questionner.
+                </div>
+              </div>
+              <div class="cov-meta">
+                <div class="ligne"><span>Personne</span><strong>Marie Dubois</strong></div>
+                <div class="ligne"><span>Rôle</span><strong>Directrice Produit</strong></div>
+                <div class="ligne"><span>Niveau de responsabilité</span><strong>Programme</strong></div>
+                <div class="ligne"><span>Date</span><strong>22 avril 2026</strong></div>
+                <div class="ligne"><span>Métriques au panier</span><strong>3 en place · 2 à envisager</strong></div>
+              </div>
+              <div class="sommaire">
+                <h2>Sommaire</h2>
+                <ol>
+                  <li><span>Synthèse</span><span class="num">p. 2</span></li>
+                  <li><span>En place — NPS global</span><span class="num">p. 3</span></li>
+                  <li><span>En place — Velocity d'équipe</span><span class="num">p. 4</span></li>
+                  <li><span>En place — Budget mensuel consommé</span><span class="num">p. 5</span></li>
+                  <li><span>À envisager — Lead Time</span><span class="num">p. 6</span></li>
+                  <li><span>À envisager — First Call Resolution</span><span class="num">p. 7</span></li>
+                  <li><span>Questions pour la discussion</span><span class="num">p. 8</span></li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="page-label">Page 1 / 8 — couverture + sommaire</div>
+
+        <!-- Page 3 — fiche détaillée NPS (exemple) -->
+        <div class="page-wrap">
+          <div class="page rapport">
+            <div class="fiche-detail">
+              <div class="fiche-en-tete">
+                <div class="ref">Fiche 1 · En place</div>
+                <h1>NPS global</h1>
+                <span class="statut">En place · Précaution</span>
+              </div>
+              <div class="bloc">
+                <h2>Ce qu'elle mesure</h2>
+                <p>
+                  La propension déclarée des clients à recommander l'entreprise — un signal d'attitude
+                  collecté par enquête, pas un comportement observé. Score agrégé sur 100 points.
+                </p>
+              </div>
+              <div class="bloc">
+                <h2>Ce qu'elle prétend mesurer</h2>
+                <p>
+                  La satisfaction client globale et, par raccourci, la loyauté. La relation au revenu
+                  réel reste faiblement établie au niveau individuel.
+                </p>
+              </div>
+              <div class="bloc anti-patterns">
+                <h2>Anti-patterns à surveiller</h2>
+                <ul>
+                  <li>Pression commerciale sur les réponses (biais de sélection du panel).</li>
+                  <li>Moyenne trompeuse qui écrase les signaux faibles aux deux extrêmes.</li>
+                  <li>Usage en évaluation individuelle des chargés de compte.</li>
+                  <li>Comparaison inter-segments sans normaliser l'échantillon.</li>
+                </ul>
+              </div>
+              <div class="bloc terrain">
+                <h2>Côté terrain</h2>
+                <p>
+                  Si le NPS baisse sans qu'aucun commentaire ne permette de comprendre pourquoi,
+                  c'est que la métrique a remplacé la conversation. Le nombre alerte ; l'entretien client explique.
+                </p>
+              </div>
+              <div class="pied-page">
+                <span>cadre-indicateurs.html · NPS · p. 3 / 8</span>
+                <span>Panel d'experts : Reichheld · Kaplan-Norton · Dixon</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="page-label">Page 3 / 8 — exemple de fiche détaillée (les 4 autres suivent le même gabarit)</div>
+      </div>
+    </section>
+  </div>
+
+  <div class="post-decision">
+    <h2>Ce qui dépend de la décision</h2>
+    <p>
+      <strong>Option A choisie :</strong> je code une seule vue imprimable, densité élevée, CSS print à écrire.
+      Les fiches détaillées restent dans l'outil en ligne — l'impression ne les embarque pas.
+    </p>
+    <p>
+      <strong>Option B choisie :</strong> je code un gabarit de page + une boucle sur chaque fiche du panier.
+      Coût de développement supérieur, mais le référentiel fait déjà 80% du contenu. La vraie contrainte devient
+      la synthèse de page 2 et les questions de page finale — éditorial à cadrer.
+    </p>
+    <p>
+      <strong>Voie intermédiaire possible (non rendue ici) :</strong> bascule utilisateur à l'impression — option A par défaut,
+      case à cocher « inclure les fiches détaillées » qui produit l'option B. Plus généreux mais double la dette UX.
+    </p>
+  </div>
+
+</body>
+</html>
