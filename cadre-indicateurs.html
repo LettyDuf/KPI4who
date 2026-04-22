@@ -6260,6 +6260,186 @@ CM.VuePorteCadre = (function() {
 </script>
 
 
+<!-- ══ MODULE : CM.VuePorteNiveau — Façade au-dessus de CM.Stepper ══
+     Troisième porte d'entrée, consomme CM.Roles (étape 1, accordéon à
+     4 cartouches) + CM.DiagnosticProbleme (étape 2, problèmes légitimes
+     au niveau dérivé du rôle) + CM.DiagnosticCadre (étape 3, cadres) +
+     CM.Stepper (orchestration). Parcours : rôle → problème → cadre →
+     indicateurs. Le niveau de pilotage n'est JAMAIS un choix utilisateur
+     dans cette porte — il se dérive de `CM.Roles.parId(role).niveau`,
+     invariant documenté dans doc-contrats-stepper-roles.md.
+
+     État d'avancement 7.2a-code.3 (livraison par étapes atomiques) :
+       B.1 — coquille DOM + CSS scope #vue-porte-niveau    ✅ 238d679
+       B.2 — squelette module + façade + stubs             ← CE COMMIT
+       B.3 — _etapeRole() accordéon 4 cartouches + CSS     ⏸ à venir
+       C   — _etapeProbleme / _etapeCadre / _etapeResultats
+             + câblage tuile d'accueil (remplace pyramide) ⏸ à venir
+
+     Tant que les étapes ne sont pas toutes implémentées, la porte
+     n'est PAS câblée dans la navigation. Accessible uniquement via
+     `CM.VuePorteNiveau.ouvrir()` depuis la console pour validation. ══ -->
+<script>
+CM.VuePorteNiveau = (function() {
+  'use strict';
+
+  /* ─── Instance Stepper ──────────────────────────────────────────
+     Configurée au parse time. Aucun accès DOM avant le premier ouvrir().
+     Trois étapes ordonnées : rôle → problème → cadre, puis résultats.
+     Signatures `rendreOptions(choix)` conformes au contrat CM.Stepper :
+     le tableau `choix` cumule les validations précédentes dans l'ordre. */
+  var _stepper = CM.Stepper.creer({
+    etiquettePorte: 'Par mon niveau',
+    idFacade:       'CM.VuePorteNiveau',
+    ids: {
+      vue:     'vue-porte-niveau',
+      stepper: 'porte-niveau-stepper',
+      etapes:  'porte-niveau-etapes'
+    },
+    etapes: [
+      {
+        cle:           'role',
+        defaut:        'Mon rôle',
+        valeur:        _labelRole,
+        rendreOptions: function()      { return _etapeRole(); }
+      },
+      {
+        cle:           'probleme',
+        defaut:        'Mon problème',
+        valeur:        _labelProbleme,
+        rendreOptions: function(choix) { return _etapeProbleme(choix[0]); }
+      },
+      {
+        cle:           'cadre',
+        defaut:        'Mon cadre',
+        valeur:        _labelCadre,
+        rendreOptions: function(choix) { return _etapeCadre(choix[0], choix[1]); }
+      }
+    ],
+    libelleResultats: 'Mes indicateurs',
+    rendreResultats:  function(choix) { return _etapeResultats(choix[0], choix[1], choix[2]); }
+  });
+
+  /* ─── API publique (façade iso-comportement) ────────────────────
+     Même patron que CM.VuePorteProbleme et CM.VuePorteCadre : chaque
+     setX délègue à setChoix(n, valeur) pour préserver les `onclick` HTML
+     générés dans les rendus d'étapes (pattern : onclick="CM.VuePorteNiveau.setRole(...)"). */
+
+  // Exemple : CM.VuePorteNiveau.ouvrir() → affiche la vue, étape 1
+  function ouvrir()        { _stepper.ouvrir(); }
+  function retourAccueil() { _stepper.retourAccueil(); }
+
+  function setRole(roleId)         { _stepper.setChoix(1, roleId);     }
+  function setProbleme(problemeId) { _stepper.setChoix(2, problemeId); }
+  function setCadre(cadreId)       { _stepper.setChoix(3, cadreId);    }
+
+  function retourA(numEtape) { _stepper.retourA(numEtape); }
+  function reset()           { _stepper.reset(); }
+
+  /* ─── Rendu d'étape : rôle (STUB B.2 — impl réelle B.3) ───
+     L'implémentation finale (accordéon à 4 cartouches Opérationnel /
+     Tactique / Portefeuille / Exécutif, chaque cartouche listant les
+     rôles de sa strate en cran 3 Doux) est décrite dans
+     doc-contrats-stepper-roles.md section « Étape 1 — accordéon à
+     4 cartouches ». */
+  function _etapeRole() {
+    return '<div class="carte-etape">'
+      + '<div class="q-numero">Étape 1</div>'
+      + '<div class="q-texte">Quel est votre rôle&nbsp;?</div>'
+      + '<div class="q-aide">Squelette B.2&nbsp;: l\'accordéon à 4 cartouches '
+      + '(Opérationnel / Tactique / Portefeuille / Exécutif) arrive en B.3 avec '
+      + 'le rendu cran 3 Doux des rôles.</div>'
+      + '</div>';
+  }
+
+  /* ─── Rendu d'étape : problème (STUB B.2 — impl réelle étape C) ───
+     L'implémentation finale filtre les problèmes par `niveauCanon` dérivé
+     du rôle via `CM.DiagnosticProbleme.problemesPourNiveau(niveauCanon)`,
+     où `niveauCanon = CM.Roles.parId(roleId).niveau`. */
+  function _etapeProbleme(roleId) {
+    var r = roleId ? CM.Roles.parId(roleId) : null;
+    var titre = r ? r.titre : '(rôle inconnu)';
+    return '<div class="carte-etape">'
+      + '<div class="q-numero">Étape 2</div>'
+      + '<div class="q-texte">Quel problème cherchez-vous à éclairer&nbsp;?</div>'
+      + '<div class="q-aide">Stub B.2 · rôle choisi&nbsp;: <strong>' + titre + '</strong>. '
+      + 'Le filtrage par problèmes légitimes au niveau dérivé arrive à l\'étape C.</div>'
+      + '</div>';
+  }
+
+  /* ─── Rendu d'étape : cadre (STUB B.2 — impl réelle étape C) ─── */
+  function _etapeCadre(roleId, problemeId) {
+    return '<div class="carte-etape">'
+      + '<div class="q-numero">Étape 3</div>'
+      + '<div class="q-texte">Quel cadre méthodologique mobilisez-vous&nbsp;?</div>'
+      + '<div class="q-aide">Stub B.2 · choix cumulés&nbsp;: rôle=<strong>' + (roleId || '—')
+      + '</strong>, problème=<strong>' + (problemeId || '—') + '</strong>. '
+      + 'Grille de cadres à venir en étape C.</div>'
+      + '</div>';
+  }
+
+  /* ─── Rendu d'étape : résultats (STUB B.2 — impl réelle étape C) ───
+     Le bouton « ↻ Recommencer » est inclus ici (le stepper ne le génère pas)
+     pour rester DANS la <div class="carte-etape">, ce qui préserve le cadre
+     visuel à l'identique des deux autres portes. */
+  function _etapeResultats(roleId, problemeId, cadreId) {
+    var html = '<div class="carte-etape">'
+      + '<div class="resultat-titre">Résultats — stub B.2</div>'
+      + '<p>Parcours complet&nbsp;: rôle=<strong>' + (roleId || '—')
+      + '</strong>, problème=<strong>' + (problemeId || '—')
+      + '</strong>, cadre=<strong>' + (cadreId || '—') + '</strong>.</p>'
+      + '<p>Le calcul des recommandations (croisement niveau dérivé × problème × cadre) '
+      + 'arrive à l\'étape C via <code>CM.DiagnosticProbleme.recommander</code> et '
+      + '<code>CM.DiagnosticCadre.recommander</code>.</p>';
+    html += '<button type="button" class="bouton-recommencer"'
+          + ' onclick="CM.VuePorteNiveau.reset()">↻ Recommencer</button>';
+    html += '</div>';
+    return html;
+  }
+
+  /* ─── Helpers — adapteurs choix → label affiché dans le stepper ───
+     Reçoivent un id de choix (ou null), retournent { icone, label } ou null.
+     Appelés par CM.Stepper via les descripteurs config.etapes[i].valeur.
+
+     `_labelRole` : le libellé cumule niveau de surface + titre du rôle, pour
+     que la pilule du stepper reste lisible après validation (ex :
+     « Opérationnel — Développeur / Ingénieur logiciel »). Les rôles n'ont
+     pas d'icône propre dans CM.Roles — on passe une chaîne vide plutôt
+     qu'une icône arbitraire qui induirait une hiérarchie non voulue.
+
+     `_labelProbleme` et `_labelCadre` réutilisent les adapteurs des portes
+     existantes : même vocabulaire, zéro duplication. */
+  function _labelRole(choix) {
+    if (!choix) return null;
+    var r = CM.Roles.parId(choix);
+    if (!r) return null;
+    var libSurface = CM.Roles.libelleDeSurface(r.niveau);
+    return { icone: '', label: libSurface + ' — ' + r.titre };
+  }
+  function _labelProbleme(choix) {
+    if (!choix) return null;
+    var p = CM.DiagnosticProbleme.problemeInfo(choix);
+    return p ? { icone: p.icone, label: p.label } : null;
+  }
+  function _labelCadre(choix) {
+    if (!choix) return null;
+    var c = CM.IndicateursMeta.infoCadre(choix);
+    return c ? { icone: c.icone, label: c.label } : null;
+  }
+
+  return {
+    ouvrir:        ouvrir,
+    retourAccueil: retourAccueil,
+    setRole:       setRole,
+    setProbleme:   setProbleme,
+    setCadre:      setCadre,
+    retourA:       retourA,
+    reset:         reset
+  };
+})();
+</script>
+
+
 <!-- ══ MODULE : CM.App — Etat, navigation et rendu des 4 vues ══ -->
 <script>
 CM.App = (function() {
