@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Preview 10.0 — Variante C : bold + barre accent sous l'onglet actif</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --niv-1:        #1a237e;
+    --niv-1-clair:  #e8eaf6;
+    --niv-1-moyen:  #3949ab;
+    --accent:       #e65100;
+    --accent-clair: #fff3e0;
+    --fond:         #f5f6fa;
+    --fond-2:       #ffffff;
+    --texte:        #1a1a2e;
+    --texte-2:      #607d8b;
+    --bordure:      #e0e4eb;
+
+    --ambre:            #FFD180;
+    --ambre-profond:    #b7791f;
+    --ambre-texte:      #6b4a00;
+
+    --trans: all 0.15s ease;
+    --rayon: 10px;
+    --ombre: 0 2px 12px rgba(26,35,126,0.06);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--fond);
+    color: var(--texte);
+    line-height: 1.5;
+  }
+
+  .en-tete {
+    background: var(--fond-2);
+    border-bottom: 1px solid var(--bordure);
+    padding: 0 1.75rem;
+    display: flex; align-items: center; gap: 1.25rem;
+    height: 58px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .logo { font-weight: 800; font-size: 0.92rem; color: var(--niv-1); letter-spacing: -0.3px; white-space: nowrap; }
+
+  .onglets {
+    display: flex; gap: 0.1rem;
+    margin-left: auto;
+    flex-wrap: nowrap;
+  }
+
+  /* VARIANTE C — bold + barre accent orange sous l'onglet actif */
+  .onglet {
+    position: relative;
+    padding: 0.4rem 0.85rem;
+    border: none; background: none;
+    cursor: pointer; font-size: 0.85rem;
+    color: var(--texte-2); font-weight: 500;
+    transition: var(--trans);
+    font-family: inherit;
+    border-radius: 0;
+    white-space: nowrap;
+  }
+  .onglet:hover { color: var(--texte); }
+  .onglet.actif {
+    color: var(--texte);
+    font-weight: 700;
+  }
+  .onglet.actif::after {
+    content: "";
+    position: absolute;
+    left: 0.85rem; right: 0.85rem;
+    bottom: -1px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 0;
+  }
+
+  /* Entrée stub (Cascade « Bientôt ») */
+  .onglet .pastille-stub {
+    display: inline-block;
+    margin-left: 0.3rem;
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 0.05rem 0.35rem;
+    background: var(--bordure);
+    color: var(--texte-2);
+    border-radius: 8px;
+    vertical-align: middle;
+    letter-spacing: 0.02em;
+  }
+
+  .page {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 2rem 1.75rem;
+  }
+  .placeholder {
+    background: var(--fond-2);
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre);
+    padding: 2rem;
+    border: 1px dashed var(--bordure);
+    color: var(--texte-2);
+    font-size: 0.95rem;
+  }
+  .placeholder h1 {
+    color: var(--texte);
+    font-size: 1.15rem;
+    margin: 0 0 0.5rem;
+    font-weight: 700;
+  }
+  .placeholder p { margin: 0.4rem 0; }
+  .placeholder .hint {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 0.78rem;
+    padding: 0.3rem 0.7rem;
+    background: var(--accent-clair);
+    border: 1px solid #f3c088;
+    color: var(--accent);
+    border-radius: 8px;
+  }
+
+  .legende {
+    margin-top: 1.5rem;
+    padding: 1.25rem 1.4rem;
+    background: var(--accent-clair);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
+    color: #8b3a00;
+    font-size: 0.88rem;
+  }
+  .legende strong { font-weight: 700; }
+  .legende code {
+    font-size: 0.8rem;
+    background: rgba(230,81,0,0.1);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<header class="en-tete" role="banner">
+  <span class="logo">&#x2B21; Indicateurs</span>
+  <nav class="onglets" role="tablist" aria-label="Vues disponibles">
+    <button class="onglet" onclick="selectionner(this)" role="tab">Accueil</button>
+    <button class="onglet actif" onclick="selectionner(this)" role="tab" aria-selected="true">Mon tableau de bord</button>
+    <button class="onglet" onclick="selectionner(this)" role="tab">Choisir mes indicateurs</button>
+    <button class="onglet" onclick="selectionner(this)" role="tab">Cascade stratégique<span class="pastille-stub">Bientôt</span></button>
+    <button class="onglet" onclick="selectionner(this)" role="tab">La maturité ?</button>
+    <button class="onglet" onclick="selectionner(this)" role="tab">Lexique</button>
+    <button class="onglet" onclick="selectionner(this)" role="tab">À propos</button>
+  </nav>
+</header>
+
+<main class="page">
+  <div class="placeholder">
+    <h1 id="titre-page">Mon tableau de bord</h1>
+    <p>Zone de contenu fictive — sert juste à valider l'ancrage de la nav et le rendu de l'onglet actif dans son contexte.</p>
+    <p>Cliquez sur n'importe quelle entrée du bandeau pour voir le traitement « bold + barre accent » appliqué.</p>
+    <span class="hint">Astuce : comparez avec les variantes A et B en les ouvrant dans des onglets voisins.</span>
+  </div>
+
+  <div class="legende">
+    <strong>Variante C — bold + barre accent orange.</strong>
+    L'onglet actif est marqué par une <strong>barre fine (2px)</strong> couleur accent
+    (<code>--accent</code>, orange <code>#e65100</code>) sous le texte, texte en <strong>bold</strong>.
+    Traitement le plus sobre — le bandeau conserve une densité visuelle basse,
+    la barre accent appelle discrètement l'œil. <em>Convention très répandue sur les nav d'apps éditoriales.</em>
+    La couleur accent renforce la hiérarchie (indigo = identité, accent = action/état).
+  </div>
+</main>
+
+<script>
+  function selectionner(btn) {
+    document.querySelectorAll('.onglet').forEach(function(o) {
+      o.classList.remove('actif');
+      o.setAttribute('aria-selected', 'false');
+    });
+    btn.classList.add('actif');
+    btn.setAttribute('aria-selected', 'true');
+    var label = btn.childNodes[0].nodeValue || btn.textContent;
+    document.getElementById('titre-page').textContent = label.trim();
+  }
+</script>
+
+</body>
+</html>
