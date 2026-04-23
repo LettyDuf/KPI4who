@@ -2,7 +2,7 @@
 
 *Document vivant. Deux zones : **figée** (invariants, contrats d'API stables) et **évolutive** (choix UX à trancher par mockup-preview). Chaque modification est commitée et consignée.*
 
-Dernière mise à jour : 22 avril 2026 — soir (squelette initial).
+Dernière mise à jour : 23 avril 2026 — correction § 1 et § 2.1 (quatre portes, dont *maturité* désactivée).
 
 ---
 
@@ -12,7 +12,7 @@ Le chantier 10 refond la topologie de navigation de `cadre-indicateurs.html`. L'
 
 **Scope dans ce document :**
 
-- les trois portes (problème, cadre, niveau) et leur place dans la nav ;
+- les quatre portes (problème, cadre, niveau, maturité — cette dernière actuellement désactivée, affichée « Bientôt ») et leur place dans la nav ;
 - les onglets de l'app (TDB, Choisir mes indicateurs, Maturité) — Cascade stratégique en pause (chantier 11) ;
 - la topologie des deux accueils (`#accueil` pyramide, `#accueil-portes` 4 tuiles) ;
 - les règles de routage par hash URL (partage d'URL, deep-linking).
@@ -38,7 +38,7 @@ L'outil présente cinq vues de premier niveau que l'utilisateur peut atteindre, 
 | Vue | Élément DOM | Rôle actuel | Entrées | Sorties |
 |---|---|---|---|---|
 | Accueil pyramide | `#accueil` | Porte niveau déguisée en accueil | défaut au boot (sauf préférence), bascule depuis `#accueil-portes` | `CM.App.entrer(niveau, branche, domaine)` → app ; `#portes` → `#accueil-portes` |
-| Accueil 4 portes | `#accueil-portes` | Écran d'entrée alternatif qui liste les quatre portes | bascule depuis `#accueil` | carte *niveau* → `#accueil` ; carte *problème* → `#porte-probleme` ; carte *cadre* → `#porte-cadre` ; carte *niveau-stepper* → `#porte-niveau` (en cours 7.2a-code.3) |
+| Accueil 4 portes | `#accueil-portes` | Écran d'entrée alternatif qui liste les quatre portes | bascule depuis `#accueil` | carte *niveau* → `#accueil` (pyramide) ; carte *problème* → `CM.VuePorteProbleme.ouvrir()` ; carte *cadre* → `CM.VuePorteCadre.ouvrir()` ; carte *maturité* → désactivée (`aria-disabled`, mention « Bientôt » — porte à venir, hors scope chantier 10) |
 | Porte problème | `#porte-probleme` | Stepper 3 étapes niveau → problème → résultats | carte dédiée dans `#accueil-portes` | bouton *Accueil* → accueil courant ; étape résultats → ouverture fiche |
 | Porte cadre | `#porte-cadre` | Stepper 3 étapes cadre → niveau → résultats | carte dédiée dans `#accueil-portes` | bouton *Accueil* → accueil courant ; étape résultats → ouverture fiche ; bloc *Cadres voisins* → pivot à étage constant |
 | Porte niveau (stepper) | `#porte-niveau` | En construction — vise un parcours niveau → problème → cadre → résultats | carte dédiée dans `#accueil-portes` | idem portes précédentes (façade en cours) |
@@ -292,3 +292,4 @@ Trois bascules explicites avec Lætitia avant de continuer :
 - 22/04/2026 soir — création du squelette (commit 1) : sections 1, 2, 3, 7.
 - 22/04/2026 soir — commit 2 : section 6 rédigée en approche ciblée (façades portes, `CM.App` nav, hash URL, transverses préservés, router).
 - 22/04/2026 soir — commit 3 : sections 4 (modèle cible — invariants de topologie + points à trancher en 10.0) et 8 (plan d'exécution — 6 sous-chantiers 10.0 à 10.5, contraintes de livraison, points d'arbitrage).
+- 23/04/2026 — commit A : correction § 1 et § 2.1 — quatre portes dans `#accueil-portes` (dont *maturité* désactivée « Bientôt »). La mention *niveau-stepper → `#porte-niveau` (en cours 7.2a-code.3)* retirée de la colonne « Sorties » — cette carte n'existe pas dans `#accueil-portes` aujourd'hui (le DOM `#vue-porte-niveau` est atteint par une autre voie, et la porte niveau telle qu'elle apparaît sur l'accueil bascule simplement vers la pyramide).
