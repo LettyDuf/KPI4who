@@ -7702,20 +7702,25 @@ CM.App = (function() {
   }
 
   /* En-tête global : titre + légende (compteur total) + bouton réinitialiser.
-     Le bouton est désactivé en 9.B.1 — son câblage (confirmation + appel
-     à CM.Panier.reinitialiser()) arrive en 9.B.3. */
+     Câblage 9.B.3 : le bouton déclenche CM.App.reinitialiserPanier() qui
+     demande confirmation avant d'appeler CM.Panier.reinitialiser().
+     État disabled calculé à chaque render : inactif quand le panier est
+     vide, actif sinon. Le rafraîchissement après mutation est assuré par
+     l'abonnement pub/sub posé dans init(). */
   function _htmlPanierHeader(total) {
     var legende = (total === 0)
       ? 'panier vide'
       : total + ' fiche' + (total > 1 ? 's' : '');
+    var disabledAttr = (total === 0) ? ' disabled' : '';
     return ''
       + '<div class="panier-tdb-header">'
         + '<div class="panier-tdb-titre">'
           + 'Mon panier d\'indicateurs '
           + '<span style="font-weight:400;color:var(--texte-secondaire)">· ' + legende + '</span>'
         + '</div>'
-        + '<button type="button" class="panier-tdb-reinit" disabled '
-          + 'aria-label="Réinitialiser le panier">'
+        + '<button type="button" class="panier-tdb-reinit"' + disabledAttr
+          + ' onclick="CM.App.reinitialiserPanier()"'
+          + ' aria-label="Réinitialiser le panier">'
           + '↻ Réinitialiser'
         + '</button>'
       + '</div>';
@@ -7830,6 +7835,27 @@ CM.App = (function() {
      pas de ré-appel manuel à _rendreTableauDeBord(). */
   function retirerDuPanier(ficheId) {
     CM.Panier.retirer(ficheId);
+  }
+
+  /* reinitialiserPanier() — câblage 9.B.3 du bouton ↻ Réinitialiser.
+     Garde-fou : si le panier est déjà vide (double-clic, race condition
+     entre rendu et clic), on sort sans rien faire — CM.Panier.reinitialiser
+     est idempotent mais on évite la boîte de dialogue inutile.
+     La confirmation via window.confirm est volontairement native : pas de
+     dépendance DOM, comportement prévisible sur tous les navigateurs,
+     libellé localisé par le navigateur pour les boutons OK / Annuler. */
+  function reinitialiserPanier() {
+    var total = CM.Panier.taille();
+    if (total === 0) return;
+    var pluriel = (total > 1);
+    var message = 'Vider entièrement votre panier ?\n\n'
+      + total + ' fiche' + (pluriel ? 's' : '')
+      + ' (en place + à envisager) '
+      + 'ser' + (pluriel ? 'ont retirées' : 'a retirée')
+      + '.\n\nCette action ne peut pas être annulée.';
+    if (window.confirm(message)) {
+      CM.Panier.reinitialiser();
+    }
   }
 
   /* Échappement HTML minimal — défense en profondeur pour tout texte
@@ -8149,6 +8175,7 @@ CM.App = (function() {
     basculerAccueil:      basculerAccueil,
     afficherAccueil:      afficherAccueil,
     retirerDuPanier:      retirerDuPanier,   /* 9.B.1 — consommé par onclick inline */
+    reinitialiserPanier:  reinitialiserPanier, /* 9.B.3 — bouton ↻ Réinitialiser */
     init:                 init
   };
 })();
