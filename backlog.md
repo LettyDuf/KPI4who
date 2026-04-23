@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **22 avril 2026 — soir** (tranche 9.B.1 livrée — squelette vue panier TDB + état vide E1 miroir ; test visuel a fait émerger une clarification structurante du chantier 10, consignée).
+Dernière mise à jour : **22 avril 2026 — soir (suite)** (chantier **9.B clos** : 9.B.2 chips type/niveau/fiabilité + 9.B.3 bouton Réinitialiser câblé ; prochain chantier = **10 — refonte architecture de navigation**).
 
 ---
 
@@ -9,13 +9,13 @@ Dernière mise à jour : **22 avril 2026 — soir** (tranche 9.B.1 livrée — s
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événement majeur de la session** : **9.B.1 livrée — squelette vue panier TDB**. L'onglet *Mon tableau de bord* consomme `CM.Panier` : header + grille miroir deux colonnes (teal / ambre) + état vide E1 hybride avec invitation centrée sous les colonnes miroir. Pub/sub posé dans `init()` — rafraîchissement automatique à chaque mutation. Rendu de carte minimaliste (nom + × retirer) ; les chips type/niveau/fiabilité arrivent en 9.B.2. Bouton *Réinitialiser* présent mais désactivé (câblage en 9.B.3).
-- **Clarification structurante issue du test 9.B.1** : Lætitia a pointé un **cloisonnement entre les portes et l'app** (on entre dans l'une ou l'autre sans passerelle fluide, *Accueil* est une sortie de secours et non une navigation, et il existe des chemins jumeaux visuellement différents — notamment *Choisir mes indicateurs* vs porte *Par mon problème*). Arbitrage du 22/04 soir : **fusion portes + onglets au même étage** (pas juste un bandeau qui les énumère côte à côte), **doublon prioritaire à traiter** = *Choisir mes indicateurs* vs *Par mon problème*, **timing** = après clôture de 9.B. Détail consigné dans **chantier 10**.
-- **Chantier actif** : **chantier 9 — code du panier**. 9.A clos. **9.B.1 clos**. Prochaine tranche = **9.B.2 — enrichir la carte avec chips type / niveau / fiabilité** (lecture de la fiche via `CM.Referentiel.chercher`, rendu comme variante C du mockup-preview). Puis **9.B.3 — câbler le bouton réinitialiser** (confirm + `CM.Panier.reinitialiser()` + disabled conditionnel). Puis bascule sur **chantier 10 — refonte architecture de navigation** (fusion portes+onglets).
-- **Dernier SHA sur `main`** : `2a486cc` — *feat(chantier-9): 9.B.1 squelette vue panier TDB + état vide E1 miroir*. Commits récents : `4ed4962` (mockup-preview 9.B.0) · `139dcb9` (arbitrages 9.B.0) · `2a486cc` (9.B.1).
-- **Règle d'or ajoutée cette session** : après toute modif de `CM.Panier`, relancer `node outils/construire-tests-panier.js` pour régénérer `tests-panier.html`. Détaillé dans `doc-contrats-panier.md` section *Régénérer le harnais de tests*.
-- **Fiches mémoire pertinentes pour la suite du chantier 9** : `project_regles_refactoring_progressif` (boy scout), `project_outillage_generation_donnees` (patron générateur Node.js), `project_document_compagnon_contrats` (doc-contrats-panier.md), `feedback_redondance_signaux_statut`, `feedback_mockup_preview_ux` ; et [`MISSION.md`](./MISSION.md) comme boussole.
-- **Blocages / questions ouvertes** : aucun. 9.B.1 en test visuel côté Lætitia. 9.B.2 peut démarrer dès validation.
+- **Événement majeur de la session** : **chantier 9.B clos**. 9.B.2 livré — `_htmlCartePanier()` enrichi avec trois chips sous le nom (type en fond doux teinté + libellé long en tooltip, niveau en fond indigo doux, fiabilité en pastille colorée + mot), réutilisant `CM.FicheViewModel.from()`. 9.B.3 livré — bouton ↻ *Réinitialiser* câblé : `CM.App.reinitialiserPanier()` avec `window.confirm` (message singulier/pluriel), disabled conditionnel (actif dès 1 fiche), rafraîchissement automatique via l'abonnement pub/sub. **Le panier est complètement fonctionnel côté vue TDB** — fin du chantier 9.
+- **Décisions UX 9.B.2** : trois previews successifs pour aboutir au **panneau A** du premier mockup (chip type doux teinté code 3 lettres · chip niveau doux teinté · pastille + mot pour la fiabilité). Exploration de la grammaire `fi-strates` / `fi-jauge` du cartouche de la fiche ouvrée puis abandonnée — le panneau A reste l'arbitrage final, plus compact et cohérent avec la variante C du mockup 9.B.0.
+- **Chantier actif** : **chantier 10 — refonte architecture de navigation**. Pas de code encore commencé. Bascule prévue dès reprise. Voir détail dans le chantier 10 du backlog (fusion portes+onglets au même étage, doublon prioritaire *Choisir mes indicateurs* vs porte *Par mon problème*).
+- **Dernier SHA sur `main`** : `ca39802` — *feat(chantier-9): 9.B.3 — câbler le bouton ↻ Réinitialiser*. Commits récents : `a0178f3` (9.B.2 chips) · `41c1450` + `5510d05` + `c20ccf7` (previews 9.B.2 successifs) · `ca39802` (9.B.3).
+- **Règle d'or du chantier 9** : après toute modif de `CM.Panier`, relancer `node outils/construire-tests-panier.js` pour régénérer `tests-panier.html`. Détaillé dans `doc-contrats-panier.md`. **Cette session n'a pas modifié `CM.Panier`** (tranche vue uniquement) — pas de régénération nécessaire.
+- **Fiches mémoire pertinentes pour le chantier 10** : `project_contrat_coherence_portes` (audit 21/04 : divergences voulues vs uniformité acquise, contrat d'entrée pour 7.2), `project_porte_niveau_statut` (la porte niveau rejoint le stepper dans 7.2), `project_regles_refactoring_progressif` (boy scout), `project_document_compagnon_contrats` (doc compagnon pour chantiers architecturaux) ; et [`MISSION.md`](./MISSION.md) comme boussole.
+- **Blocages / questions ouvertes** : aucun. 9.B.3 en attente de test visuel côté Lætitia. Le chantier 10 peut démarrer dès validation — probablement utile de rédiger un document compagnon des contrats (mapping portes↔onglets, doublons à résoudre) avant d'attaquer le code.
 
 ---
 
