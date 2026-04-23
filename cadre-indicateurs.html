@@ -8084,7 +8084,7 @@ CM.App = (function() {
       html += '</div></div>';
     }
     if (risques.length) {
-      html += '<div class="section-fiabilite"><div class="titre-fiabilite" style="color:#c62828"><span style="font-size:1.1rem">⚡</span> Courantes mais risquees — employer avec vigilance (' + risques.length + ')</div>'
+      html += '<div class="section-fiabilite"><div class="titre-fiabilite" style="color:#c62828"><span style="font-size:1.1rem">⚡</span> Risquées — employer avec vigilance (' + risques.length + ')</div>'
         + '<div style="background:#fce4e4;border-radius:10px;padding:0.75rem 1rem;font-size:0.83rem;margin-bottom:0.9rem;color:#7f0000;line-height:1.5;">Ces métriques sont tres repandues mais facilement instrumentalisees. Ouvrez la fiche pour decouvrir l\'alternative recommandee.</div>'
         + '<div class="grille-cartes">';
       risques.forEach(function(i) { html += CM.Composants.htmlCarte(i, '#c62828', false, false); });
