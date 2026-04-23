@@ -1994,6 +1994,63 @@
       outline-offset: 1px;
     }
 
+    /* Pied de carte — chips type · niveau · fiabilité (9.B.2).
+       Bandeau discret sous le nom, toujours aligné à gauche, retour à la
+       ligne automatique si trois chips + retrait ne tiennent pas sur une
+       ligne (narrow viewport). Les données sont lues via CM.Referentiel
+       + CM.FicheViewModel.from — aucune dérivation dans la vue. */
+    .panier-carte-pied {
+      display: flex; flex-wrap: wrap;
+      gap: 0.3rem; align-items: center;
+      margin-top: 0.4rem;
+    }
+
+    /* Chip TYPE — fond doux teinté, texte à la couleur du type.
+       Couleurs dérivées de CM.Config.TYPES_COULEURS (version claircie
+       pour le fond, couleur d'origine pour le texte). Le libellé long
+       est exposé en tooltip. */
+    .panier-chip-type {
+      font-size: 0.66rem; font-weight: 700;
+      padding: 0.16rem 0.45rem; border-radius: 4px;
+      letter-spacing: 0.5px; line-height: 1;
+      flex-shrink: 0;
+    }
+    .panier-chip-type.t-IGO  { background: #e8eaf6; color: #1a237e; }
+    .panier-chip-type.t-ICP  { background: #e3f2fd; color: #1565c0; }
+    .panier-chip-type.t-ICC  { background: #e0f2f1; color: #00695c; }
+    .panier-chip-type.t-ORC  { background: #f3e5f5; color: #6a1b9a; }
+    .panier-chip-type.t-DORA { background: #ffe0d6; color: #bf360c; }
+    .panier-chip-type.t-FLUX { background: #fff3e0; color: #e65100; }
+    .panier-chip-type.t-II   { background: #eceff1; color: #37474f; }
+
+    /* Chip NIVEAU — fond doux indigo (niv-1-clair), texte indigo (niv-1).
+       Libellé court du niveau (vm.niveau.libelleCourt). */
+    .panier-chip-niveau {
+      font-size: 0.68rem; font-weight: 600;
+      padding: 0.14rem 0.45rem; border-radius: 4px;
+      background: var(--niv-1-clair); color: var(--niv-1);
+      letter-spacing: 0.1px;
+      flex-shrink: 0;
+    }
+
+    /* Chip FIABILITÉ — pastille colorée + mot, ton doux (texte secondaire).
+       Les trois couleurs (vert / orange / rouge) sont celles de
+       CM.Config.FIABILITE.*.couleur, répliquées ici pour découplage CSS. */
+    .panier-chip-fiab {
+      font-size: 0.7rem; font-weight: 500;
+      color: var(--texte-secondaire);
+      display: inline-flex; align-items: center; gap: 0.28rem;
+      flex-shrink: 0;
+    }
+    .panier-chip-fiab-pastille {
+      width: 7px; height: 7px; border-radius: 50%;
+      display: inline-block; flex-shrink: 0;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+    }
+    .panier-chip-fiab.f-fiable     .panier-chip-fiab-pastille { background: #2e7d32; }
+    .panier-chip-fiab.f-precaution .panier-chip-fiab-pastille { background: #e65100; }
+    .panier-chip-fiab.f-risque     .panier-chip-fiab-pastille { background: #c62828; }
+
     /* Placeholder d'une colonne vide — affiché quand une des deux sections
        est vide mais que l'autre contient des lignes (cas mixte). */
     .panier-col-vide {
@@ -7695,12 +7752,15 @@ CM.App = (function() {
       + '</div>';
   }
 
-  /* Une carte : × retirer + nom cliquable vers le tiroir de la fiche.
-     Rendu minimaliste 9.B.1 — les chips (type, niveau, fiabilité)
-     arrivent en 9.B.2.
+  /* Une carte : × retirer + nom cliquable vers le tiroir de la fiche
+     + pied à trois chips (type · niveau · fiabilité) enrichi en 9.B.2.
      Sécurité : le ficheId a été validé par CM.Panier à l'insertion
      (regex stricte), donc son usage dans un onclick/href est sûr.
-     Le nom est échappé par prudence — défense en profondeur. */
+     Le nom et les libellés sont échappés par prudence — défense en
+     profondeur.
+     Les chips ne s'affichent que si la fiche est retrouvée — en cas de
+     désynchronisation référentiel/panier, la carte retombe sur le
+     rendu minimaliste 9.B.1 plutôt que de casser la vue. */
   function _htmlCartePanier(ligne) {
     var fiche = CM.Referentiel.chercher(ligne.ficheId);
     var nom = fiche ? fiche.nom : '(fiche introuvable : ' + ligne.ficheId + ')';
@@ -7710,6 +7770,28 @@ CM.App = (function() {
       ? '<a class="panier-carte-nom" href="#fiche=' + ligne.ficheId + '">' + nomEchappe + '</a>'
       : '<span class="panier-carte-nom">' + nomEchappe + '</span>';
 
+    var piedHtml = '';
+    if (fiche) {
+      var vm       = CM.FicheViewModel.from(fiche);
+      var fiabKey  = fiche.fiabilite || 'fiable';
+      var typeCode = fiche.type;
+      piedHtml = ''
+        + '<div class="panier-carte-pied">'
+          + '<span class="panier-chip-type t-' + typeCode + '"'
+            + ' title="' + _echapperHtml(vm.libelleType || typeCode) + '">'
+            + _echapperHtml(typeCode)
+          + '</span>'
+          + '<span class="panier-chip-niveau">'
+            + _echapperHtml(vm.niveau.libelleCourt)
+          + '</span>'
+          + '<span class="panier-chip-fiab f-' + fiabKey + '"'
+            + ' title="' + _echapperHtml(vm.fib.desc || '') + '">'
+            + '<span class="panier-chip-fiab-pastille" aria-hidden="true"></span>'
+            + _echapperHtml(vm.fib.label_court)
+          + '</span>'
+        + '</div>';
+    }
+
     return ''
       + '<div class="panier-carte">'
         + '<button type="button" class="panier-retirer" '
@@ -7718,6 +7800,7 @@ CM.App = (function() {
           + '×'
         + '</button>'
         + nomHtml
+        + piedHtml
       + '</div>';
   }
 
