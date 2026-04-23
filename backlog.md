@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **22 avril 2026 — soir (suite)** (chantier **9.B clos** : 9.B.2 chips type/niveau/fiabilité + 9.B.3 bouton Réinitialiser câblé ; prochain chantier = **10 — refonte architecture de navigation**).
+Dernière mise à jour : **23 avril 2026 — matin** (chantier **10 — refonte architecture de navigation** en progression : doc compagnon `doc-contrats-navigation.md` complété, fix d'affichage `vue-maturite` livré, renommage de l'onglet *Maturité & Recommandations* → *La maturité ?*, *Cascade stratégique* réémerge dans la v1 à 7 entrées).
 
 ---
 
@@ -9,13 +9,13 @@ Dernière mise à jour : **22 avril 2026 — soir (suite)** (chantier **9.B clos
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événement majeur de la session** : **chantier 9.B clos**. 9.B.2 livré — `_htmlCartePanier()` enrichi avec trois chips sous le nom (type en fond doux teinté + libellé long en tooltip, niveau en fond indigo doux, fiabilité en pastille colorée + mot), réutilisant `CM.FicheViewModel.from()`. 9.B.3 livré — bouton ↻ *Réinitialiser* câblé : `CM.App.reinitialiserPanier()` avec `window.confirm` (message singulier/pluriel), disabled conditionnel (actif dès 1 fiche), rafraîchissement automatique via l'abonnement pub/sub. **Le panier est complètement fonctionnel côté vue TDB** — fin du chantier 9.
-- **Décisions UX 9.B.2** : trois previews successifs pour aboutir au **panneau A** du premier mockup (chip type doux teinté code 3 lettres · chip niveau doux teinté · pastille + mot pour la fiabilité). Exploration de la grammaire `fi-strates` / `fi-jauge` du cartouche de la fiche ouvrée puis abandonnée — le panneau A reste l'arbitrage final, plus compact et cohérent avec la variante C du mockup 9.B.0.
-- **Chantier actif** : **chantier 10 — refonte architecture de navigation**. Pas de code encore commencé. Bascule prévue dès reprise. Voir détail dans le chantier 10 du backlog (fusion portes+onglets au même étage, doublon prioritaire *Choisir mes indicateurs* vs porte *Par mon problème*).
-- **Dernier SHA sur `main`** : `ca39802` — *feat(chantier-9): 9.B.3 — câbler le bouton ↻ Réinitialiser*. Commits récents : `a0178f3` (9.B.2 chips) · `41c1450` + `5510d05` + `c20ccf7` (previews 9.B.2 successifs) · `ca39802` (9.B.3).
-- **Règle d'or du chantier 9** : après toute modif de `CM.Panier`, relancer `node outils/construire-tests-panier.js` pour régénérer `tests-panier.html`. Détaillé dans `doc-contrats-panier.md`. **Cette session n'a pas modifié `CM.Panier`** (tranche vue uniquement) — pas de régénération nécessaire.
-- **Fiches mémoire pertinentes pour le chantier 10** : `project_contrat_coherence_portes` (audit 21/04 : divergences voulues vs uniformité acquise, contrat d'entrée pour 7.2), `project_porte_niveau_statut` (la porte niveau rejoint le stepper dans 7.2), `project_regles_refactoring_progressif` (boy scout), `project_document_compagnon_contrats` (doc compagnon pour chantiers architecturaux) ; et [`MISSION.md`](./MISSION.md) comme boussole.
-- **Blocages / questions ouvertes** : aucun. 9.B.3 en attente de test visuel côté Lætitia. Le chantier 10 peut démarrer dès validation — probablement utile de rédiger un document compagnon des contrats (mapping portes↔onglets, doublons à résoudre) avant d'attaquer le code.
+- **Événement majeur de la session** : **chantier 10 en progression — doc compagnon livré**. Cinq commits atomiques sur la session : `ed51cf0` fix d'affichage `vue-maturite` (accent égaré dans `getElementById` masquait la vue), `10e35e5` cotation éditoriale simplifiée *Courantes mais risquées* → *Risquées*, puis trois commits doc compagnon A/B/C (`2fac04f` / `10cea97` / `54d80fe`) qui inscrivent : 4 portes (dont maturité désactivée), renommage de l'onglet *Maturité & Recommandations* → ***La maturité ?*** (posture socratique), mutation de la mission de cet onglet (miroir de transparence des cotations + futur diagnostic), *Cascade stratégique* réémerge dans la v1 à 7 entrées.
+- **Décisions UX clés de la session** : (a) **porte *Par ma maturité* conservée** (lentille prospective : aider un utilisateur qui démarre à choisir ses premières métriques) distincte de l'onglet *La maturité ?* (page de référence + futur diagnostic) ; (b) nom retenu **La maturité ?** — article défini + point d'interrogation = posture socratique cohérente avec `MISSION.md` ; (c) *Cascade stratégique* réémerge dans la v1 de la nav (7 entrées), sa mission reste à clarifier lors du chantier 10 mais elle n'est plus en pause stricte ; (d) chantier **12** (fiabilité éditoriale) et **13** (outil de diagnostic de maturité) ouverts pour porter les prochaines étapes de l'onglet *La maturité ?*.
+- **Chantier actif** : **chantier 10 — refonte architecture de navigation**. Doc compagnon `doc-contrats-navigation.md` livré (sections 1 → 8). Prochaine étape = produire 2 à 4 `preview-10-*.html` (variantes de bandeau : ordre, compacité, traitement de l'onglet actif, comportement responsive) puis arbitrer à l'œil avec Lætitia, puis implémenter **en façade** (iso-comportement, pas de big-bang).
+- **Dernier SHA sur `main`** : `54d80fe` — *docs(chantier-10): commit C — Cascade stratégique réémerge, nav à 7 entrées*. Commits récents de la session : `ed51cf0` (fix `vue-maturite`) · `10e35e5` (cotation *Risquées*) · `2fac04f` (commit A doc compagnon) · `10cea97` (commit B doc compagnon) · `54d80fe` (commit C doc compagnon).
+- **Règle d'or du chantier 9 (panier)** conservée : après toute modif de `CM.Panier`, relancer `node outils/construire-tests-panier.js` pour régénérer `tests-panier.html`. Pas touché cette session.
+- **Fiches mémoire pertinentes pour la suite du chantier 10** : `project_contrat_coherence_portes`, `project_porte_niveau_statut`, `project_regles_refactoring_progressif`, `project_document_compagnon_contrats` ; et [`MISSION.md`](./MISSION.md) comme boussole (à rafraîchir en clôture de 10 : renommer section *Maturité & Recommandations* → *La maturité ?*, retirer la mention *en pause* de *Cascade stratégique*).
+- **Blocages / questions ouvertes** : aucun. À la reprise : lancer la production des 2 à 4 previews bandeau puis arbitrer.
 
 ---
 
@@ -309,9 +309,11 @@ Audit complet livré dans [`AUDIT-UNIFORMITE-PORTES.md`](./AUDIT-UNIFORMITE-PORT
 
 **Contenu proposé (à valider au démarrage).**
 
-Accueil · Mon tableau de bord · Choisir mes indicateurs · Maturité & Recommandations · Lexique · À propos.
+Accueil · Mon tableau de bord · Choisir mes indicateurs · Cascade stratégique · La maturité ? · Lexique · À propos.
 
-Six entrées. *Cascade stratégique* n'apparaît pas dans cette v1, conformément à sa mise en pause (voir chantier 11). L'ordre reflète le fil narratif naturel de la charpente consignée dans `MISSION.md`, sans imposer ce fil — l'utilisateur reste libre d'entrer par n'importe quel onglet.
+**Sept entrées.** Arbitrages du 23/04/2026 consignés dans le doc compagnon `doc-contrats-navigation.md` : (a) *Cascade stratégique* **réémerge** dans la v1 — le chantier 11 est absorbé ici, sa mission sera clarifiée à l'occasion du chantier 10 ; (b) *Maturité & Recommandations* est **renommé *La maturité ?*** — article défini + point d'interrogation = posture socratique, cohérente avec `MISSION.md`. L'ordre reflète le fil narratif naturel de la charpente, sans imposer ce fil — l'utilisateur reste libre d'entrer par n'importe quel onglet.
+
+**Tâches de clôture du chantier 10.** Rafraîchir `MISSION.md` (renommer section *Maturité & Recommandations* → *La maturité ?* ; retirer la mention *en pause* de *Cascade stratégique* ; clarifier la mission cible de Cascade si elle s'est décantée pendant le chantier).
 
 **Prérequis.** Chantier conditionné à l'appropriation de `MISSION.md`. Pas de dessin du bandeau tant que la mission n'est pas stabilisée — sinon on fige la charpente sur la structure actuelle.
 
@@ -327,25 +329,56 @@ Six entrées. *Cascade stratégique* n'apparaît pas dans cette v1, conformémen
 
 ---
 
-## 11. Refonte *Cascade stratégique*
+## 11. Refonte *Cascade stratégique* — absorbé par le chantier 10
 
-**Origine.** Clarification de mission du 22/04/2026. Lætitia a exprimé ne plus comprendre la mission de cet onglet dans le cadre posé.
+**Origine.** Clarification de mission du 22/04/2026. Lætitia avait exprimé ne plus comprendre la mission de cet onglet dans le cadre posé.
 
-**Statut actuel.** Onglet en pause. Il n'est plus exposé dans la navigation principale (cf. chantier 10). Le code reste en place et la vue reste techniquement accessible, mais elle ne fait plus partie du parcours utilisateur v1.
+**Statut actuel (23/04/2026).** *Cascade stratégique* **réémerge** dans la v1 de la navigation (7 entrées — cf. chantier 10). Le chantier 11 tel qu'initialement formulé — *refonte avec nouvelle mission posée séparément* — est donc **absorbé par le chantier 10** : la mission de Cascade sera clarifiée au fil du chantier 10 (doc compagnon + previews + éventuelle refonte ciblée si un besoin utilisateur émerge à l'occasion).
 
-**Pourquoi la pause.** Dans sa forme actuelle, la vue empile les 4 niveaux avec leurs indicateurs en petites puces. C'est une cartographie dense qui fait doublon avec la pyramide, en version plus théorique. Aucune des cinq prises de conscience consignées dans `MISSION.md` ne la sert clairement.
+**Option de refonte déjà identifiée (trace historique).** Donner à la vue une mission alignée avec la charpente — par exemple *« voir comment les indicateurs à mon niveau s'articulent avec ceux du niveau au-dessus et du niveau en-dessous »*. Cela servirait directement le principe Druckerien d'alignement vertical des objectifs (MBO) et la logique OKR de cascade. Piste à re-tester à l'usage pendant le chantier 10.
 
-**Option de refonte à explorer plus tard.** Donner à la vue une mission alignée avec la charpente — par exemple *« voir comment les indicateurs à mon niveau s'articulent avec ceux du niveau au-dessus et du niveau en-dessous »*. Cela servirait directement le principe Druckerien d'alignement vertical des objectifs (MBO) et la logique OKR de cascade. Mais il faut d'abord vérifier, à l'usage des autres onglets, qu'une telle vue manque réellement — plutôt que de la réinventer par inertie.
+**Critère de refonte active.** Le chantier 10 décide — à la lumière des previews et des retours — s'il faut refondre Cascade ou simplement la rétablir telle quelle dans la nav. Un chantier dédié de refonte ne se rouvre que si un besoin utilisateur récurrent fait émerger le manque.
 
-**Critère de réouverture.** Ce chantier ne s'engage que si un besoin utilisateur récurrent fait émerger le manque — pas par volonté de préserver l'existant.
+---
+
+## 12. Chantier éditorial — Transparence des cotations *Fiable / Précaution / Risquée*
+
+**Origine.** Session du 23/04/2026 — diagnostic de la vue Maturité, suite au fix d'affichage (`ed51cf0`). Le bloc *Cotation fiabilité des métriques* est déjà présent dans la vue (labels *Fiable — employer librement*, *Précaution — employer avec réserve*, *Risquées — employer avec vigilance*) mais les définitions restent courtes. L'utilisateur doit pouvoir comprendre *pourquoi* telle métrique est cotée *Risquée* sans fouiller le code — et ces définitions doivent être réutilisables hors de la seule vue Maturité.
+
+**Mission.**
+- **Enrichir** les définitions des trois cotations : rédaction courte et parlante de ce que chaque niveau signifie, critères d'attribution, 1-2 exemples concrets par niveau.
+- **Migrer** ces définitions dans le **Lexique** (référentiel partagé, accessible depuis toutes les portes et l'onglet *La maturité ?*) pour éviter de les dupliquer.
+- **Préparer** l'onglet *La maturité ?* à s'appuyer sur le Lexique plutôt que sur des définitions locales — l'onglet devient un miroir éditorial alimenté par le Lexique, pas une page autonome.
+
+**Articulations.** Tranche éditoriale pure — peut être engagée en parallèle du chantier 10 (refonte navigation). Elle est un **pré-requis du chantier 13** (outil de diagnostic de maturité) qui capitalisera sur ces définitions.
+
+**Priorité : 🟡 moyenne.** À engager à la clôture du chantier 10.
+
+---
+
+## 13. Outil de diagnostic de maturité — pour l'onglet *La maturité ?*
+
+**Origine.** Session du 23/04/2026 — arbitrage sur le renommage et la mutation de l'onglet *La maturité ?* (article défini + point d'interrogation = posture de recherche). Lætitia a consigné l'intention de proposer plus tard un outil de diagnostic, d'où la posture socratique du nom.
+
+**Mission.** Concevoir un outil qui permet à un utilisateur de **situer la maturité** de son équipe (ou de son domaine) sur les dimensions pertinentes, et d'en déduire **une poignée de métriques à engager en premier**. Cet outil alimente l'onglet *La maturité ?* et prolonge la porte *Par ma maturité* (lentille prospective) en un diagnostic interactif.
+
+**Prises de conscience visées** (cf. `MISSION.md`) : *« je ne savais pas que je mesurais trop »*, *« je ne savais pas que je pouvais mesurer avec peu »*, *« je ne savais pas que je n'étais pas mature »*.
+
+**Cadres de référence à mobiliser** (à confirmer au cadrage) : CMMI (niveaux 1-5), Capability Maturity Model DevOps (Accelerate / DORA), modèles d'échelle agile (Nexus, LeSS, SAFe — en contraste), Lean Maturity Assessment. Panel d'experts à convoquer lors du cadrage, pas par défaut.
+
+**Pré-requis.** Chantier 12 (Transparence des cotations) livré avant — les définitions *Fiable / Précaution / Risquée* sont un matériau d'entrée de cet outil.
+
+**Priorité : 🟢 basse en phase de cadrage.** Gros chantier à décomposer en tranches (cadrage mission → squelette diagnostic → intégration à l'onglet *La maturité ?*). À reporter après stabilisation du chantier 10 et livraison du chantier 12.
 
 ---
 
 ## Prochaine action recommandée
 
-Chantier **9 — panier personnel** : **9.B.1 livré** (commit `2a486cc`), en test visuel côté Lætitia. À la validation du test, enchaîner **9.B.2 — enrichir la carte du panier** avec les chips *type · niveau · fiabilité* (lecture via `CM.Referentiel.chercher`, rendu iso-mockup variante C, a11y préservée). Puis **9.B.3 — câbler le bouton *Réinitialiser*** (confirmation + `CM.Panier.reinitialiser()` + `disabled` conditionnel si panier vide).
+Chantier **10 — refonte architecture de navigation** : doc compagnon `doc-contrats-navigation.md` livré le 23/04/2026 (commits A/B/C `2fac04f` / `10cea97` / `54d80fe`). Arbitrages structurants consignés : 7 entrées (Cascade stratégique réémerge), renommage *La maturité ?* (posture socratique), mutation de la mission de cet onglet (miroir éditorial + futur diagnostic).
 
-**À la clôture de 9.B** : bascule sur **chantier 10 — refonte architecture de navigation**, **aiguisé ce jour** par le retour de Lætitia pendant le test 9.B.1. Trois arbitrages consignés en tête du chantier 10 : (1) fusion portes + onglets au même étage, (2) doublon prioritaire *Choisir mes indicateurs* vs porte *Par mon problème* à trancher, (3) timing après 9.B.
+**Prochaine étape** = produire **2 à 4 `preview-10-*.html`** proposant chacun une variante de bandeau (ordre, compacité, traitement de l'onglet actif, comportement responsive, placement des 3 portes *Par mon problème / Par mon cadre / Par ma maturité* par rapport aux 7 onglets). Arbitrer à l'œil avec Lætitia en binôme rapproché. Puis implémenter la variante retenue **en façade** sur l'existant (iso-comportement côté code actuel, boy scout strict, pas de big-bang).
+
+**À la clôture de 10** : ouvrir chantier **12** (Transparence des cotations fiabilité → Lexique), puis chantier **13** (outil de diagnostic de maturité). Rafraîchir `MISSION.md` (rename *La maturité ?* + Cascade plus en pause) en tâche de clôture de 10.
 
 *Chantiers en sommeil (à rouvrir après 9 et 10)* : **7.2a-code.3 C.2 / C.3** (porte niveau — étapes cadre et résultats), et la dette **`tests-porte-niveau.html`** à refondre sur le patron générateur Node. Tous trois documentés plus bas.
 
