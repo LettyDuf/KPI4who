@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Preview 10.0 — Lentilles A : grille de cards</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --niv-1:        #1a237e;
+    --niv-1-clair:  #e8eaf6;
+    --niv-1-moyen:  #3949ab;
+    --accent:       #e65100;
+    --accent-clair: #fff3e0;
+    --fond:         #f5f6fa;
+    --fond-2:       #ffffff;
+    --texte:        #1a1a2e;
+    --texte-2:      #607d8b;
+    --texte-3:      #9ca3af;
+    --bordure:      #e0e4eb;
+
+    --ambre:            #FFD180;
+    --ambre-profond:    #b7791f;
+    --ambre-texte:      #6b4a00;
+
+    /* Couleurs de lentille (à aligner sur le code existant — ici indicatif) */
+    --lentille-probleme: #c05621;    /* orangé terre */
+    --lentille-cadre:    #2c7a7b;    /* teal */
+    --lentille-niveau:   #3949ab;    /* indigo moyen */
+    --lentille-maturite: #6b46c1;    /* violet */
+
+    --trans: all 0.18s ease;
+    --rayon: 12px;
+    --rayon-sm: 8px;
+    --ombre: 0 2px 12px rgba(26,35,126,0.06);
+    --ombre-lift: 0 8px 28px rgba(26,35,126,0.12);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--fond);
+    color: var(--texte);
+    line-height: 1.5;
+  }
+
+  /* ─── Nav unifiée (variante B actée) ─── */
+  .en-tete {
+    background: var(--fond-2);
+    border-bottom: 1px solid var(--bordure);
+    padding: 0 1.75rem;
+    display: flex; align-items: center; gap: 1.25rem;
+    height: 58px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .logo {
+    font-weight: 800; font-size: 0.92rem;
+    color: var(--niv-1); letter-spacing: -0.3px;
+    white-space: nowrap;
+  }
+  .onglets { display: flex; gap: 0.2rem; margin-left: auto; flex-wrap: nowrap; }
+  .onglet {
+    padding: 0.4rem 0.95rem;
+    border: none; background: none;
+    cursor: pointer; font-size: 0.85rem;
+    color: var(--texte-2); font-weight: 500;
+    transition: var(--trans);
+    font-family: inherit;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+  .onglet:hover { background: var(--fond); color: var(--texte); }
+  .onglet.actif {
+    background: var(--niv-1-clair);
+    color: var(--niv-1);
+    font-weight: 700;
+  }
+  .pastille-stub {
+    display: inline-block;
+    margin-left: 0.3rem;
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 0.05rem 0.35rem;
+    background: var(--bordure);
+    color: var(--texte-2);
+    border-radius: 8px;
+    vertical-align: middle;
+    letter-spacing: 0.02em;
+  }
+
+  /* ─── Page ─── */
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 2.5rem 1.75rem 3rem;
+  }
+  .page-titre {
+    font-size: 1.6rem;
+    color: var(--texte);
+    margin: 0 0 0.5rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+  .page-intro {
+    color: var(--texte-2);
+    font-size: 1rem;
+    margin: 0 0 2rem;
+    max-width: 720px;
+  }
+  .page-intro em { color: var(--ambre-texte); font-style: normal; font-weight: 600; }
+
+  /* ─── Grille de cards ─── */
+  .grille {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(244px, 1fr));
+    gap: 1rem;
+  }
+  .card {
+    background: var(--fond-2);
+    border: 1.5px solid var(--bordure);
+    border-radius: var(--rayon);
+    padding: 1.35rem 1.3rem 1.25rem;
+    cursor: pointer;
+    transition: var(--trans);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    text-align: left;
+    font-family: inherit;
+    color: inherit;
+    box-shadow: var(--ombre);
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ombre-lift);
+    border-color: transparent;
+  }
+  .card[data-lentille="probleme"]:hover { border-top: 1.5px solid var(--lentille-probleme); box-shadow: 0 8px 28px rgba(192,86,33,0.18); }
+  .card[data-lentille="cadre"]:hover    { border-top: 1.5px solid var(--lentille-cadre);    box-shadow: 0 8px 28px rgba(44,122,123,0.18); }
+  .card[data-lentille="niveau"]:hover   { border-top: 1.5px solid var(--lentille-niveau);   box-shadow: 0 8px 28px rgba(57,73,171,0.18); }
+
+  .card .icone {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.35rem;
+    margin-bottom: 0.9rem;
+  }
+  .card[data-lentille="probleme"] .icone { background: #fff1eb; color: var(--lentille-probleme); }
+  .card[data-lentille="cadre"]    .icone { background: #e6f4f4; color: var(--lentille-cadre); }
+  .card[data-lentille="niveau"]   .icone { background: var(--niv-1-clair); color: var(--lentille-niveau); }
+  .card[data-lentille="maturite"] .icone { background: #f2eaff; color: var(--lentille-maturite); opacity: 0.55; }
+
+  .card h3 {
+    margin: 0 0 0.35rem;
+    font-size: 1.02rem;
+    color: var(--texte);
+    font-weight: 700;
+    letter-spacing: -0.1px;
+  }
+  .card .sous-titre {
+    font-size: 0.8rem;
+    color: var(--texte-2);
+    margin: 0 0 0.7rem;
+    font-weight: 500;
+  }
+  .card .desc {
+    font-size: 0.86rem;
+    color: var(--texte-2);
+    line-height: 1.5;
+    margin: 0 0 0.9rem;
+    flex: 1;
+  }
+  .card .amorce {
+    font-size: 0.78rem;
+    color: var(--texte-3);
+    font-style: italic;
+    border-left: 2px solid var(--bordure);
+    padding: 0.15rem 0 0.15rem 0.6rem;
+    margin: 0;
+  }
+
+  /* Card désactivée (Bientôt) */
+  .card.desactivee {
+    cursor: not-allowed;
+    opacity: 0.65;
+    box-shadow: none;
+    background: var(--fond);
+  }
+  .card.desactivee:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--bordure);
+  }
+  .card.desactivee h3 { color: var(--texte-2); }
+  .card .mention-bientot {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 0.15rem 0.5rem;
+    background: var(--bordure);
+    color: var(--texte-2);
+    border-radius: 8px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ─── Section Expansion future ─── */
+  .expansion {
+    margin-top: 2.25rem;
+    padding: 1.4rem 1.5rem;
+    background: var(--fond-2);
+    border-radius: var(--rayon);
+    border: 1px dashed var(--bordure);
+  }
+  .expansion h4 {
+    margin: 0 0 0.5rem;
+    font-size: 0.82rem;
+    color: var(--texte-2);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .expansion p {
+    margin: 0 0 0.75rem;
+    color: var(--texte-2);
+    font-size: 0.88rem;
+  }
+  .expansion ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .expansion li {
+    font-size: 0.82rem;
+    padding: 0.3rem 0.75rem;
+    background: var(--fond);
+    border: 1px solid var(--bordure);
+    border-radius: 999px;
+    color: var(--texte-2);
+  }
+
+  /* Légende */
+  .legende {
+    margin-top: 2.25rem;
+    padding: 1.25rem 1.4rem;
+    background: var(--niv-1-clair);
+    border-left: 4px solid var(--niv-1-moyen);
+    border-radius: 6px;
+    color: var(--niv-1);
+    font-size: 0.88rem;
+  }
+  .legende strong { font-weight: 700; }
+  .legende code {
+    font-size: 0.8rem;
+    background: rgba(26,35,126,0.08);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<header class="en-tete" role="banner">
+  <span class="logo">&#x2B21; Indicateurs</span>
+  <nav class="onglets" role="tablist" aria-label="Vues disponibles">
+    <button class="onglet" role="tab">Accueil</button>
+    <button class="onglet" role="tab">Mon tableau de bord</button>
+    <button class="onglet actif" role="tab" aria-selected="true">Choisir mes indicateurs</button>
+    <button class="onglet" role="tab">Cascade stratégique<span class="pastille-stub">Bientôt</span></button>
+    <button class="onglet" role="tab">La maturité ?</button>
+    <button class="onglet" role="tab">Lexique</button>
+    <button class="onglet" role="tab">À propos</button>
+  </nav>
+</header>
+
+<main class="page">
+  <h1 class="page-titre">Choisir mes indicateurs</h1>
+  <p class="page-intro">
+    Plusieurs lentilles pour explorer le référentiel — entrez par celle qui vous parle le plus.
+    <em>Vous pouvez changer de lentille à tout moment ;</em> ce qui compte, c'est de commencer à voir.
+  </p>
+
+  <div class="grille" role="list">
+
+    <button class="card" data-lentille="probleme" role="listitem">
+      <span class="icone" aria-hidden="true">&#x2609;</span>
+      <h3>Par mon problème</h3>
+      <div class="sous-titre">Diagnostic en 3 étapes</div>
+      <p class="desc">Choisir mes indicateurs à partir du problème que je rencontre — cycle trop long, qualité fragile, débit irrégulier, moral en baisse…</p>
+      <p class="amorce">« Ce qui me gêne au quotidien. »</p>
+    </button>
+
+    <button class="card" data-lentille="cadre" role="listitem">
+      <span class="icone" aria-hidden="true">&#x25C7;</span>
+      <h3>Par mon cadre de travail</h3>
+      <div class="sous-titre">7 familles, accordéon</div>
+      <p class="desc">Partir du cadre de référence que j'utilise — DORA, Scrum, Kanban, Lean/Six Sigma, OKR, ITIL, Vente & Marketing — et dérouler ses indicateurs canoniques.</p>
+      <p class="amorce">« La boîte à outils de mon école de pensée. »</p>
+    </button>
+
+    <button class="card" data-lentille="niveau" role="listitem">
+      <span class="icone" aria-hidden="true">&#x2731;</span>
+      <h3>Par mon niveau</h3>
+      <div class="sous-titre">Stepper niveau → problème → cadre</div>
+      <p class="desc">Partir du rôle que je tiens — équipe, programme, portefeuille, entreprise — et voir les indicateurs qui parlent à ce niveau.</p>
+      <p class="amorce">« Le langage des gens à qui je rends compte. »</p>
+    </button>
+
+    <button class="card desactivee" data-lentille="maturite" role="listitem" aria-disabled="true">
+      <span class="mention-bientot">BIENTÔT</span>
+      <span class="icone" aria-hidden="true">&#x25B2;</span>
+      <h3>Par ma maturité</h3>
+      <div class="sous-titre">Lentille prospective</div>
+      <p class="desc">Partir de mon niveau de maturité actuel — débutant, intermédiaire, avancé — pour choisir mes premières métriques.</p>
+      <p class="amorce">« Par où commencer si je démarre. »</p>
+    </button>
+
+  </div>
+
+  <section class="expansion" aria-labelledby="exp-titre">
+    <h4 id="exp-titre">D'autres lentilles à venir</h4>
+    <p>La coquille de cet écran est conçue pour accueillir d'autres angles d'entrée, au fil des chantiers éditoriaux.</p>
+    <ul>
+      <li>Par le flux</li>
+      <li>Par la communication</li>
+      <li>Par la visibilité</li>
+      <li>Par ce que je veux améliorer</li>
+      <li aria-hidden="true">…</li>
+    </ul>
+  </section>
+
+  <aside class="legende">
+    <strong>Variante A — grille de cards.</strong>
+    L'atterrissage sur <em>Choisir mes indicateurs</em> présente les lentilles disponibles
+    comme une grille de cards, à parité visuelle (mêmes dimensions, couleur de lentille propre).
+    Clic sur une card = on ouvre la porte correspondante en pleine page.
+    <strong>Enrichissabilité maximale</strong> : ajouter une lentille = ajouter une card dans la grille,
+    aucune retouche structurelle. <strong>Risque <em>chip de chip</em> écarté</strong> : pas de
+    second niveau de tabs sous la nav principale, les cards sont un geste visuellement distinct.
+    Coût : un étage d'exploration avant d'entrer dans la porte.
+  </aside>
+</main>
+
+</body>
+</html>
