@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **23 avril 2026 — fin d'après-midi** (chantier **10 — refonte architecture de navigation** : après l'arbitrage variante B, **bifurcation en deux modes d'entrée** — l'onglet unique *Choisir mes indicateurs* se scinde en *Par mes 4 axes* et *Par ma question*, nav à **8 onglets**, machinerie mix).
+Dernière mise à jour : **23 avril 2026 — fin de journée** (chantier **14 — refactor hexagonal du socle MVP 4 portes** ouvert ; chantier 10 **gelé à `5655b03`**, décisions conservées).
 
 ---
 
@@ -9,13 +9,13 @@ Dernière mise à jour : **23 avril 2026 — fin d'après-midi** (chantier **10 
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événement majeur de la session** : **bifurcation architecturale en deux modes d'entrée**. Après livraison des 4 previews lentilles (`c3cebb8` cards / `be983f3` tabs / `e75d693` stepper ouvert / `6daa562` comparaison), Lætitia identifie que ces previews fusionnent implicitement deux couches mentales distinctes — *intention du visiteur* vs *lentille d'analyse*. Décision fondatrice : l'onglet unique *Choisir mes indicateurs* se scinde en **deux onglets parallèles** — *Par mes 4 axes* (mode synthétique, les 4 portes) et *Par ma question* (mode fin, catalogue de questions métier dans la langue du visiteur). Nav passe de 7 à **8 onglets**. Machinerie **mix** (certaines questions = raccourcis vers portes préconfigurées, d'autres = mini-steppers autonomes). Catalogue construit par **consultation de panels d'experts nommés** (gestion du changement, coach Lean, coach Agile, terrain des autres cadres, accompagnement en management). Doc compagnon amendé (§ 4.1 invariants 7 → 8 + nouveau point *Deux modes*, § 4.2 points reformulés + nouveau point mode fin).
-- **Décisions UX cumulées (chantier 10)** : (a) **8 entrées de premier rang** (*amendé 23/04 fin d'après-midi*) : Accueil, Mon tableau de bord, Par mes 4 axes, Par ma question, Cascade stratégique, La maturité ?, Lexique, À propos ; (b) **porte *Par ma maturité* conservée** distincte de l'onglet *La maturité ?* ; (c) libellé **La maturité ?** avec point d'interrogation volontaire (posture socratique) ; (d) *Cascade stratégique* réémerge en vue stub (*Bientôt*) dès 10.1 ; (e) **onglet actif = fond pill indigo clair** ; (f) **deux modes d'entrée parallèles avec machinerie mix** (bifurcation 23/04 fin d'après-midi) ; (g) chantier **12** (fiabilité éditoriale) et **13** (outil de diagnostic de maturité) ouverts.
-- **Chantier actif** : **chantier 10 — construction du catalogue de questions fines** (*Par ma question*). Premier jet à produire dans la session, document de travail non commité tant qu'on itère. Ensuite : arbitrage UX de *Par ma question*, puis arbitrage exposition des 4 lentilles dans *Par mes 4 axes* (previews A/B/C déjà produits, à recadrer). Les previews existants restent utilisables après recadrage du libellé d'onglet.
-- **Dernier SHA sur `main`** : `6daa562` (page de comparaison lentilles). Un commit docs à venir pour acter la bifurcation au doc compagnon + backlog + mémoire. Commits récents de la session : `ed51cf0` (fix `vue-maturite`), `10e35e5` (cotation *Risquées*), `2fac04f` / `10cea97` / `54d80fe` (doc compagnon A/B/C), `af1557e` (clôture doc + ouverture chantiers 12/13), `988efb6` / `b1f6bb9` / `dcbda16` / `d410cf0` (previews 10.0 actif A/B/C + comparaison), `c89fb40` (arbitrage actif variante B), `c3cebb8` / `be983f3` / `e75d693` / `6daa562` (previews 10.0 lentilles A/B/C + comparaison).
-- **Règle d'or du chantier 9 (panier)** conservée : après toute modif de `CM.Panier`, relancer `node outils/construire-tests-panier.js` pour régénérer `tests-panier.html`. Pas touché cette session.
-- **Fiches mémoire pertinentes pour la suite du chantier 10** : `project_contrat_coherence_portes`, `project_porte_niveau_statut`, `project_regles_refactoring_progressif`, `project_document_compagnon_contrats`, `feedback_mockup_preview_ux`, **`project_deux_modes_entree`** (23/04) ; et [`MISSION.md`](./MISSION.md) comme boussole (à rafraîchir en clôture de 10 : renommer section *Maturité & Recommandations* → *La maturité ?*, retirer la mention *en pause* de *Cascade stratégique*, **réécrire la section *Choisir mes indicateurs* pour refléter la bifurcation en deux modes**).
-- **Blocages / questions ouvertes** : aucun. À la reprise : produire le premier jet du catalogue de questions fines (5-6 axes, ~25 questions, panels d'experts nommés par question), itérer avec Lætitia, puis arbitrer l'UX de *Par ma question*, puis reprendre les previews lentilles pour *Par mes 4 axes*.
+- **Événement majeur de la session** : **ouverture du chantier 14 — refactor hexagonal du socle MVP 4 portes**. Arbitrage de Lætitia : la construction éditoriale du mode *Par ma question* (chantier 10) exige une **assise architecturale plus saine** — métriques décrites indépendamment des chemins d'accès, chemins devenant des requêtes sur un référentiel unique. **Chantier 10 gelé à `5655b03`** (décisions conservées, pas annulées). Trois actes préparatoires posés en un commit atomique : tag git `baseline-avant-hexagonal` sur `5655b03` (point de retour absolu), `scenario-non-regression.md` (liste de clics manuels à rejouer avant/après chaque étape), `doc-contrats-chantier-14.md` (mission, périmètre MVP, plan d'attaque a/b/c/d, procédure rollback écrite noir sur blanc).
+- **Chantier actif** : **chantier 14 — refactor hexagonal**. Prochaine étape : **(a) inventaire du schéma d'étiquettes** — document texte recensant ce que chaque fiche porte aujourd'hui (niveau, cadre, axe, type, domaine, maturité, fiabilité, problèmes adressés). Livrable : `inventaire-schema-metriques.md`. Durée estimée : 1 session. Panels d'experts convoqués uniquement s'ils apportent une vraie valeur ajoutée. Étapes suivantes : (b) extraction `CM.RequeteMetriques`, (c) migration des 3 portes livrées, (d) nettoyage.
+- **Chantier 10 gelé** : décisions cumulées préservées — (a) 8 entrées de premier rang : Accueil, Mon tableau de bord, Par mes 4 axes, Par ma question, Cascade stratégique, La maturité ?, Lexique, À propos ; (b) porte *Par ma maturité* distincte de l'onglet *La maturité ?* ; (c) libellé *La maturité ?* avec point d'interrogation volontaire ; (d) *Cascade stratégique* réémerge en vue stub (*Bientôt*) dès 10.1 ; (e) onglet actif = fond pill indigo clair ; (f) deux modes d'entrée parallèles avec machinerie mix ; (g) chantiers 12 et 13 ouverts. Reprise après livraison MVP hexagonal — le mode *Par ma question* sera alors un nouveau consommateur de `CM.RequeteMetriques`, pas une duplication du référentiel.
+- **Dernier SHA sur `main`** : commit d'ouverture chantier 14 (à venir dans la foulée de cette mise à jour). Précédent : `5655b03` (bifurcation deux modes — docs). **Tag git** `baseline-avant-hexagonal` = `5655b03`, point de retour absolu. Commits récents : `ed51cf0` (fix `vue-maturite`), `10e35e5` (cotation *Risquées*), `2fac04f` / `10cea97` / `54d80fe` (doc nav A/B/C), `af1557e` (clôture doc + ouverture 12/13), `988efb6` / `b1f6bb9` / `dcbda16` / `d410cf0` (previews actif A/B/C + comparaison), `c89fb40` (arbitrage variante B), `c3cebb8` / `be983f3` / `e75d693` / `6daa562` (previews lentilles A/B/C + comparaison), `5655b03` (bifurcation docs).
+- **Règle d'or du chantier 9 (panier)** conservée : après toute modif de `CM.Panier`, relancer `node outils/construire-tests-panier.js` pour régénérer `tests-panier.html`. Non touché cette session.
+- **Fiches mémoire pertinentes pour le chantier 14** : `project_regles_refactoring_progressif` (refactor progressif, boy scout), `project_document_compagnon_contrats` (discipline contrats avant consommateurs), **`project_chantier_14_ouverture`** (ouverture 14, plan, doctrine rollback) ; et en fond : `project_deux_modes_entree`, `project_contrat_coherence_portes`, `project_7_2a_code_2_livre`.
+- **Blocages / questions ouvertes** : aucun. À la reprise : lancer l'étape (a) — lire `cadre-indicateurs.html` (ou les sources markdown générées), recenser le schéma d'étiquettes tel qu'il existe vraiment dans le code, produire `inventaire-schema-metriques.md`. Ne rien modifier du code tant que le schéma n'est pas validé par Lætitia.
 
 ---
 
@@ -291,9 +291,11 @@ Audit complet livré dans [`AUDIT-UNIFORMITE-PORTES.md`](./AUDIT-UNIFORMITE-PORT
 
 ---
 
-## 10. Refonte architecture de navigation — fusion portes + onglets
+## 10. Refonte architecture de navigation — fusion portes + onglets *(⏸ GELÉ à `5655b03` — 23/04/2026 fin de journée)*
 
 *Titre historique : « Bandeau de navigation persistant ». Requalifié le 22/04/2026 soir suite à la clarification structurante pendant le test 9.B.1 — le chantier dépasse le simple bandeau, il revoit la topologie de la navigation.*
+
+**Statut au 23/04/2026 fin de journée : gelé à `5655b03`.** Toutes les décisions sont conservées (voir détail ci-dessous), aucune n'est annulée. Reprise prévue après livraison du MVP hexagonal (chantier 14). La construction du mode *Par ma question* se fera alors comme nouveau consommateur de `CM.RequeteMetriques`, pas comme duplication du référentiel. Tag git `baseline-avant-hexagonal` posé sur `5655b03` — point de retour absolu en cas d'échec du chantier 14.
 
 **Origine.** Demande émise par Lætitia le 22/04/2026 au cours de la clarification de mission, **aiguisée le même jour en soirée** pendant le test visuel de 9.B.1 : l'outil se vit comme **deux territoires mal reliés** — d'un côté les portes (pyramide, niveau, problème, cadre) qui communiquent entre elles mais dont la seule sortie est un *Accueil* qui remet à zéro ; de l'autre l'app (les onglets : TDB, Choisir, Maturité) qui, une fois atteinte, est un enclos sans passerelle retour vers les portes. En prime, **des chemins jumeaux avec des dynamiques graphiques différentes** donnent l'impression de deux produits cousus ensemble — notamment *Choisir mes indicateurs* (onglet) et *Par mon problème* (porte) qui explorent le même référentiel avec des langages visuels différents.
 
@@ -372,15 +374,48 @@ Accueil · Mon tableau de bord · Choisir mes indicateurs · Cascade stratégiqu
 
 ---
 
+## 14. Refactor hexagonal du socle MVP 4 portes *(⏳ ACTIF depuis le 23/04/2026)*
+
+*Chantier technique. Doc compagnon dédié : [`doc-contrats-chantier-14.md`](./doc-contrats-chantier-14.md) (vérité de référence). Cet encart en est un résumé.*
+
+**Mission.** Isoler la **description des métriques** (le domaine) des **chemins d'accès** (les portes, demain les questions). Une métrique n'appartient à aucun chemin — elle existe dans le référentiel, elle est filtrée par des requêtes que les chemins formulent. Raisons d'agir : (a) **maintenabilité** (un libellé change au seul endroit où la métrique est décrite), (b) **évolution** (ajouter une nouvelle porte, un nouveau cadre, une nouvelle question ne force plus à toucher le cœur du référentiel).
+
+**Périmètre MVP.** Les **4 portes existantes** (*Par mon problème* livrée, *Par mon cadre* livrée, *Par mon niveau* en cours 7.2a-code.3, *Par ma maturité* stub). **Iso-comportement visible** — l'utilisateur ne perçoit strictement rien de nouveau. Hors scope : chantier 10 (gelé), catalogue de questions fines, modes d'entrée parallèles, refonte panier, refonte nav, revue éditoriale des fiches.
+
+**Architecture cible.** Trois zones : (a) **domaine** isolé — `CM.Referentiel`, `CM.IndicateursMeta`, `CM.Config`, `CM.RequeteMetriques` (à créer, API unique `executer(filtre)`) ; (b) **chemins** (adaptateurs d'entrée) — `CM.DiagnosticProbleme`, `CM.DiagnosticCadre`, `CM.Roles` qui deviennent des traducteurs sélection-utilisateur → filtre → appel au cœur ; (c) **vues** (adaptateurs de sortie) — `CM.VuePorteX` et `CM.Composants` qui rendent les fiches reçues. Flux `Vues → Chemins → Requete → Referentiel + Meta + Config`, aucune flèche ne remonte.
+
+**Plan d'attaque — 4 étapes.**
+
+| # | Étape | Livrable | Durée estimée | Tag de clôture |
+|---|---|---|---|---|
+| **(a)** | Inventaire du schéma d'étiquettes | `inventaire-schema-metriques.md` (texte uniquement, pas de code) | 1 session | `mvp-etape-a-schema-inventorie` |
+| **(b)** | Extraction du cœur `CM.RequeteMetriques` (coexiste avec l'ancien) | Module + tests unitaires `tests-requete-metriques.html` | 2-3 sessions | `mvp-etape-b-coeur-extrait` |
+| **(c)** | Migration des 3 portes livrées vers `CM.RequeteMetriques` | Porte par porte, scénario non-régression vert à chaque bascule | 4 sessions | `mvp-etape-c-portes-migrees` |
+| **(d)** | Nettoyage + doc finale | Code mort retiré, doc compagnon finalisé, `MISSION.md` rafraîchi | 1 session | `mvp-chantier-14-livre` |
+
+**Procédure versionnement / rollback** (inscrite en contrainte du chantier, pas en savoir-faire implicite) : tag `baseline-avant-hexagonal` sur `5655b03` = point de retour absolu ; tags d'étape à chaque clôture ; principe *pas de suppression avant validation* (le nouveau coexiste avec l'ancien jusqu'à validation) ; vérification systématique de la sync miroir après commit critique ; trois options de rollback (inspection `git diff <tag>..HEAD`, revert contrôlé, reset --hard dernier recours) ; mot-clé entre nous : **« rollback à l'étape X »** déclenche la procédure après confirmation explicite.
+
+**Doctrine panels d'experts.** Convocation **à la demande**, pas par défaut — le chantier est essentiellement technique. Si un arbitrage précis demande un panel (ex : schéma d'étiquettes qui croise Lean et Agile), on convoque ce panel-là, pas un panel rituel.
+
+**Articulations.** Chantier 10 gelé reprend après livraison 14. Chantier 7.2a-code.3 (porte niveau en cours) : option α (finir avant (b)) ou option β (migrer directement en hexagonal en (c.3)), arbitrage à la bascule. Chantiers 12 et 13 non impactés.
+
+**Acte d'ouverture livré** (23/04/2026 fin de journée) : commit atomique `chore(chantier-14): ouverture — baseline + scénario régression + procédure rollback` embarquant tag `baseline-avant-hexagonal`, `scenario-non-regression.md`, `doc-contrats-chantier-14.md`, mise à jour `doc-contrats-navigation.md`, mise à jour `backlog.md`, mémoire `project_chantier_14_ouverture.md`.
+
+**Prochaine étape** : lancer **(a) inventaire du schéma d'étiquettes**. Ne rien toucher au code tant que le schéma n'est pas validé par Lætitia.
+
+---
+
 ## Prochaine action recommandée
 
-Chantier **10 — refonte architecture de navigation** : doc compagnon `doc-contrats-navigation.md` livré le 23/04/2026 (commits A/B/C `2fac04f` / `10cea97` / `54d80fe`). Arbitrages structurants consignés : 7 entrées (Cascade stratégique réémerge), renommage *La maturité ?* (posture socratique), mutation de la mission de cet onglet (miroir éditorial + futur diagnostic).
+Chantier **14 — refactor hexagonal** ouvert le 23/04/2026 fin de journée. Chantier **10 gelé à `5655b03`** (décisions conservées).
 
-**Prochaine étape** = produire **2 à 4 `preview-10-*.html`** proposant chacun une variante de bandeau (ordre, compacité, traitement de l'onglet actif, comportement responsive, placement des 3 portes *Par mon problème / Par mon cadre / Par ma maturité* par rapport aux 7 onglets). Arbitrer à l'œil avec Lætitia en binôme rapproché. Puis implémenter la variante retenue **en façade** sur l'existant (iso-comportement côté code actuel, boy scout strict, pas de big-bang).
+**Prochaine étape** = lancer l'**étape (a) — inventaire du schéma d'étiquettes**. Lire `cadre-indicateurs.html` (et les sources markdown du générateur si plus lisibles), recenser fiche par fiche ce qu'elle porte aujourd'hui (niveau, cadre, axe, type, domaine, maturité, fiabilité, problèmes adressés via `CM.IndicateursMeta`). Livrable : `inventaire-schema-metriques.md`. Durée cible : 1 session. Document texte uniquement, aucun code touché.
 
-**À la clôture de 10** : ouvrir chantier **12** (Transparence des cotations fiabilité → Lexique), puis chantier **13** (outil de diagnostic de maturité). Rafraîchir `MISSION.md` (rename *La maturité ?* + Cascade plus en pause) en tâche de clôture de 10.
+Puis, après validation du schéma par Lætitia : **étape (b)** — création de `CM.RequeteMetriques` à côté de l'existant, tests unitaires via le patron générateur Node.
 
-*Chantiers en sommeil (à rouvrir après 9 et 10)* : **7.2a-code.3 C.2 / C.3** (porte niveau — étapes cadre et résultats), et la dette **`tests-porte-niveau.html`** à refondre sur le patron générateur Node. Tous trois documentés plus bas.
+**Discipline rappelée.** Tag `baseline-avant-hexagonal` = point de retour absolu. Mot-clé « rollback à l'étape X » entre nous si besoin. Aucun rollback appliqué sans confirmation explicite.
+
+*Chantiers en sommeil* : **7.2a-code.3 C.2 / C.3** (porte niveau — étapes cadre et résultats), la dette **`tests-porte-niveau.html`** à refondre sur le patron générateur Node, **chantier 10** (gelé), **chantier 12** (Transparence cotations → Lexique), **chantier 13** (outil de diagnostic de maturité).
 
 ### Historique — chantier 7.6 (réf. ci-dessous)
 
