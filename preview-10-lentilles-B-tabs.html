@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Preview 10.0 — Lentilles B : tabs internes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --niv-1:        #1a237e;
+    --niv-1-clair:  #e8eaf6;
+    --niv-1-moyen:  #3949ab;
+    --accent:       #e65100;
+    --accent-clair: #fff3e0;
+    --fond:         #f5f6fa;
+    --fond-2:       #ffffff;
+    --texte:        #1a1a2e;
+    --texte-2:      #607d8b;
+    --texte-3:      #9ca3af;
+    --bordure:      #e0e4eb;
+
+    --ambre:            #FFD180;
+    --ambre-profond:    #b7791f;
+    --ambre-texte:      #6b4a00;
+
+    --lentille-probleme: #c05621;
+    --lentille-cadre:    #2c7a7b;
+    --lentille-niveau:   #3949ab;
+    --lentille-maturite: #6b46c1;
+
+    --trans: all 0.18s ease;
+    --rayon: 12px;
+    --rayon-sm: 8px;
+    --ombre: 0 2px 12px rgba(26,35,126,0.06);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--fond);
+    color: var(--texte);
+    line-height: 1.5;
+  }
+
+  /* ─── Nav unifiée (variante B actée) ─── */
+  .en-tete {
+    background: var(--fond-2);
+    border-bottom: 1px solid var(--bordure);
+    padding: 0 1.75rem;
+    display: flex; align-items: center; gap: 1.25rem;
+    height: 58px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .logo {
+    font-weight: 800; font-size: 0.92rem;
+    color: var(--niv-1); letter-spacing: -0.3px;
+    white-space: nowrap;
+  }
+  .onglets { display: flex; gap: 0.2rem; margin-left: auto; flex-wrap: nowrap; }
+  .onglet {
+    padding: 0.4rem 0.95rem;
+    border: none; background: none;
+    cursor: pointer; font-size: 0.85rem;
+    color: var(--texte-2); font-weight: 500;
+    transition: var(--trans);
+    font-family: inherit;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+  .onglet:hover { background: var(--fond); color: var(--texte); }
+  .onglet.actif {
+    background: var(--niv-1-clair);
+    color: var(--niv-1);
+    font-weight: 700;
+  }
+  .pastille-stub {
+    display: inline-block;
+    margin-left: 0.3rem;
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 0.05rem 0.35rem;
+    background: var(--bordure);
+    color: var(--texte-2);
+    border-radius: 8px;
+    vertical-align: middle;
+    letter-spacing: 0.02em;
+  }
+
+  /* ─── Sous-bandeau tabs internes ─── */
+  /* Traitement volontairement DISTINCT du pill indigo de la nav principale, pour
+     éviter le risque "chip de chip". Convention retenue : barre indigo 2px sous
+     le texte bold + fond transparent. */
+  .sous-bandeau {
+    background: var(--fond-2);
+    border-bottom: 1px solid var(--bordure);
+    padding: 0 1.75rem;
+    display: flex; align-items: center;
+    height: 48px;
+    position: sticky; top: 58px; z-index: 99;
+  }
+  .sous-bandeau .lib {
+    font-size: 0.76rem;
+    color: var(--texte-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    margin-right: 1.1rem;
+    white-space: nowrap;
+  }
+  .tabs {
+    display: flex;
+    gap: 0.2rem;
+    flex-wrap: nowrap;
+  }
+  .tab {
+    position: relative;
+    padding: 0.55rem 0.95rem;
+    border: none; background: none;
+    cursor: pointer; font-size: 0.84rem;
+    color: var(--texte-2); font-weight: 500;
+    transition: var(--trans);
+    font-family: inherit;
+    border-radius: 0;
+    white-space: nowrap;
+  }
+  .tab:hover { color: var(--texte); }
+  .tab.actif {
+    color: var(--niv-1);
+    font-weight: 700;
+  }
+  .tab.actif::after {
+    content: "";
+    position: absolute;
+    left: 0.95rem; right: 0.95rem;
+    bottom: -1px;
+    height: 2px;
+    background: var(--niv-1);
+  }
+  .tab[aria-disabled="true"] {
+    color: var(--texte-3);
+    cursor: not-allowed;
+    font-weight: 500;
+  }
+  .tab[aria-disabled="true"]:hover { color: var(--texte-3); }
+
+  /* ─── Page ─── */
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 2.2rem 1.75rem 3rem;
+  }
+  .page-entete {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+  .page-titre {
+    font-size: 1.35rem;
+    color: var(--texte);
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+  }
+  .page-chapeau {
+    color: var(--texte-2);
+    font-size: 0.92rem;
+    margin: 0 0 1.6rem;
+    max-width: 720px;
+  }
+
+  /* Stub étape 1 de la porte active */
+  .stub-porte {
+    background: var(--fond-2);
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre);
+    padding: 2rem 2rem 1.75rem;
+    border-top: 3px solid var(--lentille-probleme);
+  }
+  .stub-porte .etape-num {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--texte-2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.4rem;
+  }
+  .stub-porte h2 {
+    margin: 0 0 1.5rem;
+    font-size: 1.18rem;
+    color: var(--texte);
+    font-weight: 700;
+  }
+  .niveaux {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+  }
+  .niveau {
+    background: var(--fond);
+    border: 1px solid var(--bordure);
+    border-radius: var(--rayon-sm);
+    padding: 0.95rem 1rem 1.1rem;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    transition: var(--trans);
+  }
+  .niveau:hover {
+    background: var(--fond-2);
+    border-color: var(--lentille-probleme);
+    transform: translateY(-1px);
+  }
+  .niveau h3 {
+    margin: 0 0 0.2rem;
+    font-size: 0.93rem;
+    color: var(--texte);
+    font-weight: 700;
+  }
+  .niveau p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--texte-2);
+  }
+
+  /* Légende */
+  .legende {
+    margin-top: 2.25rem;
+    padding: 1.25rem 1.4rem;
+    background: var(--niv-1-clair);
+    border-left: 4px solid var(--niv-1-moyen);
+    border-radius: 6px;
+    color: var(--niv-1);
+    font-size: 0.88rem;
+  }
+  .legende strong { font-weight: 700; }
+  .legende em { font-style: italic; }
+</style>
+</head>
+<body>
+
+<header class="en-tete" role="banner">
+  <span class="logo">&#x2B21; Indicateurs</span>
+  <nav class="onglets" role="tablist" aria-label="Vues disponibles">
+    <button class="onglet" role="tab">Accueil</button>
+    <button class="onglet" role="tab">Mon tableau de bord</button>
+    <button class="onglet actif" role="tab" aria-selected="true">Choisir mes indicateurs</button>
+    <button class="onglet" role="tab">Cascade stratégique<span class="pastille-stub">Bientôt</span></button>
+    <button class="onglet" role="tab">La maturité ?</button>
+    <button class="onglet" role="tab">Lexique</button>
+    <button class="onglet" role="tab">À propos</button>
+  </nav>
+</header>
+
+<div class="sous-bandeau" role="tablist" aria-label="Lentilles de Choisir mes indicateurs">
+  <span class="lib">Lentille</span>
+  <div class="tabs">
+    <button class="tab actif" onclick="selTab(this)" role="tab" aria-selected="true">Par mon problème</button>
+    <button class="tab" onclick="selTab(this)" role="tab">Par mon cadre</button>
+    <button class="tab" onclick="selTab(this)" role="tab">Par mon niveau</button>
+    <button class="tab" aria-disabled="true" role="tab">Par ma maturité<span class="pastille-stub">Bientôt</span></button>
+  </div>
+</div>
+
+<main class="page">
+  <div class="page-entete">
+    <h1 class="page-titre">Par mon problème</h1>
+  </div>
+  <p class="page-chapeau">Diagnostic en 3 étapes : niveau → problème rencontré → indicateurs suggérés.</p>
+
+  <section class="stub-porte">
+    <span class="etape-num">Étape 1 / 3</span>
+    <h2>Quel est votre niveau de pilotage ?</h2>
+
+    <div class="niveaux">
+      <button class="niveau" type="button">
+        <h3>Équipe</h3>
+        <p>Je pilote au quotidien une équipe produit, DevOps, support…</p>
+      </button>
+      <button class="niveau" type="button">
+        <h3>Programme</h3>
+        <p>Je coordonne plusieurs équipes autour d'un objectif métier.</p>
+      </button>
+      <button class="niveau" type="button">
+        <h3>Portefeuille</h3>
+        <p>Je répartis les ressources entre initiatives et domaines.</p>
+      </button>
+      <button class="niveau" type="button">
+        <h3>Entreprise</h3>
+        <p>Je regarde la performance globale, aux yeux d'un comité de direction.</p>
+      </button>
+    </div>
+  </section>
+
+  <aside class="legende">
+    <strong>Variante B — tabs internes (avec traitement distinct).</strong>
+    Au clic sur <em>Choisir mes indicateurs</em>, un sous-bandeau apparaît sous la nav principale
+    et liste les lentilles disponibles. Le traitement actif est <strong>volontairement différent</strong>
+    du pill indigo clair de la nav principale : ici <strong>barre indigo 2px sous le texte bold</strong>,
+    pas de fond. Le contraste visuel entre les deux niveaux évite le <em>chip de chip</em> (§ 3.5 du doc compagnon).
+    <strong>Avantage</strong> : changement de lentille en un clic, la lentille active s'affiche immédiatement,
+    pas d'étage d'atterrissage. <strong>Contrainte</strong> : le sous-bandeau consomme 48 px verticaux en permanence,
+    ajouter une lentille = ajouter une tab (la rangée peut devenir chargée au-delà de 6-7 lentilles — à prévoir
+    avec un mécanisme d'overflow pour les lentilles futures § 4.4).
+  </aside>
+</main>
+
+<script>
+  function selTab(btn) {
+    if (btn.getAttribute('aria-disabled') === 'true') return;
+    document.querySelectorAll('.tab').forEach(function(t) {
+      t.classList.remove('actif');
+      t.setAttribute('aria-selected', 'false');
+    });
+    btn.classList.add('actif');
+    btn.setAttribute('aria-selected', 'true');
+    /* Le contenu ne change pas dans ce preview — on simule juste le geste visuel. */
+  }
+</script>
+
+</body>
+</html>
