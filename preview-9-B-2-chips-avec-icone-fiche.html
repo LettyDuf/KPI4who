@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Preview 9.B.2 — Icône thématique de la fiche sur la carte panier</title>
+<style>
+:root {
+  --fond: #fafbfc;
+  --fond-2: #ffffff;
+  --texte-primaire: #1c2033;
+  --texte-secondaire: #5a6170;
+  --bordure: #dadee5;
+  --rayon: 12px;
+  --ombre: 0 1px 3px rgba(26,35,126,0.06);
+
+  --niv-1: #1a237e;
+  --niv-1-clair: #e8eaf6;
+  --niv-3-moyen: #26a69a;
+  --niv-3: #00695c;
+  --niv-3-clair: #e0f2f1;
+
+  --ambre-profond: #bf5a00;
+  --ambre-doux-debut: #fff4e6;
+  --ambre-bord: #ffd1a6;
+  --ambre-texte: #8a4400;
+
+  /* Fiabilité */
+  --fiab-fiable:     #2e7d32;
+  --fiab-precaution: #e65100;
+  --fiab-risque:     #c62828;
+}
+
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--fond);
+  color: var(--texte-primaire);
+  margin: 0; padding: 2rem 1.5rem 3rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.page { max-width: 1400px; margin: 0 auto; }
+
+h1 { font-size: 1.6rem; margin: 0 0 0.4rem; color: var(--niv-1); letter-spacing: -0.3px; }
+.sous-titre { color: var(--texte-secondaire); font-size: 0.95rem; max-width: 82ch; margin: 0 0 2rem; }
+
+.intro-bloc {
+  background: var(--fond-2);
+  border: 1px solid var(--bordure);
+  border-left: 3px solid var(--niv-1);
+  border-radius: var(--rayon);
+  padding: 1.1rem 1.3rem;
+  margin-bottom: 2.5rem;
+}
+.intro-bloc h2 { font-size: 1rem; margin: 0 0 0.6rem; color: var(--niv-1); font-weight: 700; }
+.intro-bloc p { margin: 0.5rem 0; font-size: 0.9rem; }
+.intro-bloc code {
+  background: var(--niv-1-clair); color: var(--niv-1);
+  padding: 0.05rem 0.3rem; border-radius: 3px; font-size: 0.85em;
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+}
+
+/* ══ Les 3 colonnes de variantes ══ */
+.variantes {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.3rem;
+  align-items: start;
+}
+@media (max-width: 1100px) { .variantes { grid-template-columns: 1fr; } }
+
+.pan {
+  background: var(--fond-2);
+  border: 1px solid var(--bordure);
+  border-radius: 16px;
+  padding: 1.3rem 1.2rem 1.5rem;
+  box-shadow: var(--ombre);
+}
+.pan-label {
+  display: inline-block;
+  color: white;
+  padding: 0.28rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.6rem;
+}
+.pan-A .pan-label { background: var(--texte-secondaire); }
+.pan-C .pan-label { background: var(--niv-1); }
+.pan-D .pan-label { background: #6a1b9a; }
+.pan-titre { font-size: 1rem; font-weight: 700; color: var(--texte-primaire); margin: 0 0 0.3rem; }
+.pan-desc { font-size: 0.82rem; color: var(--texte-secondaire); margin: 0 0 1rem; min-height: 3rem; }
+
+/* ══ Colonne miroir simplifiée ══ */
+.panier-col {
+  background: var(--fond);
+  border-radius: var(--rayon);
+  padding: 0.8rem 0.8rem 1rem;
+  border-top: 3px solid var(--pc);
+  margin-bottom: 0.75rem;
+}
+.panier-col.en-place {
+  --pc: var(--niv-3-moyen);
+  --pc-sombre: var(--niv-3);
+  --pc-fond: var(--niv-3-clair);
+}
+.panier-col.a-envisager {
+  --pc: var(--ambre-profond);
+  --pc-sombre: var(--ambre-texte);
+  --pc-fond: var(--ambre-doux-debut);
+}
+.panier-col-titre {
+  font-size: 0.82rem; font-weight: 700; color: var(--pc-sombre);
+  margin-bottom: 0.55rem;
+}
+.panier-col-titre .compte {
+  font-size: 0.66rem; font-weight: 700;
+  padding: 0.12rem 0.4rem; border-radius: 20px;
+  background: var(--pc-fond); color: var(--pc-sombre);
+  margin-left: 0.3rem;
+}
+.panier-cartes { display: flex; flex-direction: column; gap: 0.45rem; }
+
+.panier-carte {
+  background: var(--pc-fond);
+  border: 1px solid var(--pc);
+  border-left: 3px solid var(--pc);
+  border-radius: 8px;
+  padding: 0.55rem 0.7rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.55rem;
+  align-items: start;
+}
+.panier-carte.sans-medaillon { grid-template-columns: 1fr; }
+.panier-carte-contenu { min-width: 0; }
+.panier-carte-nom {
+  font-size: 0.82rem; font-weight: 600; color: var(--texte-primaire);
+  padding-right: 1.2rem; line-height: 1.3; margin-bottom: 0.35rem;
+}
+.panier-retirer {
+  position: absolute; top: 0.28rem; right: 0.38rem;
+  background: transparent; border: none;
+  color: var(--pc-sombre);
+  cursor: pointer; font-size: 0.9rem;
+  padding: 0.05rem 0.25rem; opacity: 0.45; line-height: 1;
+}
+.panier-carte:hover .panier-retirer { opacity: 1; }
+.panier-carte-pied {
+  display: flex; flex-wrap: wrap; gap: 0.26rem; align-items: center;
+}
+
+/* ══ Chip type (iso-A — doux teinté) : identique dans les 3 variantes ══ */
+.chip-type {
+  font-size: 0.66rem; font-weight: 700;
+  padding: 0.14rem 0.4rem; border-radius: 4px;
+  letter-spacing: 0.5px; line-height: 1;
+}
+.chip-type.t-IGO  { background: #e8eaf6; color: #1a237e; }
+.chip-type.t-ICP  { background: #e3f2fd; color: #1565c0; }
+.chip-type.t-ICC  { background: #e0f2f1; color: #00695c; }
+.chip-type.t-ORC  { background: #f3e5f5; color: #6a1b9a; }
+.chip-type.t-DORA { background: #ffe0d6; color: #bf360c; }
+.chip-type.t-FLUX { background: #fff3e0; color: #e65100; }
+.chip-type.t-II   { background: #eceff1; color: #37474f; }
+
+.chip-niveau {
+  font-size: 0.66rem; font-weight: 600;
+  padding: 0.13rem 0.4rem; border-radius: 4px;
+  background: var(--niv-1-clair); color: var(--niv-1);
+}
+
+/* ══ Pastille fiabilité (utilisée en A et D) ══ */
+.fiab-pastille-mot {
+  font-size: 0.68rem; font-weight: 500;
+  color: var(--texte-secondaire);
+  display: inline-flex; align-items: center; gap: 0.26rem;
+  margin-left: 0.1rem;
+}
+.fiab-pastille {
+  width: 7px; height: 7px; border-radius: 50%; display: inline-block;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+}
+.f-fiable .fiab-pastille     { background: var(--fiab-fiable); }
+.f-precaution .fiab-pastille { background: var(--fiab-precaution); }
+.f-risque .fiab-pastille     { background: var(--fiab-risque); }
+
+/* ══ Médaillon pour l'icône de fiche ══ */
+.medaillon {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  line-height: 1;
+  flex-shrink: 0;
+  background: white;
+  margin-top: 0.05rem;
+}
+/* Variante C : médaillon cerclé, couleur de l'anneau = fiabilité */
+.pan-C .medaillon { border: 2px solid var(--anneau); }
+.pan-C .f-fiable .medaillon     { --anneau: var(--fiab-fiable); }
+.pan-C .f-precaution .medaillon { --anneau: var(--fiab-precaution); }
+.pan-C .f-risque .medaillon     { --anneau: var(--fiab-risque); }
+/* Variante D : médaillon neutre */
+.pan-D .medaillon {
+  border: 1px solid var(--bordure);
+  background: var(--fond-2);
+}
+
+/* ══ Légende fiabilité C : mot neutre sous le médaillon ══ */
+.pan-C .fiab-mot-seul {
+  font-size: 0.66rem; font-weight: 600;
+  color: var(--fiab-color);
+  margin-top: 0.25rem;
+  text-align: center;
+  letter-spacing: 0.2px;
+  line-height: 1;
+}
+.pan-C .f-fiable .fiab-mot-seul     { --fiab-color: var(--fiab-fiable); }
+.pan-C .f-precaution .fiab-mot-seul { --fiab-color: var(--fiab-precaution); }
+.pan-C .f-risque .fiab-mot-seul     { --fiab-color: var(--fiab-risque); }
+
+/* ══ Encart décisions ══ */
+.decisions {
+  margin-top: 2rem;
+  background: var(--fond-2);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  padding: 1.3rem 1.5rem 1.5rem;
+}
+.decisions h2 { font-size: 1.05rem; margin: 0 0 0.6rem; color: var(--niv-1); }
+.decisions p { margin: 0.45rem 0; font-size: 0.92rem; }
+.decisions table { width: 100%; border-collapse: collapse; font-size: 0.86rem; margin-top: 0.7rem; }
+.decisions th, .decisions td {
+  padding: 0.6rem 0.7rem;
+  text-align: left; vertical-align: top;
+  border-bottom: 1px solid var(--bordure);
+}
+.decisions tr:last-child td { border-bottom: none; }
+.decisions th {
+  background: var(--fond); font-weight: 700; color: var(--texte-secondaire);
+  font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.decisions code {
+  background: var(--niv-1-clair); color: var(--niv-1);
+  padding: 0.05rem 0.3rem; border-radius: 3px;
+  font-size: 0.85em; font-family: ui-monospace, "SF Mono", Consolas, monospace;
+}
+</style>
+</head>
+<body>
+<main class="page">
+
+<h1>Preview 9.B.2 — Réutiliser l'icône thématique de la fiche</h1>
+<p class="sous-titre">
+  Chaque fiche du référentiel porte déjà un glyphe thématique (<code>fiche.icone</code>) — 📈 pour Croissance, 🚢 pour Déploiement, 🎯 pour OKR, ⚡ pour Vélocité. Trois façons de l'articuler avec le signal fiabilité, sur les 5 mêmes fiches.
+</p>
+
+<div class="intro-bloc">
+  <h2>Le nœud sémantique</h2>
+  <p>L'icône thématique de fiche <strong>identifie la fiche</strong> (« ça parle de flux », « ça parle d'OKR »). Elle ne dit rien de la <strong>fiabilité</strong> (fiable / précaution / risque). Si on enlève la pastille de A sans la remplacer, on perd cette information.</p>
+  <p>Donc deux chemins possibles : <strong>fusion</strong> — le médaillon porte les deux signaux (glyphe = thème, anneau = fiabilité) ; ou <strong>cumul</strong> — le médaillon porte le thème, une pastille séparée porte la fiabilité.</p>
+</div>
+
+<section class="variantes">
+
+  <!-- ══ A — référence sans icône de fiche ══ -->
+  <div class="pan pan-A">
+    <span class="pan-label">A — RAPPEL</span>
+    <h2 class="pan-titre">Sans icône thématique</h2>
+    <p class="pan-desc">Le choix d'hier. Pastille colorée + mot pour la fiabilité. Aucun glyphe thématique. Base de comparaison.</p>
+
+    <div class="panier-col en-place">
+      <div class="panier-col-titre">En place <span class="compte">2</span></div>
+      <div class="panier-cartes">
+
+        <div class="panier-carte sans-medaillon f-fiable">
+          <div class="panier-carte-contenu">
+            <button class="panier-retirer">×</button>
+            <div class="panier-carte-nom">Croissance du chiffre d'affaires</div>
+            <div class="panier-carte-pied">
+              <span class="chip-type t-IGO">IGO</span>
+              <span class="chip-niveau">Stratégique</span>
+              <span class="fiab-pastille-mot"><span class="fiab-pastille"></span>fiable</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panier-carte sans-medaillon f-fiable">
+          <div class="panier-carte-contenu">
+            <button class="panier-retirer">×</button>
+            <div class="panier-carte-nom">Fréquence de déploiement</div>
+            <div class="panier-carte-pied">
+              <span class="chip-type t-DORA">DORA</span>
+              <span class="chip-niveau">Équipes</span>
+              <span class="fiab-pastille-mot"><span class="fiab-pastille"></span>fiable</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="panier-col a-envisager">
+      <div class="panier-col-titre">À envisager <span class="compte">3</span></div>
+      <div class="panier-cartes">
+
+        <div class="panier-carte sans-medaillon f-precaution">
+          <div class="panier-carte-contenu">
+            <button class="panier-retirer">×</button>
+            <div class="panier-carte-nom">Couverture de tests automatisés</div>
+            <div class="panier-carte-pied">
+              <span class="chip-type t-ICC">ICC</span>
+              <span class="chip-niveau">Équipes</span>
+              <span class="fiab-pastille-mot"><span class="fiab-pastille"></span>précaution</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panier-carte sans-medaillon f-precaution">
+          <div class="panier-carte-contenu">
+            <button class="panier-retirer">×</button>
+            <div class="panier-carte-nom">OKR stratégiques annuels</div>
+            <div class="panier-carte-pied">
+              <span class="chip-type t-ORC">ORC</span>
+              <span class="chip-niveau">Stratégique</span>
+              <span class="fiab-pastille-mot"><span class="fiab-pastille"></span>précaution</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panier-carte sans-medaillon f-risque">
+          <div class="panier-carte-contenu">
+            <button class="panier-retirer">×</button>
+            <div class="panier-carte-nom">Vélocité (Velocity)</div>
+            <div class="panier-carte-pied">
+              <span class="chip-type t-FLUX">FLUX</span>
+              <span class="chip-niveau">Équipes</span>
+              <span class="fiab-pastille-mot"><span class="fiab-pastille"></span>risque</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ C — FUSION : médaillon + anneau coloré selon fiabilité ══ -->
+  <div class="pan pan-C">
+    <span class="pan-label">C — FUSION</span>
+    <h2 class="pan-titre">Médaillon cerclé : glyphe + anneau de couleur</h2>
+    <p class="pan-desc">Le glyphe thématique identifie la fiche, l'anneau coloré exprime la fiabilité. Mot en texte coloré sous le médaillon. Un seul objet visuel pour les deux signaux.</p>
+
+    <div class="panier-col en-place">
+      <div class="panier-col-titre">En place <span class="compte">2</span></div>
+      <div class="panier-cartes">
+
+        <div class="panier-carte f-fiable">
+          <div>
+            <span class="medaillon" aria-hidden="true">📈</span>
+            <div class="fiab-mot-seul">fiable</div>
+          </div>
+          <div class="panier-carte-contenu">
+            <button class="panier-retirer">×</button>
+            <div class="panier-carte-nom">Croissance du chiffre d'affaires</div>
+            <div class="panier-carte-pied">
+              <span class="chip-type t-IGO">IGO</span>
+              <span class="chip-niveau">Stratégique</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panier-carte f-fiable">
+          <div>
+            <span class="medaillon" aria-hidden="true">🚢</span>
+            <div class="fiab-mot-seul">fiable</div>
+          </div>
+          <div class="panier-carte-contenu">
+            <button class="panier-retirer">×</button>
+            <div class="panier-carte-nom">Fréquence de déploiement</div>
+            <div class="panier-carte-pied">
+              <span class="chip-type t-DORA">DORA</span>
+              <span class="chip-niveau">Équipes</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="panier-col a-envisager">
+      <div class="panier-col-titre">À envisager <span class="compte">3</span></div>
+      <div class="panier-cartes">
+
+        <div class="panier-carte f-precaution">
+          <div>
+            <span class="medaillon" aria-hidden="true">🧪</span>
+            <div class="fiab-mot-seul">précaution</div>
+          </div>
+          <div class="panier-carte-contenu">
+            <button class="panier-retirer">×</button>
+            <div class="panier-carte-nom">Couverture de tests automatisés</div>
+            <div class="panier-carte-pied">
+              <span class="chip-type t-ICC">ICC</span>
+              <span class="chip-niveau">Équipes</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panier-carte f-precaution">
+          <div>
+            <span class="medaillon" aria-hidden="true">🎯</span>
+            <div class="fiab-mot-seul">précaution</div>
+          </div>
+          <div class="panier-carte-contenu">
+            <button class="panier-retirer">×</button>
+            <div class="panier-carte-nom">OKR stratégiques annuels</div>
+            <div class="panier-carte-pied">
+              <span class="chip-type t-ORC">ORC</span>
+              <span class="chip-niveau">Stratégique</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panier-carte f-risque">
+          <div>
+            <span class="medaillon" aria-hidden="true">⚡</span>
+            <div class="fiab-mot-seul">risque</div>
+          </div>
+          <div class="panier-carte-contenu">
+            <button class="panier-retirer">×</button>
+            <div class="panier-carte-nom">Vélocité (Velocity)</div>
+            <div class="panier-carte-pied">
+              <span class="chip-type t-FLUX">FLUX</span>
+              <span class="chip-niveau">Équipes</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ D — CUMUL : médaillon neutre + pastille fiabilité conservée ══ -->
+  <div class="pan pan-D">
+    <span class="pan-label">D — CUMUL</span>
+    <h2 class="pan-titre">Médaillon neutre + pastille fiabilité</h2>
+    <p class="pan-desc">Le glyphe thématique s'ajoute simplement (médaillon neutre à gauche). La pastille de fiabilité reste dans le pied, inchangée. Deux zones, chacune son rôle.</p>
+
+    <div class="panier-col en-place">
+      <div class="panier-col-titre">En place <span class="compte">2</span></div>
+      <div class="panier-cartes">
+
+        <div class="panier-carte f-fiable">
+          <span class="medaillon" aria-hidden="true">📈</span>
+          <div class="panier-carte-contenu">
+            <button class="panier-retirer">×</button>
+            <div class="panier-carte-nom">Croissance du chiffre d'affaires</div>
+            <div class="panier-carte-pied">
+              <span class="chip-type t-IGO">IGO</span>
+              <span class="chip-niveau">Stratégique</span>
+              <span class="fiab-pastille-mot"><span class="fiab-pastille"></span>fiable</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panier-carte f-fiable">
+          <span class="medaillon" aria-hidden="true">🚢</span>
+          <div class="panier-carte-contenu">
+            <button class="panier-retirer">×</button>
+            <div class="panier-carte-nom">Fréquence de déploiement</div>
+            <div class="panier-carte-pied">
+              <span class="chip-type t-DORA">DORA</span>
+              <span class="chip-niveau">Équipes</span>
+              <span class="fiab-pastille-mot"><span class="fiab-pastille"></span>fiable</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="panier-col a-envisager">
+      <div class="panier-col-titre">À envisager <span class="compte">3</span></div>
+      <div class="panier-cartes">
+
+        <div class="panier-carte f-precaution">
+          <span class="medaillon" aria-hidden="true">🧪</span>
+          <div class="panier-carte-contenu">
+            <button class="panier-retirer">×</button>
+            <div class="panier-carte-nom">Couverture de tests automatisés</div>
+            <div class="panier-carte-pied">
+              <span class="chip-type t-ICC">ICC</span>
+              <span class="chip-niveau">Équipes</span>
+              <span class="fiab-pastille-mot"><span class="fiab-pastille"></span>précaution</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panier-carte f-precaution">
+          <span class="medaillon" aria-hidden="true">🎯</span>
+          <div class="panier-carte-contenu">
+            <button class="panier-retirer">×</button>
+            <div class="panier-carte-nom">OKR stratégiques annuels</div>
+            <div class="panier-carte-pied">
+              <span class="chip-type t-ORC">ORC</span>
+              <span class="chip-niveau">Stratégique</span>
+              <span class="fiab-pastille-mot"><span class="fiab-pastille"></span>précaution</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panier-carte f-risque">
+          <span class="medaillon" aria-hidden="true">⚡</span>
+          <div class="panier-carte-contenu">
+            <button class="panier-retirer">×</button>
+            <div class="panier-carte-nom">Vélocité (Velocity)</div>
+            <div class="panier-carte-pied">
+              <span class="chip-type t-FLUX">FLUX</span>
+              <span class="chip-niveau">Équipes</span>
+              <span class="fiab-pastille-mot"><span class="fiab-pastille"></span>risque</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<section class="decisions">
+  <h2>Points de lecture</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Aspect</th>
+        <th>A — rappel</th>
+        <th>C — fusion</th>
+        <th>D — cumul</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Identifier la fiche</strong></td>
+        <td>Par le nom seul</td>
+        <td>Nom + glyphe thématique</td>
+        <td>Nom + glyphe thématique</td>
+      </tr>
+      <tr>
+        <td><strong>Lire la fiabilité</strong></td>
+        <td>Pastille + mot dans le pied</td>
+        <td>Anneau du médaillon + mot sous le médaillon</td>
+        <td>Pastille + mot dans le pied</td>
+      </tr>
+      <tr>
+        <td><strong>Densité visuelle</strong></td>
+        <td>3 éléments dans le pied</td>
+        <td>Médaillon à gauche, 2 chips dans le pied. Plus aéré.</td>
+        <td>Médaillon à gauche + 3 éléments dans le pied. Plus chargé.</td>
+      </tr>
+      <tr>
+        <td><strong>Scan visuel d'une colonne</strong></td>
+        <td>Couleurs des pastilles alignées verticalement en pied</td>
+        <td>Anneaux alignés verticalement à gauche, mots colorés en-dessous — lecture immédiate</td>
+        <td>Glyphes alignés à gauche, pastilles à des positions variables dans le pied selon le texte du nom</td>
+      </tr>
+      <tr>
+        <td><strong>Cohérence avec l'app</strong></td>
+        <td>Nouveau vocabulaire (pastille)</td>
+        <td>Réutilise <code>fiche.icone</code>. Ajoute l'anneau (nouveau — mais porteur de sens)</td>
+        <td>Réutilise <code>fiche.icone</code>. Garde la pastille de A</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top:1rem;font-style:italic;color:var(--texte-secondaire);">
+    Mon inclination : <strong>C</strong>. Le glyphe thématique et le signal fiabilité sont fusionnés dans un seul objet visuel, ce qui allège la carte et crée un effet de scan vertical très net (les anneaux rouges sautent aux yeux dans une colonne). D reste lisible mais charge la carte avec un 4<sup>e</sup> repère visuel. À toi de trancher.
+  </p>
+</section>
+
+</main>
+</body>
+</html>
