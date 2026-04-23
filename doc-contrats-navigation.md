@@ -2,7 +2,7 @@
 
 *Document vivant. Deux zones : **figée** (invariants, contrats d'API stables) et **évolutive** (choix UX à trancher par mockup-preview). Chaque modification est commitée et consignée.*
 
-Dernière mise à jour : 23 avril 2026 — § 4 enrichi : renommage *La maturité ?*, direction accueil, mutation de l'onglet maturité, expansion future des lentilles de *Choisir*.
+Dernière mise à jour : 23 avril 2026 — *Cascade stratégique* réémerge (§ 4.5, nav à 7 entrées, ajustements plan d'exécution).
 
 ---
 
@@ -13,7 +13,7 @@ Le chantier 10 refond la topologie de navigation de `cadre-indicateurs.html`. L'
 **Scope dans ce document :**
 
 - les quatre portes (problème, cadre, niveau, maturité — cette dernière actuellement désactivée, affichée « Bientôt ») et leur place dans la nav ;
-- les onglets de l'app (TDB, Choisir mes indicateurs, Maturité) — Cascade stratégique en pause (chantier 11) ;
+- les onglets de l'app (TDB, Choisir mes indicateurs, Maturité) — *Cascade stratégique* réémerge avec une mission claire (cf. § 4.5) : emplacement réservé en 10.1 (vue stub), contenu livré au chantier 11 ;
 - la topologie des deux accueils (`#accueil` pyramide, `#accueil-portes` 4 tuiles) ;
 - les règles de routage par hash URL (partage d'URL, deep-linking).
 
@@ -121,7 +121,7 @@ Les portes et les onglets utilisent aujourd'hui des codes visuels différents �
 ### 4.1 Invariants de topologie (déjà tranchés)
 
 - **Une nav unifiée à un seul étage.** Portes et onglets cohabitent sous forme d'une nav persistante, visible partout sauf dans le tiroir de fiche. Plus de bascule pyramide/portes, plus d'enclos *app*.
-- **Six entrées de premier rang** (conformément au chantier 10 du backlog) : *Accueil · Mon tableau de bord · Choisir mes indicateurs · La maturité ? · Lexique · À propos*. *Cascade stratégique* reste en pause (chantier 11), non exposée dans la nav de premier rang.
+- **Sept entrées de premier rang** : *Accueil · Mon tableau de bord · Choisir mes indicateurs · Cascade stratégique · La maturité ? · Lexique · À propos*. L'entrée *Cascade stratégique* est **réservée** dès 10.1 sous forme d'une vue stub (libellé « Bientôt » ou équivalent, cohérente avec le traitement actuel de la carte *Par ma maturité*) — son contenu arrive au chantier 11. Cette réservation précoce évite une double refonte de la nav (6 → 7 entrées) plus tard. Option 1 actée avec Lætitia le 22/04.
 - **Portes = sous-lentilles de l'onglet *Choisir mes indicateurs*.** Cette hiérarchie est posée par `MISSION.md` — *« l'onglet contient les lentilles d'exploration : par mon problème, par mon cadre de travail, par mon rôle »*. Les portes ne sont pas des entrées parallèles à *Choisir*, elles en sont le contenu. **Quatre lentilles** composent le socle (problème, cadre, niveau, maturité — la dernière réactivée quand la porte *Par ma maturité* l'est aussi, cf. § 4.4 pour l'expansion future).
 - **Un seul accueil, qui exprime la mission et ce que l'utilisateur va acquérir.** L'accueil ne liste plus des portes et ne déguise plus une porte — il présente l'outil à la personne qui arrive : sa raison d'être (*« la métrique est une lunette pour se questionner »*), les cinq prises de conscience, les scénarios types. Les portes et les onglets restent atteignables depuis la nav unifiée persistante. La rédaction et le design fin de cet accueil sont à travailler dans un chantier éditorial dédié (communication + UX-UI), hors scope 10 — mais la **place** de l'accueil dans la topologie se décide ici.
 - **L'onglet *La maturité ?* mute.** La vue actuelle (audit du scorecard par maturité) est redondante avec ce que font les autres pages et disparaît. Le nouvel onglet devient la **page de transparence du référentiel sur la maturité** : il expose les définitions (débutant / intermédiaire / avancé) et accueillera à terme un **outil de diagnostic de maturité** (chantier éditorial dédié à ouvrir, hors scope 10). La porte *Par ma maturité* dans *Choisir mes indicateurs* reste une lentille distincte : elle aide à entrer dans le référentiel depuis un niveau de maturité donné (démarche prospective), tandis que l'onglet en explique la grille (démarche réflexive). Les deux cohabitent et se complètent. Le point d'interrogation dans le libellé est volontaire — il matérialise la posture socratique de l'outil : *l'onglet ne donne pas un verdict, il invite à enquêter*.
@@ -129,7 +129,7 @@ Les portes et les onglets utilisent aujourd'hui des codes visuels différents �
 ### 4.2 Points à trancher en preview fondateur (mockup 10.0)
 
 - **Comment exposer les quatre lentilles initiales dans *Choisir mes indicateurs*.** Tabs internes ? grille de cards ? stepper d'emblée ouvert sur la première lentille ? autre ? Le choix détermine la granularité de navigation visible, le comportement au clic sur *Choisir mes indicateurs* dans la nav de premier rang, **et la capacité de la coquille à absorber les lentilles futures** listées en § 4.4.
-- **Que devient l'actuel `vue-questionnaire` ?** Conservé comme quatrième lentille (*par mon questionnaire*) ? fondu dans une porte existante ? supprimé ? Question saillante — la réponse détermine le nombre de lentilles exposées en 10.0.
+- **Que devient l'actuel `vue-questionnaire` ?** Conservé comme lentille de *Choisir* ? fondu dans une porte existante ? supprimé ? **Fusionné avec la future *Cascade stratégique*** (chantier 11), qui reprend une forme voisine d'interrogation guidée ? Question saillante — la réponse détermine la topologie des lentilles exposées en 10.0 et la mission effective de *Cascade* au chantier 11. Un arbitrage **conjoint 10.0 / 11** est souhaitable.
 - **Comportement responsive de la nav.** Bandeau horizontal plein largeur ? repli en menu hamburger sous N px ? icônes-only sur un breakpoint intermédiaire ? À trancher conjointement avec le mockup.
 - **Marquage visuel de l'entrée active dans la nav.** Soulignement ? fond plein ? simple bold ? indicateur graphique (pastille, chevron) ? À arbitrer pour éviter la *chip de chip* (cf. § 3.5).
 
@@ -148,6 +148,18 @@ La mission de *Choisir mes indicateurs* est d'être l'espace des **lentilles d'e
 - **Par ce que je veux améliorer** — formulation par verbe d'intention (réduire le retard, gagner en fiabilité, rendre compte, etc.), plus proche du langage managérial.
 
 Ces lentilles ne sont pas une liste exhaustive — le jeu reste ouvert. Elles sont citées ici pour fixer une contrainte de conception du chantier 10 : **la coquille de *Choisir* doit être conçue pour s'enrichir**. Un chantier qui fige la charpente sans laisser la place à l'ajout de lentilles futures ne sert pas la mission.
+
+### 4.5 Cascade stratégique — mission réémergente, emplacement réservé
+
+*Changement de statut par rapport à `MISSION.md` version actuelle (*« statut actuel : en pause »*). L'onglet n'est plus en pause sans mission — il revient avec une intention claire. La mise à jour de `MISSION.md` se fait en parallèle du chantier 11.*
+
+**Mission émergente (à consolider au chantier 11).** *Cascade stratégique* offre la seule vision que les autres pages ne donnent pas : une **vue d'ensemble des alignements inter-niveaux**. Là où les portes de *Choisir* produisent un effet tunnel assumé (on tire une sélection à partir d'un angle), *Cascade* fait l'inverse — elle donne à voir l'ensemble du paysage des indicateurs à toutes les strates (équipe, programme, portefeuille, entreprise) et permet de **révéler les alignements** : quelle métrique équipe nourrit quelle métrique programme, elle-même reliée à quel indicateur de direction.
+
+**Interaction clé pressentie.** Un clic sur une métrique dans une colonne **colore** toutes les métriques alignées dans les autres colonnes et **grise** les autres. Un jeu de filtres (par cadre de travail, par axe, par domaine…) ajuste la lecture. Le dessin détaillé est à produire au chantier 11.
+
+**Rapport avec `vue-questionnaire` actuel.** Le questionnaire actuel est une **candidate sérieuse à la fusion ou à l'absorption par *Cascade*** — sa mission est voisine (interroger pour faire émerger). L'arbitrage se prend à l'ouverture du chantier 11, idéalement conjointement avec le point § 4.2 du chantier 10.
+
+**Scope chantier 10 pour Cascade.** Strictement minimal : **l'entrée *Cascade stratégique* existe dans la nav unifiée, elle pointe vers une vue stub** (page vide avec libellé « Bientôt » ou équivalent, cohérente avec le traitement aujourd'hui appliqué à la carte *Par ma maturité*). Aucune logique, aucune refonte interne, aucun contenu. Le chantier 11 prend le relais — et ce jour-là, la refonte de *Cascade* se fait *derrière* la place déjà réservée en nav, sans retoucher au reste.
 
 ---
 
@@ -270,8 +282,8 @@ Toute décision du chantier 10 doit pouvoir répondre à la question posée dans
 | # | Nom | Objectif | Livrable | Dépend de |
 |---|---|---|---|---|
 | **10.0** | Preview fondateur | Arbitrer les points § 4.2 (exposition des lentilles, sort du questionnaire, responsive, marquage actif) | 2 à 4 fichiers `preview-10-*.html` + arbitrage tracé dans § 5 du doc compagnon | rien |
-| **10.1** | Socle nav unifiée | Créer le bandeau, le router enrichi, sans toucher au contenu des onglets/portes. Iso-comportement des vues, nouvelle coquille de navigation. | `CM.Nav` (ou équivalent) + mise à jour DOM + routeur enrichi | 10.0 |
-| **10.2** | Migration accueil | Supprimer les deux accueils actuels (`#accueil`, `#accueil-portes`), redirection silencieuse de `#pyramide`/`#portes`, écran *Accueil* à parité visuelle | DOM accueil refait + migration hash + suppression `basculerAccueil` / `afficherAccueil` dans `CM.App` | 10.1 |
+| **10.1** | Socle nav unifiée | Créer le bandeau à **7 entrées** (dont *Cascade stratégique* en stub « Bientôt »), le router enrichi, sans toucher au contenu des onglets/portes existants. Iso-comportement des vues, nouvelle coquille de navigation. | `CM.Nav` (ou équivalent) + mise à jour DOM + routeur enrichi + **vue stub pour Cascade** (cf. § 4.5) | 10.0 |
+| **10.2** | Migration accueil | Supprimer les deux accueils actuels (`#accueil`, `#accueil-portes`), redirection silencieuse de `#pyramide`/`#portes`, mettre en place l'écran *Accueil* dans sa nouvelle mission (expression de la mission de l'outil — squelette en place, rédaction et design fin hors scope 10, à travailler dans un chantier éditorial communication + UX-UI) | DOM accueil refait + migration hash + suppression `basculerAccueil` / `afficherAccueil` dans `CM.App` | 10.1 |
 | **10.3** | Intégration portes dans *Choisir* | Les trois portes deviennent sous-lentilles de l'onglet *Choisir mes indicateurs*, selon le mode retenu en 10.0 | Refonte de `vue-questionnaire` + câblage portes | 10.2 |
 | **10.4** | Deep-linking additif *(conditionnel)* | Ajouter les hash `#onglet=`, `#porte=` si retenus après 10.0 | Router enrichi + tests d'URLs partageables | 10.3 |
 | **10.5** | Clôture et tests | Tests de non-régression complets, mise à jour backlog, archivage chantier 10 | Commit de clôture + État courant actualisé | 10.4 ou 10.3 |
@@ -289,7 +301,7 @@ Toute décision du chantier 10 doit pouvoir répondre à la question posée dans
 Trois bascules explicites avec Lætitia avant de continuer :
 
 1. **Après 10.0** — arbitrage sur les points § 4.2, consigné dans § 5 du doc compagnon. Pas de démarrage de 10.1 sans cet arbitrage.
-2. **Avant 10.3** — confirmation du choix de refonte de *vue-questionnaire* (garder / fondre / supprimer) et du câblage portes retenu.
+2. **Avant 10.3** — confirmation du choix de refonte de *vue-questionnaire* (garder / fondre dans une porte / supprimer / **fusionner avec la future *Cascade stratégique* du chantier 11**) et du câblage portes retenu. L'arbitrage peut se faire conjointement avec l'ouverture du chantier 11 (cf. § 4.5).
 3. **Avant 10.4** *(conditionnel)* — priorisation du deep-linking additif : est-ce que le chantier 10 porte ce scope ou le reporte à un chantier ultérieur ?
 
 ### 8.4 Prérequis à ne pas oublier
@@ -306,3 +318,4 @@ Trois bascules explicites avec Lætitia avant de continuer :
 - 22/04/2026 soir — commit 3 : sections 4 (modèle cible — invariants de topologie + points à trancher en 10.0) et 8 (plan d'exécution — 6 sous-chantiers 10.0 à 10.5, contraintes de livraison, points d'arbitrage).
 - 23/04/2026 — commit A : correction § 1 et § 2.1 — quatre portes dans `#accueil-portes` (dont *maturité* désactivée « Bientôt »). La mention *niveau-stepper → `#porte-niveau` (en cours 7.2a-code.3)* retirée de la colonne « Sorties » — cette carte n'existe pas dans `#accueil-portes` aujourd'hui (le DOM `#vue-porte-niveau` est atteint par une autre voie, et la porte niveau telle qu'elle apparaît sur l'accueil bascule simplement vers la pyramide).
 - 23/04/2026 — commit B : § 4 Modèle cible enrichi. Quatre ajustements actés : (1) renommage *Maturité & Recommandations* → *La maturité ?* (choix éditorial avec point d'interrogation volontaire — posture socratique) ; (2) accueil assume sa mission d'expression (raison d'être + prises de conscience + scénarios) plutôt que de lister les portes ; (3) mutation de l'onglet *La maturité ?* — plus d'audit-scorecard, devient page de transparence sur la grille de maturité + accueillera un outil de diagnostic (chantier éditorial dédié à ouvrir, hors scope 10) ; (4) nouvelle § 4.4 *Expansion future des lentilles* (flux, communication, visibilité, par ce qu'on veut améliorer) — contrainte de conception pour la coquille de *Choisir* : elle doit être conçue pour s'enrichir.
+- 23/04/2026 — commit C : *Cascade stratégique* réémerge. § 1 et § 4.1 passent à **sept entrées** de premier rang (Cascade insérée entre *Choisir* et *La maturité ?*). Nouvelle § 4.5 pose la mission de *Cascade* (vision globale des alignements inter-niveaux, click-to-highlight, filtres), son rapport avec `vue-questionnaire` actuel (candidate pour fusion au chantier 11), son scope chantier 10 (emplacement réservé en 10.1, vue stub « Bientôt »). § 4.2 enrichi (question sur `vue-questionnaire` inclut désormais la piste de fusion avec Cascade). § 8.1 ajusté — 10.1 livre aussi le stub Cascade, 10.2 met en place l'accueil dans sa nouvelle mission d'expression. § 8.3 enrichi (arbitrage conjoint 10.3 / 11).
