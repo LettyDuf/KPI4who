@@ -431,6 +431,28 @@ Accueil · Mon tableau de bord · Choisir mes indicateurs · Cascade stratégiqu
 
 ---
 
+## 15. Accompagnement post-choix — tenir les indicateurs vivants
+
+**Origine.** Session du 24/04/2026 — analyse d'expert sur la pertinence et l'utilité de l'outil. Diagnostic posé : choisir les bons indicateurs est 30 % du problème ; les faire *vivre* (ritualisation, interprétation collective, détection de dérive, ajustement trimestriel) est 70 %. Le brief mentionne « comment l'interpréter », mais l'outil n'a pas encore de traitement fort du *post-choix*. Sans ce volet, l'outil reste un instrument d'arbitrage ponctuel — il ne travaille pas la durée.
+
+**Mission.** Compléter l'outil d'un volet *après-choix* qui transforme un panier validé en pratique vivante sur 12-24 mois. Trois axes pressentis, à cadrer en ouverture :
+
+- **Ritualisation.** Pour chaque métrique du panier, suggérer un rythme de revue (continu / hebdo / sprint / mensuel / trimestriel / ad-hoc — réutilise le champ `frequenceMesure` prévu au chantier 14) et une **question-guide** de la revue (*« qu'a appris cette métrique ce mois-ci ? son interprétation a-t-elle changé ? »*). Format court attendu : 10 minutes par métrique, cadre réflexif, pas tableau de bord.
+- **Détection de dérive.** Liste fermée de signaux observables indiquant qu'une métrique se fait *gamer* (Goodhart), se ramollit (conformité cosmétique) ou devient donnée rituelle morte. Candidats pressentis : stabilisation suspecte à la cible, découplage de l'outcome perçu, migration du conflit vers une métrique voisine, rejet systématique des valeurs extrêmes, cadence de revue qui s'espace. Chaque signal nommé avec le remède associé.
+- **Règle de retrait.** Critères pour sortir une métrique du panier : apprentissage stabilisé, dérive confirmée, équipe ayant changé de problème focal, changement de maturité. Le retrait ne signale pas l'échec : il signale que la métrique a fait son travail. Bouton *retirer avec raison* dans la vue panier, raison versée au Lexique comme matériau doctrinal.
+
+**Panels d'experts à convoquer au cadrage.** Deming (PDCA, *profound knowledge*), Seddon (Vanguard method, *failure demand*), Goldratt (TOC, focalisation), Taleb (anti-fragilité, cygne noir), Senge (boucles de rétroaction, archétypes systémiques). À nommer précisément, pas par défaut.
+
+**Articulations.** Exploite le socle panier v1 (chantier 9) et le Lexique enrichi (chantier 12). Nourrit aussi l'outil de diagnostic de maturité (chantier 13) qui a besoin d'indicateurs pour nommer ses paliers. S'appuie sur la discipline **16.1 parcours court** : le volet post-choix ne doit pas alourdir le parcours de *sélection*, il s'active seulement sur un panier existant.
+
+**Non-objectifs explicites.** Pas d'automatisation de la collecte (l'outil ne branche pas d'API métier). Pas de dashboard temps réel. Pas d'alertes push. L'outil reste un miroir réflexif, pas un moniteur.
+
+**Priorité : 🟢 basse — à cadrer en profondeur.** Chantier potentiellement de même envergure que 12 + 13 réunis. À décomposer en tranches : (i) éditorial — nommer les anti-patterns post-choix et les critères de retrait dans le Lexique ; (ii) produit — où ces signaux s'affichent (fiche métrique ? vue panier ? nouveau volet *Ma pratique* ?). Ouvert après livraison du chantier 14 et de la boucle 9.B au minimum.
+
+**Points d'ancrage code (à recaler au cadrage).** Extension `CM.Panier` (ajout `frequenceRevue` et `derniereRevue` par entrée, port `CM.Panier.PratiqueDepot`). Nouveau module `CM.ConseilPostChoix` (fonction pure : panier + contexte → liste de signaux de dérive à surveiller). Éventuel nouvel onglet ou sous-vue du panier — arbitrage UX à l'ouverture.
+
+---
+
 ## Prochaine action recommandée
 
 Chantier **14 — refactor hexagonal** ouvert le 23/04/2026 fin de journée. Chantier **10 gelé à `5655b03`** (décisions conservées).
