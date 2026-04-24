@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Validation étape (a) — inventaire du schéma de métriques</title>
+<style>
+  :root {
+    --texte: #1f2937;
+    --texte-doux: #4b5563;
+    --texte-tres-doux: #6b7280;
+    --bordure: #e5e7eb;
+    --fond: #fafafa;
+    --fond-carte: #ffffff;
+    --fond-2: #f3f4f6;
+    --indigo: #4338ca;
+    --indigo-doux: #eef2ff;
+    --teal: #0d9488;
+    --teal-doux: #ccfbf1;
+    --ambre: #b45309;
+    --ambre-doux: #fef3c7;
+    --vert: #15803d;
+    --vert-doux: #dcfce7;
+    --rouge: #b91c1c;
+    --rouge-doux: #fee2e2;
+    --violet: #6d28d9;
+    --violet-doux: #ede9fe;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    background: var(--fond);
+    color: var(--texte);
+    line-height: 1.55;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+    font-size: 15px;
+  }
+  h1 {
+    font-size: 24px;
+    margin: 0 0 8px;
+    color: var(--indigo);
+    font-weight: 600;
+  }
+  .intro {
+    color: var(--texte-doux);
+    margin-bottom: 32px;
+    font-size: 14px;
+  }
+  .section {
+    background: var(--fond-carte);
+    border: 1px solid var(--bordure);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  h2 {
+    font-size: 18px;
+    margin: 0 0 4px;
+    color: var(--indigo);
+    font-weight: 600;
+  }
+  .question {
+    color: var(--texte-doux);
+    font-style: italic;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+
+  /* Q1 — schéma périmètre */
+  .schema-perim {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 16px;
+  }
+  .schema-col h3 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 12px;
+    color: var(--texte-tres-doux);
+  }
+  .schema-col.in h3 { color: var(--vert); }
+  .schema-col.out h3 { color: var(--texte-tres-doux); }
+  .zone {
+    background: var(--indigo-doux);
+    border: 1px solid var(--indigo);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .zone strong { color: var(--indigo); font-weight: 600; }
+  .zone-detail { font-size: 13px; color: var(--texte-doux); margin-top: 4px; }
+  .zone.meta { background: var(--violet-doux); border-color: var(--violet); }
+  .zone.meta strong { color: var(--violet); }
+  .zone.roles { background: var(--teal-doux); border-color: var(--teal); }
+  .zone.roles strong { color: var(--teal); }
+  .lignes-bullet {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    color: var(--texte-doux);
+  }
+  .lignes-bullet li { margin-bottom: 4px; }
+  .hors {
+    background: var(--fond-2);
+    border: 1px dashed var(--bordure);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    color: var(--texte-tres-doux);
+    font-size: 13px;
+  }
+  .hors strong { color: var(--texte-doux); font-weight: 600; }
+
+  /* Q2 — tableau deltas */
+  .tab-deltas {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 14px;
+  }
+  .tab-deltas th, .tab-deltas td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--bordure);
+    vertical-align: top;
+  }
+  .tab-deltas th {
+    background: var(--fond-2);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--texte-tres-doux);
+  }
+  .cout {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .cout-h { background: var(--rouge-doux); color: var(--rouge); }
+  .cout-m { background: var(--ambre-doux); color: var(--ambre); }
+  .cout-l { background: var(--vert-doux); color: var(--vert); }
+  .dest {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .dest-b { background: var(--indigo-doux); color: var(--indigo); }
+  .dest-backlog { background: var(--fond-2); color: var(--texte-doux); }
+  .dest-tranche { background: var(--vert-doux); color: var(--vert); }
+  .reco {
+    font-size: 12px;
+    color: var(--texte-tres-doux);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  /* Q3 — écarts possibles */
+  .ecarts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .ecart {
+    background: var(--ambre-doux);
+    border-left: 3px solid var(--ambre);
+    border-radius: 4px;
+    padding: 12px 14px;
+  }
+  .ecart-titre {
+    font-weight: 600;
+    color: var(--ambre);
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .ecart-desc {
+    font-size: 13px;
+    color: var(--texte-doux);
+  }
+  .ecart-q {
+    font-size: 12px;
+    color: var(--texte-tres-doux);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  .legende {
+    font-size: 12px;
+    color: var(--texte-tres-doux);
+    margin-top: 8px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<h1>Validation de l'étape (a) — inventaire du schéma de métriques</h1>
+<p class="intro">Ce mockup rejoue en visuel les 3 questions de validation posées précédemment en prose. Objectif : qu'on voie la même chose pour parler de la même chose. Chaque section = une question.</p>
+
+<!-- ====================== Q1 ====================== -->
+<div class="section">
+  <h2>Q1 — Le périmètre de l'inventaire est-il juste ?</h2>
+  <p class="question">Ce que le document <em>couvre</em> (à gauche) vs ce qu'il laisse <em>dehors</em> (à droite).</p>
+
+  <div class="schema-perim">
+
+    <div class="schema-col in">
+      <h3>✓ Dans le périmètre</h3>
+
+      <div class="zone">
+        <strong>Zone 1 — Fiches métriques</strong>
+        <div class="zone-detail">84 fiches. Champs filtrables (niveau, type, cadre, fiabilité, maturité, roles), champs présentation (nom, résumé, exemples), champs éditoriaux libres.</div>
+      </div>
+      <div class="zone meta">
+        <strong>Zone 2 — Tagging externe (CM.IndicateursMeta)</strong>
+        <div class="zone-detail">TAGS (7 familles de problèmes) + CADRES (10 cadres actifs) + FAMILLES (7 écoles). Table META qui relie id de fiche ↔ tags/cadres.</div>
+      </div>
+      <div class="zone roles">
+        <strong>Zone 3 — Catalogue des rôles (CM._rolesData)</strong>
+        <div class="zone-detail">53 rôles avec axes Mintzberg (projet/méthode/humaine/stratégique) et niveau hiérarchique. Vocabulaire uniquement, pas de lien vers les fiches.</div>
+      </div>
+
+      <h3 style="margin-top: 20px;">✓ Les 7 sections du livrable</h3>
+      <ol class="lignes-bullet">
+        <li>3 zones de données disjointes</li>
+        <li>Schéma champ par champ (filtrable / présentation / éditorial / tagging externe)</li>
+        <li>11 vocabulaires fermés (types, niveaux, fiabilité, maturité, domaines…)</li>
+        <li>Inventaire par niveau (12 tableaux, 84 fiches)</li>
+        <li>6 écarts identifiés + recommandations</li>
+        <li>Esquisse signature <code>CM.RequeteMetriques.executer(filtre)</code></li>
+        <li>Questions de validation</li>
+      </ol>
+    </div>
+
+    <div class="schema-col out">
+      <h3>✗ Explicitement hors périmètre</h3>
+
+      <div class="hors">
+        <strong>Revue éditoriale des fiches</strong><br>
+        Pas de reformulation de libellés, pas de refonte de résumés. L'inventaire décrit le schéma, pas le contenu.
+      </div>
+      <div class="hors">
+        <strong>Catalogue de questions fines (chantier 10)</strong><br>
+        La porte <em>Par ma question</em> est gelée. Aucune question d'utilisateur n'est inventoriée ici.
+      </div>
+      <div class="hors">
+        <strong>Refonte navigation / panier / portes</strong><br>
+        L'UX des 4 portes existantes n'est pas audité, seulement le <em>schéma de données</em> qui les alimente.
+      </div>
+      <div class="hors">
+        <strong>Rédaction du code de CM.RequeteMetriques</strong><br>
+        C'est l'étape (b). L'inventaire pose seulement l'<em>esquisse</em> de signature.
+      </div>
+      <div class="hors">
+        <strong>MISSION.md, refactor panier, doc finale</strong><br>
+        C'est l'étape (d).
+      </div>
+
+    </div>
+  </div>
+
+  <p class="legende">→ Question à trancher : ce découpage IN/OUT te convient-il ? Y a-t-il un élément à rapatrier dans le IN, ou à sortir du IN ?</p>
+</div>
+
+<!-- ====================== Q2 ====================== -->
+<div class="section">
+  <h2>Q2 — Où vont les 3 grands deltas découverts ?</h2>
+  <p class="question">Chaque delta a un coût éditorial et une priorité. Pour chacun : intégrer dès l'étape (b), ou consigner au backlog pour plus tard ?</p>
+
+  <table class="tab-deltas">
+    <thead>
+      <tr>
+        <th style="width: 22%;">Delta</th>
+        <th style="width: 28%;">Ce que ça résout</th>
+        <th style="width: 18%;">Coût éditorial</th>
+        <th style="width: 32%;">Destination recommandée</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Axes Mintzberg</strong><br><span style="font-size:12px;color:var(--texte-tres-doux)">champ <code>axes</code> sur fiches</span></td>
+        <td>Filtrer les métriques par contribution managériale (projet / méthode / humaine / stratégique). Miroir de ce qui existe sur les rôles.</td>
+        <td><span class="cout cout-h">Élevé</span><br><span class="reco">84 fiches à tagger</span></td>
+        <td><span class="dest dest-b">Étape (b) — cœur</span><br><span class="reco">Le filtre en a besoin structurellement. Tagging peut être progressif (défaut « tous axes » jusqu'à révision).</span></td>
+      </tr>
+      <tr>
+        <td><strong>Socle / spécifique</strong><br><span style="font-size:12px;color:var(--texte-tres-doux)">booléen <code>socleDeNiveau</code></span></td>
+        <td>Distinguer ce que tout rôle d'un niveau doit consulter vs ce qui est filtrable par axe/rôle.</td>
+        <td><span class="cout cout-m">Moyen</span><br><span class="reco">84 cases à cocher</span></td>
+        <td><span class="dest dest-b">Étape (b) — cœur</span><br><span class="reco">Indispensable pour l'architecture de la requête (socle + axe → 2 listes). Décision binaire, rapide.</span></td>
+      </tr>
+      <tr>
+        <td><strong>Tags thématiques</strong><br><span style="font-size:12px;color:var(--texte-tres-doux)">champ <code>tagsThematiques</code></span></td>
+        <td>Filtrer par lentille transverse : communication, prévisibilité, goulots, coûts cachés, engagement, compétences, cadence, feedback, risque, autonomie, sécurité psychologique, variabilité, alignement, expérience client.</td>
+        <td><span class="cout cout-h">Élevé</span><br><span class="reco">84 fiches à tagger + vocabulaire 10-14 à arrêter</span></td>
+        <td><span class="dest dest-tranche">Déjà tranché 🠚 Backlog / début de (b)</span><br><span class="reco">Ta décision : consigné en ligne de backlog, vocabulaire arrêté en ouverture de (b).</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="legende">→ Question à trancher : la répartition (b) / backlog pour <strong>Mintzberg</strong> et <strong>socle</strong> te convient-elle, ou tu préfères aussi les consigner au backlog pour ne pas alourdir (b) ?</p>
+</div>
+
+<!-- ====================== Q3 ====================== -->
+<div class="section">
+  <h2>Q3 — Y a-t-il un écart que j'ai manqué ?</h2>
+  <p class="question">Voici 6 angles que je n'ai <em>pas</em> investigués dans l'inventaire. Pour chacun : est-ce un écart réel ou un non-sujet ?</p>
+
+  <div class="ecarts">
+
+    <div class="ecart">
+      <div class="ecart-titre">1. Temporalité</div>
+      <div class="ecart-desc">Les fiches ne disent pas à quelle fréquence elles doivent être mesurées (quotidien, hebdo, trimestriel). Pas de granularité temporelle.</div>
+      <div class="ecart-q">Écart réel ? Ou un non-sujet pour l'outil ?</div>
+    </div>
+
+    <div class="ecart">
+      <div class="ecart-titre">2. Source des données</div>
+      <div class="ecart-desc">Aucune fiche ne dit <em>d'où</em> vient la donnée (CRM, ERP, Git, survey, humain). Questions de faisabilité masquées.</div>
+      <div class="ecart-q">Sujet pour demain, ou déjà hors scope ?</div>
+    </div>
+
+    <div class="ecart">
+      <div class="ecart-titre">3. Seuils / paliers</div>
+      <div class="ecart-desc">Pas de cible numérique ni de palier (bon / acceptable / alerte). Le champ <code>fiabilite</code> est qualitatif, pas chiffré.</div>
+      <div class="ecart-q">Est-ce un manque ou volontaire (chaque contexte décide) ?</div>
+    </div>
+
+    <div class="ecart">
+      <div class="ecart-titre">4. Relations entre fiches</div>
+      <div class="ecart-desc">Pas de graphe de dépendance (X influence Y, Z est une décomposition de W). Chaque fiche vit seule.</div>
+      <div class="ecart-q">Écart à combler en (b), ou à laisser pour plus tard ?</div>
+    </div>
+
+    <div class="ecart">
+      <div class="ecart-titre">5. Mode d'affichage par porte</div>
+      <div class="ecart-desc">L'inventaire dit <em>quelles</em> fiches existent, pas <em>comment</em> chaque porte choisit d'en afficher certaines (ordre, densité, regroupement).</div>
+      <div class="ecart-q">Doit-il y avoir un champ pour ça, ou c'est l'affaire de la vue ?</div>
+    </div>
+
+    <div class="ecart">
+      <div class="ecart-titre">6. Anti-patterns / garde-fous</div>
+      <div class="ecart-desc">Tu les as rendus obligatoires récemment (règle output/outcome). L'inventaire ne les liste pas comme un champ à part entière.</div>
+      <div class="ecart-q">Faut-il en faire un champ structuré (typé) ou rester en prose libre ?</div>
+    </div>
+
+  </div>
+
+  <p class="legende">→ Question à trancher : parmi ces 6 angles, lesquels sont de vrais écarts à ajouter à la liste ? Et y en a-t-il un 7ᵉ que ni toi ni moi n'avons encore nommé ?</p>
+</div>
+
+</body>
+</html>
