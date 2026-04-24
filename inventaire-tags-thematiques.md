@@ -163,6 +163,120 @@ Arbitrages finaux : tags sortants, tags à fusionner, vocabulaire final figé à
 
 ---
 
-## 6. Matrice de tagging (à remplir au Temps 2)
+## 6. Matrice de tagging (Temps 2)
 
-*À produire après validation du vocabulaire par Lætitia.*
+**Livrable produit le 24/04/2026.** Chaque fiche du référentiel (84 au total) reçoit 1 à 4 tags parmi les 14 candidats définis en §2. Les tags sont marqués `x` dans les colonnes correspondantes. L'ordre suit exactement celui de l'inventaire schéma (§4 de `inventaire-schema-metriques.md`) — stratégique → portefeuille → programme → équipe, puis par branche/domaine — pour faciliter les croisements.
+
+**Méthode.** Pour chaque fiche, sélection des tags les plus discriminants selon les définitions-frontières (§2). Les tags de premier niveau existants (`valeur`, `qualite`, `flux`, `delais`, `humain`, `risque`, `alignement` — champ `tags` de la fiche) n'ont **pas** été repris tels quels : ils capturent des *problèmes* alors que les 14 tags thématiques capturent des *thèmes transverses*. Les deux vocabulaires cohabitent (cf. §5.8 de `inventaire-schema-metriques.md`).
+
+**Règle 1-4 respectée.** Aucune fiche orpheline, aucune au-delà de 4 tags. 160 assignations au total → moyenne 1,9 tag par fiche.
+
+### Légende des colonnes
+
+| Abbr. | Tag thématique |
+|---|---|
+| tra | transversalité |
+| pré | prévisibilité |
+| eng | engagement |
+| gou | goulots |
+| cch | coûts cachés |
+| com | compétences |
+| cad | cadence |
+| fdb | feedback |
+| ris | risque |
+| aut | autonomie |
+| cnf | confiance |
+| var | variabilité |
+| ali | alignement |
+| cx  | expérience client |
+
+### Matrice 84 × 14
+
+| id | nom court | tra | pré | eng | gou | cch | com | cad | fdb | ris | aut | cnf | var | ali | cx |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| s1 | Croissance CA |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
+| s2 | NPS |  |  |  |  |  |  |  | x |  |  |  |  |  | x |
+| s3 | EBITDA |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
+| s4 | OKR stratégiques |  |  | x |  |  |  |  |  |  |  |  |  | x |  |
+| s5 | Part de marché |  |  |  |  |  |  |  |  |  |  |  |  | x | x |
+| s6 | ADKAR |  |  | x |  |  | x |  |  |  |  | x |  |  |  |
+| s7 | Rotation volontaire |  |  | x |  |  |  |  |  |  |  | x |  |  |  |
+| s8 | Confiance organisationnelle |  |  | x |  |  |  |  |  |  |  | x |  |  |  |
+| s9 | Maturité cyber NIST |  |  |  |  |  | x |  |  | x |  |  |  |  |  |
+| s10 | Exposition concentration |  |  |  |  |  |  |  |  | x |  |  |  |  |  |
+| t1 | ROI portefeuille |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
+| t2 | Lead time métier |  | x |  |  |  |  | x |  |  |  |  |  |  |  |
+| t3 | OKR trimestriels |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
+| t4 | Efficacité flux portefeuille | x |  |  | x |  |  |  |  |  |  |  |  |  |  |
+| t5 | Livraison dans délais |  | x |  |  |  |  |  |  |  |  |  |  |  |  |
+| x3 | Taux occupation ressources |  |  | x | x |  |  |  |  |  |  |  |  |  |  |
+| t6 | Initiatives en dérive |  | x |  |  |  |  |  |  | x |  |  |  |  |  |
+| t7 | Profil taille initiatives |  |  |  | x |  |  |  |  | x |  |  |  |  |  |
+| p1 | Avancement jalons |  | x |  |  |  |  |  |  |  |  |  |  | x |  |
+| p2 | Écart budget |  | x |  |  |  |  |  |  | x |  |  |  |  |  |
+| p3 | Risques critiques ouverts |  |  |  |  |  |  |  |  | x |  |  |  |  |  |
+| p4 | Satisfaction parties prenantes |  |  |  |  |  |  |  |  |  |  | x |  | x |  |
+| p5 | Throughput programme |  |  |  | x |  |  | x |  |  |  |  |  |  |  |
+| p6 | Acceptation 1er passage |  |  |  |  |  |  |  | x |  |  |  | x |  |  |
+| p7 | Reprise post-livraison |  |  |  |  | x |  |  | x |  |  |  |  |  |  |
+| o1 | Fréquence déploiement |  |  |  |  |  |  | x |  |  | x |  |  |  |  |
+| o2 | Lead time for changes |  |  |  | x |  |  | x |  |  |  |  |  |  |  |
+| o3 | Change failure rate |  |  |  |  |  |  |  | x |  |  |  | x |  |  |
+| o5 | Cycle time |  |  |  | x |  |  | x |  |  |  |  |  |  |  |
+| o8 | Couverture tests auto |  |  |  |  |  | x |  | x |  |  |  |  |  |  |
+| o4 | MTTR |  |  |  |  |  |  |  | x | x |  |  |  |  |  |
+| o6 | Throughput équipe |  | x |  |  |  |  | x |  |  |  |  |  |  |  |
+| o7 | WIP |  |  |  | x |  |  | x |  |  |  |  |  |  |  |
+| o9 | OKR équipe |  |  | x |  |  |  |  |  |  |  |  |  | x |  |
+| ti-d1 | Dette technique |  |  |  |  | x |  |  |  | x |  |  |  |  |  |
+| ti-d2 | Complétion sprint |  | x |  |  |  |  | x |  |  |  |  |  |  |  |
+| ti-d3 | Défauts échappés prod |  |  |  |  | x |  |  | x |  |  |  |  |  |  |
+| ti-d4 | PR Turnaround | x |  |  | x |  |  | x |  |  |  |  |  |  |  |
+| ti-p1 | Dispo pipeline CI/CD |  |  |  |  |  |  | x |  | x |  |  |  |  |  |
+| ti-p2 | Durée build |  |  |  | x |  |  | x |  |  |  |  |  |  |  |
+| ti-p3 | Taux succès pipeline |  | x |  |  |  |  |  | x |  |  |  |  |  |  |
+| ti-p4 | Provisionnement infra |  |  |  | x |  |  | x |  |  | x |  |  |  |  |
+| ti-p5 | Adoption IaC |  |  |  |  |  | x |  |  | x |  |  |  |  |  |
+| ti-o1 | MTBF |  |  |  |  |  |  |  |  | x |  |  | x |  |  |
+| ti-o2 | FCR ops |  |  |  |  |  | x |  |  |  |  |  |  |  | x |
+| ti-o3 | Conformité SLA |  | x |  |  |  |  |  |  |  |  |  |  |  | x |
+| ti-o4 | Récurrence incidents |  |  |  |  | x |  |  | x |  |  |  |  |  |  |
+| ti-o5 | Coût par ticket |  |  |  | x | x |  |  |  |  |  |  |  |  |  |
+| ti-s1 | MTTD sécurité |  |  |  |  |  |  |  | x | x |  |  |  |  |  |
+| ti-s2 | MTTR sécurité |  |  |  |  |  |  |  | x | x |  |  |  |  |  |
+| ti-s3 | Remédiation vulnérabilités |  |  |  |  |  |  | x |  | x |  |  |  |  |  |
+| ti-s4 | Couverture tests sécurité |  |  |  |  |  | x |  |  | x |  |  |  |  |  |
+| ti-s5 | Conformité réglementaire |  |  |  |  |  |  |  |  | x |  |  |  |  |  |
+| x1 | Vélocité |  | x |  |  |  |  | x |  |  |  |  |  |  |  |
+| x2 | Burndown |  | x |  |  |  |  | x |  |  |  |  |  |  |  |
+| x4 | Team health check |  |  | x |  |  |  |  |  |  |  | x |  |  |  |
+| x5 | Feature count |  |  |  |  |  |  | x |  |  |  |  |  |  |  |
+| af-c1 | Taux conversion |  |  |  |  |  |  |  | x |  |  |  |  |  | x |
+| af-c2 | Cycle vente |  |  |  | x |  |  | x |  |  |  |  |  |  |  |
+| af-c3 | LTV |  |  |  |  |  |  |  |  |  |  | x |  |  | x |
+| af-c4 | Atteinte quotas |  | x | x |  |  |  |  |  |  |  |  |  |  |  |
+| af-c5 | Couverture pipeline |  | x |  |  |  |  |  |  | x |  |  |  |  |  |
+| af-m1 | CAC |  |  |  |  | x |  |  | x |  |  |  |  |  |  |
+| af-m2 | CPL |  |  |  |  | x |  |  | x |  |  |  |  |  |  |
+| af-m3 | MQL → SQL | x |  |  | x |  |  |  | x |  |  |  |  |  |  |
+| af-m4 | ROAS |  |  |  |  |  |  |  | x |  |  |  |  |  |  |
+| af-m5 | Brand awareness |  |  |  |  |  |  |  |  |  |  |  |  |  | x |
+| af-f1 | DSO |  |  |  |  |  |  | x |  | x |  |  |  |  |  |
+| af-f2 | Précision prévisions |  | x |  |  |  |  |  |  |  |  |  | x |  |  |
+| af-f3 | Délai clôture comptable |  | x |  |  |  |  | x |  |  |  |  |  |  |  |
+| af-f4 | Conformité réglementaire fin |  |  |  |  |  |  |  |  | x |  |  |  |  |  |
+| af-r1 | eNPS |  |  | x |  |  |  |  | x |  |  |  |  |  |  |
+| af-r2 | Time to fill |  |  |  |  |  |  | x |  | x |  |  |  |  |  |
+| af-r3 | Turnover volontaire |  |  | x |  |  |  |  |  |  |  | x |  |  |  |
+| af-r4 | Complétion formations |  |  | x |  |  | x |  |  |  |  |  |  |  |  |
+| af-op1 | OEE |  |  |  | x |  |  |  |  |  |  |  | x |  |  |
+| af-op2 | DPMO sigma |  |  |  |  |  |  |  | x |  |  |  | x |  |  |
+| af-op3 | On-time delivery |  | x |  |  |  |  |  |  |  |  |  |  |  | x |
+| af-op4 | Waste reduction |  |  |  |  | x |  |  | x |  |  |  |  |  |  |
+| af-sc1 | CSAT |  |  |  |  |  |  |  | x |  |  |  |  |  | x |
+| af-sc2 | NPS service |  |  |  |  |  |  |  | x |  |  |  |  |  | x |
+| af-sc3 | CES |  |  |  |  |  |  |  | x |  |  |  |  |  | x |
+| af-sc4 | FCR service |  |  |  |  |  | x |  |  |  |  |  |  |  | x |
+| af-sc5 | Délai 1re réponse |  |  |  |  |  |  | x |  |  |  |  |  |  | x |
+
+**Note.** Le Temps 3 (analyse quantitative : taux d'usage, co-occurrences, orphelines, arbitrages sortie/fusion) s'appuie sur cette matrice pour figer le vocabulaire final (cible 10-12 tags). À produire dans la foulée, en §7.
