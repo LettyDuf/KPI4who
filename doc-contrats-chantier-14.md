@@ -42,7 +42,7 @@ Le MVP du chantier 14 est **iso-comportement visible** sur les quatre portes exi
 - `CM.Referentiel` — catalogue des indicateurs (données + accès bas niveau `tous` / `parId` / `chercher`).
 - `CM.IndicateursMeta` — tagging multi-axes (tags problèmes × cadres × niveaux). Socle déjà en place.
 - `CM.Config` — mappings métier purs.
-- *(à créer)* `CM.RequeteMetriques` — API unique que tous les chemins appellent. Signature cible : `CM.RequeteMetriques.executer(filtre)` où `filtre` est un objet `{niveau?, cadre?, probleme?, maturite?, limite?}` et qui renvoie une liste de fiches métriques ordonnées.
+- *(à créer)* `CM.RequeteMetriques` — API unique que tous les chemins appellent. Signature publique : `CM.RequeteMetriques.executer(filtre)` qui renvoie une liste de fiches métriques ordonnées. **Forme canonique du `filtre` et contrat de retour : §10.3** (source unique pendant l'étape b).
 
 **Zone chemins (adaptateurs d'entrée).** Chaque porte est un consommateur du domaine. Elle traduit la sélection utilisateur en un `filtre` à soumettre à `CM.RequeteMetriques`.
 
@@ -317,9 +317,69 @@ reperes: {
 - `tags` (vocabulaire de 7 valeurs : `valeur`, `qualite`, `flux`, `delais`, `humain`, `risque`, `alignement`) capture les *problèmes adressés* — c'est le vocabulaire d'entrée de la porte *Par mon problème*.
 - `tagsThematiques` (14 valeurs ci-dessus) capture les *thèmes transverses* — c'est un vocabulaire d'analyse et d'agrégation, appelé à structurer la vue mosaïque et la future porte *Par ma question*.
 
-**Impact sur `CM.RequeteMetriques`.** Le filtre doit accepter une clause `tagsThematiques: [...]` en plus de la clause `tags: [...]` existante. Sémantique par défaut : union intra-clause (OR), intersection inter-clauses (AND). À formaliser en tâche 3 (signature `executer(filtre)`, §6 à venir).
+**Impact sur `CM.RequeteMetriques`.** Le filtre accepte une clause `tagsThematiques: [...]` en plus de la clause `tags: [...]` existante. Sémantique par défaut : union intra-clause (OR), intersection inter-clauses (AND). Signature complète formalisée en §10.3.
 
 **Tags sous-seuil conservés** (3,6 % et 2,4 %) : `transversalité` et `autonomie`. Test d'antériorité réussi en §7.5 — Team Topologies et Management 3.0 les porteront densément une fois injectés au catalogue (chantier 17 post-14). Gardés comme *signaux de lacune du catalogue*, pas comme thèmes mineurs.
+
+
+### 10.3 Signature `executer(filtre)` — contrat d'API du cœur
+
+**Décision (24/04/2026, suite — tâche 3 de l'étape b).** Le module `CM.RequeteMetriques` expose une et une seule fonction publique : `executer(filtre)`. Le présent §10.3 est la **source unique** du contrat pendant toute l'étape (b). Document texte uniquement — il précède l'écriture du code (commit 1 de l'étape b, cf. §4).
+
+**Forme canonique du `filtre`.** Objet JavaScript dont toutes les clauses sont optionnelles. L'absence d'une clause = aucune contrainte sur cette dimension.
+
+```
+filtre = {
+  niveau?:           Array<NiveauId>,        // 'equipe' | 'programme' | 'portefeuille' | 'entreprise' | 'affaires-operationnel'
+  domaine?:          Array<DomaineId>,       // ex. 'devops', 'affaires', 'portefeuille', 'programme'…
+  type?:             Array<TypeId>,          // 'kpi' | 'kbi' | 'kgi' | 'kii' | 'okr' | 'dora' | 'lean-six-sigma'
+  cadre?:            Array<CadreId>,         // ex. 'lean', 'six-sigma', 'dora', 'scrum'…
+  tags?:             Array<TagId>,           // 7 valeurs : 'valeur', 'qualite', 'flux', 'delais', 'humain', 'risque', 'alignement'
+  tagsThematiques?:  Array<TagThematiqueId>, // 14 valeurs verrouillées en §10.2
+  fiabiliteMin?:     FiabiliteId,            // 'fiable' | 'precaution' | 'risquee' — seuil ordinal
+  maturiteMin?:      MaturiteId,             // seuil ordinal sur l'échelle de maturité (cf. inventaire-schema-metriques.md)
+  limite?:           number                  // entier strictement positif — capping de la liste retournée
+}
+```
+
+**Sucre syntaxique `probleme`.** Les portes peuvent passer le raccourci `probleme: 'flux'` au lieu de `tags: ['flux']`. Le cœur convertit avant d'évaluer. C'est la seule abstraction syntaxique offerte — toutes les autres clauses sont nominales et explicites. La porte *Par mon problème* utilise ce raccourci côté traducteur ; la porte *Par ma question* (chantier 10) le fera également.
+
+**Sémantique d'évaluation.**
+
+- **Union intra-clause (OR).** `tags: ['flux', 'qualite']` retourne les fiches qui portent `flux` OU `qualite`.
+- **Intersection inter-clauses (AND).** `{niveau: ['equipe'], tags: ['flux']}` retourne les fiches niveau équipe ET portant le tag flux.
+- **Seuils ordinaux.** `fiabiliteMin: 'precaution'` retourne les fiches de fiabilité `fiable` ou `precaution` (pas `risquee`). `maturiteMin: 'X'` même logique sur l'échelle de maturité.
+- **`limite`.** Capping appliqué *après* filtrage et *après* application de l'ordre de retour (cf. ci-dessous). Aucun re-tri spécifique au capping.
+
+**Contrat de retour.** `executer(filtre)` retourne une `Array<Fiche>`. L'ordre est celui de déclaration des fiches dans `CM.Referentiel.tous()` — éditorialement curé, stable, prévisible. Les vues qui souhaitent un autre tri trient localement après réception. Cet ordre est implicitement le contrat ; toute évolution (tri par score, par pertinence, par récence) sera un chantier séparé documenté ici.
+
+**Comportements limites.**
+
+| Cas | Comportement |
+|---|---|
+| `filtre = {}` ou `executer()` | Retourne **toutes les fiches** du référentiel, dans l'ordre de déclaration. Cohérent avec « pas de contrainte = pas de filtrage ». |
+| Clause vide (`tags: []`) | **Ignorée** comme si la clause était absente. Pas de fausse contrainte. |
+| Valeur inconnue dans une clause-set (typo, vocabulaire évolué) | **Exception explicite** `Error("CM.RequeteMetriques: valeur inconnue dans la clause 'tags' : 'flu'. Vocabulaire admis : valeur, qualite, flux, delais, humain, risque, alignement.")`. Bruyant > silencieux : les régressions de catalogue doivent être détectées immédiatement, pas avalées. |
+| Valeur inconnue dans un seuil (`fiabiliteMin`, `maturiteMin`) | **Exception explicite**, même principe. |
+| `limite` ≤ 0 ou non entière | **Exception explicite**. `limite: 0` est probablement une erreur de saisie, pas une demande légitime de liste vide. |
+| Clause inconnue dans `filtre` (typo de nom de clé) | **Exception explicite** `Error("CM.RequeteMetriques: clause inconnue 'tagThematique' (vouliez-vous dire 'tagsThematiques' ?). Clauses admises : niveau, domaine, type, cadre, tags, tagsThematiques, probleme, fiabiliteMin, maturiteMin, limite.")`. |
+
+**Cohérence avec les décisions amont.**
+
+- **§3.1 (architecture cible).** La forme initiale `{niveau?, cadre?, probleme?, maturite?, limite?}` annoncée en §3.1 est ici **étendue et normalisée** ; §3.1 pointe désormais vers ce §10.3 comme source unique.
+- **§10.1 (seuils/paliers).** `reperes` reste un champ d'affichage non filtrant — il n'apparaît pas dans la signature.
+- **§10.2 (vocabulaire fermé).** Les clauses `tags` et `tagsThematiques` consomment respectivement les vocabulaires fermés des 7 tags problèmes et des 14 tags thématiques. Toute valeur hors vocabulaire lève une exception (cf. ci-dessus).
+
+**Question ouverte — clause `branche`.** La clause `branche` apparaît dans le bloc *État courant* du backlog mais n'est définie nulle part dans ce doc compagnon ni dans `inventaire-schema-metriques.md`. Deux hypothèses : (1) `branche` = sucre pour `domaine` ; (2) `branche` = niveau de regroupement supérieur au domaine (par exemple : `branche: 'tech'` couvrant les domaines `devops`, `data`, `securite`). **À clarifier avant l'écriture du commit 1 de l'étape (b)**. Si confirmée comme clause à part entière, elle s'ajoute selon le même modèle que `domaine` (clause-set, union intra / intersection inter).
+
+**Statut éditorial du contrat.** Tout consommateur (porte, test, future porte question) qui voudrait une clause non listée ici doit (1) l'ouvrir comme évolution du §10.3 — donc valider une décision éditoriale documentée — puis (2) la consommer. Jamais l'inverse. Cf. fiche mémoire `project_document_compagnon_contrats` (le document est la référence, le code s'y conforme).
+
+**Impact sur le code à venir (étape b, commits 1 à 3).**
+
+- Commit 1 (squelette `CM.RequeteMetriques`) : valide la forme du `filtre` (validation stricte des clauses et des valeurs) et le contrat de retour. Aucun consommateur encore branché.
+- Commit 2 (implémentation) : applique la sémantique union/intersection sur les axes existants (`niveau`, `domaine`, `type`, `cadre`, `tags`, `tagsThematiques`, `fiabiliteMin`, `maturiteMin`, `limite`).
+- Commit 3 (tests via patron générateur Node) : couvre tous les comportements limites du tableau ci-dessus + un panel de filtres représentatifs croisant 2 à 4 clauses.
+- Aucune modification des consommateurs (`CM.DiagnosticProbleme`, `CM.DiagnosticCadre`, `CM.Roles`) avant l'étape (c).
 
 ---
 
