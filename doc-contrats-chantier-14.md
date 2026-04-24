@@ -287,9 +287,44 @@ reperes: {
 
 **Passage éditorial.** Travail étalé sur étape (c). À programmer dans le backlog. Ne bloque pas l'étape (b) — la structure du champ est arrêtée, la saisie des valeurs se fait en temps éditorial.
 
+
+### 10.2 Vocabulaire fermé des tags thématiques — 14 libellés
+
+**Décision (24/04/2026, Temps 3).** Le vocabulaire des tags thématiques du champ `CM.IndicateursMeta.META[id].tagsThematiques` est arrêté à **14 libellés**. La cible initiale "10-12 tags" annoncée en Temps 1 a été révisée à 14 au titre de la règle d'arbitrage nuancée (cf. fiche mémoire `project_regle_tags_sous_seuil`).
+
+**Liste exhaustive** :
+
+1. `transversalité` — décloisonnement inter-équipes
+2. `prévisibilité` — fiabilité des engagements vs réalisations
+3. `engagement` — investissement personnel constaté
+4. `goulots` — contraintes identifiées dans le flux
+5. `coûts cachés` — gaspillages et rework rétrospectifs
+6. `compétences` — savoir-faire et maîtrise
+7. `cadence` — rythme de livraison
+8. `feedback` — boucle d'apprentissage sur un output
+9. `risque` — exposition prospective à une dérive
+10. `autonomie` — permission de décider
+11. `confiance` — fondation relationnelle (verticale, horizontale, institutionnelle, client)
+12. `variabilité` — mesure statistique interne (Six Sigma)
+13. `alignement` — contenu stratégique partagé verticalement
+14. `expérience client` — perception externe
+
+**Référent éditorial** : définitions-frontières en §2 de `inventaire-tags-thematiques.md`. Tests de non-redondance en §3. Matrice d'assignation des 84 fiches en §6. Analyse quantitative et arbitrages en §7.
+
+**Règle de fermeture.** Ce vocabulaire est **fermé** — toute nouvelle fiche ajoutée au catalogue doit être taguée exclusivement dans ces 14 libellés. Aucun tag nouveau n'est accepté au fil de l'eau. Toute évolution (ajout, retrait, renommage) est un chantier séparé, jamais une révision silencieuse.
+
+**Cohabitation avec le champ `tags` existant.** Les deux vocabulaires cohabitent, intentionnellement :
+- `tags` (vocabulaire de 7 valeurs : `valeur`, `qualite`, `flux`, `delais`, `humain`, `risque`, `alignement`) capture les *problèmes adressés* — c'est le vocabulaire d'entrée de la porte *Par mon problème*.
+- `tagsThematiques` (14 valeurs ci-dessus) capture les *thèmes transverses* — c'est un vocabulaire d'analyse et d'agrégation, appelé à structurer la vue mosaïque et la future porte *Par ma question*.
+
+**Impact sur `CM.RequeteMetriques`.** Le filtre doit accepter une clause `tagsThematiques: [...]` en plus de la clause `tags: [...]` existante. Sémantique par défaut : union intra-clause (OR), intersection inter-clauses (AND). À formaliser en tâche 3 (signature `executer(filtre)`, §6 à venir).
+
+**Tags sous-seuil conservés** (3,6 % et 2,4 %) : `transversalité` et `autonomie`. Test d'antériorité réussi en §7.5 — Team Topologies et Management 3.0 les porteront densément une fois injectés au catalogue (chantier 17 post-14). Gardés comme *signaux de lacune du catalogue*, pas comme thèmes mineurs.
+
 ---
 
 ## 9. Journal du chantier
 
 - **23/04/2026 fin de journée** — ouverture du chantier. Commit atomique `chore(chantier-14): ouverture — baseline + scénario régression + procédure rollback` embarquant (1) tag git `baseline-avant-hexagonal` sur `5655b03`, (2) `scenario-non-regression.md` posé, (3) ce doc compagnon, (4) backlog mis à jour avec chantier 14 actif / chantier 10 gelé, (5) mémoire `project_chantier_14_ouverture.md` posée. Prochaine étape : (a) inventaire du schéma d'étiquettes.
 - **24/04/2026 fin de journée — ouverture étape (b), tâche 1 tranchée.** Livraison du preview `preview-14b-seuils-paliers.html` (commit `21c76b2`). Arbitrage : **Option B retenue** — champ `reperes` optionnel sur les fiches à référentiel reconnu, structure flexible-normalisée, affichage collapsé par défaut. Décisions détaillées actées en §10.1 ci-dessus. Prochaines tâches de l'étape (b) : (2) arrêter le vocabulaire fermé des tags thématiques, (3) poser la signature `executer(filtre)`.
+- **24/04/2026 (suite) — Temps 2 et Temps 3 de la tâche 2 (étape b).** Temps 2 : tagging exhaustif des 84 fiches (matrice 84×14 dans `inventaire-tags-thematiques.md` §6, commit `b474a20`). Temps 3 : analyse quantitative (taux d'usage, co-occurrences, orphelines → 0) et verrouillage du vocabulaire à 14 tags (§7 du même document + §10.2 ci-dessus, commit du présent acte). Application de la règle d'antériorité : 4 tags en zone basse/surveillance conservés (voir fiche mémoire `project_regle_tags_sous_seuil`). Entrée de backlog chantier 17 ouverte en anticipation (commit `021112b`). Prochaine tâche de l'étape (b) : (3) signature `executer(filtre)`.

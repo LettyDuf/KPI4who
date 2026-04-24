@@ -280,3 +280,138 @@ Arbitrages finaux : tags sortants, tags à fusionner, vocabulaire final figé à
 | af-sc5 | Délai 1re réponse |  |  |  |  |  |  | x |  |  |  |  |  |  | x |
 
 **Note.** Le Temps 3 (analyse quantitative : taux d'usage, co-occurrences, orphelines, arbitrages sortie/fusion) s'appuie sur cette matrice pour figer le vocabulaire final (cible 10-12 tags). À produire dans la foulée, en §7.
+
+---
+
+## 7. Temps 3 — Analyse quantitative et verrouillage du vocabulaire final
+
+**Livrable produit le 24/04/2026** à la suite immédiate du Temps 2 (commit `b474a20`). Cette section arrête le vocabulaire final des tags thématiques et documente les arbitrages appliqués.
+
+### 7.1 Méthode et règle d'arbitrage
+
+Trois questions traitées dans l'ordre :
+
+1. **Taux d'usage par tag** — combien de fiches sur 84 portent ce tag.
+2. **Orphelines** — combien de fiches ne portent aucun tag.
+3. **Co-occurrence** — redondances sémantiques révélées par partage de fiches.
+
+**Règle initiale** (posée en §4 du Temps 1) : taux d'usage < 5 % → sortie envisagée ; co-occurrence > 80 % sur le petit → fusion ou élimination du plus faible.
+
+**Règle d'arbitrage nuancée** (posée le 24/04/2026, cf. fiche mémoire `project_regle_tags_sous_seuil`) : avant toute sortie au titre du seuil 5 %, appliquer le **test d'antériorité** — *« un cadre reconnu non encore catalogué porte-t-il structurellement ce thème ? »*. Si oui, le tag est gardé comme *signal de lacune du catalogue*, avec entrée de backlog au chantier 17. Cette règle prime sur la règle initiale. La §4 reste comme trace historique de l'hypothèse Temps 1.
+
+La cible "10-12 tags" annoncée au Temps 1 est donc **révisée à 14 tags** au titre de la règle nuancée.
+
+### 7.2 Taux d'usage par tag
+
+Trié décroissant. 160 assignations totales sur 84 fiches → moyenne 1,90 tag/fiche.
+
+| Rang | Tag | Abbr. | Fiches | Taux | Zone |
+|---|---|---|---|---|---|
+| 1 | feedback | fdb | 22 | 26,2 % | Top |
+| 2 | cadence | cad | 21 | 25,0 % | Top |
+| 3 | risque | ris | 20 | 23,8 % | Top |
+| 4 | prévisibilité | pré | 16 | 19,0 % | Cœur |
+| 5 | goulots | gou | 14 | 16,7 % | Cœur |
+| 6 | expérience client | cx | 13 | 15,5 % | Cœur |
+| 7 | engagement | eng | 11 | 13,1 % | Cœur |
+| 8 | alignement | ali | 9 | 10,7 % | Cœur |
+| 9 | coûts cachés | cch | 8 | 9,5 % | Cœur |
+| 10 | compétences | com | 8 | 9,5 % | Cœur |
+| 11 | confiance | cnf | 7 | 8,3 % | **Surveillance** |
+| 12 | variabilité | var | 6 | 7,1 % | **Surveillance** |
+| 13 | transversalité | tra | 3 | 3,6 % | **Sous-seuil** |
+| 14 | autonomie | aut | 2 | 2,4 % | **Sous-seuil** |
+
+**Lecture.** Le catalogue actuel est dominé par les thèmes de **flux et de qualité** (feedback, cadence, risque, prévisibilité, goulots — 93 assignations à eux cinq, 58 % du total). Les thèmes **humains et inter-équipes** (engagement, confiance, transversalité, autonomie) sont nettement moins représentés (23 assignations, 14 %). Cette asymétrie reflète l'empreinte des cadres déjà dans le catalogue — DORA, Lean Six Sigma, Scrum, MBO/OKR, ITIL, BSC, générique — et pas un défaut du vocabulaire.
+
+### 7.3 Orphelines
+
+**0 fiche orpheline.** Les 84 fiches du référentiel portent toutes au moins 1 tag. La règle 1-4 tags est respectée intégralement.
+
+### 7.4 Co-occurrences
+
+**Matrice complète** (nombre de fiches partagées par paire, triangulaire supérieure — lecture ligne × colonne) :
+
+| | tra | pré | eng | gou | cch | com | cad | fdb | ris | aut | cnf | var | ali | cx |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **tra** | — | · | · | 3 | · | · | 1 | 1 | · | · | · | · | · | · |
+| **pré** | | — | 1 | · | · | · | 6 | 1 | 3 | · | · | 1 | 1 | 2 |
+| **eng** | | | — | 1 | · | 2 | · | 1 | · | · | 5 | · | 2 | · |
+| **gou** | | | | — | 1 | · | 8 | 1 | 1 | 1 | · | 1 | · | · |
+| **cch** | | | | | — | · | · | 6 | 1 | · | · | · | · | · |
+| **com** | | | | | | — | · | 1 | 3 | · | 1 | · | · | 2 |
+| **cad** | | | | | | | — | · | 4 | 2 | · | · | · | 1 |
+| **fdb** | | | | | | | | — | 3 | · | · | 3 | · | 5 |
+| **ris** | | | | | | | | | — | · | · | 1 | · | · |
+| **aut** | | | | | | | | | | — | · | · | · | · |
+| **cnf** | | | | | | | | | | | — | · | 1 | 1 |
+| **var** | | | | | | | | | | | | — | · | · |
+| **ali** | | | | | | | | | | | | | — | 1 |
+| **cx** | | | | | | | | | | | | | | — |
+
+**Alertes au seuil 80 %** (fusion ou élimination à envisager) :
+
+| Paire | Partagé | % du petit | % du grand | Verdict |
+|---|---|---|---|---|
+| `transversalité` ↔ `goulots` | 3 | 100,0 % | 21,4 % | **Artefact** |
+
+Le 100 % s'explique par la taille minuscule de `transversalité` (3 fiches) : les trois fiches qui portent ce tag (t4 Efficacité flux portefeuille, ti-d4 PR Turnaround, af-m3 MQL→SQL) sont toutes des points de friction inter-équipes — donc mécaniquement aussi des `goulots`. **Pas de redondance sémantique** : sitôt qu'une fiche Team Topologies *Team API freshness* entre au catalogue (chantier 17), elle portera `transversalité` **sans** `goulots`. L'alerte s'éteindra d'elle-même par densification.
+
+**Zones de vigilance (50-80 % sur le petit)** :
+
+| Paire | Partagé | % du petit | Lecture |
+|---|---|---|---|
+| `coûts cachés` ↔ `feedback` | 6 | 75,0 % | Sémantiquement proche (rattraper un coût caché passe souvent par une boucle de feedback) mais pas automatique. Contre-exemples clairs : ti-d1 (dette technique) porte `cch + ris` sans `fdb`, ti-o5 (coût par ticket) porte `cch + gou` sans `fdb`. Distinction maintenue. |
+| `engagement` ↔ `confiance` | 5 | 71,4 % | Les 5 fiches communes sont toutes du champ « climat humain » (s6 ADKAR, s7 rotation, s8 confiance orga, x4 team health, af-r3 turnover). Mais chacun capture aussi des fiches distinctes : `engagement` sans `confiance` → 6 fiches (x3, s4, o9, af-c4, af-r1, af-r4) ; `confiance` sans `engagement` → 2 fiches (p4 satisfaction parties prenantes, af-c3 LTV). La triade engagement/autonomie/confiance a été explicitement défendue en §3 et reste solide. Distinction maintenue. |
+| `goulots` ↔ `cadence` | 8 | 57,1 % | Distinction sémantique nette (contrainte vs rythme). Les 8 fiches communes sont toutes sur le flux (lead time for changes, cycle time, WIP, build time, provisionnement infra, cycle vente, PR turnaround, throughput programme). Cohérent, pas redondant. |
+
+**Aucune fusion ni élimination déclenchée par les co-occurrences.**
+
+### 7.5 Test d'antériorité — tags en zone basse et de surveillance
+
+Pour chacun des 4 tags concernés, identification du ou des cadres reconnus qui porteraient structurellement le thème et ne figurent **pas** dans les 10 cadres actifs du catalogue.
+
+| Tag | Taux | Cadres porteurs non catalogués | Gain pressenti | Verdict |
+|---|---|---|---|---|
+| `transversalité` | 3,6 % | **Team Topologies** (Interaction Mode Stability, Dependency Lead Time, Team API freshness, Stream-aligned ratio) · **Value Stream Management** / Flow Framework (Flow Efficiency, Flow Distribution) · **Lean Portfolio** (Cross-Train Alignment) | +5 à +7 fiches | **Gardé** |
+| `autonomie` | 2,4 % | **Team Topologies** (Platform Thinness, Platform NPS, Team API quality) · **Management 3.0** (Delegation Level, Moving Motivators Freedom ratio) · **Sociocratie/Holacratie** (Circle Autonomy Index) | +4 à +6 fiches | **Gardé** |
+| `variabilité` | 7,1 % | **Six Sigma avancé** (Cp/Cpk par processus, SPC Control Chart Stability, DMAIC Measure Baseline) | +3 fiches | **Gardé** |
+| `confiance` | 8,3 % | **ADKAR / Prosci détaillé** (Awareness, Desire, Reinforcement) · **Psychological Safety** (Edmondson — Team Psychological Safety Index) | +5 à +7 fiches | **Gardé** |
+
+Les quatre tags passent le test d'antériorité. Tous conservés. Entrée de backlog consignée : **chantier 17 — Enrichissement du catalogue** (commit `021112b`), gelé tant que le chantier 14 n'est pas livré.
+
+### 7.6 Arbitrage final — vocabulaire verrouillé à 14 tags
+
+**Vocabulaire final des tags thématiques, figé au 24/04/2026** :
+
+1. `transversalité`
+2. `prévisibilité`
+3. `engagement`
+4. `goulots`
+5. `coûts cachés`
+6. `compétences`
+7. `cadence`
+8. `feedback`
+9. `risque`
+10. `autonomie`
+11. `confiance`
+12. `variabilité`
+13. `alignement`
+14. `expérience client`
+
+Définitions-frontières faisant foi : §2 de ce même document. Matrice d'assignation des 84 fiches : §6.
+
+**Ce que ce verrouillage engage** :
+- le type du champ `CM.IndicateursMeta.META[id].tagsThematiques` prend ses valeurs **exclusivement** dans ces 14 libellés ;
+- toute nouvelle fiche ajoutée au catalogue (chantier 17 et au-delà) est taguée dans ce vocabulaire fermé ;
+- toute évolution du vocabulaire (ajout, retrait, renommage) est un **chantier séparé** — pas une révision silencieuse.
+
+### 7.7 Report au contrat et au backlog
+
+- **Ancrage contractuel** : vocabulaire inscrit dans `doc-contrats-chantier-14.md` §10.2 (commit du Temps 3).
+- **Chantier de densification** : `chantier 17 — Enrichissement du catalogue` ouvert le 24/04/2026 (commit `021112b`), gelé jusqu'à livraison MVP 14. Test d'antériorité de cette section cité dans l'ouverture.
+- **Tag git** à poser une fois l'étape (b) terminée (après tâche 3 = signature `executer(filtre)`) : `mvp-etape-b-coeur-extrait`. **Pas posé ici** — ce Temps 3 clôt la tâche 2, pas l'étape (b) entière.
+
+### 7.8 Ce qui reste pour clore l'étape (b)
+
+Prochaine tâche de l'étape (b), après validation de ce Temps 3 par Lætitia : **tâche 3 — poser la signature `executer(filtre)`** dans `doc-contrats-chantier-14.md` §6, avec la forme canonique de `filtre` et le contrat de retour (liste ordonnée de fiches). Puis extraction du module `CM.RequeteMetriques` + tests unitaires via patron générateur Node (étape (b) tâche suivante, pour info).
