@@ -28,11 +28,11 @@ Pour chaque candidat, trois lignes :
 - **Frontière.** Ce qu'il **n'**attrape **pas**, avec désambiguation vis-à-vis des voisins sémantiques.
 - **Fiche-ancre pressentie.** Type de métrique pour laquelle ce tag doit être le tag principal.
 
-### 2.1 `communication`
-- **Capture.** Flux d'information entre personnes ou équipes — clarté des annonces, temps de réponse, qualité des échanges.
-- **Frontière.** N'est pas `feedback` (qui est un retour sur un output, orienté apprentissage) ni `alignement` (qui est partage d'intention). Communication = vecteur ; feedback = boucle ; alignement = contenu partagé.
-- **Fiche-ancre pressentie.** Qualité des compte-rendus de comité, taux de remontée de problèmes, temps de réponse à une sollicitation inter-équipes.
-- **Héritage.** Littérature gestion du changement (Kotter), communication managériale classique.
+### 2.1 `transversalité`
+- **Capture.** Capacité à collaborer au-delà des frontières — briser les silos, faire circuler l'information entre équipes/services, réduire le cloisonnement organisationnel.
+- **Frontière.** N'est pas `feedback` (boucle d'apprentissage sur un output) ni `alignement` (partage d'intention sur une direction). Transversalité = rupture des silos et flux inter-équipes ; feedback = boucle ; alignement = contenu stratégique partagé. N'est pas non plus la communication managériale descendante (relève d'`alignement` ou d'`engagement` selon le cas).
+- **Fiche-ancre pressentie.** Taux de handoffs inter-équipes, délai moyen d'obtention d'une information hors-équipe, nombre de dépendances croisées non résolues, qualité des interactions Team Topologies (stream-aligned ↔ enabling ↔ platform).
+- **Héritage.** Skelton & Pais (Team Topologies), Conway (loi de Conway), Hoshin Kanri (catchball horizontal), Beyond Budgeting (décentralisation des décisions).
 
 ### 2.2 `prévisibilité`
 - **Capture.** Capacité à anticiper un résultat — respect d'un engagement, écart entre promesse et livraison, fiabilité d'un délai.
@@ -42,7 +42,7 @@ Pour chaque candidat, trois lignes :
 
 ### 2.3 `engagement`
 - **Capture.** Investissement subjectif des personnes — participation, initiative, énergie mise dans le travail.
-- **Frontière.** N'est pas `autonomie` (qui est la capacité à décider — condition d'engagement mais distincte) ni `sécurité psychologique` (condition préalable). Engagement = l'investissement constaté ; autonomie = la permission de décider ; sécurité psy = la permission de parler.
+- **Frontière.** N'est pas `autonomie` (qui est la capacité à décider — condition d'engagement mais distincte) ni `confiance` (fondation relationnelle, plus large). Engagement = l'investissement constaté ; autonomie = la permission de décider ; confiance = la fondation qui rend l'investissement possible.
 - **Fiche-ancre pressentie.** eNPS, participation aux rétros, initiatives portées spontanément.
 - **Héritage.** Management 3.0 (Appelo), engagement score Gallup.
 
@@ -72,7 +72,7 @@ Pour chaque candidat, trois lignes :
 
 ### 2.8 `feedback`
 - **Capture.** Boucle d'apprentissage — retour d'information, ajustement en conséquence, qualité du dispositif de mesure.
-- **Frontière.** N'est pas `communication` (plus large) ni `expérience client` (qui est un type de feedback, mais pas le seul). Feedback est la boucle d'apprentissage dans les deux sens ; communication est le vecteur général ; expérience client est un input spécifique.
+- **Frontière.** N'est pas `transversalité` (qui est la capacité à collaborer inter-équipes) ni `expérience client` (qui est un type de feedback, mais pas le seul). Feedback est la boucle d'apprentissage dans les deux sens ; transversalité est le décloisonnement ; expérience client est un input spécifique.
 - **Fiche-ancre pressentie.** Qualité des rétros, cycles d'A/B testing, boucle customer discovery, fréquence de revue des hypothèses.
 - **Héritage.** Lean Startup (Ries), Agile retrospectives, double boucle d'Argyris.
 
@@ -84,15 +84,15 @@ Pour chaque candidat, trois lignes :
 
 ### 2.10 `autonomie`
 - **Capture.** Capacité à décider seul — décentralisation des décisions, responsabilité déléguée, dépendances croisées réduites.
-- **Frontière.** N'est pas `compétences` (savoir-faire) ni `sécurité psychologique` (permission de parler). L'autonomie est la permission de décider, distincte de la capacité technique de le faire et de la permission d'exprimer un désaccord.
+- **Frontière.** N'est pas `compétences` (savoir-faire) ni `confiance` (fondation relationnelle). L'autonomie est la permission de décider, distincte de la capacité technique de le faire et de la confiance qui rend la délégation possible.
 - **Fiche-ancre pressentie.** Taux de décisions prises au niveau équipe, nombre de handoffs nécessaires, délai d'obtention d'un arbitrage.
 - **Héritage.** Reinertsen (décentralisation), Management 3.0, Team Topologies (Skelton & Pais), Beyond Budgeting.
 
-### 2.11 `sécurité psychologique`
-- **Capture.** Permission de parler, d'échouer, de contredire, de soulever un problème sans crainte de représailles.
-- **Frontière.** N'est pas `engagement` (conséquence possible) ni `confiance` (plus large, inclut la direction). Sécurité psychologique est spécifique à la permission d'exprimer — la confiance englobe plus.
-- **Fiche-ancre pressentie.** Taux de remontée de problèmes, nombre de post-mortems blame-free, permission à dire non.
-- **Héritage.** Amy Edmondson (The Fearless Organization), Google Aristotle project.
+### 2.11 `confiance`
+- **Capture.** Phénomène fondamental — capacité à s'en remettre à l'autre sans garantie. Couvre la confiance verticale (envers la direction, le management, la stratégie), la confiance horizontale / sécurité psychologique au sens d'Edmondson (permission de parler, d'échouer, de contredire au sein de l'équipe), la confiance institutionnelle (tenue des engagements, respect des règles du jeu) et la confiance client (promesse tenue, qualité perçue).
+- **Frontière.** N'est pas `engagement` (énergie investie, conséquence possible d'un climat de confiance) ni `expérience client` (qui est un résultat perçu, dont la confiance client est une composante mais pas le tout). La confiance est la fondation relationnelle ; l'engagement est ce qu'elle rend possible ; l'expérience client est le résultat terminal.
+- **Fiche-ancre pressentie.** Indice de confiance organisationnelle (s8), eNPS, Trust Index type Great Place to Work, taux de remontée de problèmes sans sanction, nombre de post-mortems blame-free, NPS côté client.
+- **Héritage.** Amy Edmondson (The Fearless Organization, psychological safety comme forme horizontale), Patrick Lencioni (Five Dysfunctions — absence de confiance comme racine), Stephen Covey (The Speed of Trust), Deming (confiance dans le système).
 
 ### 2.12 `variabilité`
 - **Capture.** Dispersion statistique — écart-type, amplitude, instabilité du signal, capabilité d'un processus.
@@ -102,7 +102,7 @@ Pour chaque candidat, trois lignes :
 
 ### 2.13 `alignement`
 - **Capture.** Partage d'intention — tous tirent dans le même sens, priorités comprises, stratégie relayée.
-- **Frontière.** N'est pas `communication` (vecteur) ni `engagement` (investissement personnel). Alignement = contenu partagé ; communication = canal ; engagement = investissement. On peut communiquer sans aligner, aligner sans engager.
+- **Frontière.** N'est pas `transversalité` (flux inter-équipes) ni `engagement` (investissement personnel). Alignement = contenu stratégique partagé verticalement ; transversalité = décloisonnement horizontal ; engagement = investissement. On peut être aligné sans être transversal, transversal sans engager.
 - **Fiche-ancre pressentie.** Alignement OKR, cohérence des priorités portefeuille, compréhension de la vision, Strategy Deployment (Hoshin).
 - **Héritage.** Drucker (MBO), Doerr (OKR), Hoshin Kanri.
 
@@ -122,8 +122,8 @@ Sept paires sémantiquement proches ont été auditées explicitement. Pour chac
 |---|---|---|
 | `prévisibilité` ↔ `variabilité` | **Distincts, garder les deux** | Variabilité = mesure statistique interne. Prévisibilité = lecture business. Un écart-type des coûts matière est de la variabilité sans être de la prévisibilité. Un say/do ratio est de la prévisibilité sans mesure statistique explicite. |
 | `cadence` ↔ `prévisibilité` | **Distincts, garder les deux** | Cadence = rythme. Prévisibilité = fiabilité. Sprint cadencé mais imprévisible : rythme constant + contenu variable. |
-| `engagement` ↔ `sécurité psychologique` ↔ `autonomie` | **Triade distincte, garder les trois** | Sécurité psy = permission de parler. Autonomie = permission de décider. Engagement = investissement constaté. Une organisation peut avoir l'une sans les deux autres. |
-| `communication` ↔ `feedback` ↔ `alignement` | **Triade distincte, garder les trois** | Communication = flux. Feedback = boucle. Alignement = contenu. Vecteur ≠ dispositif ≠ intention partagée. |
+| `engagement` ↔ `confiance` ↔ `autonomie` | **Triade distincte, garder les trois** | Confiance = fondation relationnelle (verticale + horizontale + institutionnelle). Autonomie = permission de décider. Engagement = investissement constaté. La confiance rend l'autonomie soutenable et l'engagement possible — chacune peut manquer sans les autres. |
+| `transversalité` ↔ `feedback` ↔ `alignement` | **Triade distincte, garder les trois** | Transversalité = décloisonnement inter-équipes. Feedback = boucle d'apprentissage sur un output. Alignement = contenu stratégique partagé. Décloisonnement horizontal ≠ dispositif de retour ≠ intention partagée verticale. |
 | `coûts cachés` ↔ `risque` | **Distincts, garder les deux** | Coûts cachés = rétrospectif (déjà subi, invisible au P&L). Risque = prospectif (exposition anticipée à une dérive). |
 | `feedback` ↔ `expérience client` | **Distincts, garder les deux** | Feedback est un dispositif interne d'apprentissage. Expérience client est un résultat chez l'utilisateur. Un NPS est un input possible du feedback, pas le feedback lui-même. |
 | `compétences` ↔ `autonomie` | **Distincts, garder les deux** | Compétences = savoir-faire (peut exister sans autonomie : équipe très compétente mais micro-managée). Autonomie = permission de décider (peut exister sans compétences — contre-exemple rare mais pas nul : équipe autonome formellement mais pas formée). |
@@ -139,9 +139,9 @@ Certains tags passent le test sémantique mais ont une sémantique large ou trè
 | Tag | Risque | Raison |
 |---|---|---|
 | `alignement` | Fourre-tout | Toute métrique stratégique peut être lue comme un indicateur d'alignement. Risque de suremploi qui dilue la sémantique. |
-| `communication` | Fourre-tout | Très large, peut capturer par défaut des métriques qui relèvent plus précisément de `feedback` ou `alignement`. |
+| `transversalité` | Fourre-tout potentiel | Sémantique plus ciblée que `communication` (décloisonnement inter-équipes) mais reste à surveiller contre `alignement` et `feedback`. Si < 4 fiches, sort. |
 | `coûts cachés` | Sous-usage | Spécifique au vocabulaire Lean. Peu de fiches du catalogue actuel peuvent le nommer directement. À confirmer. |
-| `sécurité psychologique` | Sous-usage | Très spécifique. Si moins de 3-4 fiches l'appellent en propre, sort. |
+| `confiance` | Fourre-tout potentiel | Tag élargi depuis `sécurité psychologique` (renommé le 24/04/2026). Couvre 4 facettes (verticale, horizontale, institutionnelle, client). À surveiller : si co-occurrence > 80 % avec `expérience client` sur les fiches client-facing, voir si splitter. |
 | `variabilité` | Sous-usage | Spécifique Six Sigma. Le catalogue actuel est plus Agile/Lean que Six Sigma — test à faire. |
 | `goulots` | Solide pressenti | Probablement bien couvert si le catalogue a des fiches de flux (Lead Time, WIP, occupation). |
 
