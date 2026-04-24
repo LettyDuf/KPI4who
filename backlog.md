@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **24 avril 2026** (chantier **14 — refactor hexagonal**, **étape (a) close** — inventaire de schéma livré et validé ; chantier 10 gelé à `5655b03`).
+Dernière mise à jour : **24 avril 2026 — fin de journée** (analyse d'expert → ouverture chantiers **15 — Accompagnement post-choix** et **16 — Garde-fous doctrinaux** ; annotations au chantier 10. Chantier **14 — refactor hexagonal** reste actif, étape (b) prochaine).
 
 ---
 
@@ -9,13 +9,13 @@ Dernière mise à jour : **24 avril 2026** (chantier **14 — refactor hexagonal
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événement majeur de la session** : **clôture de l'étape (a) du chantier 14** — inventaire complet du schéma de métriques (`inventaire-schema-metriques.md`, 84 fiches, 8 écarts identifiés + 6 angles additionnels validés par Lætitia). Deltas à intégrer en (b) consignés dans le backlog (section chantier 14). Un mockup de validation (`mockup-validation-etape-a.html`) a servi de support au dialogue — règle mémoire `feedback_mockup_preview_ux` élargie aux questions structurantes, pas seulement aux décisions UX.
+- **Événement majeur de la session** : **analyse d'expert sur la pertinence et l'utilité de l'outil** — suivie de l'entrée au backlog des trois suggestions retenues par Lætitia : chantier **15 — Accompagnement post-choix** (ritualisation, détection de dérive, règle de retrait) ; chantier **16 — Garde-fous doctrinaux de non-dérive** (parcours court, anti-encyclopédie, contrainte volontaire — grille permanente) ; **deux questions à trancher** ajoutées au chantier 10 gelé (personas nommés à l'entrée, mécanisme de reformulation dans *Par ma question*). Trois commits atomiques : `715673d`, `bffc987`, `0aab2ec`. Aucun code touché — travail documentaire pur.
 - **Chantier actif** : **chantier 14 — refactor hexagonal**. Étape (a) close. Prochaine étape : **(b) extraction du cœur `CM.RequeteMetriques`** — module + tests unitaires via patron générateur Node. Durée estimée : 2-3 sessions. À faire en ouverture de (b) : (1) mini-mockup 2-3 options pour les seuils/paliers avant de trancher ; (2) arrêter le vocabulaire fermé des tags thématiques (10-14 tags parmi les 14 candidats) ; (3) poser la signature `executer(filtre)` dans le document compagnon.
 - **Chantier 10 gelé** : décisions cumulées préservées (voir fiche mémoire `project_deux_modes_entree`). Reprise après livraison MVP hexagonal — le mode *Par ma question* sera alors un nouveau consommateur de `CM.RequeteMetriques`.
-- **Dernier SHA sur `main`** : commit de clôture étape (a) (à venir dans la foulée de cette mise à jour). Précédent : `4fc21bb` (ouverture chantier 14). **Tag git** `baseline-avant-hexagonal` = `5655b03`, point de retour absolu. Prochain tag à poser : `mvp-etape-a-schema-inventorie` sur le commit de clôture.
+- **Dernier SHA sur `main`** : `0aab2ec` (annotations chantier 10). Précédents de la session : `bffc987` (chantier 16), `715673d` (chantier 15). Précédent de la session clôture étape (a) : `1ba5112`. **Tag git** `baseline-avant-hexagonal` = `5655b03`, point de retour absolu. Prochain tag à poser : `mvp-etape-a-schema-inventorie` sur `1ba5112` (reste à faire au prochain passage en étape b).
 - **Règle d'or du chantier 9 (panier)** conservée : après toute modif de `CM.Panier`, relancer `node outils/construire-tests-panier.js` pour régénérer `tests-panier.html`. Non touché cette session.
 - **Fiches mémoire pertinentes pour le chantier 14** : `project_chantier_14_ouverture` (plan, doctrine rollback), `project_regles_refactoring_progressif` (boy scout), `project_document_compagnon_contrats` (contrats avant consommateurs), `feedback_mockup_preview_ux` (mockup-preview étendu aux questions structurantes, mis à jour 24/04/2026).
-- **Blocages / questions ouvertes** : aucun. À la reprise : lancer l'étape (b) — commencer par le mini-mockup seuils/paliers, puis arrêt du vocabulaire tags thématiques, puis signature `executer(filtre)` dans `doc-contrats-chantier-14.md`.
+- **Blocages / questions ouvertes** : aucun. À la reprise : lancer l'étape (b) du chantier 14 — mini-mockup seuils/paliers, arrêt du vocabulaire tags thématiques, signature `executer(filtre)` dans `doc-contrats-chantier-14.md`. Les chantiers 15 et 16 sont ouverts mais gelés tant que 14 n'est pas livré (discipline 16.4 : ne pas cumuler les chantiers actifs).
 
 ---
 
@@ -505,7 +505,7 @@ Puis, après validation du schéma par Lætitia : **étape (b)** — création d
 
 **Discipline rappelée.** Tag `baseline-avant-hexagonal` = point de retour absolu. Mot-clé « rollback à l'étape X » entre nous si besoin. Aucun rollback appliqué sans confirmation explicite.
 
-*Chantiers en sommeil* : **7.2a-code.3 C.2 / C.3** (porte niveau — étapes cadre et résultats), la dette **`tests-porte-niveau.html`** à refondre sur le patron générateur Node, **chantier 10** (gelé), **chantier 12** (Transparence cotations → Lexique), **chantier 13** (outil de diagnostic de maturité).
+*Chantiers en sommeil* : **7.2a-code.3 C.2 / C.3** (porte niveau — étapes cadre et résultats), la dette **`tests-porte-niveau.html`** à refondre sur le patron générateur Node, **chantier 10** (gelé), **chantier 12** (Transparence cotations → Lexique), **chantier 13** (outil de diagnostic de maturité), **chantier 15** (Accompagnement post-choix, ouvert 24/04/2026), **chantier 16** (Garde-fous doctrinaux — grille permanente, ouvert 24/04/2026).
 
 ### Historique — chantier 7.6 (réf. ci-dessous)
 
