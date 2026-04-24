@@ -502,6 +502,41 @@ Ces trois disciplines forment un **triptyque à relire en ouverture** de chaque 
 
 ---
 
+## 17. Enrichissement du catalogue — cadres qui portent les tags sous-seuil *(📋 post-14)*
+
+**Déclenchement.** Après livraison du MVP hexagonal (chantier 14 clos, tag `mvp-chantier-14-livre`). Chantier gelé tant que 14 n'est pas livré (discipline 16.4 — ne pas cumuler les chantiers actifs).
+
+**Origine.** Le Temps 2 du chantier 14 (24/04/2026, commit `b474a20`) a tagué les 84 fiches avec les 14 tags thématiques. Il remonte quatre tags en zone basse : `transversalité` (3 fiches, 3,6 %), `autonomie` (2 fiches, 2,4 %), `variabilité` (6 fiches, 7,1 %), `confiance` (7 fiches, 8,3 %). Les deux premiers passent sous le seuil 5 %.
+
+**Doctrine d'arbitrage verrouillée** (cf. fiche mémoire `project_regle_tags_sous_seuil`) : un tag sous-seuil est **gardé** si au moins un cadre reconnu non encore catalogué porte structurellement le thème. C'est un *signal de lacune du catalogue*, pas un défaut du vocabulaire. Sinon, sortie argumentée.
+
+**Test d'antériorité appliqué aux 4 tags concernés** :
+
+| Tag | Taux | Cadre(s) porteur(s) identifié(s) | Verdict |
+|---|---|---|---|
+| `transversalité` | 3,6 % | Team Topologies · Value Stream Management · Lean Portfolio | Gardé |
+| `autonomie` | 2,4 % | Team Topologies · Management 3.0 · Sociocratie/Holacratie | Gardé |
+| `variabilité` | 7,1 % | Six Sigma avancé (Cp/Cpk, SPC, DMAIC Measure) | Surveillance |
+| `confiance` | 8,3 % | ADKAR/Prosci détaillé · Psychological Safety (Edmondson) | Surveillance |
+
+**Cadres prioritaires pressentis** — à reconfirmer au moment de l'ouverture du chantier :
+
+- **Team Topologies** (Skelton & Pais, 2019) — ~5 fiches : Team Cognitive Load, Team API freshness, Interaction Mode Stability, Stream-aligned ratio, Dependency Lead Time, Platform Thinness/NPS. Porte `autonomie` + `transversalité`.
+- **Management 3.0** (Appelo) — ~6 fiches : Delegation Level, Moving Motivators Satisfaction Gap, Happiness Index, Kudo frequency / Merit Money, Celebration Grid (Experiment Cadence + Learning Ratio), Competency Matrix (Bus Factor + Coverage Gaps). Porte `autonomie` + `engagement` + `confiance`.
+- **Value Stream Management** (Flow Framework, Kersten) — ~4 fiches : Flow Velocity, Flow Efficiency, Flow Distribution, Flow Load. Porte `transversalité` + `goulots`.
+- **Six Sigma avancé** — ~3 fiches : Cp/Cpk par processus critique, SPC Control Chart Stability, DMAIC Measure Baseline. Porte `variabilité`.
+- **ADKAR / Prosci détaillé** — ~5 fiches : Awareness Index, Desire Score, Knowledge Gap, Ability Readiness, Reinforcement Sustainability. Porte `engagement` + `compétences` + `confiance`.
+
+**Ordre pressenti** : Team Topologies > Management 3.0 > VSM > ADKAR détaillé > Six Sigma avancé. Raisonnement : gain le plus visible d'abord sur les deux tags les plus pauvres.
+
+**Exigence qualité par fiche ajoutée** : fiabilité explicite (fiable / precaution / risque), source citée (livre + page ou matériel officiel), positionnement dans le catalogue (niveau + branche + domaine), tags de problèmes (champ `tags` — §5.8 inventaire schéma), tags thématiques (§2 de `inventaire-tags-thematiques.md`).
+
+**Règle conservatrice.** Le chantier 17 n'est pas « refaire le vocabulaire » — le vocabulaire est figé au Temps 3 du chantier 14. Le chantier 17 augmente la **densité d'usage** de chaque tag existant. Si un nouvel axe thématique émerge de cette injection, il est traité comme un chantier séparé 18+, pas comme une révision silencieuse du vocabulaire.
+
+**Priorité : 🟡 moyenne.** Dépendance dure : MVP chantier 14 livré. Temps estimé : 2-3 sessions par cadre, soit ~10-15 sessions pour les 5 cadres prioritaires.
+
+---
+
 ## Prochaine action recommandée
 
 Chantier **14 — refactor hexagonal** ouvert le 23/04/2026 fin de journée. Chantier **10 gelé à `5655b03`** (décisions conservées).
