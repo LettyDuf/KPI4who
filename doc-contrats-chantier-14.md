@@ -236,6 +236,60 @@ Garde-fou pour moi : si je me retrouve à toucher une fiche pour une autre raiso
 
 ---
 
+---
+
+## 10. Décisions éditoriales structurelles (étape b)
+
+Décisions prises en ouverture de l'étape (b), suite aux mockup-previews livrés. Chaque décision est référencée par le commit qui l'acte.
+
+### 10.1 Seuils / paliers — Option B retenue
+
+**Décision (24/04/2026).** Les fiches peuvent porter un champ optionnel `reperes`, réservé aux métriques dont un référentiel reconnu publie des bandes. Les fiches sans référentiel légitime n'en portent aucun. Référence de l'arbitrage : `preview-14b-seuils-paliers.html` (commit `21c76b2`).
+
+**Critère d'éligibilité (applicable fiche par fiche au passage éditorial).** Une fiche devient éligible si et seulement si les trois conditions sont réunies :
+
+1. Un référentiel **public et nommé** publie des bandes pour cette métrique (DORA State of DevOps, NIST CSF, Bain/Reichheld pour NPS, ITIL, OWASP, etc.).
+2. Les bandes sont **descriptives** — ce que l'industrie observe — jamais **prescriptives** (« il faut atteindre »).
+3. La fiche ne porte pas le flag `observationPure` (à introduire) qui exclut explicitement toute gradation. Cas typiques : confiance organisationnelle (`s8`), NPS interne nominatif, métriques où la cible est toujours contextuelle.
+
+**Volume attendu.** Entre 10 et 15 fiches éligibles sur les 84 du catalogue. Candidats pressentis : DORA ×4 (`o1` à `o4`), NIST ×1 (`s9`), ITIL/Ops ×3-4 (SLA, MTTR, disponibilité pipeline), NPS/CSAT/eNPS ×3-4, éventuellement disponibilité ×1-2. Liste exacte figée au passage éditorial, pas ici.
+
+**Structure du champ.**
+
+```
+reperes: {
+  source:    "DORA State of DevOps 2024",   // obligatoire
+  sourceUrl: "https://...",                  // optionnel
+  unite:     "/semaine",                     // pour l'affichage
+  bandes: [
+    { nom: "Elite",   seuil: "plusieurs/jour",   qualif: "excellent" },
+    { nom: "Haute",   seuil: "1/jour à 1/sem",   qualif: "bon" },
+    { nom: "Moyenne", seuil: "1/sem à 1/mois",   qualif: "moyen" },
+    { nom: "Basse",   seuil: "< 1/mois",         qualif: "faible" }
+  ]
+}
+```
+
+- `source` (obligatoire) nomme le référentiel qui publie les bandes.
+- `sourceUrl` (optionnel) renvoie au document de référence.
+- `unite` (optionnel) pour l'affichage côté vue.
+- `bandes[]` est un tableau de 3 à 5 éléments. Chaque bande a : `nom` (libellé spécifique au référentiel — « Elite », « Niveau 5 », « Promoteurs »), `seuil` (valeur ou intervalle sous forme de chaîne — la donnée n'est pas typée, la sémantique vit dans le libellé), `qualif` (enum fermé : `excellent` | `bon` | `moyen` | `faible` | `alerte` — pilote la couleur d'affichage, indépendamment du libellé de source).
+
+**Principe flexible côté donnée, normalisé côté vue.** Les référentiels sont hétérogènes (DORA en 4 bandes, NIST en 5, NPS en 3). La structure accepte cette hétérogénéité. Le composant d'affichage normalise à 3-5 bandes max : regroupe si plus, étire si moins. L'utilisateur voit toujours un rendu homogène quelle que soit la source.
+
+**Comportement d'affichage.** Collapsé par défaut. Toggle sobre « Voir les repères industriels » placé **après** la section anti-patterns, **avant** la section alternatives. Jamais en tête de fiche, jamais en premier signal visuel.
+
+**Règle d'or anti-Goodhart.** Le repère n'est jamais la première chose vue. L'utilisateur doit d'abord lire l'intention, les exemples, les anti-patterns. Les repères sont un tutorat — un deuxième temps pédagogique, pas le contenu principal. Collapsé par défaut protège la lecture naïve contre la fixation réflexive sur un chiffre.
+
+**Impact sur `CM.RequeteMetriques`.** Aucun. `reperes` est un champ d'affichage, non filtrant. La signature `executer(filtre)` ne connaît pas cette notion — elle reste identique à celle posée au §6 de l'inventaire.
+
+**Flag `observationPure`.** Nouveau champ booléen optionnel sur la fiche. Défaut : `false`. Quand `true`, la fiche refuse explicitement toute gradation (ni `reperes` côté catalogue, ni paliers côté panier si Option C émergeait un jour). À poser fiche par fiche sur les métriques-observation lors du passage éditorial — estimation : ~5 à 10 fiches (`s8`, certaines fiches humaines, certaines fiches ICP stratégiques).
+
+**Passage éditorial.** Travail étalé sur étape (c). À programmer dans le backlog. Ne bloque pas l'étape (b) — la structure du champ est arrêtée, la saisie des valeurs se fait en temps éditorial.
+
+---
+
 ## 9. Journal du chantier
 
 - **23/04/2026 fin de journée** — ouverture du chantier. Commit atomique `chore(chantier-14): ouverture — baseline + scénario régression + procédure rollback` embarquant (1) tag git `baseline-avant-hexagonal` sur `5655b03`, (2) `scenario-non-regression.md` posé, (3) ce doc compagnon, (4) backlog mis à jour avec chantier 14 actif / chantier 10 gelé, (5) mémoire `project_chantier_14_ouverture.md` posée. Prochaine étape : (a) inventaire du schéma d'étiquettes.
+- **24/04/2026 fin de journée — ouverture étape (b), tâche 1 tranchée.** Livraison du preview `preview-14b-seuils-paliers.html` (commit `21c76b2`). Arbitrage : **Option B retenue** — champ `reperes` optionnel sur les fiches à référentiel reconnu, structure flexible-normalisée, affichage collapsé par défaut. Décisions détaillées actées en §10.1 ci-dessus. Prochaines tâches de l'étape (b) : (2) arrêter le vocabulaire fermé des tags thématiques, (3) poser la signature `executer(filtre)`.

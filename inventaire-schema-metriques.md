@@ -424,7 +424,7 @@ Validation du périmètre de l'inventaire par Lætitia → 6 angles initialement
 
 **(b) Source des données — évolution future (backlog).** Les fiches ne disent pas d'où vient la donnée (CRM, ERP, Git, survey, humain). Décision : **ne pas** bloquer l'étape (b) là-dessus, consigner en évolution backlog. À traiter plus tard comme champ structuré quand on aura l'usage (ex. filtre « métriques automatisables » vs « métriques d'enquête »).
 
-**(c) Seuils / paliers — point ouvert, à mockuper avant de trancher.** Hésitation exprimée : pas un manque volontaire, mais crainte que la structuration impose des limitations non souhaitées (chaque contexte ayant ses propres cibles). Décision : traiter en mini-mockup en ouverture de (b) avec 2-3 options concrètes avant d'arbitrer — voir ligne dédiée au backlog.
+**(c) Seuils / paliers — RÉSOLU (Option B retenue 24/04/2026).** Arbitrage fait après mockup `preview-14b-seuils-paliers.html` (commit `21c76b2`). Décision : champ optionnel `reperes` sur les fiches à référentiel reconnu, structure flexible (source + bandes + qualif enum), affichage collapsé par défaut, passage éditorial étalé sur étape (c). Détails en `doc-contrats-chantier-14.md` §10.1. Flag `observationPure` introduit pour exclure explicitement la gradation sur les métriques-observation (confiance, NPS interne, etc.).
 
 **(d) Relations entre fiches — à combler (destination à préciser).** Pas de graphe de dépendance (X influence Y, Z décompose W). Décision : écart reconnu, à combler. Destination probable : (b) si la signature de `CM.RequeteMetriques` prévoit une propriété `lien:{type, cible}` ; sinon évolution ultérieure. À arbitrer en ouverture de (b) selon la charge.
 
