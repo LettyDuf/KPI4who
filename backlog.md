@@ -453,6 +453,46 @@ Accueil · Mon tableau de bord · Choisir mes indicateurs · Cascade stratégiqu
 
 ---
 
+## 16. Garde-fous doctrinaux de non-dérive — disciplines permanentes
+
+**Origine.** Session du 24/04/2026 — analyse d'expert sur les risques structurels de l'outil au stade actuel (84 fiches, 4 portes, 2 modes d'entrée prévus, 8 onglets pressentis). Trois risques nommés : encyclopédisme, paradoxe du choix, surface de décision qui dépasse la décidabilité.
+
+**Nature de cette section.** Ce n'est **pas un chantier avec livrable daté** — c'est une **grille permanente d'évaluation** à appliquer à chaque arbitrage de chantier futur. Consignée ici, elle a le statut d'invariant auquel on revient quand on hésite, pas de *todo* à rayer. Elle ne se clôt jamais ; elle se met à jour si une quatrième discipline émerge de l'expérience terrain.
+
+### 16.1 Parcours court comme juge de paix
+
+**Règle.** Un visiteur motivé doit ressortir en **7 à 10 minutes** avec **3 métriques candidates** et une intention d'action — quel que soit le mode d'entrée emprunté (*Par mes 4 axes*, *Par ma question*, ou accès direct à une porte). Si une modification enrichit le catalogue ou densifie une porte au point de casser ce test, l'ajout est refusé ou amputé, pas amendé à la marge.
+
+**Pourquoi.** La richesse éditoriale n'est utile que si la décidabilité suit. Un outil qui *affiche* beaucoup sans permettre de *sortir avec peu* glisse vers la bibliothèque — et rate sa mission.
+
+**Comment appliquer.** À chaque clôture de chantier de priorité ≥ 🟡, rejouer le parcours court sur les portes vivantes (problème, cadre, niveau, maturité). Si une porte dépasse le plafond, ouvrir immédiatement une ligne 🔴 de *simplification* au backlog — avant tout autre chantier d'extension. Le test est un *smoke test* permanent, pas une cérémonie annuelle.
+
+### 16.2 Anti-encyclopédie — le manque utilisateur nommé
+
+**Règle.** Chaque nouvelle fiche, chaque nouvelle porte, chaque nouveau cadre doit être justifiée par un **manque utilisateur nommé** — pas par une tentation d'exhaustivité doctrinale. Formule attendue en ouverture : *« sans cette fiche, un visiteur de profil X reste bloqué devant Y »*. Si la formule n'existe pas, l'ajout est reporté jusqu'à ce qu'un manque terrain l'exprime.
+
+**Pourquoi.** Le marché ne manque pas de catalogues ; il manque d'outils qui obligent à choisir. Chaque addition non-justifiée augmente la surface de choix sans augmenter la valeur — elle dégrade la décidabilité silencieusement.
+
+**Comment appliquer.** En ouverture de chaque chantier d'ajout éditorial ou de porte, inscrire la ligne *manque utilisateur* en tête du mandat. Le panel d'experts convoqué doit valider que le manque est réel, pas doctrinal. Règle dialogue avec la doctrine *panels à la demande* du chantier 14.
+
+### 16.3 Contrainte volontaire dans le parcours
+
+**Règle.** L'outil doit être son propre contre-poison au paradoxe du choix. Par défaut : on propose peu, on élimine, on force une hiérarchie. Concrètement : pas de liste de 20 candidats en premier rendu, pas d'égalitarisme visuel, pas d'option « tout voir » en premier clic. L'exhaustivité est accessible en secondaire, pas offerte d'emblée.
+
+**Pourquoi.** Sans contrainte volontaire, le rendu *étale* au lieu de *proposer*. L'utilisateur part avec l'impression d'avoir reçu une documentation, pas une décision de candidat.
+
+**Comment appliquer.** À chaque rendu de résultats (porte, mode *Par ma question*, panier, tableau de bord), audit en bas de spec : *est-ce qu'on propose ou est-ce qu'on étale ?* Un rendu qui étale est retravaillé pour porter un angle, ou pour laisser le visiteur demander explicitement l'exhaustivité.
+
+### 16.4 Posture d'ouverture de chantier
+
+Ces trois disciplines forment un **triptyque à relire en ouverture** de chaque nouveau chantier éditorial ou produit, pas en fin de parcours. Le coût de les respecter est marginal en ouverture, massif après coup.
+
+**Rituel proposé.** À l'ouverture d'un chantier ≥ 🟡, rédiger un court encart *16.1 / 16.2 / 16.3* qui répond aux trois disciplines. Trois phrases suffisent. Si l'une des trois bute, c'est un signal — souvent le chantier doit être re-cadré ou re-priorisé.
+
+**Priorité : 🟡 moyenne — permanent.** Ne se clôt jamais. S'enrichit par retour d'expérience.
+
+---
+
 ## Prochaine action recommandée
 
 Chantier **14 — refactor hexagonal** ouvert le 23/04/2026 fin de journée. Chantier **10 gelé à `5655b03`** (décisions conservées).
