@@ -108,7 +108,7 @@ Cette étape *vit* côté code sans rien changer de visible. On vérifie par tes
 **Commits atomiques attendus.**
 
 1. Création du squelette `CM.RequeteMetriques` + structure du `filtre`.
-2. Implémentation `executer` sur les axes déjà présents dans `CM.IndicateursMeta`.
+2. Implémentation `executer` sur tous les axes documentés au §10.3, en composant `CM.Referentiel` (champs de fiche : `niveau`, `domaine`, `type`, `cadre`, `fiabiliteMin`, `maturiteMin`) et `CM.IndicateursMeta` (clauses `tags` et `tagsThematiques`).
 3. Tests unitaires de `CM.RequeteMetriques` — fichier `tests-requete-metriques.html` généré via le patron Node.js existant.
 4. Greffe opportuniste éventuelle (ex : extraction `CM.Config` si opportunité).
 
@@ -122,9 +122,9 @@ Cette étape *vit* côté code sans rien changer de visible. On vérifie par tes
 
 Chaque porte migre indépendamment des autres. Sous-étape (c.N) = *porte N passe par `CM.RequeteMetriques`*.
 
-**(c.1) Porte *Par mon problème***. Reformuler `CM.DiagnosticProbleme` : l'action de déterminer les métriques passe par un appel à `CM.RequeteMetriques.executer({niveau, probleme})` au lieu de la dérivation locale. Scenario non-régression passé en entier avant / après. Tag `mvp-etape-c1-porte-probleme-migree`.
+**(c.1) Porte *Par mon problème***. Reformuler `CM.DiagnosticProbleme` : l'action de déterminer les métriques passe par un appel à `CM.RequeteMetriques.executer({niveau: ['equipe'], probleme: 'flux'})` (forme conforme à §10.3 — clauses-set toujours en array, sucre `probleme` accepté) au lieu de la dérivation locale. Scenario non-régression passé en entier avant / après. Tag `mvp-etape-c1-porte-probleme-migree`.
 
-**(c.2) Porte *Par mon cadre***. Même chose. `CM.DiagnosticCadre.executer({niveau, cadre})`. Tag `mvp-etape-c2-porte-cadre-migree`.
+**(c.2) Porte *Par mon cadre***. Même chose. `CM.DiagnosticCadre.executer({niveau: ['portefeuille'], cadre: ['dora']})` (clauses-set en array, conformément à §10.3). Tag `mvp-etape-c2-porte-cadre-migree`.
 
 **(c.3) Porte *Par mon niveau***. Même chose. Migration à faire en coordination avec 7.2a-code.3 qui est encore en cours — il peut être naturel de finir 7.2a-code.3 *après* que le cœur est posé, pour que la porte niveau naisse directement hexagonale. Tag `mvp-etape-c3-porte-niveau-migree`.
 
@@ -281,7 +281,7 @@ reperes: {
 
 **Règle d'or anti-Goodhart.** Le repère n'est jamais la première chose vue. L'utilisateur doit d'abord lire l'intention, les exemples, les anti-patterns. Les repères sont un tutorat — un deuxième temps pédagogique, pas le contenu principal. Collapsé par défaut protège la lecture naïve contre la fixation réflexive sur un chiffre.
 
-**Impact sur `CM.RequeteMetriques`.** Aucun. `reperes` est un champ d'affichage, non filtrant. La signature `executer(filtre)` ne connaît pas cette notion — elle reste identique à celle posée au §6 de l'inventaire.
+**Impact sur `CM.RequeteMetriques`.** Aucun. `reperes` est un champ d'affichage, non filtrant. La signature `executer(filtre)` ne connaît pas cette notion — voir §10.3 pour le contrat complet.
 
 **Flag `observationPure`.** Nouveau champ booléen optionnel sur la fiche. Défaut : `false`. Quand `true`, la fiche refuse explicitement toute gradation (ni `reperes` côté catalogue, ni paliers côté panier si Option C émergeait un jour). À poser fiche par fiche sur les métriques-observation lors du passage éditorial — estimation : ~5 à 10 fiches (`s8`, certaines fiches humaines, certaines fiches ICP stratégiques).
 
@@ -364,13 +364,13 @@ filtre = {
 | `limite` ≤ 0 ou non entière | **Exception explicite**. `limite: 0` est probablement une erreur de saisie, pas une demande légitime de liste vide. |
 | Clause inconnue dans `filtre` (typo de nom de clé) | **Exception explicite** `Error("CM.RequeteMetriques: clause inconnue 'tagThematique' (vouliez-vous dire 'tagsThematiques' ?). Clauses admises : niveau, domaine, type, cadre, tags, tagsThematiques, probleme, fiabiliteMin, maturiteMin, limite.")`. |
 
+**Origine des valeurs comparées.** Les clauses `tags` et `tagsThematiques` matchent contre les champs de même nom dans `CM.IndicateursMeta.META[id]`. Les autres clauses (`niveau`, `domaine`, `type`, `cadre`, `fiabiliteMin`, `maturiteMin`) matchent contre les champs de même nom **dans la fiche elle-même** (`CM.Referentiel`). Le module `CM.RequeteMetriques` compose donc deux sources de données ; il n'enrichit aucun champ, il ne fait que filtrer.
+
 **Cohérence avec les décisions amont.**
 
 - **§3.1 (architecture cible).** La forme initiale `{niveau?, cadre?, probleme?, maturite?, limite?}` annoncée en §3.1 est ici **étendue et normalisée** ; §3.1 pointe désormais vers ce §10.3 comme source unique.
 - **§10.1 (seuils/paliers).** `reperes` reste un champ d'affichage non filtrant — il n'apparaît pas dans la signature.
 - **§10.2 (vocabulaire fermé).** Les clauses `tags` et `tagsThematiques` consomment respectivement les vocabulaires fermés des 7 tags problèmes et des 14 tags thématiques. Toute valeur hors vocabulaire lève une exception (cf. ci-dessus).
-
-**Question ouverte — clause `branche`.** La clause `branche` apparaît dans le bloc *État courant* du backlog mais n'est définie nulle part dans ce doc compagnon ni dans `inventaire-schema-metriques.md`. Deux hypothèses : (1) `branche` = sucre pour `domaine` ; (2) `branche` = niveau de regroupement supérieur au domaine (par exemple : `branche: 'tech'` couvrant les domaines `devops`, `data`, `securite`). **À clarifier avant l'écriture du commit 1 de l'étape (b)**. Si confirmée comme clause à part entière, elle s'ajoute selon le même modèle que `domaine` (clause-set, union intra / intersection inter).
 
 **Statut éditorial du contrat.** Tout consommateur (porte, test, future porte question) qui voudrait une clause non listée ici doit (1) l'ouvrir comme évolution du §10.3 — donc valider une décision éditoriale documentée — puis (2) la consommer. Jamais l'inverse. Cf. fiche mémoire `project_document_compagnon_contrats` (le document est la référence, le code s'y conforme).
 
