@@ -370,10 +370,17 @@ CM.RequeteMetriques = (function() {
      Ordre de retour : ordre de déclaration de CM.Referentiel.tous().
      Capping `limite` appliqué après filtrage, sans re-tri.
 
-     Sémantique d'absence : si la fiche n'a pas le champ filtré (par ex.
-     pas de `branche` sur une fiche stratégique), elle est exclue dès qu'une
-     clause portant ce champ est active. Cohérent avec le contrat §10.3 :
-     une clause active impose la présence d'une valeur correspondante. */
+     Sémantique d'absence — distinction obligatoires/optionnels (cf. §10.3) :
+       · Champs OBLIGATOIRES (`niveau`, `type`) : si la fiche n'a pas le champ,
+         elle est exclue par toute clause portant sur lui. La fiche est mal
+         formée — l'absence est un défaut.
+       · Champs OPTIONNELS (`branche`, `domaine`) : si la fiche n'a pas le champ,
+         elle est INCLUSE par défaut. Filtrer par domaine='dev' n'élimine pas
+         les fiches transverses sans domaine — elles restent pertinentes pour
+         tout filtre. Sémantique alignée sur la nature de la donnée
+         (cf. inventaire-schema-metriques.md §3.2 et §3.3).
+       Pour les seuils ordinaux (`fiabiliteMin`, `maturiteMin`) qui matchent
+       contre des champs obligatoires, l'absence du champ exclut. */
 
   function uneValeurEnCommun(listeFiltre, listeFiche) {
     for (var i = 0; i < listeFiltre.length; i++) {
@@ -417,10 +424,12 @@ CM.RequeteMetriques = (function() {
 
       /* Clauses sur la fiche elle-même (CM.Referentiel). */
       if (actNiveau  && filtre.niveau.indexOf(f.niveau) === -1) continue;
-      if (actBranche && (f.branche === undefined ||
-                         filtre.branche.indexOf(f.branche) === -1)) continue;
-      if (actDomaine && (f.domaine === undefined ||
-                         filtre.domaine.indexOf(f.domaine) === -1)) continue;
+      /* Champ OPTIONNEL : exclure UNIQUEMENT si présent et non-matchant. */
+      if (actBranche && f.branche !== undefined &&
+                        filtre.branche.indexOf(f.branche) === -1) continue;
+      /* Champ OPTIONNEL : exclure UNIQUEMENT si présent et non-matchant. */
+      if (actDomaine && f.domaine !== undefined &&
+                        filtre.domaine.indexOf(f.domaine) === -1) continue;
       if (actType    && filtre.type.indexOf(f.type) === -1) continue;
 
       /* Seuils ordinaux. */
@@ -842,12 +851,51 @@ CM.RequeteMetriques = (function() {
           ['f7','f8','f9','f12']
         );
       });
-      it('Clause branche exclut les fiches sans branche (sémantique d\'absence)', function() {
-        /* f1 à f6 n\'ont pas de branche → exclues quand branche est actif */
-        expect(ids(R.executer({ branche:['ti'] }))).toEqualOrderedArray(['f7','f8','f9','f12']);
+      it('Clause branche INCLUT les fiches sans branche (champ optionnel — inclusion par absence)', function() {
+        /* f1 à f6 n\'ont pas de branche → INCLUSES quand branche:[ti] est actif.
+           f7,f8,f9,f12 ont branche:ti → incluses par match.
+           f10,f11 ont branche:affaires → exclues (champ présent et non-matchant). */
+        expect(ids(R.executer({ branche:['ti'] }))).toEqualOrderedArray(
+          ['f1','f2','f3','f4','f5','f6','f7','f8','f9','f12']
+        );
       });
-      it('Clause domaine exclut les fiches sans domaine (sémantique d\'absence)', function() {
-        expect(ids(R.executer({ domaine:['dev'] }))).toEqualOrderedArray(['f7','f8']);
+      it('Clause domaine INCLUT les fiches sans domaine (champ optionnel — inclusion par absence)', function() {
+        /* f1 à f6 n\'ont pas de domaine → incluses. f7,f8 ont dev → incluses par match.
+           f9,f10,f11,f12 ont d\'autres domaines → exclues. */
+        expect(ids(R.executer({ domaine:['dev'] }))).toEqualOrderedArray(
+          ['f1','f2','f3','f4','f5','f6','f7','f8']
+        );
+      });
+      it('Clause branche : fiche AVEC branche non-matchante est exclue (sémantique stricte sur présent)', function() {
+        /* f10,f11 ont branche:affaires → EXCLUES quand branche:[ti] est actif.
+           Vérifie que l\'inclusion par absence ne se confond pas avec
+           l\'inclusion par défaut. */
+        var res = ids(R.executer({ branche:['ti'] }));
+        expect(res.indexOf('f10') === -1).toBeTruthy();
+        expect(res.indexOf('f11') === -1).toBeTruthy();
+      });
+      it('Clause domaine : fiche AVEC domaine non-matchant est exclue', function() {
+        /* f9 (plateforme), f10 (commercial), f11 (service-client), f12 (sécurité)
+           sont exclues quand domaine:[dev] est actif. */
+        var res = ids(R.executer({ domaine:['dev'] }));
+        expect(res.indexOf('f9') === -1).toBeTruthy();
+        expect(res.indexOf('f10') === -1).toBeTruthy();
+        expect(res.indexOf('f11') === -1).toBeTruthy();
+        expect(res.indexOf('f12') === -1).toBeTruthy();
+      });
+      it('Combinaison niveau + branche : la sémantique d\'absence ne ressuscite pas les fiches exclues par d\'autres clauses', function() {
+        /* f1-f6 sans branche seraient incluses par branche:[ti] seul,
+           mais elles sont exclues par niveau:[operationnel] (champ obligatoire).
+           Résultat : seules les fiches op-ti restent. */
+        expect(ids(R.executer({ niveau:['operationnel'], branche:['ti'] }))).toEqualOrderedArray(
+          ['f7','f8','f9','f12']
+        );
+      });
+      it('Combinaison domaine + cadres : domaine optionnel inclut absents, cadres reste strict', function() {
+        /* Les fiches sans domaine (f1-f6) sont incluses par domaine:[dev],
+           puis filtrées par cadres:[lean] qui ne match que f4.
+           Sans inclusion par absence on aurait perdu f4. */
+        expect(ids(R.executer({ domaine:['dev'], cadres:['lean'] }))).toEqualOrderedArray(['f4']);
       });
       it('type:[ICP] AND niveau:[operationnel] = f10', function() {
         expect(ids(R.executer({ type:['ICP'], niveau:['operationnel'] }))).toEqualOrderedArray(['f10']);

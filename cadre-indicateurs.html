@@ -4077,10 +4077,17 @@ CM.RequeteMetriques = (function() {
      Ordre de retour : ordre de déclaration de CM.Referentiel.tous().
      Capping `limite` appliqué après filtrage, sans re-tri.
 
-     Sémantique d'absence : si la fiche n'a pas le champ filtré (par ex.
-     pas de `branche` sur une fiche stratégique), elle est exclue dès qu'une
-     clause portant ce champ est active. Cohérent avec le contrat §10.3 :
-     une clause active impose la présence d'une valeur correspondante. */
+     Sémantique d'absence — distinction obligatoires/optionnels (cf. §10.3) :
+       · Champs OBLIGATOIRES (`niveau`, `type`) : si la fiche n'a pas le champ,
+         elle est exclue par toute clause portant sur lui. La fiche est mal
+         formée — l'absence est un défaut.
+       · Champs OPTIONNELS (`branche`, `domaine`) : si la fiche n'a pas le champ,
+         elle est INCLUSE par défaut. Filtrer par domaine='dev' n'élimine pas
+         les fiches transverses sans domaine — elles restent pertinentes pour
+         tout filtre. Sémantique alignée sur la nature de la donnée
+         (cf. inventaire-schema-metriques.md §3.2 et §3.3).
+       Pour les seuils ordinaux (`fiabiliteMin`, `maturiteMin`) qui matchent
+       contre des champs obligatoires, l'absence du champ exclut. */
 
   function uneValeurEnCommun(listeFiltre, listeFiche) {
     for (var i = 0; i < listeFiltre.length; i++) {
@@ -4124,10 +4131,12 @@ CM.RequeteMetriques = (function() {
 
       /* Clauses sur la fiche elle-même (CM.Referentiel). */
       if (actNiveau  && filtre.niveau.indexOf(f.niveau) === -1) continue;
-      if (actBranche && (f.branche === undefined ||
-                         filtre.branche.indexOf(f.branche) === -1)) continue;
-      if (actDomaine && (f.domaine === undefined ||
-                         filtre.domaine.indexOf(f.domaine) === -1)) continue;
+      /* Champ OPTIONNEL : exclure UNIQUEMENT si présent et non-matchant. */
+      if (actBranche && f.branche !== undefined &&
+                        filtre.branche.indexOf(f.branche) === -1) continue;
+      /* Champ OPTIONNEL : exclure UNIQUEMENT si présent et non-matchant. */
+      if (actDomaine && f.domaine !== undefined &&
+                        filtre.domaine.indexOf(f.domaine) === -1) continue;
       if (actType    && filtre.type.indexOf(f.type) === -1) continue;
 
       /* Seuils ordinaux. */
