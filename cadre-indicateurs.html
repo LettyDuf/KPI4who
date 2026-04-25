@@ -4071,13 +4071,90 @@ CM.RequeteMetriques = (function() {
 
   /* ── API publique ── */
 
+  /* ── Logique de filtrage (commit 2 de l'étape b) ──
+     Sémantique : intersection inter-clauses (AND), union intra-clause (OR).
+     Ordre de retour : ordre de déclaration de CM.Referentiel.tous().
+     Capping `limite` appliqué après filtrage, sans re-tri.
+
+     Sémantique d'absence : si la fiche n'a pas le champ filtré (par ex.
+     pas de `branche` sur une fiche stratégique), elle est exclue dès qu'une
+     clause portant ce champ est active. Cohérent avec le contrat §10.3 :
+     une clause active impose la présence d'une valeur correspondante. */
+
+  function uneValeurEnCommun(listeFiltre, listeFiche) {
+    for (var i = 0; i < listeFiltre.length; i++) {
+      if (listeFiche.indexOf(listeFiltre[i]) !== -1) return true;
+    }
+    return false;
+  }
+
   function executer(filtre) {
     valider(filtre);
-    /* COMMIT 1 — pas de logique de filtrage. On respecte le contrat de
-       retour (Array<Fiche> dans l'ordre de déclaration de CM.Referentiel.tous())
-       par renvoi du référentiel complet. La sémantique union/intersection est
-       implémentée au commit 2 de l'étape (b). */
-    return CM.Referentiel.tous().slice();
+    var fiches = CM.Referentiel.tous();
+    if (filtre === undefined || filtre === null) return fiches.slice();
+
+    /* Normalisation du raccourci `probleme` : s'agglomère à `tags` (OR). */
+    var tagsEffectifs = (filtre.tags || []).slice();
+    if (filtre.probleme !== undefined &&
+        tagsEffectifs.indexOf(filtre.probleme) === -1) {
+      tagsEffectifs.push(filtre.probleme);
+    }
+
+    /* Pré-calcul des rangs de seuils ordinaux (-1 = clause inactive). */
+    var rangFiabilite = filtre.fiabiliteMin !== undefined
+      ? VOCAB.fiabilite.indexOf(filtre.fiabiliteMin)
+      : -1;
+    var rangMaturite  = filtre.maturiteMin !== undefined
+      ? VOCAB.maturite.indexOf(filtre.maturiteMin)
+      : -1;
+
+    /* Drapeaux d'activité par clause (clause vide = inactive, cf. §10.3). */
+    var actNiveau    = filtre.niveau          && filtre.niveau.length > 0;
+    var actBranche   = filtre.branche         && filtre.branche.length > 0;
+    var actDomaine   = filtre.domaine         && filtre.domaine.length > 0;
+    var actType      = filtre.type            && filtre.type.length > 0;
+    var actCadres    = filtre.cadres          && filtre.cadres.length > 0;
+    var actTags      = tagsEffectifs.length > 0;
+    var actTT        = filtre.tagsThematiques && filtre.tagsThematiques.length > 0;
+
+    var resultat = [];
+    for (var i = 0; i < fiches.length; i++) {
+      var f = fiches[i];
+
+      /* Clauses sur la fiche elle-même (CM.Referentiel). */
+      if (actNiveau  && filtre.niveau.indexOf(f.niveau) === -1) continue;
+      if (actBranche && (f.branche === undefined ||
+                         filtre.branche.indexOf(f.branche) === -1)) continue;
+      if (actDomaine && (f.domaine === undefined ||
+                         filtre.domaine.indexOf(f.domaine) === -1)) continue;
+      if (actType    && filtre.type.indexOf(f.type) === -1) continue;
+
+      /* Seuils ordinaux. */
+      if (rangFiabilite >= 0) {
+        var rF = VOCAB.fiabilite.indexOf(f.fiabilite);
+        if (rF < 0 || rF > rangFiabilite) continue;
+      }
+      if (rangMaturite >= 0) {
+        var rM = VOCAB.maturite.indexOf(f.maturite_min);
+        if (rM < 0 || rM > rangMaturite) continue;
+      }
+
+      /* Clauses sur le tagging multi-axes (CM.IndicateursMeta). */
+      if (actCadres && !uneValeurEnCommun(filtre.cadres,
+                                          CM.IndicateursMeta.cadresDe(f.id))) continue;
+      if (actTags   && !uneValeurEnCommun(tagsEffectifs,
+                                          CM.IndicateursMeta.tagsDe(f.id))) continue;
+      if (actTT     && !uneValeurEnCommun(filtre.tagsThematiques,
+                                          CM.IndicateursMeta.tagsThematiquesDe(f.id))) continue;
+
+      resultat.push(f);
+    }
+
+    /* Capping après filtrage, sans re-tri. */
+    if (filtre.limite !== undefined && resultat.length > filtre.limite) {
+      resultat = resultat.slice(0, filtre.limite);
+    }
+    return resultat;
   }
 
   return { executer: executer };
