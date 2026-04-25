@@ -263,6 +263,16 @@ Audit complet livré dans [`AUDIT-UNIFORMITE-PORTES.md`](./AUDIT-UNIFORMITE-PORT
 
 ## 9. Vue panier personnel — nouvelle mission de *Mon tableau de bord*
 
+> **⚠️ Statut au 25/04/2026 — moteur extrait, UI non câblée (dette T1).**
+>
+> Audit conjoint mené suite remontée Lætitia (test interactif sur HEAD `2a61336`) : *« je n'ai pas le bouton ajouter à mon panier qui apparaît, je ne peux rien ajouter à mon tableau de bord ».*
+>
+> État réel du code : `CM.Panier` est extrait à la ligne ~3043 de `cadre-indicateurs.html` et expose `ajouter / retirer / tous` ; `tests-panier.html` valide le moteur en isolation. **Mais aucun appelant en UI n'invoque `CM.Panier.ajouter`** — seule `CM.App.retirerDuPanier` est câblée (ligne ~8246, vue *Mon tableau de bord*). Conséquences : la voie rapide *icônes nues coche + ampoule rayonnante* sur les fiches du référentiel (arbitrage 9.B du 22/04/2026, mockup-preview `0cc8a49`) et la voie lente *zone d'ajout dans le tiroir* ne sont **pas implémentées**.
+>
+> Le scenario de non-régression a été aligné en conséquence : §6 (T1-T4) marqués ⏸ skip jusqu'à câblage. Aucune régression à tester ici aujourd'hui.
+>
+> Ce chantier est donc **en cadrage clos, en livraison non démarrée**. Gel maintenu derrière le chantier 14 (discipline 16.4 — pas de chantiers cumulés). Reprise = câbler les deux voies sur les vues existantes (porte problème, porte cadre, tiroir de fiche), consommer `CM.Panier.ajouter`, sans toucher au moteur ni à l'API.
+
 **Origine.** Clarification de mission du 22/04/2026, consignée dans [`MISSION.md`](./MISSION.md). Le chantier traduit les décisions de cette session en éléments d'implémentation.
 
 **Mission du chantier.** Transformer l'onglet *Mon tableau de bord* en panier personnel qui matérialise l'écart entre *« ce que je mesure déjà »* et *« ce que j'envisage de mesurer »*. Livrable final : une impression que la personne emporte pour discuter son scorecard avec ses collaborateurs.
