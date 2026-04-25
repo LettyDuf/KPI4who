@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Tests — CM.RequeteMetriques (chantier 14, étape b)</title>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       Harnais de consolidation — chantier 14, étape (b), commit 3
+
+       Intention : vérifier le contrat d'API de CM.RequeteMetriques tel que
+       documenté dans doc-contrats-chantier-14.md §10.3 — validation stricte
+       du filtre, sémantique union/intersection, seuils ordinaux, capping,
+       comportements limites, et filtres croisés représentatifs (2 à 4 clauses).
+
+       Mécanique : le bloc CM.RequeteMetriques de cadre-indicateurs.html est
+       inliné directement dans ce harnais, entre les marqueurs
+       CM.REQUETE-METRIQUES-INJECTION-BEGIN / END ci-dessous. Le bloc est
+       recopié automatiquement par outils/construire-tests-requete-metriques.js ;
+       il ne faut JAMAIS le modifier à la main. Pour régénérer après une
+       modification de CM.RequeteMetriques, lancer :
+
+           node outils/construire-tests-requete-metriques.js
+
+       Pourquoi cette mécanique : en Chrome moderne sur file://, un iframe
+       local a une origine "null" distincte du parent, donc l'approche
+       iframe + contentWindow est bloquée. Inliner le bloc dans la même
+       page lève cette barrière (cf. tests-panier.html, même patron).
+
+       Architecture hexagonale : CM.RequeteMetriques est un service du
+       domaine, pur, sans DOM, dépendant de deux ports (CM.Referentiel
+       pour les fiches, CM.IndicateursMeta pour les tags multi-axes).
+       Ce harnais joue le rôle d'adapter driver. Les deux ports sont
+       montés en doubles de test (stubs in-memory) — les tests vérifient
+       donc la sémantique du module en isolation, indépendamment du
+       contenu éditorial réel des fiches.
+
+       Jeu de fiches synthétiques : 12 fiches construites à la main pour
+       couvrir tous les axes du filtre (niveau, branche, domaine, type,
+       cadres, tags, tagsThematiques, fiabilite, maturite_min) et leurs
+       combinaisons. Voir le bloc « Données de test » plus bas.
+
+       Ouverture : ouvrir ce fichier dans un navigateur. Les résultats
+       s'affichent automatiquement. Aucune dépendance externe, aucun
+       framework à installer. ══════════════════════════════════════════ -->
+
+  <style>
+    :root {
+      --ok:   #2a7f2a;
+      --ko:   #b00020;
+      --muted:#6b6b6b;
+      --bord: #dcdcdc;
+      --fond-ok: #ecf7ec;
+      --fond-ko: #fbeaec;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 960px;
+      margin: 2em auto;
+      padding: 0 1.5em 3em;
+      color: #222;
+      line-height: 1.5;
+    }
+    h1 { margin-bottom: 0.3em; font-size: 1.5em; }
+    .sous-titre { color: var(--muted); margin-top: 0; }
+    .lead { color: #444; font-size: 0.95em; }
+    code { background: #f3f3f3; padding: 0.05em 0.3em; border-radius: 3px; font-size: 0.9em; }
+
+    .resume {
+      padding: 0.8em 1.2em;
+      border-radius: 6px;
+      font-weight: 600;
+      margin: 1.5em 0 1em;
+      border: 1px solid var(--bord);
+    }
+    .resume.pending { background: #f7f7f7; color: var(--muted); }
+    .resume.ok      { background: var(--fond-ok); color: var(--ok); border-color: #cfe5cf; }
+    .resume.ko      { background: var(--fond-ko); color: var(--ko); border-color: #f0cfd4; }
+
+    details.suite {
+      border: 1px solid var(--bord);
+      border-radius: 6px;
+      margin: 0.8em 0;
+      padding: 0 1em;
+      background: #fff;
+    }
+    details.suite[open]     { padding-bottom: 0.6em; }
+    details.suite > summary {
+      padding: 0.6em 0;
+      cursor: pointer;
+      font-weight: 600;
+      list-style: none;
+    }
+    details.suite > summary::-webkit-details-marker { display: none; }
+    details.suite > summary::before { content: '▸ '; color: var(--muted); }
+    details.suite[open] > summary::before { content: '▾ '; }
+    details.suite.ok > summary { color: var(--ok); }
+    details.suite.ko > summary { color: var(--ko); }
+
+    .test {
+      padding: 0.35em 0;
+      border-top: 1px dotted #eee;
+      display: grid;
+      grid-template-columns: 1.4em 1fr;
+      gap: 0.6em;
+      align-items: start;
+      font-size: 0.92em;
+    }
+    .test.pass { color: var(--ok); }
+    .test.fail { color: var(--ko); }
+    .test-detail {
+      grid-column: 2;
+      color: #555;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.85em;
+      background: #fafafa;
+      padding: 0.4em 0.6em;
+      border-radius: 3px;
+      margin-top: 0.3em;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+  </style>
+</head>
+<body>
+
+<h1>Tests — <code>CM.RequeteMetriques</code> (chantier 14, étape b)</h1>
+<p class="sous-titre">Harnais de consolidation du <strong>commit 3</strong> de la tâche 3 (étape b).</p>
+
+<p class="lead">
+  Le bloc <code>CM.RequeteMetriques</code> est inliné dans ce fichier depuis
+  <code>cadre-indicateurs.html</code> par <code>outils/construire-tests-requete-metriques.js</code>.
+  Les ports <code>CM.Referentiel</code> et <code>CM.IndicateursMeta</code> sont montés en
+  doubles de test (stubs in-memory) — les tests vérifient la sémantique du module
+  en isolation, indépendamment du contenu éditorial réel. Source du contrat :
+  <code>doc-contrats-chantier-14.md</code> §10.3.
+</p>
+
+<div id="resume" class="resume pending">Exécution des tests…</div>
+<div id="resultats"></div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     Doubles de test pour les ports CM.Referentiel et CM.IndicateursMeta.
+
+     Architecture hexagonale : ces stubs respectent le contrat des ports
+     (les méthodes consommées par CM.RequeteMetriques) sans charger les
+     données éditoriales réelles. Ils sont alimentés en début de chaque
+     suite par chargerJeuDeFiches(...).
+
+     Méthodes implémentées :
+       · CM.Referentiel.tous() — retourne la liste courante.
+       · CM.Referentiel.chercher(id) — retourne la fiche ou null.
+       · CM.Referentiel._charger(arr) — helper test-only : remplace la liste.
+       · CM.IndicateursMeta.tagsDe(id) / cadresDe(id) / tagsThematiquesDe(id)
+       · CM.IndicateursMeta._charger(map) — helper test-only.
+     ══════════════════════════════════════════════════════════════════════ -->
+<script>window.CM = window.CM || {};</script>
+<script>
+CM.Referentiel = (function() {
+  'use strict';
+  var liste = [];
+  return {
+    tous:      function()   { return liste; },
+    chercher:  function(id) {
+      for (var i = 0; i < liste.length; i++) {
+        if (liste[i].id === id) return liste[i];
+      }
+      return null;
+    },
+    _charger:  function(arr) { liste = arr.slice(); }
+  };
+})();
+
+CM.IndicateursMeta = (function() {
+  'use strict';
+  var meta = {};
+  function lire(id, champ) {
+    return (meta[id] && meta[id][champ]) ? meta[id][champ] : [];
+  }
+  return {
+    tagsDe:            function(id) { return lire(id, 'tags'); },
+    cadresDe:          function(id) { return lire(id, 'cadres'); },
+    tagsThematiquesDe: function(id) { return lire(id, 'tagsThematiques'); },
+    _charger:          function(map) { meta = map; }
+  };
+})();
+</script>
+
+<!-- CM.REQUETE-METRIQUES-INJECTION-BEGIN -->
+<script>
+/* ══ CM.RequeteMetriques — BEGIN (zone extractible par outils/construire-tests-requete-metriques.js) ══ */
+CM.RequeteMetriques = (function() {
+  'use strict';
+
+  /* ── Vocabulaires fermés ──
+     Transcription stricte de §10.3 (doc-contrats-chantier-14.md), eux-mêmes
+     alignés sur inventaire-schema-metriques.md §3.1 à §3.6 et §3.9. Toute
+     évolution d'un vocabulaire passe d'abord par §10.3, puis ici. Jamais
+     l'inverse (cf. fiche mémoire `project_document_compagnon_contrats`). */
+  var VOCAB = {
+    niveau:          ['strategique', 'tactique', 'programme', 'operationnel'],
+    branche:         ['ti', 'affaires'],
+    domaine:         ['dev', 'plateforme', 'ops-support', 'sécurité',
+                      'commercial', 'marketing', 'finance', 'rh',
+                      'operations', 'service-client'],
+    type:            ['IGO', 'ICP', 'ICC', 'ORC', 'DORA', 'FLUX', 'II'],
+    cadres:          ['dora', 'lean', 'okr', 'mbo', 'scrum', 'kanban',
+                      'safe', 'itil', 'bsc', 'generique'],
+    tags:            ['valeur', 'qualite', 'flux', 'delais',
+                      'humain', 'risque', 'alignement'],
+    tagsThematiques: ['transversalité', 'prévisibilité', 'engagement',
+                      'goulots', 'coûts cachés', 'compétences',
+                      'cadence', 'feedback', 'risque', 'autonomie',
+                      'confiance', 'variabilité', 'alignement',
+                      'expérience client'],
+    /* Seuils ordinaux — l'ordre du tableau encode l'ordre canonique.
+       fiabilite : du plus solide au plus instable.
+       maturite : du moins exigeant au plus exigeant en prérequis. */
+    fiabilite:       ['fiable', 'precaution', 'risque'],
+    maturite:        ['debutant', 'intermediaire', 'avance']
+  };
+
+  var CLAUSES_SET     = ['niveau', 'branche', 'domaine', 'type',
+                         'cadres', 'tags', 'tagsThematiques'];
+  var CLAUSES_SEUIL   = ['fiabiliteMin', 'maturiteMin'];
+  var CLAUSES_RACC    = ['probleme'];
+  var CLAUSES_LIMITE  = ['limite'];
+  var CLAUSES_ADMISES = CLAUSES_SET
+    .concat(CLAUSES_SEUIL)
+    .concat(CLAUSES_RACC)
+    .concat(CLAUSES_LIMITE);
+
+  /* ── Utilitaires d'erreur et de suggestion ── */
+
+  function erreur(msg) {
+    throw new Error('CM.RequeteMetriques: ' + msg);
+  }
+
+  /* Suggestion best-effort par distance de Levenshtein, pour aider à
+     diagnostiquer une typo de nom de clause. Retourne la clause admise
+     la plus proche dans la limite d'un seuil tolérant. Aucune dépendance. */
+  function distanceLev(a, b) {
+    var m = a.length, n = b.length;
+    if (m === 0) return n;
+    if (n === 0) return m;
+    var d = [];
+    for (var i = 0; i <= m; i++) { d[i] = [i]; }
+    for (var j = 1; j <= n; j++) { d[0][j] = j; }
+    for (var i2 = 1; i2 <= m; i2++) {
+      for (var j2 = 1; j2 <= n; j2++) {
+        var c = a.charAt(i2 - 1) === b.charAt(j2 - 1) ? 0 : 1;
+        d[i2][j2] = Math.min(d[i2 - 1][j2] + 1,
+                             d[i2][j2 - 1] + 1,
+                             d[i2 - 1][j2 - 1] + c);
+      }
+    }
+    return d[m][n];
+  }
+
+  function suggestionClause(inconnue) {
+    var bas = String(inconnue).toLowerCase();
+    var seuil = Math.max(2, Math.floor(bas.length / 3));
+    var meilleur = null, meilleureDist = Infinity;
+    for (var i = 0; i < CLAUSES_ADMISES.length; i++) {
+      var d = distanceLev(bas, CLAUSES_ADMISES[i].toLowerCase());
+      if (d < meilleureDist && d <= seuil) {
+        meilleureDist = d;
+        meilleur = CLAUSES_ADMISES[i];
+      }
+    }
+    return meilleur;
+  }
+
+  /* ── Validation par clause ── */
+
+  function validerClauseSet(nom, valeurs) {
+    if (!Array.isArray(valeurs)) {
+      erreur("la clause '" + nom + "' doit être un tableau (Array) — reçu : " +
+             (valeurs === null ? 'null' : typeof valeurs) + ".");
+    }
+    var vocab = VOCAB[nom];
+    for (var i = 0; i < valeurs.length; i++) {
+      if (vocab.indexOf(valeurs[i]) === -1) {
+        erreur("valeur inconnue dans la clause '" + nom + "' : " +
+               JSON.stringify(valeurs[i]) +
+               ". Vocabulaire admis : " + vocab.join(', ') + ".");
+      }
+    }
+  }
+
+  function validerSeuil(nom, valeur, vocab) {
+    if (typeof valeur !== 'string') {
+      erreur("la clause '" + nom + "' doit être une chaîne de caractères — reçu : " +
+             (valeur === null ? 'null' : typeof valeur) + ".");
+    }
+    if (vocab.indexOf(valeur) === -1) {
+      erreur("valeur inconnue pour '" + nom + "' : " + JSON.stringify(valeur) +
+             ". Vocabulaire admis : " + vocab.join(', ') + ".");
+    }
+  }
+
+  function validerRaccourciProbleme(valeur) {
+    if (typeof valeur !== 'string') {
+      erreur("le raccourci 'probleme' doit être une chaîne de caractères — reçu : " +
+             (valeur === null ? 'null' : typeof valeur) + ".");
+    }
+    if (VOCAB.tags.indexOf(valeur) === -1) {
+      erreur("valeur inconnue pour le raccourci 'probleme' : " + JSON.stringify(valeur) +
+             ". Vocabulaire admis : " + VOCAB.tags.join(', ') + ".");
+    }
+  }
+
+  function validerLimite(valeur) {
+    if (typeof valeur !== 'number' || !isFinite(valeur) ||
+        Math.floor(valeur) !== valeur || valeur <= 0) {
+      erreur("la clause 'limite' doit être un entier strictement positif — reçu : " +
+             JSON.stringify(valeur) + ".");
+    }
+  }
+
+  function validerNomDeClause(cle) {
+    if (CLAUSES_ADMISES.indexOf(cle) !== -1) return;
+    var sugg = suggestionClause(cle);
+    var msg = "clause inconnue '" + cle + "'";
+    if (sugg) { msg += " (vouliez-vous dire '" + sugg + "' ?)"; }
+    msg += ". Clauses admises : " + CLAUSES_ADMISES.join(', ') + ".";
+    erreur(msg);
+  }
+
+  /* ── Validation orchestrée du filtre complet ── */
+
+  function valider(filtre) {
+    if (filtre === undefined || filtre === null) return;
+    if (typeof filtre !== 'object' || Array.isArray(filtre)) {
+      erreur("le filtre doit être un objet — reçu : " +
+             (Array.isArray(filtre) ? 'Array' : typeof filtre) + ".");
+    }
+
+    var cles = Object.keys(filtre);
+    for (var i = 0; i < cles.length; i++) {
+      validerNomDeClause(cles[i]);
+    }
+
+    for (var j = 0; j < CLAUSES_SET.length; j++) {
+      var nom = CLAUSES_SET[j];
+      if (filtre[nom] !== undefined) {
+        validerClauseSet(nom, filtre[nom]);
+      }
+    }
+
+    if (filtre.fiabiliteMin !== undefined) {
+      validerSeuil('fiabiliteMin', filtre.fiabiliteMin, VOCAB.fiabilite);
+    }
+    if (filtre.maturiteMin !== undefined) {
+      validerSeuil('maturiteMin', filtre.maturiteMin, VOCAB.maturite);
+    }
+    if (filtre.probleme !== undefined) {
+      validerRaccourciProbleme(filtre.probleme);
+    }
+    if (filtre.limite !== undefined) {
+      validerLimite(filtre.limite);
+    }
+  }
+
+  /* ── API publique ── */
+
+  /* ── Logique de filtrage (commit 2 de l'étape b) ──
+     Sémantique : intersection inter-clauses (AND), union intra-clause (OR).
+     Ordre de retour : ordre de déclaration de CM.Referentiel.tous().
+     Capping `limite` appliqué après filtrage, sans re-tri.
+
+     Sémantique d'absence : si la fiche n'a pas le champ filtré (par ex.
+     pas de `branche` sur une fiche stratégique), elle est exclue dès qu'une
+     clause portant ce champ est active. Cohérent avec le contrat §10.3 :
+     une clause active impose la présence d'une valeur correspondante. */
+
+  function uneValeurEnCommun(listeFiltre, listeFiche) {
+    for (var i = 0; i < listeFiltre.length; i++) {
+      if (listeFiche.indexOf(listeFiltre[i]) !== -1) return true;
+    }
+    return false;
+  }
+
+  function executer(filtre) {
+    valider(filtre);
+    var fiches = CM.Referentiel.tous();
+    if (filtre === undefined || filtre === null) return fiches.slice();
+
+    /* Normalisation du raccourci `probleme` : s'agglomère à `tags` (OR). */
+    var tagsEffectifs = (filtre.tags || []).slice();
+    if (filtre.probleme !== undefined &&
+        tagsEffectifs.indexOf(filtre.probleme) === -1) {
+      tagsEffectifs.push(filtre.probleme);
+    }
+
+    /* Pré-calcul des rangs de seuils ordinaux (-1 = clause inactive). */
+    var rangFiabilite = filtre.fiabiliteMin !== undefined
+      ? VOCAB.fiabilite.indexOf(filtre.fiabiliteMin)
+      : -1;
+    var rangMaturite  = filtre.maturiteMin !== undefined
+      ? VOCAB.maturite.indexOf(filtre.maturiteMin)
+      : -1;
+
+    /* Drapeaux d'activité par clause (clause vide = inactive, cf. §10.3). */
+    var actNiveau    = filtre.niveau          && filtre.niveau.length > 0;
+    var actBranche   = filtre.branche         && filtre.branche.length > 0;
+    var actDomaine   = filtre.domaine         && filtre.domaine.length > 0;
+    var actType      = filtre.type            && filtre.type.length > 0;
+    var actCadres    = filtre.cadres          && filtre.cadres.length > 0;
+    var actTags      = tagsEffectifs.length > 0;
+    var actTT        = filtre.tagsThematiques && filtre.tagsThematiques.length > 0;
+
+    var resultat = [];
+    for (var i = 0; i < fiches.length; i++) {
+      var f = fiches[i];
+
+      /* Clauses sur la fiche elle-même (CM.Referentiel). */
+      if (actNiveau  && filtre.niveau.indexOf(f.niveau) === -1) continue;
+      if (actBranche && (f.branche === undefined ||
+                         filtre.branche.indexOf(f.branche) === -1)) continue;
+      if (actDomaine && (f.domaine === undefined ||
+                         filtre.domaine.indexOf(f.domaine) === -1)) continue;
+      if (actType    && filtre.type.indexOf(f.type) === -1) continue;
+
+      /* Seuils ordinaux. */
+      if (rangFiabilite >= 0) {
+        var rF = VOCAB.fiabilite.indexOf(f.fiabilite);
+        if (rF < 0 || rF > rangFiabilite) continue;
+      }
+      if (rangMaturite >= 0) {
+        var rM = VOCAB.maturite.indexOf(f.maturite_min);
+        if (rM < 0 || rM > rangMaturite) continue;
+      }
+
+      /* Clauses sur le tagging multi-axes (CM.IndicateursMeta). */
+      if (actCadres && !uneValeurEnCommun(filtre.cadres,
+                                          CM.IndicateursMeta.cadresDe(f.id))) continue;
+      if (actTags   && !uneValeurEnCommun(tagsEffectifs,
+                                          CM.IndicateursMeta.tagsDe(f.id))) continue;
+      if (actTT     && !uneValeurEnCommun(filtre.tagsThematiques,
+                                          CM.IndicateursMeta.tagsThematiquesDe(f.id))) continue;
+
+      resultat.push(f);
+    }
+
+    /* Capping après filtrage, sans re-tri. */
+    if (filtre.limite !== undefined && resultat.length > filtre.limite) {
+      resultat = resultat.slice(0, filtre.limite);
+    }
+    return resultat;
+  }
+
+  return { executer: executer };
+})();
+/* ══ CM.RequeteMetriques — END ══ */
+</script>
+<!-- CM.REQUETE-METRIQUES-INJECTION-END -->
+
+<script>
+(function() {
+  'use strict';
+
+  /* ══════ Micro-framework d'assertions ═══════════════════════════════
+     Même patron que tests-panier.html. Trois verbes —
+     describe / it / expect. Les expect(...) lèvent une Error
+     descriptive quand l'assertion échoue ; it l'attrape et
+     enregistre l'échec avec le message. */
+
+  var suites = [];
+  var suiteCourante = null;
+
+  function describe(nom, fn) {
+    suiteCourante = { nom: nom, tests: [] };
+    suites.push(suiteCourante);
+    try {
+      fn();
+    } catch (e) {
+      suiteCourante.tests.push({
+        nom:    '(initialisation de la suite)',
+        ok:     false,
+        detail: (e && e.message) ? e.message : String(e)
+      });
+    }
+    suiteCourante = null;
+  }
+
+  function it(nom, fn) {
+    var test = { nom: nom, ok: true, detail: '' };
+    try {
+      fn();
+    } catch (e) {
+      test.ok     = false;
+      test.detail = (e && e.message) ? e.message : String(e);
+    }
+    suiteCourante.tests.push(test);
+  }
+
+  function expect(actuel) {
+    return {
+      toBe: function(attendu) {
+        if (actuel !== attendu) {
+          throw new Error(
+            'attendu ' + JSON.stringify(attendu)
+            + ', obtenu ' + JSON.stringify(actuel)
+          );
+        }
+      },
+      toBeNull: function() {
+        if (actuel !== null) {
+          throw new Error('attendu null, obtenu ' + JSON.stringify(actuel));
+        }
+      },
+      toBeTruthy: function() {
+        if (!actuel) {
+          throw new Error('attendu truthy, obtenu ' + JSON.stringify(actuel));
+        }
+      },
+      toBeFalsy: function() {
+        if (actuel) {
+          throw new Error('attendu falsy, obtenu ' + JSON.stringify(actuel));
+        }
+      },
+      toBeTypeOf: function(type) {
+        if (typeof actuel !== type) {
+          throw new Error('attendu typeof ' + type + ', obtenu ' + typeof actuel
+            + ' (' + JSON.stringify(actuel) + ')');
+        }
+      },
+      toEqualOrderedArray: function(attendu) {
+        var a = actuel || [];
+        var b = attendu || [];
+        if (a.length !== b.length || a.join('') !== b.join('')) {
+          throw new Error(
+            'attendu (ordre) [' + b.join(', ') + '], '
+            + 'obtenu [' + a.join(', ') + ']'
+          );
+        }
+      },
+      toContainSubstring: function(attendu) {
+        if (typeof actuel !== 'string' || actuel.indexOf(attendu) === -1) {
+          throw new Error(
+            'attendu une chaîne contenant ' + JSON.stringify(attendu)
+            + ', obtenu ' + JSON.stringify(actuel)
+          );
+        }
+      }
+    };
+  }
+
+  /* Exécute fn() et retourne l'Error levée, ou null si rien n'est levé.
+     Rend les tests d'exception lisibles : on récupère l'objet pour
+     inspecter le message, sans try/catch dans chaque it(). */
+  function attraperErreur(fn) {
+    try { fn(); return null; }
+    catch (e) { return e; }
+  }
+
+  /* ══════ Données de test : 12 fiches synthétiques ════════════════════
+     Construites à la main pour couvrir tous les axes du filtre.
+     Tableaux de référence utilisés dans les attentes — modifier ici
+     impose de mettre à jour les tests qui en dérivent. */
+
+  var FICHES = [
+    /* f1 : strat IGO fiable debutant — pas de branche ni domaine */
+    { id:'f1', niveau:'strategique',                              type:'IGO', fiabilite:'fiable',     maturite_min:'debutant' },
+    /* f2 : strat ICP fiable intermediaire */
+    { id:'f2', niveau:'strategique',                              type:'ICP', fiabilite:'fiable',     maturite_min:'intermediaire' },
+    /* f3 : tact ICP fiable intermediaire */
+    { id:'f3', niveau:'tactique',                                 type:'ICP', fiabilite:'fiable',     maturite_min:'intermediaire' },
+    /* f4 : tact ICP precaution intermediaire */
+    { id:'f4', niveau:'tactique',                                 type:'ICP', fiabilite:'precaution', maturite_min:'intermediaire' },
+    /* f5 : prog IGO precaution avance */
+    { id:'f5', niveau:'programme',                                type:'IGO', fiabilite:'precaution', maturite_min:'avance' },
+    /* f6 : prog ORC risque avance */
+    { id:'f6', niveau:'programme',                                type:'ORC', fiabilite:'risque',     maturite_min:'avance' },
+    /* f7 : op ti dev DORA fiable debutant */
+    { id:'f7', niveau:'operationnel', branche:'ti',       domaine:'dev',            type:'DORA', fiabilite:'fiable',     maturite_min:'debutant' },
+    /* f8 : op ti dev DORA fiable intermediaire */
+    { id:'f8', niveau:'operationnel', branche:'ti',       domaine:'dev',            type:'DORA', fiabilite:'fiable',     maturite_min:'intermediaire' },
+    /* f9 : op ti plateforme FLUX precaution intermediaire */
+    { id:'f9', niveau:'operationnel', branche:'ti',       domaine:'plateforme',     type:'FLUX', fiabilite:'precaution', maturite_min:'intermediaire' },
+    /* f10 : op affaires commercial ICP precaution debutant */
+    { id:'f10', niveau:'operationnel', branche:'affaires', domaine:'commercial',     type:'ICP',  fiabilite:'precaution', maturite_min:'debutant' },
+    /* f11 : op affaires service-client ICC risque debutant */
+    { id:'f11', niveau:'operationnel', branche:'affaires', domaine:'service-client', type:'ICC',  fiabilite:'risque',     maturite_min:'debutant' },
+    /* f12 : op ti sécurité II fiable avance */
+    { id:'f12', niveau:'operationnel', branche:'ti',       domaine:'sécurité',       type:'II',   fiabilite:'fiable',     maturite_min:'avance' }
+  ];
+
+  var META = {
+    f1:  { tags:['valeur'],              cadres:['bsc'],             tagsThematiques:['alignement'] },
+    f2:  { tags:['valeur','alignement'], cadres:['okr'],             tagsThematiques:['alignement'] },
+    f3:  { tags:['flux'],                cadres:['okr','mbo'],       tagsThematiques:['cadence'] },
+    f4:  { tags:['flux','qualite'],      cadres:['lean'],            tagsThematiques:['cadence','variabilité'] },
+    f5:  { tags:['valeur','alignement'], cadres:['safe'],            tagsThematiques:['alignement','transversalité'] },
+    f6:  { tags:['delais'],              cadres:['okr'],             tagsThematiques:['cadence','prévisibilité'] },
+    f7:  { tags:['flux'],                cadres:['dora'],            tagsThematiques:['cadence'] },
+    f8:  { tags:['qualite'],             cadres:['dora'],            tagsThematiques:['feedback'] },
+    f9:  { tags:['flux','delais'],       cadres:['lean','kanban'],   tagsThematiques:['goulots'] },
+    f10: { tags:['valeur','delais'],     cadres:['generique'],       tagsThematiques:['expérience client'] },
+    f11: { tags:['humain','qualite'],    cadres:['generique','itil'],tagsThematiques:['expérience client','confiance'] },
+    f12: { tags:['risque'],              cadres:['itil'],            tagsThematiques:['risque'] }
+  };
+
+  /* Helper : extrait les ids d'un Array<Fiche>, dans l'ordre. */
+  function ids(fiches) {
+    return (fiches || []).map(function(f) { return f.id; });
+  }
+
+  /* Charge le jeu de fiches synthétiques dans les stubs. À appeler en
+     début de chaque suite qui exerce la sémantique. */
+  function chargerJeuDeFiches() {
+    CM.Referentiel._charger(FICHES);
+    CM.IndicateursMeta._charger(META);
+  }
+
+  /* Vide les stubs — utile pour les tests qui veulent un référentiel vide
+     (par exemple « executer() retourne [] sur référentiel vide »). */
+  function viderJeuDeFiches() {
+    CM.Referentiel._charger([]);
+    CM.IndicateursMeta._charger({});
+  }
+
+  /* ══════ Adapter vers le système sous test ════════════════════════════ */
+
+  var R;  /* raccourci vers window.CM.RequeteMetriques */
+
+  /* ══════ Orchestration ════════════════════════════════════════════════ */
+
+  function demarrer() {
+    try {
+      if (!window.CM || !window.CM.RequeteMetriques) {
+        throw new Error(
+          'CM.RequeteMetriques introuvable — la zone d\'injection est vide. ' +
+          'As-tu lancé `node outils/construire-tests-requete-metriques.js` ?'
+        );
+      }
+      R = window.CM.RequeteMetriques;
+      executerSuites();
+    } catch (e) {
+      var r = document.getElementById('resume');
+      r.className   = 'resume ko';
+      r.textContent = 'Erreur inattendue pendant l\'exécution : '
+        + ((e && e.message) ? e.message : String(e));
+      return;
+    }
+    rendreRapport();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', demarrer);
+  } else {
+    demarrer();
+  }
+
+  function executerSuites() {
+
+    /* ─── Suite 1 : Sanity — module et signature ─────────────────────── */
+    describe('Sanity — module et signature', function() {
+      it('CM.RequeteMetriques est défini', function() {
+        expect(R).toBeTruthy();
+      });
+      it('executer est une fonction', function() {
+        expect(typeof R.executer).toBe('function');
+      });
+      it('Pas d\'autre méthode publique exposée', function() {
+        var cles = Object.keys(R);
+        expect(cles.length).toBe(1);
+        expect(cles[0]).toBe('executer');
+      });
+    });
+
+    /* ─── Suite 2 : Comportements limites — §10.3 tableau ────────────── */
+    describe('Comportements limites — §10.3 tableau', function() {
+      chargerJeuDeFiches();
+
+      it('executer() sans argument retourne toutes les fiches dans l\'ordre de déclaration', function() {
+        expect(ids(R.executer())).toEqualOrderedArray(
+          ['f1','f2','f3','f4','f5','f6','f7','f8','f9','f10','f11','f12']
+        );
+      });
+      it('executer({}) retourne toutes les fiches', function() {
+        expect(ids(R.executer({}))).toEqualOrderedArray(
+          ['f1','f2','f3','f4','f5','f6','f7','f8','f9','f10','f11','f12']
+        );
+      });
+      it('executer(null) retourne toutes les fiches (équivalent à sans argument)', function() {
+        expect(ids(R.executer(null))).toEqualOrderedArray(
+          ['f1','f2','f3','f4','f5','f6','f7','f8','f9','f10','f11','f12']
+        );
+      });
+      it('Référentiel vide : executer() retourne []', function() {
+        viderJeuDeFiches();
+        expect(R.executer().length).toBe(0);
+        chargerJeuDeFiches();  /* restauration pour les tests suivants */
+      });
+      it('Clause vide tags: [] est ignorée (équivalente à clause absente)', function() {
+        var avec    = ids(R.executer({ tags: [] }));
+        var sans    = ids(R.executer({}));
+        expect(avec.join(',')).toBe(sans.join(','));
+      });
+      it('Clause vide niveau: [] est ignorée', function() {
+        var avec = ids(R.executer({ niveau: [] }));
+        expect(avec.length).toBe(12);
+      });
+      it('Clause vide cadres: [] est ignorée', function() {
+        var avec = ids(R.executer({ cadres: [] }));
+        expect(avec.length).toBe(12);
+      });
+      it('Valeur inconnue dans tags lève une exception explicite', function() {
+        var e = attraperErreur(function() { R.executer({ tags: ['flu'] }); });
+        expect(e).toBeTruthy();
+        expect(e.message).toContainSubstring("clause 'tags'");
+        expect(e.message).toContainSubstring('flu');
+        expect(e.message).toContainSubstring('Vocabulaire admis');
+      });
+      it('Valeur inconnue dans niveau lève une exception explicite', function() {
+        var e = attraperErreur(function() { R.executer({ niveau: ['stratgique'] }); });
+        expect(e).toBeTruthy();
+        expect(e.message).toContainSubstring("clause 'niveau'");
+        expect(e.message).toContainSubstring('strategique');
+      });
+      it('Valeur inconnue dans cadres lève une exception explicite', function() {
+        var e = attraperErreur(function() { R.executer({ cadres: ['xxx'] }); });
+        expect(e).toBeTruthy();
+        expect(e.message).toContainSubstring("clause 'cadres'");
+      });
+      it('Valeur inconnue dans fiabiliteMin lève une exception explicite', function() {
+        var e = attraperErreur(function() { R.executer({ fiabiliteMin: 'fragile' }); });
+        expect(e).toBeTruthy();
+        expect(e.message).toContainSubstring("'fiabiliteMin'");
+        expect(e.message).toContainSubstring('fiable');
+      });
+      it('Valeur inconnue dans maturiteMin lève une exception explicite', function() {
+        var e = attraperErreur(function() { R.executer({ maturiteMin: 'expert' }); });
+        expect(e).toBeTruthy();
+        expect(e.message).toContainSubstring("'maturiteMin'");
+        expect(e.message).toContainSubstring('debutant');
+      });
+      it('limite: 0 lève une exception explicite', function() {
+        var e = attraperErreur(function() { R.executer({ limite: 0 }); });
+        expect(e).toBeTruthy();
+        expect(e.message).toContainSubstring("'limite'");
+        expect(e.message).toContainSubstring('entier strictement positif');
+      });
+      it('limite: -1 lève une exception explicite', function() {
+        var e = attraperErreur(function() { R.executer({ limite: -1 }); });
+        expect(e).toBeTruthy();
+        expect(e.message).toContainSubstring("'limite'");
+      });
+      it('limite: 2.5 (non entière) lève une exception explicite', function() {
+        var e = attraperErreur(function() { R.executer({ limite: 2.5 }); });
+        expect(e).toBeTruthy();
+        expect(e.message).toContainSubstring("'limite'");
+      });
+      it('limite: "trois" (non numérique) lève une exception explicite', function() {
+        var e = attraperErreur(function() { R.executer({ limite: 'trois' }); });
+        expect(e).toBeTruthy();
+        expect(e.message).toContainSubstring("'limite'");
+      });
+      it('Clause inconnue lève une exception avec suggestion (typo proche)', function() {
+        var e = attraperErreur(function() { R.executer({ tagThematique: ['cadence'] }); });
+        expect(e).toBeTruthy();
+        expect(e.message).toContainSubstring("clause inconnue 'tagThematique'");
+        expect(e.message).toContainSubstring('tagsThematiques');
+      });
+      it('Clause inconnue sans suggestion proche liste les clauses admises', function() {
+        var e = attraperErreur(function() { R.executer({ zzzzzzzzzzzz: 'x' }); });
+        expect(e).toBeTruthy();
+        expect(e.message).toContainSubstring('Clauses admises');
+      });
+      it('Filtre non-objet (string) lève une exception explicite', function() {
+        var e = attraperErreur(function() { R.executer('foo'); });
+        expect(e).toBeTruthy();
+        expect(e.message).toContainSubstring('le filtre doit être un objet');
+      });
+      it('Filtre non-objet (Array) lève une exception explicite', function() {
+        var e = attraperErreur(function() { R.executer(['flux']); });
+        expect(e).toBeTruthy();
+        expect(e.message).toContainSubstring('Array');
+      });
+      it('Tags non-tableau (string) lève une exception explicite', function() {
+        var e = attraperErreur(function() { R.executer({ tags: 'flux' }); });
+        expect(e).toBeTruthy();
+        expect(e.message).toContainSubstring("clause 'tags'");
+        expect(e.message).toContainSubstring('tableau');
+      });
+      it('fiabiliteMin non-string lève une exception explicite', function() {
+        var e = attraperErreur(function() { R.executer({ fiabiliteMin: 1 }); });
+        expect(e).toBeTruthy();
+        expect(e.message).toContainSubstring("'fiabiliteMin'");
+        expect(e.message).toContainSubstring('chaîne');
+      });
+      it('probleme avec valeur hors vocabulaire lève une exception explicite', function() {
+        var e = attraperErreur(function() { R.executer({ probleme: 'cadence' }); });
+        expect(e).toBeTruthy();
+        expect(e.message).toContainSubstring("'probleme'");
+      });
+    });
+
+    /* ─── Suite 3 : Sémantique union intra-clause (OR) ─────────────────── */
+    describe('Sémantique union intra-clause (OR)', function() {
+      chargerJeuDeFiches();
+
+      it('tags: [\'flux\'] retourne les fiches portant flux', function() {
+        expect(ids(R.executer({ tags: ['flux'] }))).toEqualOrderedArray(['f3','f4','f7','f9']);
+      });
+      it('tags: [\'flux\', \'qualite\'] retourne flux OU qualite (union)', function() {
+        expect(ids(R.executer({ tags: ['flux','qualite'] }))).toEqualOrderedArray(
+          ['f3','f4','f7','f8','f9','f11']
+        );
+      });
+      it('niveau: [\'tactique\', \'programme\'] retourne les fiches des deux niveaux', function() {
+        expect(ids(R.executer({ niveau: ['tactique','programme'] }))).toEqualOrderedArray(
+          ['f3','f4','f5','f6']
+        );
+      });
+      it('cadres: [\'dora\', \'lean\'] retourne les fiches portant dora OU lean', function() {
+        expect(ids(R.executer({ cadres: ['dora','lean'] }))).toEqualOrderedArray(
+          ['f4','f7','f8','f9']
+        );
+      });
+      it('tagsThematiques: [\'cadence\', \'goulots\'] retourne l\'union', function() {
+        expect(ids(R.executer({ tagsThematiques: ['cadence','goulots'] }))).toEqualOrderedArray(
+          ['f3','f4','f6','f7','f9']
+        );
+      });
+    });
+
+    /* ─── Suite 4 : Sémantique intersection inter-clauses (AND) ────────── */
+    describe('Sémantique intersection inter-clauses (AND)', function() {
+      chargerJeuDeFiches();
+
+      it('niveau:[operationnel] AND tags:[flux] = f7, f9', function() {
+        expect(ids(R.executer({ niveau:['operationnel'], tags:['flux'] }))).toEqualOrderedArray(
+          ['f7','f9']
+        );
+      });
+      it('niveau:[operationnel] AND branche:[ti] = f7,f8,f9,f12', function() {
+        expect(ids(R.executer({ niveau:['operationnel'], branche:['ti'] }))).toEqualOrderedArray(
+          ['f7','f8','f9','f12']
+        );
+      });
+      it('Clause branche exclut les fiches sans branche (sémantique d\'absence)', function() {
+        /* f1 à f6 n\'ont pas de branche → exclues quand branche est actif */
+        expect(ids(R.executer({ branche:['ti'] }))).toEqualOrderedArray(['f7','f8','f9','f12']);
+      });
+      it('Clause domaine exclut les fiches sans domaine (sémantique d\'absence)', function() {
+        expect(ids(R.executer({ domaine:['dev'] }))).toEqualOrderedArray(['f7','f8']);
+      });
+      it('type:[ICP] AND niveau:[operationnel] = f10', function() {
+        expect(ids(R.executer({ type:['ICP'], niveau:['operationnel'] }))).toEqualOrderedArray(['f10']);
+      });
+    });
+
+    /* ─── Suite 5 : Seuils ordinaux ───────────────────────────────────── */
+    describe('Seuils ordinaux — fiabiliteMin et maturiteMin', function() {
+      chargerJeuDeFiches();
+
+      it('fiabiliteMin:fiable retourne uniquement les fiches fiables', function() {
+        expect(ids(R.executer({ fiabiliteMin:'fiable' }))).toEqualOrderedArray(
+          ['f1','f2','f3','f7','f8','f12']
+        );
+      });
+      it('fiabiliteMin:precaution retourne fiable + precaution (pas risque)', function() {
+        expect(ids(R.executer({ fiabiliteMin:'precaution' }))).toEqualOrderedArray(
+          ['f1','f2','f3','f4','f5','f7','f8','f9','f10','f12']
+        );
+      });
+      it('fiabiliteMin:risque retourne toutes les fiches (seuil le plus permissif)', function() {
+        expect(R.executer({ fiabiliteMin:'risque' }).length).toBe(12);
+      });
+      it('maturiteMin:debutant retourne uniquement les fiches debutant (sémantique borne sup de prérequis)', function() {
+        expect(ids(R.executer({ maturiteMin:'debutant' }))).toEqualOrderedArray(
+          ['f1','f7','f10','f11']
+        );
+      });
+      it('maturiteMin:intermediaire retourne debutant + intermediaire (pas avance)', function() {
+        expect(ids(R.executer({ maturiteMin:'intermediaire' }))).toEqualOrderedArray(
+          ['f1','f2','f3','f4','f7','f8','f9','f10','f11']
+        );
+      });
+      it('maturiteMin:avance retourne toutes les fiches (seuil le plus permissif)', function() {
+        expect(R.executer({ maturiteMin:'avance' }).length).toBe(12);
+      });
+    });
+
+    /* ─── Suite 6 : Capping `limite` ──────────────────────────────────── */
+    describe('Capping limite — appliqué après filtrage, sans re-tri', function() {
+      chargerJeuDeFiches();
+
+      it('limite:3 sur référentiel complet retourne les 3 premières fiches dans l\'ordre', function() {
+        expect(ids(R.executer({ limite:3 }))).toEqualOrderedArray(['f1','f2','f3']);
+      });
+      it('limite:3 sur tags:[flux] (4 fiches) coupe à 3 sans changer l\'ordre', function() {
+        expect(ids(R.executer({ tags:['flux'], limite:3 }))).toEqualOrderedArray(['f3','f4','f7']);
+      });
+      it('limite:100 (au-delà) retourne toutes les fiches sans erreur', function() {
+        expect(R.executer({ limite:100 }).length).toBe(12);
+      });
+      it('limite préserve l\'ordre de déclaration', function() {
+        var res = ids(R.executer({ niveau:['operationnel'], limite:2 }));
+        expect(res).toEqualOrderedArray(['f7','f8']);
+      });
+    });
+
+    /* ─── Suite 7 : Sucre syntaxique probleme ─────────────────────────── */
+    describe('Sucre syntaxique probleme — équivalence avec tags', function() {
+      chargerJeuDeFiches();
+
+      it('probleme:flux est strictement équivalent à tags:[flux]', function() {
+        var avecRaccourci = ids(R.executer({ probleme:'flux' }));
+        var avecTags      = ids(R.executer({ tags:['flux'] }));
+        expect(avecRaccourci.join(',')).toBe(avecTags.join(','));
+      });
+      it('probleme:flux + tags:[qualite] s\'agglomère en union (flux OU qualite)', function() {
+        var avec    = ids(R.executer({ probleme:'flux', tags:['qualite'] }));
+        var attendu = ids(R.executer({ tags:['flux','qualite'] }));
+        expect(avec.join(',')).toBe(attendu.join(','));
+      });
+      it('probleme:flux n\'introduit pas de doublon si flux est déjà dans tags', function() {
+        var avec = ids(R.executer({ probleme:'flux', tags:['flux'] }));
+        expect(avec).toEqualOrderedArray(['f3','f4','f7','f9']);
+      });
+    });
+
+    /* ─── Suite 8 : Filtres croisés représentatifs (2 à 4 clauses) ───── */
+    describe('Filtres croisés représentatifs (2 à 4 clauses)', function() {
+      chargerJeuDeFiches();
+
+      it('2 clauses — niveau + tags : équipe TI orientée flux', function() {
+        expect(ids(R.executer({
+          niveau:['operationnel'], tags:['flux']
+        }))).toEqualOrderedArray(['f7','f9']);
+      });
+      it('2 clauses — domaine + cadres : équipes dev faisant DORA', function() {
+        expect(ids(R.executer({
+          domaine:['dev'], cadres:['dora']
+        }))).toEqualOrderedArray(['f7','f8']);
+      });
+      it('3 clauses — niveau + branche + type : opérations TI DORA', function() {
+        expect(ids(R.executer({
+          niveau:['operationnel'], branche:['ti'], type:['DORA']
+        }))).toEqualOrderedArray(['f7','f8']);
+      });
+      it('3 clauses — niveau + tags + fiabiliteMin : équipes flux fiables au moins precaution', function() {
+        expect(ids(R.executer({
+          niveau:['operationnel'], tags:['flux'], fiabiliteMin:'precaution'
+        }))).toEqualOrderedArray(['f7','f9']);
+      });
+      it('4 clauses — niveau + type + cadres + fiabiliteMin : f7, f8 (ICP DORA fiables ops)', function() {
+        expect(ids(R.executer({
+          niveau:['operationnel'], type:['DORA'], cadres:['dora'], fiabiliteMin:'fiable'
+        }))).toEqualOrderedArray(['f7','f8']);
+      });
+      it('4 clauses — programme + ORC + okr + fiabiliteMin:risque : f6 (toutes fiabilités)', function() {
+        expect(ids(R.executer({
+          niveau:['programme'], type:['ORC'], cadres:['okr'], fiabiliteMin:'risque'
+        }))).toEqualOrderedArray(['f6']);
+      });
+      it('4 clauses qui ne matchent rien : tableau vide', function() {
+        expect(R.executer({
+          niveau:['strategique'], branche:['ti'], domaine:['dev'], type:['DORA']
+        }).length).toBe(0);
+      });
+      it('Combinaison saturée — niveau + tags + cadres + tagsThematiques + maturiteMin + limite', function() {
+        var res = ids(R.executer({
+          niveau:           ['operationnel'],
+          tags:             ['flux','qualite'],
+          cadres:           ['dora','lean','kanban'],
+          tagsThematiques:  ['cadence','feedback','goulots'],
+          maturiteMin:      'intermediaire',
+          limite:           5
+        }));
+        /* f7 (op,flux,dora,cadence,debutant), f8 (op,qualite,dora,feedback,intermediaire),
+           f9 (op,flux,lean,goulots,intermediaire) — f4 a tags flux/qualite mais niveau=tactique. */
+        expect(res).toEqualOrderedArray(['f7','f8','f9']);
+      });
+    });
+
+    /* ─── Suite 9 : Ordre de retour stable et indépendant des clauses ─ */
+    describe('Ordre de retour — stable et indépendant des clauses', function() {
+      chargerJeuDeFiches();
+
+      it('L\'ordre suit toujours CM.Referentiel.tous(), pas l\'ordre du filtre', function() {
+        /* On filtre sur des tags listés dans un ordre quelconque ; le résultat
+           garde l\'ordre de déclaration des fiches, pas celui du filtre. */
+        var res = ids(R.executer({ tags:['risque','valeur','humain'] }));
+        expect(res).toEqualOrderedArray(['f1','f2','f5','f10','f11','f12']);
+      });
+      it('Deux exécutions identiques renvoient la même liste dans le même ordre', function() {
+        var a = ids(R.executer({ niveau:['operationnel'] }));
+        var b = ids(R.executer({ niveau:['operationnel'] }));
+        expect(a.join(',')).toBe(b.join(','));
+      });
+    });
+
+  }
+
+  /* ══════ Rendu du rapport ═════════════════════════════════════════════ */
+
+  function rendreRapport() {
+    var totalTests = 0;
+    var totalFails = 0;
+    var html       = '';
+
+    for (var i = 0; i < suites.length; i++) {
+      var s     = suites[i];
+      var fails = 0;
+      for (var j = 0; j < s.tests.length; j++) if (!s.tests[j].ok) fails++;
+      totalTests += s.tests.length;
+      totalFails += fails;
+
+      var classeSuite = fails === 0 ? 'ok' : 'ko';
+      var marqueur    = fails === 0 ? '✓' : '✗';
+      var ouvert      = fails > 0 ? ' open' : '';
+      html += '<details class="suite ' + classeSuite + '"' + ouvert + '>';
+      html += '<summary>' + marqueur + ' ' + escapeHtml(s.nom)
+            + ' — ' + (s.tests.length - fails) + '/' + s.tests.length + '</summary>';
+      for (var k = 0; k < s.tests.length; k++) {
+        var t = s.tests[k];
+        html += '<div class="test ' + (t.ok ? 'pass' : 'fail') + '">';
+        html += '<span>' + (t.ok ? '✓' : '✗') + '</span>';
+        html += '<span>' + escapeHtml(t.nom) + '</span>';
+        if (!t.ok) {
+          html += '<div class="test-detail">' + escapeHtml(t.detail) + '</div>';
+        }
+        html += '</div>';
+      }
+      html += '</details>';
+    }
+    document.getElementById('resultats').innerHTML = html;
+
+    var resume = document.getElementById('resume');
+    if (totalFails === 0) {
+      resume.className = 'resume ok';
+      resume.textContent = '✓ ' + totalTests + ' tests — tous verts';
+    } else {
+      resume.className = 'resume ko';
+      resume.textContent = '✗ ' + totalFails + ' échec'
+        + (totalFails > 1 ? 's' : '') + ' sur ' + totalTests + ' tests';
+    }
+  }
+
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+})();
+</script>
+</body>
+</html>
