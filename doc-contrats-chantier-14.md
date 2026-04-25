@@ -324,20 +324,21 @@ reperes: {
 
 ### 10.3 Signature `executer(filtre)` — contrat d'API du cœur
 
-**Décision (24/04/2026, suite — tâche 3 de l'étape b).** Le module `CM.RequeteMetriques` expose une et une seule fonction publique : `executer(filtre)`. Le présent §10.3 est la **source unique** du contrat pendant toute l'étape (b). Document texte uniquement — il précède l'écriture du code (commit 1 de l'étape b, cf. §4).
+**Décision (24/04/2026, suite — tâche 3 de l'étape b ; vocabulaires alignés sur l'inventaire de l'étape a le 25/04/2026).** Le module `CM.RequeteMetriques` expose une et une seule fonction publique : `executer(filtre)`. Le présent §10.3 est la **source unique** du contrat pendant toute l'étape (b). Document texte uniquement — il précède l'écriture du code (commit 1 de l'étape b, cf. §4).
 
-**Forme canonique du `filtre`.** Objet JavaScript dont toutes les clauses sont optionnelles. L'absence d'une clause = aucune contrainte sur cette dimension.
+**Forme canonique du `filtre`.** Objet JavaScript dont toutes les clauses sont optionnelles. L'absence d'une clause = aucune contrainte sur cette dimension. Les vocabulaires fermés ci-dessous sont ceux **réellement portés par les fiches** (cf. `inventaire-schema-metriques.md` §3) — pas une terminologie de surface idéalisée.
 
 ```
 filtre = {
-  niveau?:           Array<NiveauId>,        // 'equipe' | 'programme' | 'portefeuille' | 'entreprise' | 'affaires-operationnel'
-  domaine?:          Array<DomaineId>,       // ex. 'devops', 'affaires', 'portefeuille', 'programme'…
-  type?:             Array<TypeId>,          // 'kpi' | 'kbi' | 'kgi' | 'kii' | 'okr' | 'dora' | 'lean-six-sigma'
-  cadre?:            Array<CadreId>,         // ex. 'lean', 'six-sigma', 'dora', 'scrum'…
+  niveau?:           Array<NiveauId>,        // 'strategique' | 'tactique' | 'programme' | 'operationnel'
+  branche?:          Array<BrancheId>,       // 'ti' | 'affaires' — pertinent uniquement sur les fiches niveau 'operationnel'
+  domaine?:          Array<DomaineId>,       // 10 valeurs : 'dev', 'plateforme', 'ops-support', 'sécurité', 'commercial', 'marketing', 'finance', 'rh', 'operations', 'service-client'
+  type?:             Array<TypeId>,          // 7 valeurs : 'IGO' | 'ICP' | 'ICC' | 'ORC' | 'DORA' | 'FLUX' | 'II' (terminologie française = KGI/KPI/KBI/OKR/DORA/Flux/KII)
+  cadres?:           Array<CadreId>,         // 10 valeurs : 'dora', 'lean', 'okr', 'mbo', 'scrum', 'kanban', 'safe', 'itil', 'bsc', 'generique'
   tags?:             Array<TagId>,           // 7 valeurs : 'valeur', 'qualite', 'flux', 'delais', 'humain', 'risque', 'alignement'
   tagsThematiques?:  Array<TagThematiqueId>, // 14 valeurs verrouillées en §10.2
-  fiabiliteMin?:     FiabiliteId,            // 'fiable' | 'precaution' | 'risquee' — seuil ordinal
-  maturiteMin?:      MaturiteId,             // seuil ordinal sur l'échelle de maturité (cf. inventaire-schema-metriques.md)
+  fiabiliteMin?:     FiabiliteId,            // 'fiable' | 'precaution' | 'risque' — seuil ordinal (cf. ci-dessous)
+  maturiteMin?:      MaturiteId,             // 'debutant' | 'intermediaire' | 'avance' — seuil ordinal (cf. ci-dessous, sémantique inversée par rapport à fiabiliteMin)
   limite?:           number                  // entier strictement positif — capping de la liste retournée
 }
 ```
@@ -347,8 +348,9 @@ filtre = {
 **Sémantique d'évaluation.**
 
 - **Union intra-clause (OR).** `tags: ['flux', 'qualite']` retourne les fiches qui portent `flux` OU `qualite`.
-- **Intersection inter-clauses (AND).** `{niveau: ['equipe'], tags: ['flux']}` retourne les fiches niveau équipe ET portant le tag flux.
-- **Seuils ordinaux.** `fiabiliteMin: 'precaution'` retourne les fiches de fiabilité `fiable` ou `precaution` (pas `risquee`). `maturiteMin: 'X'` même logique sur l'échelle de maturité.
+- **Intersection inter-clauses (AND).** `{niveau: ['operationnel'], tags: ['flux']}` retourne les fiches niveau opérationnel ET portant le tag flux.
+- **Seuil ordinal `fiabiliteMin`.** Ordre `fiable > precaution > risque` (du plus solide au plus instable). `fiabiliteMin: 'precaution'` retourne les fiches de fiabilité `fiable` ou `precaution` — c'est-à-dire « au moins aussi solide que precaution ». Sémantique « borne inférieure de qualité acceptable ».
+- **Seuil ordinal `maturiteMin`.** Ordre `debutant < intermediaire < avance` (du moins exigeant au plus exigeant en prérequis côté équipe). `maturiteMin: 'intermediaire'` retourne les fiches dont le prérequis `maturite_min` est `debutant` ou `intermediaire` — c'est-à-dire « les fiches utilisables par une équipe dont la maturité est au plus `intermediaire` ». Sémantique « borne supérieure de prérequis acceptable ». **Note** : le sens du `Min` est inversé par rapport à `fiabiliteMin` parce que la donnée source `maturite_min` représente un prérequis (borne inférieure de maturité requise par la fiche), alors que `fiabilite` représente une qualité intrinsèque. Le nom `maturiteMin` reste cohérent avec la donnée source ; un alias `maturiteUtilisateurMax` pourrait être introduit ultérieurement si la confusion s'avère récurrente — décision laissée ouverte au chantier 17 ou plus tard.
 - **`limite`.** Capping appliqué *après* filtrage et *après* application de l'ordre de retour (cf. ci-dessous). Aucun re-tri spécifique au capping.
 
 **Contrat de retour.** `executer(filtre)` retourne une `Array<Fiche>`. L'ordre est celui de déclaration des fiches dans `CM.Referentiel.tous()` — éditorialement curé, stable, prévisible. Les vues qui souhaitent un autre tri trient localement après réception. Cet ordre est implicitement le contrat ; toute évolution (tri par score, par pertinence, par récence) sera un chantier séparé documenté ici.
@@ -362,29 +364,34 @@ filtre = {
 | Valeur inconnue dans une clause-set (typo, vocabulaire évolué) | **Exception explicite** `Error("CM.RequeteMetriques: valeur inconnue dans la clause 'tags' : 'flu'. Vocabulaire admis : valeur, qualite, flux, delais, humain, risque, alignement.")`. Bruyant > silencieux : les régressions de catalogue doivent être détectées immédiatement, pas avalées. |
 | Valeur inconnue dans un seuil (`fiabiliteMin`, `maturiteMin`) | **Exception explicite**, même principe. |
 | `limite` ≤ 0 ou non entière | **Exception explicite**. `limite: 0` est probablement une erreur de saisie, pas une demande légitime de liste vide. |
-| Clause inconnue dans `filtre` (typo de nom de clé) | **Exception explicite** `Error("CM.RequeteMetriques: clause inconnue 'tagThematique' (vouliez-vous dire 'tagsThematiques' ?). Clauses admises : niveau, domaine, type, cadre, tags, tagsThematiques, probleme, fiabiliteMin, maturiteMin, limite.")`. |
+| Clause inconnue dans `filtre` (typo de nom de clé) | **Exception explicite** `Error("CM.RequeteMetriques: clause inconnue 'tagThematique' (vouliez-vous dire 'tagsThematiques' ?). Clauses admises : niveau, branche, domaine, type, cadres, tags, tagsThematiques, probleme, fiabiliteMin, maturiteMin, limite.")`. |
 
-**Origine des valeurs comparées.** Les clauses `tags` et `tagsThematiques` matchent contre les champs de même nom dans `CM.IndicateursMeta.META[id]`. Les autres clauses (`niveau`, `domaine`, `type`, `cadre`, `fiabiliteMin`, `maturiteMin`) matchent contre les champs de même nom **dans la fiche elle-même** (`CM.Referentiel`). Le module `CM.RequeteMetriques` compose donc deux sources de données ; il n'enrichit aucun champ, il ne fait que filtrer.
+**Origine des valeurs comparées.**
+
+- Clauses qui matchent contre les **champs de la fiche elle-même** (`CM.Referentiel`) : `niveau`, `branche`, `domaine`, `type`, `fiabiliteMin` (vs `fiche.fiabilite`), `maturiteMin` (vs `fiche.maturite_min`).
+- Clauses qui matchent contre les **champs du tagging multi-axes** (`CM.IndicateursMeta.META[id]`) : `tags` (vs `META[id].tags`), `tagsThematiques` (vs `META[id].tagsThematiques`), `cadres` (vs `META[id].cadres`).
+
+Le module `CM.RequeteMetriques` compose donc deux sources de données ; il n'enrichit aucun champ, il ne fait que filtrer.
 
 **Cohérence avec les décisions amont.**
 
-- **§3.1 (architecture cible).** La forme initiale `{niveau?, cadre?, probleme?, maturite?, limite?}` annoncée en §3.1 est ici **étendue et normalisée** ; §3.1 pointe désormais vers ce §10.3 comme source unique.
+- **§3.1 (architecture cible).** La forme initiale `{niveau?, cadre?, probleme?, maturite?, limite?}` annoncée en §3.1 est ici **étendue, normalisée et alignée sur les vocabulaires inventoriés** ; §3.1 pointe désormais vers ce §10.3 comme source unique.
 - **§10.1 (seuils/paliers).** `reperes` reste un champ d'affichage non filtrant — il n'apparaît pas dans la signature.
 - **§10.2 (vocabulaire fermé).** Les clauses `tags` et `tagsThematiques` consomment respectivement les vocabulaires fermés des 7 tags problèmes et des 14 tags thématiques. Toute valeur hors vocabulaire lève une exception (cf. ci-dessus).
+- **Inventaire de l'étape (a)** (`inventaire-schema-metriques.md`). Les vocabulaires fermés `niveau`, `branche`, `domaine`, `type`, `fiabilite` et `maturite_min` sont ici la **transcription stricte** de §3.1 à §3.6 et §3.9 de l'inventaire. Toute valeur ajoutée à l'inventaire (ex. nouveau domaine, nouveau cadre) doit l'être ici simultanément.
 
 **Statut éditorial du contrat.** Tout consommateur (porte, test, future porte question) qui voudrait une clause non listée ici doit (1) l'ouvrir comme évolution du §10.3 — donc valider une décision éditoriale documentée — puis (2) la consommer. Jamais l'inverse. Cf. fiche mémoire `project_document_compagnon_contrats` (le document est la référence, le code s'y conforme).
 
 **Impact sur le code à venir (étape b, commits 1 à 3).**
 
 - Commit 1 (squelette `CM.RequeteMetriques`) : valide la forme du `filtre` (validation stricte des clauses et des valeurs) et le contrat de retour. Aucun consommateur encore branché.
-- Commit 2 (implémentation) : applique la sémantique union/intersection sur les axes existants (`niveau`, `domaine`, `type`, `cadre`, `tags`, `tagsThematiques`, `fiabiliteMin`, `maturiteMin`, `limite`).
+- Commit 2 (implémentation) : applique la sémantique union/intersection sur les axes existants (`niveau`, `branche`, `domaine`, `type`, `cadres`, `tags`, `tagsThematiques`, `fiabiliteMin`, `maturiteMin`, `limite`).
 - Commit 3 (tests via patron générateur Node) : couvre tous les comportements limites du tableau ci-dessus + un panel de filtres représentatifs croisant 2 à 4 clauses.
 - Aucune modification des consommateurs (`CM.DiagnosticProbleme`, `CM.DiagnosticCadre`, `CM.Roles`) avant l'étape (c).
-
----
 
 ## 9. Journal du chantier
 
 - **23/04/2026 fin de journée** — ouverture du chantier. Commit atomique `chore(chantier-14): ouverture — baseline + scénario régression + procédure rollback` embarquant (1) tag git `baseline-avant-hexagonal` sur `5655b03`, (2) `scenario-non-regression.md` posé, (3) ce doc compagnon, (4) backlog mis à jour avec chantier 14 actif / chantier 10 gelé, (5) mémoire `project_chantier_14_ouverture.md` posée. Prochaine étape : (a) inventaire du schéma d'étiquettes.
 - **24/04/2026 fin de journée — ouverture étape (b), tâche 1 tranchée.** Livraison du preview `preview-14b-seuils-paliers.html` (commit `21c76b2`). Arbitrage : **Option B retenue** — champ `reperes` optionnel sur les fiches à référentiel reconnu, structure flexible-normalisée, affichage collapsé par défaut. Décisions détaillées actées en §10.1 ci-dessus. Prochaines tâches de l'étape (b) : (2) arrêter le vocabulaire fermé des tags thématiques, (3) poser la signature `executer(filtre)`.
 - **24/04/2026 (suite) — Temps 2 et Temps 3 de la tâche 2 (étape b).** Temps 2 : tagging exhaustif des 84 fiches (matrice 84×14 dans `inventaire-tags-thematiques.md` §6, commit `b474a20`). Temps 3 : analyse quantitative (taux d'usage, co-occurrences, orphelines → 0) et verrouillage du vocabulaire à 14 tags (§7 du même document + §10.2 ci-dessus, commit du présent acte). Application de la règle d'antériorité : 4 tags en zone basse/surveillance conservés (voir fiche mémoire `project_regle_tags_sous_seuil`). Entrée de backlog chantier 17 ouverte en anticipation (commit `021112b`). Prochaine tâche de l'étape (b) : (3) signature `executer(filtre)`.
+- **25/04/2026 — Tâche 3 (étape b), alignement du contrat sur l'inventaire.** Avant d'attaquer le commit 1 du squelette `CM.RequeteMetriques`, audit de §10.3 contre la donnée réellement portée par les fiches (vérifiée par `grep` sur `cadre-indicateurs.html` et croisée avec `inventaire-schema-metriques.md` §3). **Quatre divergences corrigées en place dans §10.3** : (i) `niveau` aligné sur `'strategique' | 'tactique' | 'programme' | 'operationnel'` (terminologie interne, et non terminologie de surface équipe/portefeuille/entreprise) ; (ii) `type` aligné sur `'IGO' | 'ICP' | 'ICC' | 'ORC' | 'DORA' | 'FLUX' | 'II'` (terminologie française IGO/ICP/ICC/ORC/II + DORA/FLUX) ; (iii) `fiabilite` aligné sur `'fiable' | 'precaution' | 'risque'` (sans -ée) ; (iv) clause renommée `cadres` au pluriel et précision : matche contre `CM.IndicateursMeta.META[id].cadres`, pas contre la fiche elle-même. Ajout d'une clause `branche` (`'ti' | 'affaires'`) pour préserver la granularité affaires/TI. Suppression de la valeur `'affaires-operationnel'` qui était une fusion artificielle de `niveau:'operationnel'` × `branche:'affaires'`. Sémantique de `maturiteMin` clarifiée comme « borne supérieure de prérequis acceptable » (sens inversé par rapport à `fiabiliteMin`, parce que `fiche.maturite_min` est un prérequis et non une qualité). Application stricte des fiches mémoire `feedback_anti_invention_documents` et `feedback_verifier_avant_affirmer` : un contrat doit miroir le réel inventorié, pas une terminologie idéalisée. Prochaine tâche de l'étape (b) : commit 1 — squelette `CM.RequeteMetriques` avec validation stricte du filtre selon ce §10.3 corrigé.
