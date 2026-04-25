@@ -211,6 +211,36 @@ Pour garder la file d'attente 6.2-6.8 facile à reprendre, ces refactors **ne ca
 
 ⚠️ Ces préparations sont **optionnelles et différées** tant que Lætitia n'a pas redéclenché le chantier 6. Elles sont listées ici pour que le choix soit visible, pas imposé.
 
+### 6.d Diagnostic de creux éditorial — extension de l'item 6.9
+
+*Mesuré le 25/04/2026 par croisement automatique `niveau` × `META.tags` sur les 137 fiches du référentiel. Documenté ici pour cadrer précisément l'item 6.9 quand le chantier reprendra.*
+
+**Distribution du tagging.** 84 fiches sur 137 portent au moins un tag problème dans `META.tags`. Les 53 fiches restantes se décomposent en : **39 fiches du canon Roles** (équipe / portefeuille / entreprise — fiches de description de rôles, non destinées à apparaître dans la porte problème par construction) et **14 fiches au niveau `programme` mais sans tag** — toutes des fiches rôles `ta-*` (architecte, black-belt, chef-programme, RTE, value-stream-manager, etc.). Conclusion : **aucun bug de tagging à corriger sur les 53 fiches sans tag** — leur absence est normale, elles décrivent des rôles, pas des indicateurs.
+
+**Le vrai creux est dans la matrice canonique.** Sur les 28 cellules (4 niveaux DiagnosticProbleme × 7 problèmes) :
+
+| Niveau | Délais | Qualité | Flux | Valeur | Humain | Alignement | Risque |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| **Stratégique** | **0** | 1 | **0** | 5 | 3 | 4 | 3 |
+| **Tactique** | 2 | **0** | 3 | 2 | 1 | 1 | 2 |
+| **Programme** | 1 | 2 | 1 | 3 | 1 | 3 | 1 |
+| **Opérationnel** | 16 | 23 | 21 | 14 | 8 | 2 | 14 |
+
+**Couples critiques** :
+
+- **3 cellules à 0 fiche** : *Stratégique × Délais*, *Stratégique × Flux*, *Tactique × Qualité*. L'utilisateur ne peut pas atteindre ces couples (la `MATRICE_PERTINENCE` les exclut de l'étape 2 — voir lignes 70-75 de `CM.DiagnosticProbleme`), donc pas de message « vide » à gérer en UI. Mais c'est un signal éditorial : la matrice de pertinence **dit qu'on devrait pouvoir piloter ces couples** alors que le référentiel ne les couvre pas. Décision à prendre : (a) populer ces couples par re-tagging ou nouvelle fiche, ou (b) retirer ces couples de la `MATRICE_PERTINENCE` parce qu'éditorialement non pertinents.
+- **5 cellules à 1 ou 2 fiches** (côté niveaux supérieurs uniquement) : *Programme × Délais* = 1, *Programme × Flux* = 1, *Programme × Humain* = 1, *Programme × Risque* = 1, *Tactique × Délais* = 2. Ces couples affichent à l'utilisateur une recommandation indigente — c'est exactement ce que la remontée du 25/04/2026 a révélé sur Programme × Délais (1 fiche, *Taux d'avancement des jalons*). Action : densifier par re-tagging de fiches existantes dont le tag problème actuel est trop restrictif.
+
+**Disproportion verticale.** Le niveau Opérationnel concentre 98 occurrences de tags problèmes ; les 3 niveaux supérieurs cumulent 50 occurrences. La porte problème est donc structurellement **plus utile en bas qu'en haut** — ce qui est l'inverse de la promesse de l'outil pour les directions et portefeuilles.
+
+**Cadrage de l'item 6.9 mis à jour** :
+
+1. *Densification du tagging existant* — re-passer les 84 fiches déjà tagguées et compléter `META.tags` quand un problème secondaire est porté de fait par la fiche mais pas déclaré. Priorité : niveaux Programme et Tactique. Estimation : 2-3 sessions.
+2. *Décision sur les 3 couples à 0* — soit ajout de fiches, soit retrait des couples de la `MATRICE_PERTINENCE`. Tranchage éditorial préalable.
+3. *Ajout éventuel d'un 8e tag « Visibilité & transparence »* — si la décision (1) ne couvre pas la promesse manquante, envisager l'enrichissement du vocabulaire fermé. À traiter en dernier, parce qu'un tag de plus n'aide pas si les fiches existantes ne sont pas correctement tagguées.
+
+Tout reste gelé derrière la livraison du chantier 14 (discipline 16.4).
+
 ---
 
 ## 7. Évolutions transversales (cross-portes)
