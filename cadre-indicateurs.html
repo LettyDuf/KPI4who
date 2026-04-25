@@ -3607,6 +3607,15 @@ CM.IndicateursMeta = (function() {
   }
   function tagsDe(id) { return pour(id).tags || []; }
   function cadresDe(id) { return pour(id).cadres || []; }
+  /* tagsThematiques — vocabulaire séparé (§10.2 du doc compagnon).
+     Stocké hors META[id] (zone CM._tagsThematiquesData régénérée par
+     outils/generer-tags-thematiques.js depuis inventaire-tags-thematiques.md
+     §6) pour préserver le patron éditorial existant et éviter de mêler
+     données curées à la main et données générées. */
+  function tagsThematiquesDe(id) {
+    var data = (typeof CM !== 'undefined' && CM._tagsThematiquesData) || {};
+    return data[id] || [];
+  }
 
   /* ── Règle d'affichage : le cadre « generique » est un fallback sémantique.
      Quand une méthodologie spécifique (Lean, DORA, Scrum…) est déjà présente,
@@ -3748,6 +3757,7 @@ CM.IndicateursMeta = (function() {
     pour: pour,
     tagsDe: tagsDe,
     cadresDe: cadresDe,
+    tagsThematiquesDe: tagsThematiquesDe,
     cadresAffichables: cadresAffichables,
     infoTag: infoTag,
     infoCadre: infoCadre,
@@ -3764,6 +3774,103 @@ CM.IndicateursMeta = (function() {
 })();
 </script>
 
+
+
+<!-- ══ DONNÉES : tags thématiques (vocabulaire fermé §10.2) ══
+     Source éditoriale : inventaire-tags-thematiques.md §6 (matrice 84×14).
+     Zone régénérée par outils/generer-tags-thematiques.js — ne pas éditer
+     à la main entre les balises CM.TAGS-THEMATIQUES-DATA:BEGIN/END.
+     Consommée par CM.IndicateursMeta.tagsThematiquesDe(id). -->
+<script>
+/* CM.TAGS-THEMATIQUES-DATA:BEGIN — généré par outils/generer-tags-thematiques.js, ne pas éditer à la main */
+CM._tagsThematiquesData = {
+  's1':      ['alignement'],
+  's2':      ['feedback', 'expérience client'],
+  's3':      ['alignement'],
+  's4':      ['engagement', 'alignement'],
+  's5':      ['alignement', 'expérience client'],
+  's6':      ['engagement', 'compétences', 'confiance'],
+  's7':      ['engagement', 'confiance'],
+  's8':      ['engagement', 'confiance'],
+  's9':      ['compétences', 'risque'],
+  's10':     ['risque'],
+  't1':      ['alignement'],
+  't2':      ['prévisibilité', 'cadence'],
+  't3':      ['alignement'],
+  't4':      ['transversalité', 'goulots'],
+  't5':      ['prévisibilité'],
+  'x3':      ['engagement', 'goulots'],
+  't6':      ['prévisibilité', 'risque'],
+  't7':      ['goulots', 'risque'],
+  'p1':      ['prévisibilité', 'alignement'],
+  'p2':      ['prévisibilité', 'risque'],
+  'p3':      ['risque'],
+  'p4':      ['confiance', 'alignement'],
+  'p5':      ['goulots', 'cadence'],
+  'p6':      ['feedback', 'variabilité'],
+  'p7':      ['coûts cachés', 'feedback'],
+  'o1':      ['cadence', 'autonomie'],
+  'o2':      ['goulots', 'cadence'],
+  'o3':      ['feedback', 'variabilité'],
+  'o5':      ['goulots', 'cadence'],
+  'o8':      ['compétences', 'feedback'],
+  'o4':      ['feedback', 'risque'],
+  'o6':      ['prévisibilité', 'cadence'],
+  'o7':      ['goulots', 'cadence'],
+  'o9':      ['engagement', 'alignement'],
+  'ti-d1':   ['coûts cachés', 'risque'],
+  'ti-d2':   ['prévisibilité', 'cadence'],
+  'ti-d3':   ['coûts cachés', 'feedback'],
+  'ti-d4':   ['transversalité', 'goulots', 'cadence'],
+  'ti-p1':   ['cadence', 'risque'],
+  'ti-p2':   ['goulots', 'cadence'],
+  'ti-p3':   ['prévisibilité', 'feedback'],
+  'ti-p4':   ['goulots', 'cadence', 'autonomie'],
+  'ti-p5':   ['compétences', 'risque'],
+  'ti-o1':   ['risque', 'variabilité'],
+  'ti-o2':   ['compétences', 'expérience client'],
+  'ti-o3':   ['prévisibilité', 'expérience client'],
+  'ti-o4':   ['coûts cachés', 'feedback'],
+  'ti-o5':   ['goulots', 'coûts cachés'],
+  'ti-s1':   ['feedback', 'risque'],
+  'ti-s2':   ['feedback', 'risque'],
+  'ti-s3':   ['cadence', 'risque'],
+  'ti-s4':   ['compétences', 'risque'],
+  'ti-s5':   ['risque'],
+  'x1':      ['prévisibilité', 'cadence'],
+  'x2':      ['prévisibilité', 'cadence'],
+  'x4':      ['engagement', 'confiance'],
+  'x5':      ['cadence'],
+  'af-c1':   ['feedback', 'expérience client'],
+  'af-c2':   ['goulots', 'cadence'],
+  'af-c3':   ['confiance', 'expérience client'],
+  'af-c4':   ['prévisibilité', 'engagement'],
+  'af-c5':   ['prévisibilité', 'risque'],
+  'af-m1':   ['coûts cachés', 'feedback'],
+  'af-m2':   ['coûts cachés', 'feedback'],
+  'af-m3':   ['transversalité', 'goulots', 'feedback'],
+  'af-m4':   ['feedback'],
+  'af-m5':   ['expérience client'],
+  'af-f1':   ['cadence', 'risque'],
+  'af-f2':   ['prévisibilité', 'variabilité'],
+  'af-f3':   ['prévisibilité', 'cadence'],
+  'af-f4':   ['risque'],
+  'af-r1':   ['engagement', 'feedback'],
+  'af-r2':   ['cadence', 'risque'],
+  'af-r3':   ['engagement', 'confiance'],
+  'af-r4':   ['engagement', 'compétences'],
+  'af-op1':  ['goulots', 'variabilité'],
+  'af-op2':  ['feedback', 'variabilité'],
+  'af-op3':  ['prévisibilité', 'expérience client'],
+  'af-op4':  ['coûts cachés', 'feedback'],
+  'af-sc1':  ['feedback', 'expérience client'],
+  'af-sc2':  ['feedback', 'expérience client'],
+  'af-sc3':  ['feedback', 'expérience client'],
+  'af-sc4':  ['compétences', 'expérience client'],
+  'af-sc5':  ['cadence', 'expérience client']
+};
+/* CM.TAGS-THEMATIQUES-DATA:END */
+</script>
 
 <!-- ══ MODULE : CM.RequeteMetriques — API unique du domaine pour le filtrage des fiches ══
      Source de vérité : §10.3 du doc-contrats-chantier-14.md
