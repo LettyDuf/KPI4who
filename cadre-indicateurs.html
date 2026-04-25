@@ -3765,6 +3765,220 @@ CM.IndicateursMeta = (function() {
 </script>
 
 
+<!-- ══ MODULE : CM.RequeteMetriques — API unique du domaine pour le filtrage des fiches ══
+     Source de vérité : §10.3 du doc-contrats-chantier-14.md
+     (vocabulaires fermés alignés sur inventaire-schema-metriques.md §3.1 à §3.6 et §3.9).
+
+     Fonction publique unique :
+       · executer(filtre) — retourne Array<Fiche> dans l'ordre de déclaration
+                            de CM.Referentiel.tous(). Aucun re-tri.
+
+     Filtre canonique (toutes clauses optionnelles ; AND inter-clauses, OR intra-clause) :
+       { niveau?, branche?, domaine?, type?, cadres?, tags?, tagsThematiques?,
+         probleme?, fiabiliteMin?, maturiteMin?, limite? }
+
+     COMMIT 1 (étape b, tâche 3) : ce squelette implémente uniquement la
+     VALIDATION STRICTE du filtre. Sans logique de filtrage : `executer`
+     retourne le référentiel complet dans son ordre de déclaration. La
+     sémantique union/intersection arrive au commit 2 ; les tests via
+     patron générateur Node au commit 3.
+
+     Politique d'erreur — bruyant > silencieux : toute clause inconnue,
+     toute valeur hors vocabulaire, tout type incorrect lève une exception
+     explicite. Les régressions de catalogue doivent être détectées
+     immédiatement, jamais avalées (cf. §10.3 du doc compagnon, tableau
+     « Comportements limites »). -->
+<script>
+CM.RequeteMetriques = (function() {
+  'use strict';
+
+  /* ── Vocabulaires fermés ──
+     Transcription stricte de §10.3 (doc-contrats-chantier-14.md), eux-mêmes
+     alignés sur inventaire-schema-metriques.md §3.1 à §3.6 et §3.9. Toute
+     évolution d'un vocabulaire passe d'abord par §10.3, puis ici. Jamais
+     l'inverse (cf. fiche mémoire `project_document_compagnon_contrats`). */
+  var VOCAB = {
+    niveau:          ['strategique', 'tactique', 'programme', 'operationnel'],
+    branche:         ['ti', 'affaires'],
+    domaine:         ['dev', 'plateforme', 'ops-support', 'sécurité',
+                      'commercial', 'marketing', 'finance', 'rh',
+                      'operations', 'service-client'],
+    type:            ['IGO', 'ICP', 'ICC', 'ORC', 'DORA', 'FLUX', 'II'],
+    cadres:          ['dora', 'lean', 'okr', 'mbo', 'scrum', 'kanban',
+                      'safe', 'itil', 'bsc', 'generique'],
+    tags:            ['valeur', 'qualite', 'flux', 'delais',
+                      'humain', 'risque', 'alignement'],
+    tagsThematiques: ['transversalité', 'prévisibilité', 'engagement',
+                      'goulots', 'coûts cachés', 'compétences',
+                      'cadence', 'feedback', 'risque', 'autonomie',
+                      'confiance', 'variabilité', 'alignement',
+                      'expérience client'],
+    /* Seuils ordinaux — l'ordre du tableau encode l'ordre canonique.
+       fiabilite : du plus solide au plus instable.
+       maturite : du moins exigeant au plus exigeant en prérequis. */
+    fiabilite:       ['fiable', 'precaution', 'risque'],
+    maturite:        ['debutant', 'intermediaire', 'avance']
+  };
+
+  var CLAUSES_SET     = ['niveau', 'branche', 'domaine', 'type',
+                         'cadres', 'tags', 'tagsThematiques'];
+  var CLAUSES_SEUIL   = ['fiabiliteMin', 'maturiteMin'];
+  var CLAUSES_RACC    = ['probleme'];
+  var CLAUSES_LIMITE  = ['limite'];
+  var CLAUSES_ADMISES = CLAUSES_SET
+    .concat(CLAUSES_SEUIL)
+    .concat(CLAUSES_RACC)
+    .concat(CLAUSES_LIMITE);
+
+  /* ── Utilitaires d'erreur et de suggestion ── */
+
+  function erreur(msg) {
+    throw new Error('CM.RequeteMetriques: ' + msg);
+  }
+
+  /* Suggestion best-effort par distance de Levenshtein, pour aider à
+     diagnostiquer une typo de nom de clause. Retourne la clause admise
+     la plus proche dans la limite d'un seuil tolérant. Aucune dépendance. */
+  function distanceLev(a, b) {
+    var m = a.length, n = b.length;
+    if (m === 0) return n;
+    if (n === 0) return m;
+    var d = [];
+    for (var i = 0; i <= m; i++) { d[i] = [i]; }
+    for (var j = 1; j <= n; j++) { d[0][j] = j; }
+    for (var i2 = 1; i2 <= m; i2++) {
+      for (var j2 = 1; j2 <= n; j2++) {
+        var c = a.charAt(i2 - 1) === b.charAt(j2 - 1) ? 0 : 1;
+        d[i2][j2] = Math.min(d[i2 - 1][j2] + 1,
+                             d[i2][j2 - 1] + 1,
+                             d[i2 - 1][j2 - 1] + c);
+      }
+    }
+    return d[m][n];
+  }
+
+  function suggestionClause(inconnue) {
+    var bas = String(inconnue).toLowerCase();
+    var seuil = Math.max(2, Math.floor(bas.length / 3));
+    var meilleur = null, meilleureDist = Infinity;
+    for (var i = 0; i < CLAUSES_ADMISES.length; i++) {
+      var d = distanceLev(bas, CLAUSES_ADMISES[i].toLowerCase());
+      if (d < meilleureDist && d <= seuil) {
+        meilleureDist = d;
+        meilleur = CLAUSES_ADMISES[i];
+      }
+    }
+    return meilleur;
+  }
+
+  /* ── Validation par clause ── */
+
+  function validerClauseSet(nom, valeurs) {
+    if (!Array.isArray(valeurs)) {
+      erreur("la clause '" + nom + "' doit être un tableau (Array) — reçu : " +
+             (valeurs === null ? 'null' : typeof valeurs) + ".");
+    }
+    var vocab = VOCAB[nom];
+    for (var i = 0; i < valeurs.length; i++) {
+      if (vocab.indexOf(valeurs[i]) === -1) {
+        erreur("valeur inconnue dans la clause '" + nom + "' : " +
+               JSON.stringify(valeurs[i]) +
+               ". Vocabulaire admis : " + vocab.join(', ') + ".");
+      }
+    }
+  }
+
+  function validerSeuil(nom, valeur, vocab) {
+    if (typeof valeur !== 'string') {
+      erreur("la clause '" + nom + "' doit être une chaîne de caractères — reçu : " +
+             (valeur === null ? 'null' : typeof valeur) + ".");
+    }
+    if (vocab.indexOf(valeur) === -1) {
+      erreur("valeur inconnue pour '" + nom + "' : " + JSON.stringify(valeur) +
+             ". Vocabulaire admis : " + vocab.join(', ') + ".");
+    }
+  }
+
+  function validerRaccourciProbleme(valeur) {
+    if (typeof valeur !== 'string') {
+      erreur("le raccourci 'probleme' doit être une chaîne de caractères — reçu : " +
+             (valeur === null ? 'null' : typeof valeur) + ".");
+    }
+    if (VOCAB.tags.indexOf(valeur) === -1) {
+      erreur("valeur inconnue pour le raccourci 'probleme' : " + JSON.stringify(valeur) +
+             ". Vocabulaire admis : " + VOCAB.tags.join(', ') + ".");
+    }
+  }
+
+  function validerLimite(valeur) {
+    if (typeof valeur !== 'number' || !isFinite(valeur) ||
+        Math.floor(valeur) !== valeur || valeur <= 0) {
+      erreur("la clause 'limite' doit être un entier strictement positif — reçu : " +
+             JSON.stringify(valeur) + ".");
+    }
+  }
+
+  function validerNomDeClause(cle) {
+    if (CLAUSES_ADMISES.indexOf(cle) !== -1) return;
+    var sugg = suggestionClause(cle);
+    var msg = "clause inconnue '" + cle + "'";
+    if (sugg) { msg += " (vouliez-vous dire '" + sugg + "' ?)"; }
+    msg += ". Clauses admises : " + CLAUSES_ADMISES.join(', ') + ".";
+    erreur(msg);
+  }
+
+  /* ── Validation orchestrée du filtre complet ── */
+
+  function valider(filtre) {
+    if (filtre === undefined || filtre === null) return;
+    if (typeof filtre !== 'object' || Array.isArray(filtre)) {
+      erreur("le filtre doit être un objet — reçu : " +
+             (Array.isArray(filtre) ? 'Array' : typeof filtre) + ".");
+    }
+
+    var cles = Object.keys(filtre);
+    for (var i = 0; i < cles.length; i++) {
+      validerNomDeClause(cles[i]);
+    }
+
+    for (var j = 0; j < CLAUSES_SET.length; j++) {
+      var nom = CLAUSES_SET[j];
+      if (filtre[nom] !== undefined) {
+        validerClauseSet(nom, filtre[nom]);
+      }
+    }
+
+    if (filtre.fiabiliteMin !== undefined) {
+      validerSeuil('fiabiliteMin', filtre.fiabiliteMin, VOCAB.fiabilite);
+    }
+    if (filtre.maturiteMin !== undefined) {
+      validerSeuil('maturiteMin', filtre.maturiteMin, VOCAB.maturite);
+    }
+    if (filtre.probleme !== undefined) {
+      validerRaccourciProbleme(filtre.probleme);
+    }
+    if (filtre.limite !== undefined) {
+      validerLimite(filtre.limite);
+    }
+  }
+
+  /* ── API publique ── */
+
+  function executer(filtre) {
+    valider(filtre);
+    /* COMMIT 1 — pas de logique de filtrage. On respecte le contrat de
+       retour (Array<Fiche> dans l'ordre de déclaration de CM.Referentiel.tous())
+       par renvoi du référentiel complet. La sémantique union/intersection est
+       implémentée au commit 2 de l'étape (b). */
+    return CM.Referentiel.tous().slice();
+  }
+
+  return { executer: executer };
+})();
+</script>
+
+
+
 <!-- ══ MODULE : CM.Roles — Inventaire des rôles par niveau (porte niveau) ══
      Source éditoriale : inventaire-roles-porte-niveau.md (53 fiches, 4 niveaux).
      La zone de données `CM._rolesData` est régénérée par tools/generer-roles.js ;
