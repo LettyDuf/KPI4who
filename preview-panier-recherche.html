@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Preview 9.B.4 — Recherche globale dans la vue panier</title>
+<style>
+  :root {
+    --niv-1: #1a237e; --niv-1-clair: #e8eaf6; --niv-1-moyen: #3949ab;
+    --niv-3: #004d40; --niv-3-clair: #e0f2f1; --niv-3-moyen: #00897b;
+    --ambre-profond: #b7791f; --ambre-texte: #6b4a00; --ambre-doux-debut: #fff8e7;
+    --fond: #f5f6fa; --fond-2: #ffffff;
+    --texte: #1a1a2e;
+    --texte-primaire: #1c2033; --texte-secondaire: #6b7280; --texte-2: #607d8b;
+    --bordure: #e0e4eb;
+    --rayon: 14px;
+    --ombre: 0 2px 12px rgba(26,35,126,0.08);
+    --fw-bold: 700; --fw-semi: 600;
+    --trans: 0.18s ease;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    background: var(--fond); color: var(--texte);
+    padding: 2.5rem 2rem; line-height: 1.6; font-size: 15px;
+  }
+  .page { max-width: 1320px; margin: 0 auto; }
+  h1 { font-size: 1.55rem; color: var(--niv-1); margin-bottom: 0.4rem; }
+  .sous-titre { color: var(--texte-2); font-size: 0.95rem; margin-bottom: 0.4rem; max-width: 80ch; }
+  .meta { color: var(--texte-secondaire); font-size: 0.82rem; margin-bottom: 2.2rem; font-style: italic; }
+  .scenario {
+    background: #fff; border: 1px solid var(--bordure);
+    border-left: 4px solid var(--ambre-profond);
+    border-radius: 10px; padding: 0.95rem 1.15rem;
+    margin-bottom: 2.4rem; font-size: 0.9rem; line-height: 1.55;
+    color: var(--texte-primaire);
+  }
+  .scenario b { color: var(--ambre-texte); }
+  .deux-colonnes { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; align-items: start; }
+  @media (max-width: 1100px) { .deux-colonnes { grid-template-columns: 1fr; } }
+  .variante {
+    background: var(--fond-2); border-radius: 18px;
+    padding: 1.7rem 1.6rem 1.9rem;
+    box-shadow: 0 4px 22px rgba(26,35,126,0.07);
+  }
+  .variante-label {
+    display: inline-block; background: var(--niv-1); color: white;
+    padding: 0.22rem 0.75rem; border-radius: 6px;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.4px;
+    margin-bottom: 0.5rem;
+  }
+  .variante-titre { font-size: 1.1rem; color: var(--texte-primaire); margin-bottom: 0.3rem; font-weight: 700; }
+  .variante-desc { font-size: 0.84rem; color: var(--texte-secondaire); margin-bottom: 1.4rem; line-height: 1.55; }
+
+  .panier-tdb { border-top: 1px dashed var(--bordure); padding-top: 1.3rem; display: flex; flex-direction: column; gap: 1.1rem; }
+  .panier-tdb-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem; }
+  .panier-tdb-titre { font-size: 1.05rem; font-weight: var(--fw-bold); color: var(--texte-primaire); letter-spacing: -0.1px; }
+  .panier-tdb-titre span { font-weight: 400; color: var(--texte-secondaire); }
+  .panier-tdb-reinit { background: transparent; border: 1px solid var(--bordure); color: var(--texte-2); padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 0.78rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+
+  .panier-recherche { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; padding: 0.4rem 0; }
+  .panier-recherche-input-wrap { position: relative; flex: 1 1 320px; min-width: 240px; }
+  .panier-recherche-input {
+    width: 100%; padding: 0.55rem 0.9rem 0.55rem 2.2rem;
+    border: 1px solid var(--bordure); border-radius: 8px;
+    font-size: 0.88rem; font-family: inherit;
+    background: var(--fond-2); color: var(--texte-primaire);
+    transition: var(--trans);
+  }
+  .panier-recherche-input:focus { outline: none; border-color: var(--niv-1-moyen); box-shadow: 0 0 0 3px rgba(57,73,171,0.1); }
+  .panier-recherche-icone { position: absolute; left: 0.7rem; top: 50%; transform: translateY(-50%); color: var(--texte-secondaire); font-size: 0.95rem; pointer-events: none; }
+  .panier-recherche-effacer { position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--texte-secondaire); font-size: 0.9rem; cursor: pointer; padding: 0.25rem 0.4rem; border-radius: 4px; }
+  .panier-recherche-resultat { font-size: 0.78rem; color: var(--texte-secondaire); font-style: italic; }
+
+  .panier-filtres { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .panier-filtre {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    padding: 0.3rem 0.65rem; border-radius: 16px;
+    border: 1px solid var(--bordure); background: var(--fond-2);
+    color: var(--texte-2); font-size: 0.74rem; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: var(--trans);
+  }
+  .panier-filtre:hover { border-color: var(--niv-1-moyen); color: var(--niv-1-moyen); }
+  .panier-filtre.actif { background: var(--niv-1); color: white; border-color: var(--niv-1); }
+  .panier-filtre-coche { font-size: 0.76rem; }
+  .panier-filtre-label { font-size: 0.72rem; color: var(--texte-secondaire); align-self: center; margin-right: 0.2rem; }
+
+  .panier-tdb-grille { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; align-items: start; }
+  @media (max-width: 700px) { .panier-tdb-grille { grid-template-columns: 1fr; } }
+  .panier-colonne {
+    background: var(--fond-2); border-radius: var(--rayon);
+    padding: 0.95rem 1rem 1.05rem; box-shadow: var(--ombre);
+    border-top: 4px solid var(--pc, var(--bordure));
+    display: flex; flex-direction: column; gap: 0.7rem;
+  }
+  .panier-colonne.en-place { --pc: var(--niv-3-moyen); --pc-sombre: var(--niv-3); --pc-fond: var(--niv-3-clair); }
+  .panier-colonne.a-envisager { --pc: var(--ambre-profond); --pc-sombre: var(--ambre-texte); --pc-fond: var(--ambre-doux-debut); }
+  .panier-col-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.4rem; }
+  .panier-col-titre { font-size: 0.95rem; font-weight: var(--fw-bold); color: var(--pc-sombre); display: inline-flex; align-items: center; gap: 0.45rem; }
+  .panier-col-compte { display: inline-flex; align-items: center; font-size: 0.7rem; font-weight: var(--fw-bold); padding: 0.15rem 0.5rem; border-radius: 20px; background: var(--pc-fond); color: var(--pc-sombre); }
+  .panier-col-aide { font-size: 0.74rem; color: var(--texte-secondaire); font-style: italic; }
+  .panier-cartes { display: flex; flex-direction: column; gap: 0.5rem; }
+  .panier-carte {
+    background: var(--pc-fond); border: 1px solid var(--pc);
+    border-left: 3px solid var(--pc); border-radius: 9px;
+    padding: 0.6rem 0.75rem; position: relative;
+  }
+  .panier-carte.estompee { opacity: 0.28; filter: grayscale(0.4); }
+  .panier-carte-nom {
+    font-size: 0.86rem; font-weight: var(--fw-semi);
+    color: var(--texte-primaire); padding-right: 1.4rem;
+    line-height: 1.3; display: block;
+  }
+  .panier-carte-nom mark { background: #fff3a8; padding: 0 2px; border-radius: 2px; color: inherit; }
+  .panier-retirer {
+    position: absolute; top: 0.35rem; right: 0.45rem;
+    background: transparent; border: none; color: var(--pc-sombre);
+    cursor: pointer; font-size: 0.95rem; padding: 0.1rem 0.3rem;
+    line-height: 1; opacity: 0.45;
+  }
+  .panier-carte-pied { display: flex; flex-wrap: wrap; gap: 0.28rem; align-items: center; margin-top: 0.35rem; }
+  .panier-chip-type { font-size: 0.62rem; font-weight: 700; padding: 0.14rem 0.4rem; border-radius: 4px; letter-spacing: 0.5px; line-height: 1; }
+  .panier-chip-type.t-DORA { background: #ffe0d6; color: #bf360c; }
+  .panier-chip-type.t-FLUX { background: #fff3e0; color: #e65100; }
+  .panier-chip-type.t-IGO  { background: #e8eaf6; color: #1a237e; }
+  .panier-chip-niveau { font-size: 0.64rem; font-weight: 600; padding: 0.12rem 0.4rem; border-radius: 4px; background: var(--niv-1-clair); color: var(--niv-1); letter-spacing: 0.1px; }
+  .panier-chip-fiab { font-size: 0.66rem; font-weight: 500; color: var(--texte-secondaire); display: inline-flex; align-items: center; gap: 0.25rem; }
+  .panier-chip-fiab-pastille { width: 7px; height: 7px; border-radius: 50%; display: inline-block; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); }
+  .panier-chip-fiab.f-fiable     .panier-chip-fiab-pastille { background: #2e7d32; }
+  .panier-chip-fiab.f-precaution .panier-chip-fiab-pastille { background: #e65100; }
+
+  .avis {
+    margin-top: 2.5rem; background: #fff;
+    border: 1px solid var(--bordure);
+    border-left: 4px solid var(--niv-1-moyen);
+    border-radius: 10px; padding: 1.1rem 1.3rem;
+    font-size: 0.86rem; line-height: 1.65; color: var(--texte-primaire);
+  }
+  .avis h3 { font-size: 0.95rem; color: var(--niv-1); margin-bottom: 0.6rem; }
+  .avis ul { margin: 0.4rem 0 0 1.2rem; }
+  .avis li { margin-bottom: 0.25rem; }
+  .pictos { color: var(--texte-secondaire); font-size: 0.78rem; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Preview 9.B.4 — Recherche globale dans la vue panier</h1>
+  <p class="sous-titre">Comparer côte à côte deux options pour la barre de recherche du panier <i>Mon tableau de bord</i> : input seul (filtre texte unique) vs input + chips filtres contextuels (texte + Type + Niveau).</p>
+  <p class="meta">Mockup statique — état figé pour la lecture, l'interactif arrivera dans <code>cadre-indicateurs.html</code> après arbitrage.</p>
+
+  <div class="scenario">
+    <b>Scénario commun aux deux options.</b> L'utilisateur a un panier de 6 fiches (3 en place + 3 à envisager) couvrant DORA, Flux, et indicateurs corporate, sur trois niveaux différents. Il cherche un indicateur précis : <b>« le lead time pour mon équipe DevOps »</b>. Il tape <code>lead</code> dans la recherche.
+  </div>
+
+  <div class="deux-colonnes">
+
+    <div class="variante">
+      <span class="variante-label">OPTION A</span>
+      <div class="variante-titre">Input seul — filtre live sur le nom</div>
+      <p class="variante-desc">Un seul champ. Saisie au clavier, mise en évidence des correspondances dans les noms, les fiches non-correspondantes s'estompent (pas masquées : on garde la conscience du panier complet). Compteur de résultats à droite. Croix pour effacer.</p>
+
+      <div class="panier-tdb">
+        <div class="panier-tdb-header">
+          <div class="panier-tdb-titre">Mon panier d'indicateurs <span>· 6 fiches</span></div>
+          <button class="panier-tdb-reinit">↻ Réinitialiser</button>
+        </div>
+
+        <div class="panier-recherche">
+          <div class="panier-recherche-input-wrap">
+            <span class="panier-recherche-icone">🔍</span>
+            <input class="panier-recherche-input" type="text" value="lead" placeholder="Rechercher dans mon panier…" />
+            <button class="panier-recherche-effacer" title="Effacer">×</button>
+          </div>
+          <span class="panier-recherche-resultat">2 sur 6 correspondent</span>
+        </div>
+
+        <div class="panier-tdb-grille">
+          <div class="panier-colonne en-place">
+            <div class="panier-col-head">
+              <div class="panier-col-titre">En place <span class="panier-col-compte">3</span></div>
+              <div class="panier-col-aide">Ce que je mesure déjà</div>
+            </div>
+            <div class="panier-cartes">
+              <div class="panier-carte">
+                <span class="panier-carte-nom"><mark>Lead</mark> Time for Changes</span>
+                <button class="panier-retirer">×</button>
+                <div class="panier-carte-pied">
+                  <span class="panier-chip-type t-DORA">DORA</span>
+                  <span class="panier-chip-niveau">Équipe</span>
+                  <span class="panier-chip-fiab f-fiable"><span class="panier-chip-fiab-pastille"></span>fiable</span>
+                </div>
+              </div>
+              <div class="panier-carte estompee">
+                <span class="panier-carte-nom">Deployment Frequency</span>
+                <button class="panier-retirer">×</button>
+                <div class="panier-carte-pied">
+                  <span class="panier-chip-type t-DORA">DORA</span>
+                  <span class="panier-chip-niveau">Équipe</span>
+                  <span class="panier-chip-fiab f-fiable"><span class="panier-chip-fiab-pastille"></span>fiable</span>
+                </div>
+              </div>
+              <div class="panier-carte estompee">
+                <span class="panier-carte-nom">Taux de conversion MQL → SQL</span>
+                <button class="panier-retirer">×</button>
+                <div class="panier-carte-pied">
+                  <span class="panier-chip-type t-FLUX">FLUX</span>
+                  <span class="panier-chip-niveau">Affaires</span>
+                  <span class="panier-chip-fiab f-precaution"><span class="panier-chip-fiab-pastille"></span>précaution</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panier-colonne a-envisager">
+            <div class="panier-col-head">
+              <div class="panier-col-titre">À envisager <span class="panier-col-compte">3</span></div>
+              <div class="panier-col-aide">Ce que je veux creuser</div>
+            </div>
+            <div class="panier-cartes">
+              <div class="panier-carte">
+                <span class="panier-carte-nom"><mark>Lead</mark> time d'initiative (programme)</span>
+                <button class="panier-retirer">×</button>
+                <div class="panier-carte-pied">
+                  <span class="panier-chip-type t-FLUX">FLUX</span>
+                  <span class="panier-chip-niveau">Programme</span>
+                  <span class="panier-chip-fiab f-precaution"><span class="panier-chip-fiab-pastille"></span>précaution</span>
+                </div>
+              </div>
+              <div class="panier-carte estompee">
+                <span class="panier-carte-nom">Change Failure Rate</span>
+                <button class="panier-retirer">×</button>
+                <div class="panier-carte-pied">
+                  <span class="panier-chip-type t-DORA">DORA</span>
+                  <span class="panier-chip-niveau">Équipe</span>
+                  <span class="panier-chip-fiab f-fiable"><span class="panier-chip-fiab-pastille"></span>fiable</span>
+                </div>
+              </div>
+              <div class="panier-carte estompee">
+                <span class="panier-carte-nom">Marge brute</span>
+                <button class="panier-retirer">×</button>
+                <div class="panier-carte-pied">
+                  <span class="panier-chip-type t-IGO">IGO</span>
+                  <span class="panier-chip-niveau">Entreprise</span>
+                  <span class="panier-chip-fiab f-fiable"><span class="panier-chip-fiab-pastille"></span>fiable</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pictos" style="margin-top: 1rem;">→ L'utilisateur voit les <b>2 fiches qui contiennent « lead »</b> (l'une au niveau équipe, l'autre au niveau programme). Pour distinguer son cas, il <b>lit les chips</b> de chaque carte.</div>
+    </div>
+
+    <div class="variante">
+      <span class="variante-label">OPTION B</span>
+      <div class="variante-titre">Input + chips filtres Type · Niveau</div>
+      <p class="variante-desc">Même champ texte, plus deux séries de chips qui se peuplent <em>dynamiquement</em> avec ce qui existe dans le panier (pas de chip pour un type/niveau absent). Cliquer sur un chip ajoute un filtre cumulatif à la recherche texte. Indicateur visuel : chip foncé = actif.</p>
+
+      <div class="panier-tdb">
+        <div class="panier-tdb-header">
+          <div class="panier-tdb-titre">Mon panier d'indicateurs <span>· 6 fiches</span></div>
+          <button class="panier-tdb-reinit">↻ Réinitialiser</button>
+        </div>
+
+        <div class="panier-recherche">
+          <div class="panier-recherche-input-wrap">
+            <span class="panier-recherche-icone">🔍</span>
+            <input class="panier-recherche-input" type="text" value="lead" placeholder="Rechercher dans mon panier…" />
+            <button class="panier-recherche-effacer" title="Effacer">×</button>
+          </div>
+          <span class="panier-recherche-resultat">1 sur 6 correspond</span>
+        </div>
+
+        <div class="panier-recherche">
+          <span class="panier-filtre-label">Type :</span>
+          <div class="panier-filtres">
+            <button class="panier-filtre actif"><span class="panier-filtre-coche">✓</span>DORA</button>
+            <button class="panier-filtre">FLUX</button>
+            <button class="panier-filtre">IGO</button>
+          </div>
+          <span class="panier-filtre-label" style="margin-left:0.6rem;">Niveau :</span>
+          <div class="panier-filtres">
+            <button class="panier-filtre actif"><span class="panier-filtre-coche">✓</span>Équipe</button>
+            <button class="panier-filtre">Programme</button>
+            <button class="panier-filtre">Entreprise</button>
+            <button class="panier-filtre">Affaires</button>
+          </div>
+        </div>
+
+        <div class="panier-tdb-grille">
+          <div class="panier-colonne en-place">
+            <div class="panier-col-head">
+              <div class="panier-col-titre">En place <span class="panier-col-compte">3</span></div>
+              <div class="panier-col-aide">Ce que je mesure déjà</div>
+            </div>
+            <div class="panier-cartes">
+              <div class="panier-carte">
+                <span class="panier-carte-nom"><mark>Lead</mark> Time for Changes</span>
+                <button class="panier-retirer">×</button>
+                <div class="panier-carte-pied">
+                  <span class="panier-chip-type t-DORA">DORA</span>
+                  <span class="panier-chip-niveau">Équipe</span>
+                  <span class="panier-chip-fiab f-fiable"><span class="panier-chip-fiab-pastille"></span>fiable</span>
+                </div>
+              </div>
+              <div class="panier-carte estompee">
+                <span class="panier-carte-nom">Deployment Frequency</span>
+                <button class="panier-retirer">×</button>
+                <div class="panier-carte-pied">
+                  <span class="panier-chip-type t-DORA">DORA</span>
+                  <span class="panier-chip-niveau">Équipe</span>
+                  <span class="panier-chip-fiab f-fiable"><span class="panier-chip-fiab-pastille"></span>fiable</span>
+                </div>
+              </div>
+              <div class="panier-carte estompee">
+                <span class="panier-carte-nom">Taux de conversion MQL → SQL</span>
+                <button class="panier-retirer">×</button>
+                <div class="panier-carte-pied">
+                  <span class="panier-chip-type t-FLUX">FLUX</span>
+                  <span class="panier-chip-niveau">Affaires</span>
+                  <span class="panier-chip-fiab f-precaution"><span class="panier-chip-fiab-pastille"></span>précaution</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panier-colonne a-envisager">
+            <div class="panier-col-head">
+              <div class="panier-col-titre">À envisager <span class="panier-col-compte">3</span></div>
+              <div class="panier-col-aide">Ce que je veux creuser</div>
+            </div>
+            <div class="panier-cartes">
+              <div class="panier-carte estompee">
+                <span class="panier-carte-nom"><mark>Lead</mark> time d'initiative (programme)</span>
+                <button class="panier-retirer">×</button>
+                <div class="panier-carte-pied">
+                  <span class="panier-chip-type t-FLUX">FLUX</span>
+                  <span class="panier-chip-niveau">Programme</span>
+                  <span class="panier-chip-fiab f-precaution"><span class="panier-chip-fiab-pastille"></span>précaution</span>
+                </div>
+              </div>
+              <div class="panier-carte estompee">
+                <span class="panier-carte-nom">Change Failure Rate</span>
+                <button class="panier-retirer">×</button>
+                <div class="panier-carte-pied">
+                  <span class="panier-chip-type t-DORA">DORA</span>
+                  <span class="panier-chip-niveau">Équipe</span>
+                  <span class="panier-chip-fiab f-fiable"><span class="panier-chip-fiab-pastille"></span>fiable</span>
+                </div>
+              </div>
+              <div class="panier-carte estompee">
+                <span class="panier-carte-nom">Marge brute</span>
+                <button class="panier-retirer">×</button>
+                <div class="panier-carte-pied">
+                  <span class="panier-chip-type t-IGO">IGO</span>
+                  <span class="panier-chip-niveau">Entreprise</span>
+                  <span class="panier-chip-fiab f-fiable"><span class="panier-chip-fiab-pastille"></span>fiable</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pictos" style="margin-top: 1rem;">→ L'utilisateur a tapé <code>lead</code> + cliqué sur les chips <b>DORA</b> et <b>Équipe</b>. Une seule carte reste pleine : <i>Lead Time for Changes</i>. Le résultat est trouvé sans avoir à lire les pieds de carte.</div>
+    </div>
+
+  </div>
+
+  <div class="avis">
+    <h3>Compromis à arbitrer</h3>
+    <ul>
+      <li><b>Option A — input seul.</b> Plus simple à apprendre, plus simple à coder, parfait quand le panier reste à 5-15 fiches (lecture des chips suffit pour distinguer). Risque : devient pénible quand le panier monte à 20-30 fiches avec des homonymes (ex : trois <i>Lead Time</i> sur des niveaux différents).</li>
+      <li><b>Option B — input + chips.</b> Plus précis dès qu'il y a des homonymes ou qu'on cherche par axe (« montre-moi mes DORA niveau équipe »). Plus de surface visuelle (deux lignes au-dessus de la grille), plus de logique de peuplement dynamique. Cohérent avec la décision ferme du 22/04 (« recherche globale + 1-2 filtres contextuels optionnels »).</li>
+      <li><b>Compatible évolutif.</b> Coder l'option A maintenant n'empêche pas d'ajouter les chips plus tard — le filtre côté vue est une fonction pure de <code>(panier, requete)</code>. Mais ajouter les chips après coup demande de réviser la signature et le rendu.</li>
+    </ul>
+    <p style="margin-top:0.7rem;"><b>Lecture honnête.</b> En v1 le panier sera petit (5-15 fiches typiquement). L'option A couvre 80 % des besoins. L'option B sera utile au moment où l'usage révèle qu'on cherche souvent <i>par axe</i>, pas seulement <i>par nom</i>.</p>
+  </div>
+
+</div>
+</body>
+</html>
