@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>9.C — Placement des icônes panier dans la carte verticale</title>
+<title>9.C — Placement des icônes panier dans la carte verticale (α / β / γ)</title>
 <style>
   :root {
     --niv-1: #1a237e;
@@ -23,15 +23,16 @@
   }
   * { box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--fond); color: var(--texte); margin: 0; padding: 2rem 1.5rem 4rem; }
-  .preamb { max-width: 1280px; margin: 0 auto 2rem; background: var(--fond-2); border-radius: 12px; box-shadow: var(--ombre); padding: 1.5rem 1.75rem; }
+  .preamb { max-width: 1620px; margin: 0 auto 2rem; background: var(--fond-2); border-radius: 12px; box-shadow: var(--ombre); padding: 1.5rem 1.75rem; }
   .preamb h1 { margin: 0 0 0.5rem; font-size: 1.35rem; color: var(--niv-1); }
   .preamb p { margin: 0.4rem 0; color: var(--texte-2); font-size: 0.92rem; line-height: 1.55; }
   .preamb code { background: #f3f4f8; padding: 0.05rem 0.3rem; border-radius: 3px; font-size: 0.85em; }
-  .colonnes { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .colonnes { max-width: 1620px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; }
+  @media (max-width: 1100px) { .colonnes { grid-template-columns: 1fr; } }
   .option { background: var(--fond-2); border-radius: 12px; box-shadow: var(--ombre); padding: 1.5rem 1.5rem 1.75rem; }
   .option h2 { margin: 0 0 0.4rem; font-size: 1.05rem; color: var(--niv-1); }
   .option h2 .greek { display: inline-block; width: 1.6rem; height: 1.6rem; line-height: 1.6rem; background: var(--niv-1-clair); color: var(--niv-1); border-radius: 50%; text-align: center; font-style: normal; margin-right: 0.4rem; font-size: 0.95rem; }
-  .option .resume { color: var(--texte-2); font-size: 0.88rem; margin: 0 0 1.2rem; line-height: 1.55; }
+  .option .resume { color: var(--texte-2); font-size: 0.85rem; margin: 0 0 1.2rem; line-height: 1.55; }
   .grille-cartes { display: grid; grid-template-columns: 1fr; gap: 1rem; }
   .carte-ind { position: relative; border-radius: 12px; border: 1.5px solid var(--bordure); background: var(--fond-2); cursor: pointer; transition: var(--trans); overflow: hidden; display: flex; flex-direction: column; }
   .carte-ind:hover { box-shadow: var(--ombre-forte); transform: translateY(-2px); }
@@ -49,6 +50,8 @@
   .carte-pied { padding: 0.6rem 1rem; border-top: 1px solid var(--bordure); display: flex; justify-content: flex-end; }
   .btn-detail { font-size: 0.78rem; color: var(--texte-2); background: none; border: none; cursor: pointer; border-radius: 6px; padding: 0.28rem 0.5rem; transition: var(--trans); font-family: inherit; }
   .btn-detail:hover { background: var(--fond); color: var(--texte); }
+
+  /* ─── Boutons icônes panier (forme commune α / β / γ) ─── */
   .panier-icones { display: flex; gap: 0.15rem; }
   .panier-btn { width: 32px; height: 32px; border-radius: 999px; border: none; background: transparent; color: var(--texte-3); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; padding: 0; }
   .panier-btn:hover { background: rgba(96, 125, 139, 0.10); color: var(--texte-2); }
@@ -57,33 +60,52 @@
   .panier-btn.actif-idee { color: var(--ambre-discret-texte); }
   .panier-btn.actif-idee:hover { background: var(--ambre-discret-fond); }
   .panier-btn svg { width: 22px; height: 22px; }
+
+  /* α — pied de carte, justify-between */
   .opt-alpha .carte-pied { justify-content: space-between; align-items: center; }
-  .opt-beta .panier-icones { position: absolute; top: 0.5rem; right: 0.5rem; flex-direction: column; gap: 0.05rem; z-index: 2; }
+
+  /* β — coin haut-droit absolu */
   .opt-beta .carte-en-tete { padding-right: 4.2rem; }
+  .opt-beta .panier-icones { position: absolute; top: 0.5rem; right: 0.5rem; flex-direction: column; gap: 0.05rem; z-index: 2; }
+
+  /* γ — sous le badge fiabilité, horizontal, dans une colonne d'actions à droite */
+  .opt-gamma .carte-en-tete { gap: 0.55rem; }
+  .opt-gamma .carte-titre { flex: 1; min-width: 0; }
+  .opt-gamma .carte-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.4rem;
+    flex-shrink: 0;
+  }
+  .opt-gamma .panier-icones { gap: 0.05rem; }
+  .opt-gamma .panier-btn { width: 28px; height: 28px; }
+  .opt-gamma .panier-btn svg { width: 19px; height: 19px; }
+
   .etat-chip { display: inline-block; margin: 0.5rem 0 0; padding: 0.18rem 0.55rem; border-radius: 12px; font-size: 0.7rem; font-weight: 600; color: var(--texte-2); background: var(--fond); border: 1px solid var(--bordure); }
-  .bilan { max-width: 1280px; margin: 2rem auto 0; background: var(--fond-2); border-radius: 12px; box-shadow: var(--ombre); padding: 1.5rem 1.75rem; }
+  .bilan { max-width: 1620px; margin: 2rem auto 0; background: var(--fond-2); border-radius: 12px; box-shadow: var(--ombre); padding: 1.5rem 1.75rem; }
   .bilan h2 { margin: 0 0 0.7rem; font-size: 1.1rem; color: var(--niv-1); }
-  .bilan table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-  .bilan th, .bilan td { text-align: left; padding: 0.6rem 0.7rem; border-bottom: 1px solid var(--bordure); vertical-align: top; }
+  .bilan table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .bilan th, .bilan td { text-align: left; padding: 0.55rem 0.65rem; border-bottom: 1px solid var(--bordure); vertical-align: top; }
   .bilan th { font-weight: 600; color: var(--niv-1); background: #f8f9fc; }
   .bilan tr:last-child td { border-bottom: none; }
-  .bilan td.crit { color: var(--texte); font-weight: 600; width: 22%; }
+  .bilan td.crit { color: var(--texte); font-weight: 600; width: 20%; }
 </style>
 </head>
 <body>
 
 <div class="preamb">
-  <h1>9.C — Placement des icônes panier dans la carte verticale</h1>
-  <p>Le mockup <code>0cc8a49</code> a tranché la <em>forme</em> des icônes : nues, 22 px de SVG dans un bouton 32×32 transparent, cercle teinté au survol, états actifs en vert / ambre désaturés. Mais ce mockup les a testées dans une <em>fiche horizontale</em> (texte à gauche, icônes en colonne à droite). La primitive <code>htmlCarte</code> de l'outil est <em>verticale</em> : en-tête (icône + chip type + nom + badge fiabilité) → corps (définition + freq + chips cadres) → pied (bouton <em>Voir le detail →</em>).</p>
-  <p>Deux placements candidats côte à côte, identiques en forme, qui ne diffèrent que par <em>où</em> les icônes se posent. Trois cartes par option pour montrer les trois états (vide, en place, à envisager).</p>
+  <h1>9.C — Placement des icônes panier dans la carte verticale (α / β / γ)</h1>
+  <p>Le mockup <code>0cc8a49</code> a tranché la <em>forme</em> des icônes : nues, 22 px de SVG dans un bouton 32×32 transparent (réduit à 28×28 / 19 px en γ pour respecter la mesure de la zone droite), cercle teinté au survol, états actifs en vert / ambre désaturés. Reste le placement dans la carte verticale de la primitive <code>htmlCarte</code>.</p>
+  <p>Trois placements candidats côte à côte. Trois cartes par option pour montrer les trois états (vide, en place, à envisager).</p>
 </div>
 
 <div class="colonnes">
 
   <!-- ════════════════ Option α — Pied de carte ════════════════ -->
   <div class="option opt-alpha">
-    <h2><span class="greek">α</span>Pied de carte, à gauche du bouton détail</h2>
-    <p class="resume">Les deux icônes vivent dans <code>carte-pied</code> qui passe de <code>justify-end</code> à <code>justify-between</code>. Sémantiquement « actions de la carte ». Pas d'overlap, alignement strict avec le bouton existant. Les icônes sont moins visibles d'un coup d'œil — l'utilisateur doit poser le regard sur le pied.</p>
+    <h2><span class="greek">α</span>Pied de carte</h2>
+    <p class="resume">Les deux icônes vivent dans <code>carte-pied</code>, à gauche du bouton détail. Sémantique « actions de la carte ». Pas de pattern nouveau, plus discret au repos.</p>
 
     <div class="grille-cartes">
 
@@ -123,7 +145,7 @@
           <button class="btn-detail">Voir le detail →</button>
         </div>
       </div>
-      <span class="etat-chip">État vide — pas au panier</span>
+      <span class="etat-chip">Vide — pas au panier</span>
 
       <div class="carte-ind prioritaire" style="border-color:#2e7d32">
         <div class="carte-en-tete">
@@ -161,7 +183,7 @@
           <button class="btn-detail">Voir le detail →</button>
         </div>
       </div>
-      <span class="etat-chip">État « en place » — coche active vert désaturé</span>
+      <span class="etat-chip">En place — coche active vert</span>
 
       <div class="carte-ind prioritaire" style="border-color:#2e7d32">
         <div class="carte-en-tete">
@@ -199,15 +221,15 @@
           <button class="btn-detail">Voir le detail →</button>
         </div>
       </div>
-      <span class="etat-chip">État « à envisager » — ampoule active ambre désaturé</span>
+      <span class="etat-chip">À envisager — ampoule active ambre</span>
 
     </div>
   </div>
 
   <!-- ════════════════ Option β — Coin haut-droit absolu ════════════════ -->
   <div class="option opt-beta">
-    <h2><span class="greek">β</span>Coin haut-droit, en surimpression</h2>
-    <p class="resume">Les deux icônes flottent en absolu dans le coin haut-droit, en colonne. Pattern reconnu (favori, like, pin sur Notion, GitHub, Gmail). Visibles d'un coup d'œil. L'en-tête gagne un padding-right pour ne pas chevaucher le badge fiabilité.</p>
+    <h2><span class="greek">β</span>Coin haut-droit absolu</h2>
+    <p class="resume">Les deux icônes flottent en absolu dans le coin haut-droit, en colonne. Pattern reconnu (favori, like, pin). Visibles d'un coup d'œil. L'en-tête gagne un padding-right.</p>
 
     <div class="grille-cartes">
 
@@ -247,7 +269,7 @@
           <button class="btn-detail">Voir le detail →</button>
         </div>
       </div>
-      <span class="etat-chip">État vide — pas au panier</span>
+      <span class="etat-chip">Vide — pas au panier</span>
 
       <div class="carte-ind prioritaire" style="border-color:#2e7d32">
         <div class="panier-icones">
@@ -285,7 +307,7 @@
           <button class="btn-detail">Voir le detail →</button>
         </div>
       </div>
-      <span class="etat-chip">État « en place » — coche active vert désaturé</span>
+      <span class="etat-chip">En place — coche active vert</span>
 
       <div class="carte-ind prioritaire" style="border-color:#2e7d32">
         <div class="panier-icones">
@@ -323,7 +345,131 @@
           <button class="btn-detail">Voir le detail →</button>
         </div>
       </div>
-      <span class="etat-chip">État « à envisager » — ampoule active ambre désaturé</span>
+      <span class="etat-chip">À envisager — ampoule active ambre</span>
+
+    </div>
+  </div>
+
+  <!-- ════════════════ Option γ — Sous le badge fiabilité, horizontal ════════════════ -->
+  <div class="option opt-gamma">
+    <h2><span class="greek">γ</span>Sous le badge fiabilité</h2>
+    <p class="resume">L'en-tête passe en <em>flex 3 colonnes</em> : icône 36 px / texte (chip type + nom) / colonne d'actions à droite. Dans cette colonne, badge fiabilité en haut, deux icônes panier en horizontal juste en dessous. Les boutons sont réduits à 28×28 (SVG 19 px) pour respecter la mesure de la zone droite.</p>
+
+    <div class="grille-cartes">
+
+      <div class="carte-ind prioritaire" style="border-color:#2e7d32">
+        <div class="carte-en-tete">
+          <div class="carte-icone" style="background:#e6510018;color:#e65100">⚡</div>
+          <div class="carte-titre">
+            <div class="carte-type" style="color:#e65100">FLUX · Flux & Throughput</div>
+            <div class="carte-nom">Lead time de livraison</div>
+          </div>
+          <div class="carte-actions">
+            <span class="badge-fiabilite">✅ Fiable</span>
+            <div class="panier-icones">
+              <button class="panier-btn" aria-label="Marquer en place" title="En place">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </button>
+              <button class="panier-btn" aria-label="Marquer à envisager" title="À envisager">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 6a5 5 0 0 0-3 8.9c.5.4.7 1 .7 1.6v0.5h4.6V16.5c0-.6.2-1.2.7-1.6A5 5 0 0 0 12 6z"/>
+                  <line x1="9.5" y1="19" x2="14.5" y2="19"/><line x1="10.5" y1="21.5" x2="13.5" y2="21.5"/>
+                  <line x1="12" y1="1.5" x2="12" y2="3.5"/><line x1="3.5" y1="10.5" x2="5.5" y2="10.5"/>
+                  <line x1="18.5" y1="10.5" x2="20.5" y2="10.5"/><line x1="5.5" y1="4" x2="6.9" y2="5.4"/>
+                  <line x1="18.5" y1="4" x2="17.1" y2="5.4"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="carte-corps">
+          <div class="carte-def">Délai entre l'engagement à livrer et la mise en production. Mesure la fluidité du flux et la capacité de l'équipe à tenir un rythme prévisible.</div>
+          <div class="carte-meta-bas">
+            <span class="carte-freq">🕐 Hebdomadaire</span>
+            <span class="badge-maturite">🌱 Débutant</span>
+          </div>
+        </div>
+        <div class="carte-pied">
+          <button class="btn-detail">Voir le detail →</button>
+        </div>
+      </div>
+      <span class="etat-chip">Vide — pas au panier</span>
+
+      <div class="carte-ind prioritaire" style="border-color:#2e7d32">
+        <div class="carte-en-tete">
+          <div class="carte-icone" style="background:#6a1b9a18;color:#6a1b9a">📊</div>
+          <div class="carte-titre">
+            <div class="carte-type" style="color:#6a1b9a">QUALITÉ · Qualité opérationnelle</div>
+            <div class="carte-nom">Taux de défauts par release</div>
+          </div>
+          <div class="carte-actions">
+            <span class="badge-fiabilite">✅ Fiable</span>
+            <div class="panier-icones">
+              <button class="panier-btn actif-coche" aria-label="Retirer du panier" title="Retirer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </button>
+              <button class="panier-btn" aria-label="Basculer en à envisager" title="Basculer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 6a5 5 0 0 0-3 8.9c.5.4.7 1 .7 1.6v0.5h4.6V16.5c0-.6.2-1.2.7-1.6A5 5 0 0 0 12 6z"/>
+                  <line x1="9.5" y1="19" x2="14.5" y2="19"/><line x1="10.5" y1="21.5" x2="13.5" y2="21.5"/>
+                  <line x1="12" y1="1.5" x2="12" y2="3.5"/><line x1="3.5" y1="10.5" x2="5.5" y2="10.5"/>
+                  <line x1="18.5" y1="10.5" x2="20.5" y2="10.5"/><line x1="5.5" y1="4" x2="6.9" y2="5.4"/>
+                  <line x1="18.5" y1="4" x2="17.1" y2="5.4"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="carte-corps">
+          <div class="carte-def">Nombre de défauts détectés post-livraison rapporté au volume mis en production. Indicateur de qualité de bout en bout.</div>
+          <div class="carte-meta-bas">
+            <span class="carte-freq">🕐 Par release</span>
+            <span class="badge-maturite">🌱 Débutant</span>
+          </div>
+        </div>
+        <div class="carte-pied">
+          <button class="btn-detail">Voir le detail →</button>
+        </div>
+      </div>
+      <span class="etat-chip">En place — coche active vert</span>
+
+      <div class="carte-ind prioritaire" style="border-color:#2e7d32">
+        <div class="carte-en-tete">
+          <div class="carte-icone" style="background:#c2185b18;color:#c2185b">👥</div>
+          <div class="carte-titre">
+            <div class="carte-type" style="color:#c2185b">HUMAIN · Climat & engagement</div>
+            <div class="carte-nom">eNPS — engagement de l'équipe</div>
+          </div>
+          <div class="carte-actions">
+            <span class="badge-fiabilite">✅ Fiable</span>
+            <div class="panier-icones">
+              <button class="panier-btn" aria-label="Basculer en place" title="Basculer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </button>
+              <button class="panier-btn actif-idee" aria-label="Retirer du panier" title="Retirer">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 6a5 5 0 0 0-3 8.9c.5.4.7 1 .7 1.6v0.5h4.6V16.5c0-.6.2-1.2.7-1.6A5 5 0 0 0 12 6z"/>
+                  <line x1="9.5" y1="19" x2="14.5" y2="19"/><line x1="10.5" y1="21.5" x2="13.5" y2="21.5"/>
+                  <line x1="12" y1="1.5" x2="12" y2="3.5"/><line x1="3.5" y1="10.5" x2="5.5" y2="10.5"/>
+                  <line x1="18.5" y1="10.5" x2="20.5" y2="10.5"/><line x1="5.5" y1="4" x2="6.9" y2="5.4"/>
+                  <line x1="18.5" y1="4" x2="17.1" y2="5.4"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="carte-corps">
+          <div class="carte-def">Score de recommandation interne. Mesure indirecte du moral et de la propension de l'équipe à recommander son employeur.</div>
+          <div class="carte-meta-bas">
+            <span class="carte-freq">🕐 Trimestriel</span>
+            <span class="badge-maturite">🌱 Débutant</span>
+          </div>
+        </div>
+        <div class="carte-pied">
+          <button class="btn-detail">Voir le detail →</button>
+        </div>
+      </div>
+      <span class="etat-chip">À envisager — ampoule active ambre</span>
 
     </div>
   </div>
@@ -334,43 +480,55 @@
   <h2>Bilan comparatif</h2>
   <table>
     <thead>
-      <tr><th>Critère</th><th>α — Pied de carte</th><th>β — Coin haut-droit</th></tr>
+      <tr><th>Critère</th><th>α — Pied de carte</th><th>β — Coin haut-droit</th><th>γ — Sous le badge</th></tr>
     </thead>
     <tbody>
       <tr>
         <td class="crit">Visibilité au repos</td>
-        <td>Plus discrète. Le regard arrive sur l'en-tête puis descend ; les icônes attendent en bas.</td>
-        <td>Immédiate. Pattern reconnu (favori / like / pin) — le coin haut-droit est convention pour « action sur cet objet ».</td>
+        <td>Discrète. Le regard arrive sur l'en-tête puis descend.</td>
+        <td>Immédiate. Pattern reconnu (favori / like / pin).</td>
+        <td>Bonne. Les icônes vivent dans la zone du badge fiabilité — déjà inspectée d'office par l'œil.</td>
       </tr>
       <tr>
-        <td class="crit">Gestion du clic</td>
-        <td>Pas d'overlap avec l'<code>onclick</code> de la carte (qui ouvre le tiroir). <code>event.stopPropagation</code> classique.</td>
-        <td>Idem mais zone absolue plus exposée à la collision avec le badge fiabilité — le padding-right de l'en-tête est obligatoire.</td>
+        <td class="crit">Cohérence sémantique</td>
+        <td>Naturelle : « actions de la carte » groupées en pied.</td>
+        <td>Convention nouvelle dans l'outil (premier élément absolu sur les cartes).</td>
+        <td>Le badge fiabilité = méta de la fiche ; les icônes = action de l'utilisateur sur la fiche. Cohabitation à risque conceptuel — méta vs action sur le même axe vertical.</td>
       </tr>
       <tr>
         <td class="crit">Sémantique HTML</td>
-        <td>Naturelle : « actions de la carte » groupées en pied. <code>carte-pied</code> existe déjà.</td>
-        <td>Plus complexe : <code>position: absolute</code> impose <code>position: relative</code> sur la carte (déjà OK), z-index, breakpoints à surveiller sur écran &lt; 600 px.</td>
+        <td>Aucune restructuration : <code>carte-pied</code> existe déjà.</td>
+        <td><code>position: absolute</code>, padding-right de l'en-tête, breakpoints à surveiller.</td>
+        <td>Refonte du flex de l'en-tête en 3 colonnes (icône / texte / actions). Suppression du flex justify-between actuel chip-type/badge.</td>
       </tr>
       <tr>
         <td class="crit">Densité visuelle</td>
-        <td>Concentre tout en pied (icônes panier + bouton détail). Peut paraître chargé sur mobile si la carte rétrécit.</td>
-        <td>Aère le pied (un seul bouton). L'en-tête est un poil plus chargé.</td>
+        <td>Concentre tout en pied (icônes + bouton détail). Possible saturation sur mobile.</td>
+        <td>Aère le pied. L'en-tête est un poil plus chargé.</td>
+        <td>Concentre badge + icônes dans la même colonne droite. Si nom long, la zone droite reste compacte.</td>
       </tr>
       <tr>
-        <td class="crit">Cohérence avec le rendu existant</td>
-        <td>S'inscrit dans la grammaire actuelle (chips, badges, bouton détail) — aucun pattern nouveau.</td>
-        <td>Introduit une convention nouvelle dans l'outil (pas d'élément absolu sur les cartes aujourd'hui).</td>
+        <td class="crit">Hauteur de carte</td>
+        <td>Pas d'impact (les icônes remplacent l'espace vide gauche du pied).</td>
+        <td>Pas d'impact (icônes en absolu, hors flow).</td>
+        <td>Hauteur de la zone droite augmentée d'environ 32 px. Léger gain de hauteur globale de l'en-tête si le nom tient sur 1 ligne ; nul si nom sur 2 lignes.</td>
       </tr>
       <tr>
         <td class="crit">Mobile / cartes étroites</td>
-        <td>Le pied passe à pleine largeur, icônes à gauche, bouton à droite. Espacement préservé.</td>
-        <td>Coin haut-droit absolu reste indépendant de la largeur — tient bien sur mobile.</td>
+        <td>Le pied passe à pleine largeur, espacement préservé.</td>
+        <td>Coin haut-droit absolu indépendant de la largeur — tient bien sur mobile.</td>
+        <td>3 colonnes flex peuvent serrer le texte du chip type. À tester sur breakpoint < 600 px ; éventuellement passer en 2 colonnes sur mobile (icône / texte+actions empilés).</td>
+      </tr>
+      <tr>
+        <td class="crit">Concurrence avec autres signaux</td>
+        <td>Aucune (le pied est libre).</td>
+        <td>Modérée : le coin haut-droit est aussi le territoire visuel du badge fiabilité.</td>
+        <td>Concurrence directe : badge fiabilité ⤴ et icônes panier ⤵ sur le même axe vertical à droite. Lisibilité dépend du contraste de couleurs (badge coloré plein, icônes désaturées).</td>
       </tr>
     </tbody>
   </table>
 
-  <p style="margin-top:1rem;color:var(--texte-2);font-size:0.9rem;line-height:1.55">Mon avis : <strong>α</strong> est plus orthodoxe pour cet outil. Il s'inscrit dans la grammaire existante (un pied de carte = actions de la carte), il évite d'introduire la première convention de superposition absolue, et il garde le coin haut-droit propre pour le badge fiabilité qui y est déjà visuellement ancré (en-tête). <strong>β</strong> est plus voyant — c'est sa force et son risque. À toi de trancher selon la posture <em>Gemba</em> que tu vises : icônes en pied = on les trouve quand on s'occupe de la carte ; icônes en haut = on est invité à agir tout de suite.</p>
+  <p style="margin-top:1rem;color:var(--texte-2);font-size:0.9rem;line-height:1.55">Trois lectures possibles. <strong>α</strong> est l'option <em>orthodoxe</em> : sémantique « actions de carte » en pied, pas de pattern nouveau. <strong>β</strong> est l'option <em>visible</em> : convention reconnue, mais introduit la première superposition absolue. <strong>γ</strong> est l'option <em>compacte</em> : badge et icônes regroupés à droite, dans la même zone d'inspection visuelle. À toi d'arbitrer selon la posture : icônes <em>discrètes</em> (α), <em>imposantes</em> (β), ou <em>indexées sur le badge</em> (γ).</p>
 </div>
 
 </body>
