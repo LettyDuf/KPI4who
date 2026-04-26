@@ -6075,14 +6075,20 @@ CM.DiagnosticProbleme = (function() {
   }
 
   /* Indicateurs qui éclairent le problème mais relèvent d'un autre niveau.
-     Sert à montrer la "zone de délégation" — rappel à la posture. */
+     Sert à montrer la "zone de délégation" — rappel à la posture.
+     Traducteur orthodoxe (chantier 14 §3.1) : tout l'effort est dans la
+     formulation du filtre — niveau ∈ complément du niveau courant (union OR
+     intra-clause § 10.3) ET tag = problème courant (intersection AND
+     inter-clauses). Pas de post-filtre côté traducteur. */
   // Exemple : aDeleguerPour({niveau:'strategique', probleme:'valeur'}) → [ind, ind, ...]
   function aDeleguerPour(ctx) {
     if (!ctx || !ctx.niveau || !ctx.probleme) return [];
-    var tous = CM.Referentiel.tous();
-    return tous.filter(function(ind) {
-      var tags = CM.IndicateursMeta.tagsDe(ind.id);
-      return tags.indexOf(ctx.probleme) !== -1 && ind.niveau !== ctx.niveau;
+    var autresNiveaux = NIVEAUX
+      .map(function(n) { return n.id; })
+      .filter(function(id) { return id !== ctx.niveau; });
+    return CM.RequeteMetriques.executer({
+      niveau: autresNiveaux,
+      tags:   [ctx.probleme]
     });
   }
 
