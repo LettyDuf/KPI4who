@@ -20,7 +20,7 @@ Dernière mise à jour : **26 avril 2026 — chantier 9.C livré** (voie rapide 
   - **9.G garde-fou `beforeunload`** : confirmation si le panier n'est pas vide. Non démarré.
   - **9.E/F vue imprimable + export PDF** : one-pager A4 minimaliste arbitré sur `preview-panier-impression.html` (commit `494a4b9`). Non démarré.
 - **Autres chantiers ouverts** : Chantier 10 (gelé à `5655b03`) peut reprendre, item 6.9 (matrice 4×7 niveau × tags), chantier 18 (audit catalogue rôles), chantiers 12/13/15/16/17 en sommeil.
-- **Tag posé** : **`mvp-9c-voie-rapide`** sur `fdd8cba` (HEAD de fin de séance). Chaîne complète : `mvp-chantier-14-livre` = `6ea868b` (matin), **`mvp-9c-voie-rapide`** = `fdd8cba` (fin de séance).
+- **Tag posé** : **`mvp-9c-voie-rapide`** sur `45bdc62` (HEAD de fin de séance, commit doc qui rafraîchit le bloc État courant). Chaîne complète : `mvp-chantier-14-livre` = `6ea868b` (matin), **`mvp-9c-voie-rapide`** = `45bdc62` (fin de séance).
 - **Blocages / questions ouvertes** : aucun. Test interactif Lætitia validé sur les 4 commits 9.C (icônes opérationnelles, lisibilité actif satisfaisante, vue d'entrée corrigée).
 
 ---
