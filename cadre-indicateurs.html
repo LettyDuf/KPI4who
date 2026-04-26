@@ -6474,8 +6474,8 @@ CM.Composants = (function() {
     var statutCourant = CM.Panier.statut(ind.id);
     var classCoche = (statutCourant === 'en-place')    ? ' actif-coche' : '';
     var classIdee  = (statutCourant === 'a-envisager') ? ' actif-idee'  : '';
-    var labelCoche = (statutCourant === 'en-place')    ? 'Retirer du panier' : 'Marquer en place';
-    var labelIdee  = (statutCourant === 'a-envisager') ? 'Retirer du panier' : 'Marquer à envisager';
+    var labelCoche = (statutCourant === 'en-place')    ? 'Retirer du tableau de bord' : 'Marquer en place';
+    var labelIdee  = (statutCourant === 'a-envisager') ? 'Retirer du tableau de bord' : 'Marquer à envisager';
 
     var SVG_COCHE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
     var SVG_AMPOULE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'
@@ -8524,10 +8524,10 @@ CM.App = (function() {
           + '<span class="panier-recherche-icone" aria-hidden="true">🔍</span>'
           + '<input type="text" id="panier-recherche-input"'
             + ' class="panier-recherche-input"'
-            + ' placeholder="Rechercher dans mon panier…"'
+            + ' placeholder="Rechercher dans mon tableau de bord…"'
             + ' value="' + _echapperHtml(texte) + '"'
             + ' oninput="CM.App.appliquerRechercheTexte(this.value)"'
-            + ' aria-label="Rechercher dans le panier" />'
+            + ' aria-label="Rechercher dans le tableau de bord" />'
           + (afficheEffacer
               ? '<button type="button" class="panier-recherche-effacer"'
                 + ' onclick="CM.App.effacerRechercheTexte()"'
@@ -8598,18 +8598,18 @@ CM.App = (function() {
      l'abonnement pub/sub posé dans init(). */
   function _htmlPanierHeader(total) {
     var legende = (total === 0)
-      ? 'panier vide'
+      ? 'vide'
       : total + ' fiche' + (total > 1 ? 's' : '');
     var disabledAttr = (total === 0) ? ' disabled' : '';
     return ''
       + '<div class="panier-tdb-header">'
         + '<div class="panier-tdb-titre">'
-          + 'Mon panier d\'indicateurs '
+          + 'Mon tableau de bord '
           + '<span style="font-weight:400;color:var(--texte-secondaire)">· ' + legende + '</span>'
         + '</div>'
         + '<button type="button" class="panier-tdb-reinit"' + disabledAttr
           + ' onclick="CM.App.reinitialiserPanier()"'
-          + ' aria-label="Réinitialiser le panier">'
+          + ' aria-label="Réinitialiser le tableau de bord">'
           + '↻ Réinitialiser'
         + '</button>'
       + '</div>';
@@ -8707,7 +8707,7 @@ CM.App = (function() {
       + '<div class="' + classeCarte + '">'
         + '<button type="button" class="panier-retirer" '
           + 'onclick="CM.App.retirerDuPanier(\'' + ligne.ficheId + '\')" '
-          + 'aria-label="Retirer du panier" title="Retirer">'
+          + 'aria-label="Retirer du tableau de bord" title="Retirer">'
           + '×'
         + '</button>'
         + nomHtml
@@ -8759,11 +8759,11 @@ CM.App = (function() {
     return ''
       + '<div class="panier-tdb-vide-invite">'
         + '<span class="panier-tdb-vide-icone" aria-hidden="true">🎯</span>'
-        + '<div class="panier-tdb-vide-titre">Votre panier est vide.</div>'
+        + '<div class="panier-tdb-vide-titre">Votre tableau de bord est vide.</div>'
         + '<p class="panier-tdb-vide-texte">'
           + 'Cet onglet est le miroir de votre scorecard — les métriques '
           + '<em>en place</em> et celles que vous envisagez. Parcourez '
-          + 'les indicateurs pour commencer à remplir votre panier.'
+          + 'les indicateurs pour commencer à remplir votre tableau de bord.'
         + '</p>'
         + '<button type="button" class="panier-tdb-vide-cta" '
           + 'onclick="CM.App.changerVue(\'questionnaire\', this)">'
@@ -8821,7 +8821,7 @@ CM.App = (function() {
           btn.classList.add(statutBtn === 'en-place' ? 'actif-coche' : 'actif-idee');
         }
         var label = actif
-          ? 'Retirer du panier'
+          ? 'Retirer du tableau de bord'
           : (statutBtn === 'en-place' ? 'Marquer en place' : 'Marquer à envisager');
         btn.setAttribute('aria-label', label);
         btn.setAttribute('title', label);
@@ -8861,7 +8861,7 @@ CM.App = (function() {
     var total = CM.Panier.taille();
     if (total === 0) return;
     var pluriel = (total > 1);
-    var message = 'Vider entièrement votre panier ?\n\n'
+    var message = 'Vider entièrement votre tableau de bord ?\n\n'
       + total + ' fiche' + (pluriel ? 's' : '')
       + ' (en place + à envisager) '
       + 'ser' + (pluriel ? 'ont retirées' : 'a retirée')
