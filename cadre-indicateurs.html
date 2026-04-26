@@ -3378,6 +3378,166 @@ CM.Panier = (function() {
 /* ══ CM.Panier — END ══ */
 </script>
 
+<!-- ══ MODULE : CM.PanierRecherche — Filtrage pur de la vue panier (chantier 9.B.4) ══ -->
+<script>
+/* ══ CM.PanierRecherche — BEGIN (zone extractible par un futur outils/construire-tests-panier-recherche.js) ══
+
+   Filtrage pur, sans DOM, sans dépendance à CM.Panier. La recherche est
+   un comportement de VUE — ce module reçoit en entrée des données déjà
+   matérialisées (lignes du panier + référentiel) et une requête, et
+   retourne une description de l'état filtré que la vue se contente de
+   peindre.
+
+   La séparation est volontaire :
+   - CM.Panier reste un service domaine du panier (port hexagonal).
+   - CM.PanierRecherche est un service applicatif côté vue, pur, testable.
+   - La vue (_rendreTableauDeBord) compose les deux et s'occupe du DOM.
+
+   Contrat d'API.
+   ─────────────
+   filtrer({ lignes, referentiel, requete }) → {
+     resultats:        [{ ligne, fiche, correspond }],   // ordre préservé
+     typesPresents:    Array<string>,                     // pour peupler les chips Type
+     niveauxPresents:  Array<string>,                     // pour peupler les chips Niveau
+     nbCorrespondants: number,                            // pour le compteur « X sur N »
+     total:            number                             // total des lignes en entrée
+   }
+
+   Sémantique :
+   - Une ligne « correspond » si elle satisfait CHAQUE clause active de la
+     requête (ET logique). Une clause vide est neutre — ne filtre pas.
+   - Texte : sous-chaîne dans fiche.nom, insensible à la casse et aux accents.
+   - Types/Niveaux : appartenance à un ensemble de codes attendus.
+   - Une ligne dont la fiche est introuvable (id zombie) ne correspond
+     que si la requête est entièrement vide.
+*/
+CM.PanierRecherche = (function() {
+  'use strict';
+
+  /* Normalisation de chaîne — minuscule + suppression des diacritiques.
+     Permet à la recherche de tolérer "deploiement" pour "déploiement",
+     "EQUIPE" pour "Équipe", etc. */
+  function _normaliser(s) {
+    if (s === null || s === undefined) return '';
+    return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  /* Test d'appartenance pour Set ou Array. Tolère l'absence de Set
+     côté appelant — on accepte indifféremment les deux conteneurs. */
+  function _contient(conteneur, valeur) {
+    if (!conteneur) return false;
+    if (typeof conteneur.has === 'function') return conteneur.has(valeur);
+    if (Object.prototype.toString.call(conteneur) === '[object Array]') {
+      return conteneur.indexOf(valeur) !== -1;
+    }
+    return false;
+  }
+
+  function _taille(conteneur) {
+    if (!conteneur) return 0;
+    if (typeof conteneur.size === 'number') return conteneur.size;
+    if (typeof conteneur.length === 'number') return conteneur.length;
+    return 0;
+  }
+
+  /* Évalue si une fiche correspond à la requête.
+     Retourne true si la fiche existe ET satisfait toutes les clauses
+     actives. Retourne true par défaut quand la requête est vide. */
+  function _correspond(fiche, requeteNormalisee) {
+    if (!fiche) {
+      return requeteNormalisee.estVide;
+    }
+    if (requeteNormalisee.texte !== '') {
+      var nomNormalise = _normaliser(fiche.nom || '');
+      if (nomNormalise.indexOf(requeteNormalisee.texte) === -1) return false;
+    }
+    if (_taille(requeteNormalisee.types) > 0) {
+      if (!_contient(requeteNormalisee.types, fiche.type)) return false;
+    }
+    if (_taille(requeteNormalisee.niveaux) > 0) {
+      if (!_contient(requeteNormalisee.niveaux, fiche.niveau)) return false;
+    }
+    return true;
+  }
+
+  /* Normalise la requête une seule fois, en amont du parcours des lignes.
+     Évite de re-normaliser le texte à chaque ligne. */
+  function _normaliserRequete(requete) {
+    var r = requete || {};
+    var texte = _normaliser(r.texte || '');
+    var types = r.types || null;
+    var niveaux = r.niveaux || null;
+    return {
+      texte: texte,
+      types: types,
+      niveaux: niveaux,
+      estVide: (texte === '' && _taille(types) === 0 && _taille(niveaux) === 0)
+    };
+  }
+
+  /* Point d'entrée principal — filtrage pur.
+     Préserve l'ordre des lignes en entrée. */
+  function filtrer(args) {
+    var lignes = (args && args.lignes) || [];
+    var referentiel = (args && args.referentiel) || null;
+    var rq = _normaliserRequete(args && args.requete);
+
+    var resultats = [];
+    var typesPresentsSet = {};
+    var niveauxPresentsSet = {};
+    var nbCorrespondants = 0;
+
+    for (var i = 0; i < lignes.length; i++) {
+      var ligne = lignes[i];
+      var fiche = (referentiel && typeof referentiel.chercher === 'function')
+        ? referentiel.chercher(ligne.ficheId)
+        : null;
+
+      if (fiche) {
+        if (fiche.type)   typesPresentsSet[fiche.type] = true;
+        if (fiche.niveau) niveauxPresentsSet[fiche.niveau] = true;
+      }
+
+      var correspond = _correspond(fiche, rq);
+      if (correspond) nbCorrespondants++;
+
+      resultats.push({
+        ligne: ligne,
+        fiche: fiche,
+        correspond: correspond
+      });
+    }
+
+    var typesPresents = [];
+    for (var t in typesPresentsSet) {
+      if (Object.prototype.hasOwnProperty.call(typesPresentsSet, t)) typesPresents.push(t);
+    }
+    var niveauxPresents = [];
+    for (var n in niveauxPresentsSet) {
+      if (Object.prototype.hasOwnProperty.call(niveauxPresentsSet, n)) niveauxPresents.push(n);
+    }
+
+    return {
+      resultats:        resultats,
+      typesPresents:    typesPresents,
+      niveauxPresents:  niveauxPresents,
+      nbCorrespondants: nbCorrespondants,
+      total:            lignes.length
+    };
+  }
+
+  return {
+    filtrer:    filtrer,
+    /* Exposés pour permettre une réutilisation cohérente côté vue
+       (mise en évidence <mark>). Marqués _ pour signaler "pas une API
+       officielle" — la vue peut s'appuyer dessus sans que ça compte
+       comme un contrat client. */
+    _normaliser: _normaliser
+  };
+})();
+/* ══ CM.PanierRecherche — END ══ */
+</script>
+
 <!-- ══ MODULE : CM.Referentiel — Stockage et requête des indicateurs ══ -->
 <script>
 CM.Referentiel = (function() {
