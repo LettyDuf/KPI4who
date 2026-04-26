@@ -7670,6 +7670,17 @@ CM.VuePorteNiveau = (function() {
     'entreprise':   'strategique'
   };
 
+  /* Score numérique pour ordonner les indicateurs par qualité de mesure :
+     fiable (3) > précaution (2) > risque (1) > absent (0). Iso le tri
+     local appliqué dans CM.DiagnosticProbleme et CM.DiagnosticCadre après
+     leur migration vers CM.RequeteMetriques (chantier 14, c.1 et c.2).
+     Doctrine §10.3 du doc compagnon : « les vues qui souhaitent un autre
+     tri trient localement après réception ». */
+  var _RANG_FIABILITE = { 'fiable': 3, 'precaution': 2, 'risque': 1 };
+  function _rangFiabilite(ind) {
+    return _RANG_FIABILITE[ind && ind.fiabilite] || 0;
+  }
+
   function _etapeProbleme(roleId) {
     var r = roleId ? CM.Roles.parId(roleId) : null;
     if (!r) return '<div class="message-vide">Rôle inconnu.</div>';
@@ -7848,25 +7859,23 @@ CM.VuePorteNiveau = (function() {
     var canonDiag = ROLE_NIVEAU_VERS_DIAG[r.niveau];
     if (!canonDiag) return '<div class="message-vide">Niveau dérivé inconnu.</div>';
 
-    /* Intersection par id — les deux listes sont déjà filtrées par niveau
-       (DiagnosticProbleme par ctx.niveau, DiagnosticCadre par ctx.niveau).
-       L'ordre de sortie suit celui de recoProbleme (fiabilité décroissante),
-       qui est le même tri que la porte cadre — pas de divergence d'ordre
-       entre portes pour les indicateurs communs. */
-    var recoProbleme = CM.DiagnosticProbleme.recommander({
-      niveau:   canonDiag,
-      probleme: problemeId
+    /* Doctrine traducteur orthodoxe (chantier 14, héritée de c.1 et c.2) :
+       la porte formule un filtre unique et délègue à
+       CM.RequeteMetriques.executer. Trois axes simultanés
+       (niveau × tags × cadres) — composition AND inter-clauses native du
+       moteur. Plus aucun calcul d'intersection local. Tri par fiabilité
+       décroissante appliqué localement (cf. §10.3 : « les vues qui
+       souhaitent un autre tri trient localement après réception »), iso
+       l'ordre observé pré-bascule (recoProbleme triait par fiabilité,
+       l'intersection préservait cet ordre). */
+    var recos = CM.RequeteMetriques.executer({
+      niveau: [canonDiag],
+      tags:   [problemeId],
+      cadres: [cadreId]
     });
-    var recoCadre = CM.DiagnosticCadre.recommander({
-      cadre:  cadreId,
-      niveau: canonDiag
+    recos.sort(function(a, b) {
+      return _rangFiabilite(b) - _rangFiabilite(a);
     });
-    var idsCadre = {};
-    for (var k = 0; k < recoCadre.length; k++) idsCadre[recoCadre[k].id] = true;
-    var recos = [];
-    for (var j = 0; j < recoProbleme.length; j++) {
-      if (idsCadre[recoProbleme[j].id]) recos.push(recoProbleme[j]);
-    }
 
     var libSurface = CM.Roles.libelleDeSurface(r.niveau);
 
