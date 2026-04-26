@@ -5932,7 +5932,7 @@ CM.Domaine = (function() {
      - Extensibilité : le nœud opérationnel accepte un domaine optionnel
        (contexte.domaine). Aujourd'hui null ; demain 'dev', 'devops', etc.
      - Open/closed : ajouter un niveau ou un problème = ajouter une entrée dans
-       NIVEAUX / MATRICE_PERTINENCE / DELEGATION. Aucun code à modifier ailleurs.
+       NIVEAUX / MATRICE_PERTINENCE. Aucun code à modifier ailleurs.
      - Zéro DOM, zéro état, 100% testable. -->
 <script>
 CM.DiagnosticProbleme = (function() {
@@ -6011,16 +6011,6 @@ CM.DiagnosticProbleme = (function() {
     operationnel: ['delais', 'qualite', 'flux', 'humain', 'risque']
   };
 
-  /* ─── Carte de délégation ────────────────────────────────────────
-     Quand un problème n'est pas légitime à mon niveau, vers qui déléguer ?
-     Utilisé à titre pédagogique si l'utilisateur force un choix non légitime
-     (aujourd'hui impossible via l'UI, mais reste exposé pour l'extensibilité). */
-  var DELEGATION = {
-    strategique:  { delais:'programme', qualite:'programme', flux:'programme' },
-    tactique:     { qualite:'programme', flux:'programme' },
-    programme:    { risque:'operationnel' },
-    operationnel: { valeur:'programme', alignement:'tactique' }
-  };
 
   /* ─── API publique ─────────────────────────────────────────────── */
 
@@ -6092,14 +6082,6 @@ CM.DiagnosticProbleme = (function() {
     });
   }
 
-  /* Niveau de destination suggéré pour un problème non légitime au niveau courant.
-     Renvoie null si le couple est déjà légitime (pas de délégation à proposer). */
-  // Exemple : delegationPour('strategique', 'flux') → 'programme'
-  function delegationPour(niveauId, problemeId) {
-    var carte = DELEGATION[niveauId];
-    return carte && carte[problemeId] ? carte[problemeId] : null;
-  }
-
   /* ─── Internes ─────────────────────────────────────────────────── */
   /* Score numérique pour ordonner les indicateurs par qualité de mesure.
      Reflète la hiérarchie pédagogique : on présente d'abord ce qui est fiable,
@@ -6117,8 +6099,7 @@ CM.DiagnosticProbleme = (function() {
     problemesPourNiveau: problemesPourNiveau,
     problemeInfo:        problemeInfo,
     recommander:         recommander,
-    aDeleguerPour:       aDeleguerPour,
-    delegationPour:      delegationPour
+    aDeleguerPour:       aDeleguerPour
   };
 })();
 </script>
