@@ -9513,7 +9513,14 @@ CM.App = (function() {
      || resultat.action === 'absent'
      || resultat.action === 'modifie-note') return;
 
-    var ficheCourante = CM.Hash.lireFicheId();
+    /* Source de vérité = DOM du tiroir, pas CM.Hash. Le hash peut être
+       désynchronisé selon le chemin d'ouverture (vue TDB, vue Choisir,
+       deep-link, etc.) ; le DOM, lui, reflète exactement ce que voit
+       l'utilisateur. Si #voie-lente-tiroir n'existe pas, le tiroir est
+       fermé ou rendu sans voie lente — no-op. */
+    var conteneur = document.getElementById('voie-lente-tiroir');
+    if (!conteneur) return;
+    var ficheCourante = conteneur.getAttribute('data-fiche-id');
     if (!ficheCourante) return;
 
     if (resultat.action === 'reinitialise') {
