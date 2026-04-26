@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>9.D — Voie lente d'ajout au panier dans le tiroir de fiche</title>
+<style>
+  :root {
+    --niv-1: #1a237e;
+    --niv-1-clair: #e8eaf6;
+    --accent: #e65100;
+    --bordure: #e0e4eb;
+    --carte-bord: #e0e4eb;
+    --carte-fond-2: #ffffff;
+    --fond: #f5f6fa;
+    --fond-2: #ffffff;
+    --texte: #1a1a2e;
+    --texte-primaire: #1c2033;
+    --texte-secondaire: #6b7280;
+    --texte-tertiaire: #9ca3af;
+    --texte-2: #607d8b;
+
+    --ambre-doux-debut: #fff8e7;
+    --ambre-doux-fin:   #fffaf0;
+    --ambre-bord:       #f3e3b8;
+    --ambre-fond:       #fffaf0;
+    --ambre-profond:    #b7791f;
+    --ambre-texte:      #6b4a00;
+
+    --vert-fiab:        #2e7d32;
+    --vert-fiab-fond:   rgba(46, 125, 50, 0.08);
+    --vert-fiab-fond-2: rgba(46, 125, 50, 0.16);
+    --ambre-actif-fond: rgba(183, 121, 31, 0.08);
+    --ambre-actif-fond-2: rgba(183, 121, 31, 0.16);
+
+    --fs-meta:  0.72rem;
+    --fs-sm:    0.84rem;
+    --fs-base:  0.93rem;
+    --fs-h3:    1.02rem;
+    --fw-semi:  600;
+    --fw-bold:  700;
+    --lh-tight:   1.25;
+    --lh-relaxed: 1.55;
+
+    --ombre: 0 2px 12px rgba(26,35,126,0.08);
+    --ombre-forte: 0 8px 32px rgba(26,35,126,0.14);
+    --trans: 0.22s ease;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--fond); color: var(--texte);
+    margin: 0; padding: 2rem 1.25rem 4rem;
+  }
+
+  .preamb {
+    max-width: 1700px; margin: 0 auto 1.5rem;
+    background: var(--fond-2); border-radius: 12px; box-shadow: var(--ombre);
+    padding: 1.5rem 1.75rem;
+  }
+  .preamb h1 { margin: 0 0 0.5rem; font-size: 1.35rem; color: var(--niv-1); }
+  .preamb p { margin: 0.45rem 0; color: var(--texte-2); font-size: 0.92rem; line-height: 1.6; }
+  .preamb code { background: #f3f4f8; padding: 0.05rem 0.32rem; border-radius: 3px; font-size: 0.86em; color: var(--niv-1); }
+  .preamb em { color: var(--texte); font-style: italic; }
+
+  .axes {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem;
+    margin-top: 1rem;
+  }
+  .axe {
+    background: #f8f9fc; border-left: 3px solid var(--niv-1);
+    border-radius: 0 8px 8px 0; padding: 0.7rem 0.95rem;
+    font-size: 0.85rem; line-height: 1.55; color: var(--texte);
+  }
+  .axe b { color: var(--niv-1); }
+
+  .toggle-etat {
+    margin-top: 1.4rem;
+    display: inline-flex; gap: 0.4rem;
+    padding: 0.32rem; background: var(--fond);
+    border-radius: 999px; border: 1px solid var(--bordure);
+  }
+  .toggle-btn {
+    border: none; background: transparent;
+    padding: 0.5rem 1.1rem; border-radius: 999px;
+    font-family: inherit; font-size: 0.86rem; font-weight: 600;
+    color: var(--texte-2); cursor: pointer; transition: var(--trans);
+  }
+  .toggle-btn.actif {
+    background: var(--niv-1); color: white;
+    box-shadow: 0 2px 6px rgba(26,35,126,0.18);
+  }
+  .toggle-btn:hover:not(.actif) { color: var(--texte); }
+
+  .legende-toggle {
+    display: block; margin-top: 0.65rem;
+    font-size: 0.82rem; color: var(--texte-2); font-style: italic;
+  }
+
+  /* Grille des 3 options */
+  .colonnes {
+    max-width: 1700px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.1rem;
+  }
+  @media (max-width: 1180px) { .colonnes { grid-template-columns: 1fr; } }
+
+  .option {
+    background: var(--fond-2); border-radius: 12px; box-shadow: var(--ombre);
+    padding: 1.4rem 1.4rem 1.6rem;
+    display: flex; flex-direction: column;
+  }
+  .option h2 { margin: 0 0 0.4rem; font-size: 1.05rem; color: var(--niv-1); display: flex; align-items: center; gap: 0.5rem; }
+  .option h2 .num {
+    display: inline-block; width: 1.6rem; height: 1.6rem; line-height: 1.6rem;
+    background: var(--niv-1-clair); color: var(--niv-1);
+    border-radius: 50%; text-align: center; font-weight: 700; font-size: 0.95rem;
+  }
+  .option .resume { color: var(--texte-2); font-size: 0.85rem; margin: 0 0 0.25rem; line-height: 1.55; }
+  .option .position { color: var(--texte-2); font-size: 0.78rem; margin: 0 0 1rem; font-style: italic; }
+  .option code { background: #f3f4f8; padding: 0.04rem 0.3rem; border-radius: 3px; font-size: 0.86em; color: var(--niv-1); }
+
+  /* Mini-tiroir */
+  .tiroir-mini {
+    background: var(--fond-2); border: 1px solid var(--bordure); border-radius: 14px;
+    overflow: hidden; box-shadow: 0 4px 18px rgba(26,35,126,0.06);
+  }
+  .tiroir-corps { padding: 1.1rem 1.2rem 1.3rem; }
+
+  .fi-header { padding-bottom: 0.85rem; margin-bottom: 0.95rem; border-bottom: 1px solid var(--carte-bord); }
+  .fi-chip-ligne { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.45rem; flex-wrap: wrap; }
+  .fi-chip { background: #e65100; color: white; font-size: 0.66rem; font-weight: 800; padding: 0.18rem 0.55rem; border-radius: 6px; letter-spacing: 0.4px; }
+  .fi-chip-label { font-size: 0.74rem; color: var(--texte-secondaire); }
+  .fi-nom { margin: 0; font-size: 1.18rem; font-weight: 800; color: var(--texte-primaire); line-height: var(--lh-tight); }
+
+  .fi-cadre {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    background: linear-gradient(180deg, var(--ambre-doux-debut) 0%, var(--ambre-doux-fin) 100%);
+    border: 1px solid var(--ambre-bord); border-radius: 10px;
+    padding: 0.6rem 0.4rem; margin-bottom: 0.95rem;
+  }
+  .fi-cadre-item { padding: 0.15rem 0.5rem; border-right: 1px solid rgba(183, 121, 31, 0.18); }
+  .fi-cadre-item:last-child { border-right: none; }
+  .fi-cadre-label { display: block; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.6px; color: var(--ambre-profond); font-weight: 700; margin-bottom: 0.18rem; }
+  .fi-cadre-valeur { font-size: 0.84rem; font-weight: 600; color: var(--texte-primaire); }
+
+  .fi-bloc-principal {
+    background: var(--carte-fond-2); border: 1px solid var(--carte-bord);
+    border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.85rem;
+  }
+  .fi-bloc-principal h3 { margin: 0 0 0.4rem; font-size: var(--fs-h3); font-weight: var(--fw-semi); color: var(--texte-primaire); line-height: var(--lh-tight); }
+  .fi-bloc-principal p { margin: 0; font-size: var(--fs-sm); line-height: var(--lh-relaxed); color: var(--texte-primaire); }
+
+  .fi-bloc-inline { padding: 0 0.1rem; margin-bottom: 0.85rem; }
+  .fi-bloc-inline h4 {
+    margin: 0 0 0.2rem; font-size: var(--fs-meta); font-weight: var(--fw-bold);
+    text-transform: uppercase; letter-spacing: 1px; color: var(--ambre-profond);
+  }
+  .fi-bloc-inline p { margin: 0; font-size: var(--fs-sm); line-height: var(--lh-relaxed); color: var(--texte-primaire); }
+
+  .fi-vigilance {
+    background: var(--ambre-fond); border-left: 2px solid var(--ambre-profond);
+    border-radius: 0 10px 10px 0; padding: 0.75rem 0.9rem; margin: 0.4rem 0 0.9rem;
+  }
+  .fi-vigilance h3 {
+    margin: 0 0 0.3rem; font-size: var(--fs-sm); font-weight: var(--fw-semi);
+    color: var(--ambre-texte); display: flex; align-items: center; gap: 0.35rem;
+    line-height: var(--lh-tight);
+  }
+  .fi-vigilance h3 svg { width: 13px; height: 13px; color: var(--ambre-profond); flex-shrink: 0; }
+  .fi-vigilance p { margin: 0; font-size: 0.82rem; line-height: var(--lh-relaxed); color: var(--ambre-texte); }
+
+  /* Tronc commun voie lente */
+  .voie-lente { padding: 0.95rem 1rem; border-radius: 10px; margin: 0.55rem 0 0.85rem; transition: var(--trans); }
+  .voie-lente .vl-titre {
+    margin: 0 0 0.55rem; font-size: var(--fs-meta); font-weight: var(--fw-bold);
+    text-transform: uppercase; letter-spacing: 1px; color: var(--niv-1);
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .voie-lente .vl-titre svg { width: 14px; height: 14px; }
+  .voie-lente .vl-help {
+    margin: 0 0 0.7rem; font-size: 0.78rem; color: var(--texte-2); line-height: 1.5;
+  }
+  .voie-lente textarea {
+    width: 100%; resize: vertical; min-height: 66px; max-height: 160px;
+    border: 1px solid var(--bordure); border-radius: 8px;
+    padding: 0.55rem 0.7rem; font-family: inherit; font-size: 0.85rem; line-height: 1.5;
+    color: var(--texte); background: var(--fond-2); transition: border-color var(--trans);
+  }
+  .voie-lente textarea:focus { outline: none; border-color: var(--niv-1); box-shadow: 0 0 0 3px rgba(26,35,126,0.12); }
+  .voie-lente textarea::placeholder { color: var(--texte-tertiaire); font-style: italic; }
+  .voie-lente .vl-compteur { font-size: 0.7rem; color: var(--texte-tertiaire); margin-top: 0.25rem; text-align: right; }
+
+  .vl-actions { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-top: 0.7rem; }
+  .vl-btn-primaire {
+    background: var(--niv-1); color: white; border: none; border-radius: 8px;
+    padding: 0.55rem 1rem; font-family: inherit; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; transition: var(--trans);
+  }
+  .vl-btn-primaire:hover { background: #283593; transform: translateY(-1px); }
+  .vl-btn-primaire[disabled] { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .vl-btn-secondaire {
+    background: transparent; color: var(--texte-2); border: none;
+    padding: 0.45rem 0.65rem; font-family: inherit; font-size: 0.8rem; font-weight: 500;
+    cursor: pointer; border-radius: 6px; transition: var(--trans);
+    text-decoration: underline; text-decoration-color: rgba(96,125,139,0.3);
+    text-underline-offset: 3px;
+  }
+  .vl-btn-secondaire:hover { color: #c62828; text-decoration-color: #c62828; }
+
+  /* OPTION A — Encart segmenté en pied */
+  .vl-A { background: #fafbfd; border: 1px solid var(--bordure); }
+  .vl-A.actif-place { background: var(--vert-fiab-fond); border-color: rgba(46,125,50,0.32); }
+  .vl-A.actif-idee  { background: var(--ambre-actif-fond); border-color: rgba(183,121,31,0.32); }
+
+  .seg-control {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;
+    background: var(--fond); border-radius: 8px; padding: 0.25rem;
+    margin-bottom: 0.7rem;
+  }
+  .seg-btn {
+    border: none; background: transparent; cursor: pointer;
+    padding: 0.55rem 0.6rem; border-radius: 6px;
+    font-family: inherit; font-size: 0.83rem; font-weight: 600; color: var(--texte-2);
+    display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+    transition: var(--trans); line-height: 1.2;
+  }
+  .seg-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .seg-btn:hover { background: rgba(96,125,139,0.08); color: var(--texte); }
+  .seg-btn.actif-place { background: var(--fond-2); color: var(--vert-fiab); box-shadow: 0 1px 3px rgba(46,125,50,0.18); }
+  .seg-btn.actif-idee  { background: var(--fond-2); color: var(--ambre-profond); box-shadow: 0 1px 3px rgba(183,121,31,0.18); }
+
+  /* OPTION B — Deux cartes basculables */
+  .vl-B { background: transparent; padding: 0; border: none; }
+  .vl-B .vl-titre { padding: 0 0.1rem; }
+  .vl-B .vl-help { padding: 0 0.1rem; }
+  .duo-cartes { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; }
+  .duo-carte {
+    background: var(--fond-2); border: 1.5px solid var(--bordure); border-radius: 10px;
+    padding: 0.7rem 0.75rem; cursor: pointer; transition: var(--trans);
+    display: flex; flex-direction: column; gap: 0.35rem;
+    text-align: left; font-family: inherit;
+  }
+  .duo-carte:hover { border-color: var(--texte-2); transform: translateY(-1px); }
+  .duo-carte-tete { display: flex; align-items: center; gap: 0.45rem; }
+  .duo-carte-tete svg { width: 18px; height: 18px; color: var(--texte-2); }
+  .duo-carte-tete b { font-size: 0.85rem; font-weight: 700; color: var(--texte); }
+  .duo-carte-aide { font-size: 0.74rem; color: var(--texte-2); line-height: 1.4; }
+
+  .duo-carte.actif-place { background: var(--vert-fiab-fond); border-color: var(--vert-fiab); }
+  .duo-carte.actif-place .duo-carte-tete svg { color: var(--vert-fiab); }
+  .duo-carte.actif-place .duo-carte-tete b { color: var(--vert-fiab); }
+  .duo-carte.actif-idee { background: var(--ambre-actif-fond); border-color: var(--ambre-profond); }
+  .duo-carte.actif-idee .duo-carte-tete svg { color: var(--ambre-profond); }
+  .duo-carte.actif-idee .duo-carte-tete b { color: var(--ambre-profond); }
+
+  .duo-zone-note {
+    margin-top: 0.7rem; padding: 0.85rem 0.95rem;
+    background: var(--fond-2); border: 1px dashed var(--bordure); border-radius: 10px;
+  }
+  .vl-B.actif-place .duo-zone-note { border-style: solid; border-color: rgba(46,125,50,0.32); background: rgba(46,125,50,0.03); }
+  .vl-B.actif-idee  .duo-zone-note { border-style: solid; border-color: rgba(183,121,31,0.32); background: rgba(183,121,31,0.03); }
+  .duo-zone-note-titre { font-size: 0.75rem; font-weight: 700; color: var(--texte-2); margin-bottom: 0.4rem; }
+
+  /* OPTION C — Bandeau d'action en tête */
+  .vl-C {
+    margin: 0 0 1rem;
+    background: linear-gradient(180deg, #fbfcff 0%, #f5f7fb 100%);
+    border: 1px solid var(--bordure);
+    box-shadow: inset 0 -1px 0 rgba(26,35,126,0.04);
+  }
+  .vl-C.actif-place { background: linear-gradient(180deg, rgba(46,125,50,0.05) 0%, rgba(46,125,50,0.10) 100%); border-color: rgba(46,125,50,0.32); }
+  .vl-C.actif-idee  { background: linear-gradient(180deg, rgba(183,121,31,0.05) 0%, rgba(183,121,31,0.10) 100%); border-color: rgba(183,121,31,0.32); }
+
+  .gros-boutons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+  .gros-btn {
+    border: 1.5px solid var(--bordure); background: var(--fond-2);
+    border-radius: 10px; padding: 0.85rem 0.7rem;
+    cursor: pointer; transition: var(--trans);
+    font-family: inherit; text-align: left;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .gros-btn svg { width: 26px; height: 26px; flex-shrink: 0; color: var(--texte-2); }
+  .gros-btn-corps b { display: block; font-size: 0.88rem; font-weight: 700; color: var(--texte); }
+  .gros-btn-corps span { display: block; font-size: 0.74rem; color: var(--texte-2); margin-top: 0.1rem; }
+  .gros-btn:hover { border-color: var(--texte-2); transform: translateY(-1px); }
+  .gros-btn.actif-place { background: var(--fond-2); border-color: var(--vert-fiab); box-shadow: 0 0 0 3px rgba(46,125,50,0.12); }
+  .gros-btn.actif-place svg { color: var(--vert-fiab); }
+  .gros-btn.actif-place b { color: var(--vert-fiab); }
+  .gros-btn.actif-idee { background: var(--fond-2); border-color: var(--ambre-profond); box-shadow: 0 0 0 3px rgba(183,121,31,0.12); }
+  .gros-btn.actif-idee svg { color: var(--ambre-profond); }
+  .gros-btn.actif-idee b { color: var(--ambre-profond); }
+
+  .accordeon-note { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
+  .vl-C.actif-place .accordeon-note,
+  .vl-C.actif-idee  .accordeon-note { max-height: 280px; margin-top: 0.7rem; }
+
+  .badge-statut {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    padding: 0.22rem 0.55rem; border-radius: 999px;
+    font-size: 0.7rem; font-weight: 700;
+    margin-left: 0.5rem;
+  }
+  .badge-statut svg { width: 12px; height: 12px; }
+  .badge-statut.place { background: var(--vert-fiab-fond); color: var(--vert-fiab); border: 1px solid rgba(46,125,50,0.25); }
+  .badge-statut.idee  { background: var(--ambre-actif-fond); color: var(--ambre-profond); border: 1px solid rgba(183,121,31,0.25); }
+
+  /* Toggle d'état */
+  body[data-etat="vide"]    .montre-present { display: none !important; }
+  body[data-etat="vide"]    .montre-vide    { display: block; }
+  body[data-etat="present"] .montre-vide    { display: none !important; }
+  body[data-etat="present"] .montre-present { display: block; }
+  body[data-etat="vide"]    .badge-statut   { display: none !important; }
+
+  /* Bilan */
+  .bilan {
+    max-width: 1700px; margin: 1.5rem auto 0;
+    background: var(--fond-2); border-radius: 12px; box-shadow: var(--ombre);
+    padding: 1.4rem 1.7rem;
+  }
+  .bilan h2 { margin: 0 0 0.8rem; font-size: 1.1rem; color: var(--niv-1); }
+  .bilan table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+  .bilan th, .bilan td { text-align: left; padding: 0.6rem 0.7rem; border-bottom: 1px solid var(--bordure); vertical-align: top; }
+  .bilan th { font-weight: 600; color: var(--niv-1); background: #f8f9fc; font-size: 0.82rem; }
+  .bilan tr:last-child td { border-bottom: none; }
+  .bilan td.crit { color: var(--texte); font-weight: 600; width: 22%; }
+  .pour { color: var(--vert-fiab); }
+  .contre { color: #c62828; }
+
+  .questions {
+    max-width: 1700px; margin: 1.2rem auto 0;
+    background: #fffaf0; border-left: 4px solid var(--ambre-profond);
+    border-radius: 0 12px 12px 0; padding: 1.2rem 1.5rem;
+  }
+  .questions h2 { margin: 0 0 0.6rem; font-size: 1rem; color: var(--ambre-texte); }
+  .questions ul { margin: 0; padding-left: 1.2rem; color: var(--texte); font-size: 0.88rem; line-height: 1.65; }
+  .questions ul li { margin: 0.2rem 0; }
+
+  .evidence {
+    max-width: 1700px; margin: 1.2rem auto 0;
+    background: linear-gradient(180deg, #f8f9fc 0%, var(--fond-2) 100%);
+    border-radius: 12px; box-shadow: var(--ombre);
+    padding: 1.2rem 1.7rem;
+    font-size: 0.88rem; line-height: 1.65; color: var(--texte);
+  }
+  .evidence h2 { margin: 0 0 0.5rem; font-size: 1rem; color: var(--niv-1); }
+  .evidence p { margin: 0.3rem 0; }
+</style>
+</head>
+<body data-etat="vide">
+
+<div class="preamb">
+  <h1>9.D — Voie lente d'ajout au panier dans le tiroir de fiche</h1>
+
+  <p>La <em>voie rapide</em> 9.C est câblée : un clic sur la coche ou l'ampoule depuis la liste pose le statut. Elle est efficace pour balayer.</p>
+
+  <p>La <em>voie lente</em> est l'autre côté du même geste : la fiche est ouverte, on a lu la définition, le point de vigilance, l'encart Terrain — et c'est <em>là</em> que la décision se mûrit. La zone d'ajout doit donc faire deux choses qu'aucune icône ne peut faire :</p>
+
+  <p style="padding-left: 1rem; border-left: 3px solid var(--niv-1); background: #f8f9fc; padding: 0.7rem 1rem; border-radius: 0 8px 8px 0; font-style: italic;">
+    <b>Justifier le choix</b> par une note de contexte : <em>« on l'a déjà mais sur Excel »</em>, <em>« à tester en sprint 14 sur l'équipe Médée »</em>, <em>« en doublon avec X — choisir »</em>. La note est l'objet utile en réunion.
+  </p>
+
+  <p>Trois axes d'arbitrage indépendants :</p>
+
+  <div class="axes">
+    <div class="axe"><b>Forme</b> — un seul encart segmenté <em>vs</em> deux cartes côte à côte basculables <em>vs</em> bandeau d'action de premier rang</div>
+    <div class="axe"><b>Position dans le tiroir</b> — pied (après la fiche) <em>vs</em> tête (avant la fiche, accroche)</div>
+    <div class="axe"><b>Coexistence avec la voie rapide 9.C</b> — la fiche ouverte <em>après</em> un clic d'icône doit refléter l'état et permettre d'ajouter / éditer la note</div>
+  </div>
+
+  <p style="margin-top: 1.1rem;">Toutes les options sont rendues dans deux états :</p>
+  <div class="toggle-etat" role="tablist">
+    <button class="toggle-btn actif" data-etat="vide" type="button">État 1 — fiche pas encore au panier</button>
+    <button class="toggle-btn" data-etat="present" type="button">État 2 — fiche déjà ajoutée via voie rapide (note existante)</button>
+  </div>
+  <span class="legende-toggle">Le toggle bascule simultanément les 3 colonnes pour comparer la même décision sous chaque option.</span>
+</div>
+
+
+<div class="colonnes">
+
+  <!-- OPTION A -->
+  <div class="option">
+    <h2><span class="num">A</span>Encart segmenté discret, en pied</h2>
+    <p class="resume">Un seul bloc compact après le contenu de la fiche. <em>Segmented control</em> à deux choix + textarea + bouton primaire. État vide = neutre.</p>
+    <p class="position">Position : <b>pied du tiroir</b>, après l'encart Terrain. Ne vole pas la vedette à la lecture de la fiche.</p>
+
+    <div class="tiroir-mini">
+      <div class="tiroir-corps">
+
+        <div class="fi-header">
+          <div class="fi-chip-ligne">
+            <span class="fi-chip">FLUX</span>
+            <span class="fi-chip-label">Flux & Throughput</span>
+            <span class="badge-statut place montre-present">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              en place
+            </span>
+          </div>
+          <h2 class="fi-nom">⚡ Lead time de livraison</h2>
+        </div>
+
+        <div class="fi-cadre">
+          <div class="fi-cadre-item"><span class="fi-cadre-label">Niveau</span><span class="fi-cadre-valeur">Équipe</span></div>
+          <div class="fi-cadre-item"><span class="fi-cadre-label">Maturité</span><span class="fi-cadre-valeur">Débutant</span></div>
+          <div class="fi-cadre-item"><span class="fi-cadre-label">Fiabilité</span><span class="fi-cadre-valeur">Haute</span></div>
+        </div>
+
+        <div class="fi-bloc-principal">
+          <h3>Ce que mesure l'indicateur</h3>
+          <p>Délai écoulé entre l'engagement d'une demande et sa mise en production. Mesure la fluidité du flux de delivery, pas le rythme de l'équipe.</p>
+        </div>
+
+        <div class="fi-bloc-inline">
+          <h4>Objectif</h4>
+          <p>Identifier les points de friction dans la chaîne de valeur — file d'attente, validation, déploiement.</p>
+        </div>
+
+        <div class="fi-vigilance">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Point de vigilance
+          </h3>
+          <p>Pousse à découper artificiellement les demandes pour faire baisser la moyenne. Toujours regarder la médiane et la dispersion.</p>
+        </div>
+
+        <div class="voie-lente vl-A montre-vide">
+          <div class="vl-titre">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+            Mettre dans mon panier
+          </div>
+          <p class="vl-help">Choisir un statut, puis (optionnel) noter le contexte qui justifie ce choix.</p>
+          <div class="seg-control">
+            <button class="seg-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              J'ai déjà cet indicateur
+            </button>
+            <button class="seg-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6a5 5 0 0 0-3 8.9c.5.4.7 1 .7 1.6v0.5h4.6V16.5c0-.6.2-1.2.7-1.6A5 5 0 0 0 12 6z"/><line x1="9.5" y1="19" x2="14.5" y2="19"/><line x1="10.5" y1="21.5" x2="13.5" y2="21.5"/></svg>
+              J'envisage de l'ajouter
+            </button>
+          </div>
+          <textarea placeholder="Optionnel — contexte, pourquoi, à qui en parler…"></textarea>
+          <div class="vl-compteur">0 / 280</div>
+          <div class="vl-actions">
+            <span style="font-size: 0.78rem; color: var(--texte-tertiaire);">Choisis un statut pour activer le bouton</span>
+            <button class="vl-btn-primaire" disabled>Ajouter au panier</button>
+          </div>
+        </div>
+
+        <div class="voie-lente vl-A actif-place montre-present">
+          <div class="vl-titre">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+            Dans mon panier
+          </div>
+          <p class="vl-help">Tu peux changer le statut ou compléter la note de contexte.</p>
+          <div class="seg-control">
+            <button class="seg-btn actif-place" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              J'ai déjà cet indicateur
+            </button>
+            <button class="seg-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6a5 5 0 0 0-3 8.9c.5.4.7 1 .7 1.6v0.5h4.6V16.5c0-.6.2-1.2.7-1.6A5 5 0 0 0 12 6z"/><line x1="9.5" y1="19" x2="14.5" y2="19"/><line x1="10.5" y1="21.5" x2="13.5" y2="21.5"/></svg>
+              J'envisage de l'ajouter
+            </button>
+          </div>
+          <textarea>Suivi sur Jira depuis Q3 — 18 j de médiane, à challenger en rétro avec l'équipe Médée.</textarea>
+          <div class="vl-compteur">93 / 280</div>
+          <div class="vl-actions">
+            <button class="vl-btn-secondaire" type="button">Retirer du panier</button>
+            <button class="vl-btn-primaire" type="button">Mettre à jour</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- OPTION B -->
+  <div class="option">
+    <h2><span class="num">B</span>Deux cartes basculables, en pied</h2>
+    <p class="resume">Choix matérialisé visuellement : deux <em>cartes-statut</em> côte à côte. Cliquer une carte la sélectionne, révèle la note, dévoile le bouton.</p>
+    <p class="position">Position : <b>pied du tiroir</b>. Le choix est plus visuel — l'utilisateur voit physiquement les deux options avant de trancher.</p>
+
+    <div class="tiroir-mini">
+      <div class="tiroir-corps">
+
+        <div class="fi-header">
+          <div class="fi-chip-ligne">
+            <span class="fi-chip">FLUX</span>
+            <span class="fi-chip-label">Flux & Throughput</span>
+            <span class="badge-statut place montre-present">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              en place
+            </span>
+          </div>
+          <h2 class="fi-nom">⚡ Lead time de livraison</h2>
+        </div>
+
+        <div class="fi-cadre">
+          <div class="fi-cadre-item"><span class="fi-cadre-label">Niveau</span><span class="fi-cadre-valeur">Équipe</span></div>
+          <div class="fi-cadre-item"><span class="fi-cadre-label">Maturité</span><span class="fi-cadre-valeur">Débutant</span></div>
+          <div class="fi-cadre-item"><span class="fi-cadre-label">Fiabilité</span><span class="fi-cadre-valeur">Haute</span></div>
+        </div>
+
+        <div class="fi-bloc-principal">
+          <h3>Ce que mesure l'indicateur</h3>
+          <p>Délai écoulé entre l'engagement d'une demande et sa mise en production. Mesure la fluidité du flux de delivery, pas le rythme de l'équipe.</p>
+        </div>
+
+        <div class="fi-bloc-inline">
+          <h4>Objectif</h4>
+          <p>Identifier les points de friction dans la chaîne de valeur — file d'attente, validation, déploiement.</p>
+        </div>
+
+        <div class="fi-vigilance">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Point de vigilance
+          </h3>
+          <p>Pousse à découper artificiellement les demandes pour faire baisser la moyenne. Toujours regarder la médiane et la dispersion.</p>
+        </div>
+
+        <div class="voie-lente vl-B montre-vide">
+          <div class="vl-titre">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+            Mettre dans mon panier
+          </div>
+          <p class="vl-help">Sélectionne le statut qui correspond à ta situation, puis ajoute une note de contexte.</p>
+          <div class="duo-cartes">
+            <button class="duo-carte" type="button">
+              <div class="duo-carte-tete">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <b>En place</b>
+              </div>
+              <div class="duo-carte-aide">Je le mesure déjà — même partiellement.</div>
+            </button>
+            <button class="duo-carte" type="button">
+              <div class="duo-carte-tete">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6a5 5 0 0 0-3 8.9c.5.4.7 1 .7 1.6v0.5h4.6V16.5c0-.6.2-1.2.7-1.6A5 5 0 0 0 12 6z"/><line x1="9.5" y1="19" x2="14.5" y2="19"/><line x1="10.5" y1="21.5" x2="13.5" y2="21.5"/></svg>
+                <b>À envisager</b>
+              </div>
+              <div class="duo-carte-aide">Je voudrais le mettre en place.</div>
+            </button>
+          </div>
+        </div>
+
+        <div class="voie-lente vl-B actif-place montre-present">
+          <div class="vl-titre">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+            Dans mon panier
+          </div>
+          <p class="vl-help">Tu peux changer le statut ou compléter la note.</p>
+          <div class="duo-cartes">
+            <button class="duo-carte actif-place" type="button">
+              <div class="duo-carte-tete">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <b>En place</b>
+              </div>
+              <div class="duo-carte-aide">Statut actuel</div>
+            </button>
+            <button class="duo-carte" type="button">
+              <div class="duo-carte-tete">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6a5 5 0 0 0-3 8.9c.5.4.7 1 .7 1.6v0.5h4.6V16.5c0-.6.2-1.2.7-1.6A5 5 0 0 0 12 6z"/><line x1="9.5" y1="19" x2="14.5" y2="19"/><line x1="10.5" y1="21.5" x2="13.5" y2="21.5"/></svg>
+                <b>À envisager</b>
+              </div>
+              <div class="duo-carte-aide">Cliquer pour basculer</div>
+            </button>
+          </div>
+          <div class="duo-zone-note">
+            <div class="duo-zone-note-titre">Note de contexte</div>
+            <textarea>Suivi sur Jira depuis Q3 — 18 j de médiane, à challenger en rétro avec l'équipe Médée.</textarea>
+            <div class="vl-compteur">93 / 280</div>
+            <div class="vl-actions">
+              <button class="vl-btn-secondaire" type="button">Retirer du panier</button>
+              <button class="vl-btn-primaire" type="button">Mettre à jour</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- OPTION C -->
+  <div class="option">
+    <h2><span class="num">C</span>Bandeau d'action de premier rang, en tête</h2>
+    <p class="resume">Deux gros boutons côte à côte juste sous l'en-tête. Cliquer ouvre un accordéon avec textarea + bouton primaire.</p>
+    <p class="position">Position : <b>tête du tiroir</b>, juste après le titre. L'action est annoncée comme la <em>raison</em> d'ouvrir la fiche.</p>
+
+    <div class="tiroir-mini">
+      <div class="tiroir-corps">
+
+        <div class="fi-header">
+          <div class="fi-chip-ligne">
+            <span class="fi-chip">FLUX</span>
+            <span class="fi-chip-label">Flux & Throughput</span>
+            <span class="badge-statut place montre-present">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              en place
+            </span>
+          </div>
+          <h2 class="fi-nom">⚡ Lead time de livraison</h2>
+        </div>
+
+        <div class="voie-lente vl-C montre-vide">
+          <div class="gros-boutons">
+            <button class="gros-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <div class="gros-btn-corps"><b>En place</b><span>Je le mesure déjà</span></div>
+            </button>
+            <button class="gros-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6a5 5 0 0 0-3 8.9c.5.4.7 1 .7 1.6v0.5h4.6V16.5c0-.6.2-1.2.7-1.6A5 5 0 0 0 12 6z"/><line x1="9.5" y1="19" x2="14.5" y2="19"/><line x1="10.5" y1="21.5" x2="13.5" y2="21.5"/></svg>
+              <div class="gros-btn-corps"><b>À envisager</b><span>J'envisage de l'ajouter</span></div>
+            </button>
+          </div>
+        </div>
+
+        <div class="voie-lente vl-C actif-place montre-present">
+          <div class="gros-boutons">
+            <button class="gros-btn actif-place" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <div class="gros-btn-corps"><b>En place</b><span>Statut actuel — cliquer pour retirer</span></div>
+            </button>
+            <button class="gros-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6a5 5 0 0 0-3 8.9c.5.4.7 1 .7 1.6v0.5h4.6V16.5c0-.6.2-1.2.7-1.6A5 5 0 0 0 12 6z"/><line x1="9.5" y1="19" x2="14.5" y2="19"/><line x1="10.5" y1="21.5" x2="13.5" y2="21.5"/></svg>
+              <div class="gros-btn-corps"><b>À envisager</b><span>Cliquer pour basculer</span></div>
+            </button>
+          </div>
+          <div class="accordeon-note">
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--texte-2); margin: 0.7rem 0 0.4rem; text-transform: uppercase; letter-spacing: 0.8px;">Note de contexte</div>
+            <textarea>Suivi sur Jira depuis Q3 — 18 j de médiane, à challenger en rétro avec l'équipe Médée.</textarea>
+            <div class="vl-compteur">93 / 280</div>
+            <div class="vl-actions">
+              <button class="vl-btn-secondaire" type="button">Retirer du panier</button>
+              <button class="vl-btn-primaire" type="button">Mettre à jour</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="fi-cadre">
+          <div class="fi-cadre-item"><span class="fi-cadre-label">Niveau</span><span class="fi-cadre-valeur">Équipe</span></div>
+          <div class="fi-cadre-item"><span class="fi-cadre-label">Maturité</span><span class="fi-cadre-valeur">Débutant</span></div>
+          <div class="fi-cadre-item"><span class="fi-cadre-label">Fiabilité</span><span class="fi-cadre-valeur">Haute</span></div>
+        </div>
+
+        <div class="fi-bloc-principal">
+          <h3>Ce que mesure l'indicateur</h3>
+          <p>Délai écoulé entre l'engagement d'une demande et sa mise en production. Mesure la fluidité du flux de delivery, pas le rythme de l'équipe.</p>
+        </div>
+
+        <div class="fi-bloc-inline">
+          <h4>Objectif</h4>
+          <p>Identifier les points de friction dans la chaîne de valeur — file d'attente, validation, déploiement.</p>
+        </div>
+
+        <div class="fi-vigilance">
+          <h3>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Point de vigilance
+          </h3>
+          <p>Pousse à découper artificiellement les demandes pour faire baisser la moyenne. Toujours regarder la médiane et la dispersion.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<div class="bilan">
+  <h2>Bilan comparatif — sur quoi arbitrer</h2>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>A — Encart segmenté en pied</th>
+        <th>B — Deux cartes en pied</th>
+        <th>C — Bandeau d'action en tête</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="crit">Charge visuelle dans la fiche</td>
+        <td><span class="pour">Faible</span> — un bloc compact</td>
+        <td>Moyenne — deux cartes prennent de la place</td>
+        <td><span class="contre">Forte</span> — l'action capte la moitié de l'écran d'ouverture</td>
+      </tr>
+      <tr>
+        <td class="crit">Hiérarchie de la fiche préservée</td>
+        <td><span class="pour">Oui</span> — fiche d'abord lue, action ensuite</td>
+        <td><span class="pour">Oui</span> — même logique</td>
+        <td><span class="contre">Non</span> — l'action passe avant la lecture</td>
+      </tr>
+      <tr>
+        <td class="crit">Découvrabilité</td>
+        <td>Modeste — il faut scroller jusqu'au pied</td>
+        <td>Modeste — pareil</td>
+        <td><span class="pour">Forte</span> — visible à l'ouverture</td>
+      </tr>
+      <tr>
+        <td class="crit">Geste d'ajout en un mouvement</td>
+        <td>Choix + (note) + bouton — 2 ou 3 clics</td>
+        <td>Clic carte + (note) — 1 ou 2 clics</td>
+        <td>Clic gros bouton + (note) — 1 ou 2 clics</td>
+      </tr>
+      <tr>
+        <td class="crit">Lisibilité du statut courant</td>
+        <td>Bon — bloc coloré + segmented<br/>(badge en-tête optionnel)</td>
+        <td><span class="pour">Très bon</span> — la carte active est franchement visuelle</td>
+        <td><span class="pour">Très bon</span> — gros bouton actif</td>
+      </tr>
+      <tr>
+        <td class="crit">Cohérence avec voie rapide 9.C</td>
+        <td>Correct — segmented à 2 choix, mêmes icônes</td>
+        <td><span class="pour">Très bon</span> — les deux statuts aussi explicites que les deux icônes</td>
+        <td><span class="pour">Très bon</span> — pareil, en plus gros</td>
+      </tr>
+      <tr>
+        <td class="crit">Risque de doublon avec le badge en-tête</td>
+        <td>Faible</td>
+        <td>Faible</td>
+        <td><span class="contre">Réel</span> — bandeau actif + badge → 3 signaux pour un même état</td>
+      </tr>
+      <tr>
+        <td class="crit">Note obligatoire ?</td>
+        <td>Non — optionnelle</td>
+        <td>Non — optionnelle, sous le statut</td>
+        <td>Non — révélée après clic statut</td>
+      </tr>
+      <tr>
+        <td class="crit">Posture éditoriale</td>
+        <td><em>« Lis, puis décide »</em></td>
+        <td><em>« Lis, puis choisis ton camp »</em></td>
+        <td><em>« Choisis d'abord, lis pour confirmer »</em></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<div class="evidence">
+  <h2>Lecture éditoriale</h2>
+  <p>L'option <b>C</b> a un coût caché : elle transforme la fiche en formulaire d'ajout. C'est efficace en découvrabilité, mais ça heurte la posture <em>« lire la fiche pour comprendre, puis décider »</em> portée par l'encart Terrain et le point de vigilance. La fiche n'est plus un objet à habiter, c'est une étape vers le panier.</p>
+  <p>Entre <b>A</b> et <b>B</b>, le départage se fait sur la <em>franchise du choix</em>. <b>A</b> est sobre — le segmented dit <em>« choisis »</em>, le textarea dit <em>« justifie si tu veux »</em>. <b>B</b> donne plus de matière à chaque option — la <em>carte-statut</em> avec son aide courte (<em>« je le mesure déjà »</em>, <em>« je voudrais le mettre en place »</em>) aide quelqu'un qui hésite.</p>
+  <p>Recommandation à arbitrer : <b>A</b> si la fiche garde le rôle principal, <b>B</b> si la voie lente doit accompagner la décision avec un peu plus de pédagogie.</p>
+</div>
+
+
+<div class="questions">
+  <h2>Questions ouvertes pour arbitrage</h2>
+  <ul>
+    <li><b>Position pied vs tête.</b> La fiche est un objet à lire (terrain, vigilance, exemples). Mettre l'action en tête (C) déforme cet objet en formulaire d'ajout — est-ce ce qu'on veut ?</li>
+    <li><b>Note obligatoire ou optionnelle ?</b> Les options ci-dessus la rendent optionnelle. Veut-on un nudge (sans bloquer) si vide ?</li>
+    <li><b>Longueur max de la note.</b> 280 cars proposé (gabarit tweet). 500 cars si on veut laisser respirer. Plus = on glisse vers la rédaction.</li>
+    <li><b>Bouton retirer.</b> Présent dans tous les états « déjà au panier ». Confirmer — ou refuser et ne laisser que la voie rapide pour retirer ?</li>
+    <li><b>Bascule de statut.</b> Si fiche déjà <em>en place</em>, cliquer <em>à envisager</em> doit bouger la fiche (consomme <code>CM.Panier.basculer</code>). Conservation de la note ou reset ? Recommandation : conservation.</li>
+    <li><b>Nom du bouton primaire.</b> <em>Ajouter au panier</em> à l'état vide / <em>Mettre à jour</em> en édition — ou un seul libellé constant ?</li>
+  </ul>
+</div>
+
+
+<script>
+  (function() {
+    var boutons = document.querySelectorAll('.toggle-btn');
+    var body = document.body;
+    boutons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var etat = btn.dataset.etat;
+        body.dataset.etat = etat;
+        boutons.forEach(function(b) { b.classList.toggle('actif', b === btn); });
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>
