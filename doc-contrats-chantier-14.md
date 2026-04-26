@@ -70,6 +70,52 @@ Une seule règle : les flèches ne remontent pas. Un module du cœur ne connaît
 
 `CM.App` reste l'orchestrateur : événements globaux, routing hash, délégation de clics. Le chantier peut l'alléger en extrayant des sous-modules (`CM.Router` notamment, listé en Règle 1 du refactoring progressif) — mais seulement en greffe opportuniste, pas comme objectif.
 
+### 3.4 Architecture livrée (post-chantier 14)
+
+Section actée à la clôture de l'étape (d), 26/04/2026. Décrit ce qui est **vraiment en place** dans `cadre-indicateurs.html` après les étapes (a) → (d). Sert de référence pour le code, en complément de §3.1 (cible projetée à l'ouverture).
+
+**Domaine isolé.** Les modules suivants forment le cœur, sans dépendance vers les chemins ni les vues :
+
+- `CM.Config` (~ligne 2541) — référentiel des types, fiabilités, maturités, niveaux de surface.
+- `CM.IndicateursMeta` (~ligne 3413) — métadonnées des fiches (tags, cadres, familles, tags thématiques, voisinage de cadres). Expose désormais aussi `rangFiabilite(ind)` — score numérique pour ordonner les fiches par qualité de mesure (mutualisé à l'étape (d), auparavant dupliqué dans trois modules consommateurs).
+- `CM.Referentiel` (catalogue des fiches indicateurs).
+- **`CM.RequeteMetriques`** (~ligne 3875) — API unique du domaine pour le filtrage. Signature `executer(filtre)` formalisée en §10.3. Tous les chemins passent par lui.
+
+**Chemins (adaptateurs d'entrée).** Trois traducteurs orthodoxes formulent un filtre conforme à §10.3 et délèguent à `executer` :
+
+- `CM.DiagnosticProbleme` (~ligne 5924) — porte *Par mon problème*. Méthodes : `niveauxTous`, `niveauInfo`, `problemesPourNiveau`, `problemeInfo`, `recommander`, `aDeleguerPour`. La méthode `delegationPour` et sa table interne `DELEGATION` ont été retirées à l'étape (d) (code mort, 0 usages).
+- `CM.DiagnosticCadre` (~ligne 7066) — porte *Par mon cadre*. Méthodes : `niveauxTous`, `niveauInfo`, `cadreInfo`, `recommander`, `famillesAvecCadres`.
+- `CM.Roles` (porte *Par mon niveau*) — l'aspect traducteur sélection→filtre vit en pratique dans `CM.VuePorteNiveau._etapeResultats` après le refactor (c.3) : un `executer({niveau, tags, cadres})` à trois axes natif.
+
+**Vues (adaptateurs de sortie).** Quatre modules `CM.VuePorteX` rendent les fiches reçues :
+
+- `CM.VuePorteProbleme` (~ligne 6820) — façade au-dessus de `CM.Stepper`.
+- `CM.VuePorteCadre` (~ligne 7158) — contrôleur de la vue *Par mon cadre*.
+- `CM.VuePorteNiveau` (~ligne 7463) — façade `CM.Stepper`. `_etapeResultats` formule directement le filtre 3-axes, sans passer par les traducteurs frères (héritage du calque strict (c.3)).
+- `CM.VuePorteMaturite` — **emplacement réservé** (commentaire-balise architectural ~ligne 7982). Aucun module exécutable. Quand la porte sera instruite, suivra le patron des trois sœurs (cf. §c.4 et le commentaire-balise).
+
+`CM.Composants` (~ligne 6216) et `CM.FicheViewModel` (~ligne 6127) restent les utilitaires de rendu HTML, partagés entre vues. Ne sont pas des chemins.
+
+**Tri local toléré.** Conformément à §10.3, les vues qui souhaitent un tri par fiabilité l'appliquent localement après réception, via `CM.IndicateursMeta.rangFiabilite(ind)`. Trois sites d'appel : `CM.DiagnosticProbleme.recommander`, `CM.DiagnosticCadre.recommander`, `CM.VuePorteNiveau._etapeResultats`.
+
+**Divergences avec §3.1 (cible projetée à l'ouverture).** Mineures, à acter pour l'historique :
+
+- L'étape (a) parlait d'un module `CM.Roles` qui deviendrait traducteur. En pratique, le rôle de traducteur pour la porte niveau est assumé par `CM.VuePorteNiveau._etapeResultats` directement (la vue formule le filtre, le module `CM.Roles` reste un inventaire). Aucun impact fonctionnel — la doctrine traducteur orthodoxe est respectée.
+- La porte *Par ma maturité* (c.4) reste un emplacement, pas un module. Acte documenté en §c.4.
+
+**Tags d'étape posés** (chaîne complète, pour reconstruire l'historique) :
+
+| Tag | Commit | Acte |
+|---|---|---|
+| `baseline-avant-hexagonal` | `5655b03` | Point de retour absolu, posé à l'ouverture du chantier. |
+| `mvp-etape-a-schema-inventorie` | `1ba5112` | Inventaire du schéma d'étiquettes livré. |
+| `mvp-etape-b-coeur-extrait` | `2a61336` | `CM.RequeteMetriques` extrait + tests verts. |
+| `mvp-etape-c1-porte-probleme-migree` | `83d3bd2` | Porte *Par mon problème* migrée. |
+| `mvp-etape-c2-porte-cadre-migree` | `894ab8a` | Porte *Par mon cadre* migrée. |
+| `mvp-etape-c3-porte-niveau-migree` | `34366f3` | Porte *Par mon niveau* migrée (premier triplet à 3 axes). |
+| `mvp-etape-c-portes-migrees` | `b17b776` | (c.4) actée, étape (c) globalement close. |
+| `mvp-chantier-14-livre` | *(à poser après §9 et MISSION.md)* | Clôture finale du chantier. |
+
 ---
 
 ## 4. Plan d'attaque
@@ -429,3 +475,6 @@ Le module `CM.RequeteMetriques` compose donc deux sources de données ; il n'enr
 
 - **26/04/2026 (suite) — Étape (c.3) livrée. Porte *Par mon niveau* migrée.** Commit unique atomique (`34366f3`) refondant `CM.VuePorteNiveau._etapeResultats`. Avant : deux appels `recommander` (porte problème + porte cadre) suivis d'une intersection manuelle locale par id, préservant l'ordre de `recoProbleme` (déjà trié par fiabilité). Après : un appel unique `CM.RequeteMetriques.executer({niveau:[canonDiag], tags:[problemeId], cadres:[cadreId]})` — composition AND inter-clauses native du moteur. **Premier triplet à trois axes du chantier** (c.1 et c.2 jouaient sur deux). Tri par fiabilité conservé localement via un helper privé `_rangFiabilite` (+ table `_RANG_FIABILITE`) ajouté au module `CM.VuePorteNiveau`, calque strict des helpers identiques dans `CM.DiagnosticProbleme` et `CM.DiagnosticCadre`. **Découverte de cadrage en ouverture (c.3)** : la question doctrinale annoncée en §7.2 du présent doc (« dégeler 7.2a-code.3 *avant* ou *pendant* (c.3) ? ») est devenue sans objet à la lecture du code — la porte niveau est en réalité fonctionnelle (étapes B.1 à C.3 de 7.2a-code.3 livrées), seule l'étape D « câblage tuile d'accueil » reste gelée derrière 14 et ne participe pas à la mécanique de filtrage. **Sentinelle dédiée I7** (Développeur × Flux & goulots × DORA) ajoutée au `journal-invariants-pre-c.md` (commit `c2240b3`) — capture pré-bascule = 7 fiches, top 3 documenté avec cadre + fiabilité. Validation interactive Safari côté Lætitia post-bascule : I7 strictement identique (7 fiches, *Fréquence de déploiement* → *Délai de livraison des changements* → *Durée de cycle*). **Tag `mvp-etape-c3-porte-niveau-migree` posé sur `34366f3`**. **Découverte de séance hors scope 14** : audit factuel pyramide vs accordéon Opérationnel a remonté une zone aveugle structurelle (4 TI + 6 Affaires de la pyramide → 0 rôle Affaires individuel, 2/4 domaines TI lacunaires). Section §18 du backlog ouverte avec question doctrinale α/β + axe de réflexion *case à cocher / étape supplémentaire dans le parcours des portes* (4 pistes inventoriées). Préalable à l'étape D de 7.2a-code.3. Avec ce commit, `CM.VuePorteNiveau` n'accède plus directement à `CM.Referentiel` ni à `CM.IndicateursMeta` — seul `executer` compose. Les passe-plats `problemeInfo`, `cadreInfo`, `niveauInfo` restent (métadonnées d'affichage, pas filtrage de fiches). Reste pour clore (c) : **(c.4) emplacement *Par ma maturité*** — porte stub, pas de migration code, juste s'assurer que l'emplacement architectural est propre ; puis tag global `mvp-etape-c-portes-migrees`.
 - **26/04/2026 (suite, fin de séance) — Étape (c.4) livrée. Étape (c) globalement close.** (c.4) actée comme **acte de documentation** — la porte *Par ma maturité* est un stub d'accueil sans module dédié, l'emplacement est propre par construction. Trois pièces livrées dans un commit unique : (i) commentaire-balise architectural inséré dans `cadre-indicateurs.html` après `CM.VuePorteNiveau` (signal explicite au prochain qui scanne : patron à suivre, distinction porte prospective vs onglet *La maturité ?* réflexif) ; (ii) §c.4 du présent doc enrichi du contrat futur de `CM.VuePorteMaturite` (façade orthodoxe vers `executer`, filtre type pressenti `{niveau, maturiteMin}` à arbitrer panel-on-demand) ; (iii) `backlog.md` rafraîchi (État courant + §14 + Prochaine action). **Tag global `mvp-etape-c-portes-migrees` posé** sur ce commit — clôture de (c). Iso-comportement strict (rien d'exécutable n'est touché). Reste l'étape **(d) — nettoyage et documentation finale**.
+- **26/04/2026 (suite, étape d.1) — Retrait du code mort `delegationPour` + `DELEGATION`.** Commit `f75be8b`. Méthode publique `CM.DiagnosticProbleme.delegationPour` exposée mais jamais appelée (0 usages externes), table interne `DELEGATION` qui ne servait qu'à elle. Retrait propre : 21 lignes supprimées, 2 ajoutées (ajustement du `return` et du commentaire d'en-tête). Iso-comportement strict — aucun appelant impacté.
+- **26/04/2026 (suite, étape d.2) — Mutualisation `rangFiabilite` dans `CM.IndicateursMeta`.** Commit `18f7ab8`. Le helper `_rangFiabilite` + sa table `_RANG_FIABILITE` étaient dupliqués à l'identique dans `CM.DiagnosticProbleme`, `CM.DiagnosticCadre` et `CM.VuePorteNiveau` — duplication directement issue du calque strict appliqué en (c.1)/(c.2)/(c.3). Centralisation dans `CM.IndicateursMeta` (domaine sémantique : la fiabilité est une propriété des fiches indicateurs). Trois sites d'appel substitués par `CM.IndicateursMeta.rangFiabilite(...)`. Iso-comportement strict (signature, sémantique et défense identiques). 16 ajouts / 31 suppressions. Note de propreté consignée : variable locale `rangFiabilite` dans `CM.RequeteMetriques.executer` (~ligne 4125) reste sans conflit (scope distinct), homonyme à signaler éventuellement en passe éditoriale ultérieure.
+- **26/04/2026 (suite, étape d.3) — §3.4 « Architecture livrée » ajoutée au présent doc.** Acte ce qui est vraiment en place après (a) → (d). Pointe les divergences mineures avec §3.1 (cible projetée à l'ouverture). Source de vérité de l'architecture livrée par le chantier 14.

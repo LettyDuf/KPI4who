@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **26 avril 2026 — étape (c.4) livrée, étape (c) globalement close** (clôture de la migration des 4 portes vers `CM.RequeteMetriques`. (c.4) actée comme acte de documentation : porte *Par ma maturité* stub d'accueil sans module dédié, emplacement propre par construction. Commentaire-balise architectural inséré dans `cadre-indicateurs.html` après `CM.VuePorteNiveau`. §c.4 du doc compagnon enrichi du contrat futur de `CM.VuePorteMaturite`. **Tag global `mvp-etape-c-portes-migrees` posé**. Prochaine étape : (d) — nettoyage et documentation finale.)
+Dernière mise à jour : **26 avril 2026 — chantier 14 livré** (refactor hexagonal du socle MVP 4 portes. Étape (d) close : retrait code mort `delegationPour` + `DELEGATION` (`f75be8b`), mutualisation `rangFiabilite` dans `CM.IndicateursMeta` (`18f7ab8`), §3.4 « Architecture livrée » ajoutée au doc compagnon, garde-fou architectural ajouté à `MISSION.md`. **Tag final `mvp-chantier-14-livre` posé**. Le chantier 10 (gelé à `5655b03`) peut reprendre. Architecture désormais : domaine isolé / chemins / vues, flux unidirectionnel via `CM.RequeteMetriques.executer`.)
 
 ---
 
@@ -9,16 +9,20 @@ Dernière mise à jour : **26 avril 2026 — étape (c.4) livrée, étape (c) gl
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événement majeur de la séance** : **étape (c.4) du chantier 14 livrée → étape (c) globalement close**. (c.4) actée comme **acte de documentation** : la porte *Par ma maturité* est un stub d'accueil sans module dédié, l'emplacement est propre par construction (rien à supprimer, rien à migrer). Trois pièces livrées dans un commit unique : commentaire-balise architectural dans `cadre-indicateurs.html` après `CM.VuePorteNiveau` (signal au prochain qui scanne, distinction porte prospective vs onglet *La maturité ?* réflexif), §c.4 du doc compagnon enrichi du contrat futur de `CM.VuePorteMaturite` (façade orthodoxe vers `executer`, filtre type pressenti `{niveau, maturiteMin}` à arbitrer panel-on-demand), backlog rafraîchi. **Tag global `mvp-etape-c-portes-migrees` posé**.
-- **Chantier actif** : **chantier 14 — refactor hexagonal**. Étapes (a), (b), (c.1), (c.2), (c.3), (c.4) closes. **Reste l'étape (d) — nettoyage et documentation finale** (~1 session : retrait code mort éventuel, doc finale dans le compagnon, rafraîchissement `MISSION.md`, mémoires pertinentes, tag final `mvp-chantier-14-livre`).
-- **Iso-comportement strict respecté à (c.4)** : aucun JavaScript modifié, aucun comportement utilisateur visible touché. Le commentaire-balise est purement signalétique. Les invariants du `journal-invariants-pre-c.md` restent verts par construction (rien d'exécutable n'est touché).
-- **Découverte de séance précédente — chantier 18 ouvert** (zone aveugle catalogue rôles, audit pyramide vs accordéon Opérationnel). Section §18 du backlog avec question doctrinale α/β + 4 pistes. Préalable à l'étape D de 7.2a-code.3. Hors scope chantier 14, post-livraison.
-- **Document central pour la reprise** : **`journal-invariants-pre-c.md`** (commit `9525f8e`, enrichi `c2240b3` avec I7). I1 ✓ post-(c.1). I2 ✓ post-(c.2). I7 ✓ post-(c.3). I3 partiel (à exhausifier sur la liste complète des 13 fiches I2 — non bloquant). I5 toujours incomplet (titre première fiche manquant). I4 et I6 en skip documenté. **À regarder en (d)** : compléter I5, exhausifier I3, archiver le journal une fois (d) close.
-- **Découverte structurelle item 6.9** : matrice 4×7 niveau × tags → 3 cellules à 0 fiche, 5 à 1-2. Action en 3 étapes (densifier → trancher → 8e tag éventuel). Toujours gelé derrière 14.
-- **Chantier 9 (panier)** : `CM.Panier` extrait + tests verts mais aucun appelant UI. Câblage UI gelé derrière 14.
-- **Dernier SHA de contenu** : commit (c.4) à venir. Précédents : `887a585` (docs clôture c.3), `34366f3` (c.3 commit unique), `894ab8a` (c.2), `83d3bd2` (commit 2 de c.1). **Tags** : `baseline-avant-hexagonal` = `5655b03`, `mvp-etape-a-schema-inventorie` = `1ba5112`, `mvp-etape-b-coeur-extrait` = `2a61336`, `mvp-etape-c1-porte-probleme-migree` = `83d3bd2`, `mvp-etape-c2-porte-cadre-migree` = `894ab8a`, `mvp-etape-c3-porte-niveau-migree` = `34366f3`, **`mvp-etape-c-portes-migrees` = (commit (c.4))**. Prochain tag cible : `mvp-chantier-14-livre` (clôture finale du chantier 14 après (d)).
-- **Prochaine action recommandée** : **lancer (d) — nettoyage et documentation finale**. Cycle court : (i) audit du HTML pour code mort résiduel des anciens chemins (peu probable, on a opéré en façade iso-comportement, mais à vérifier) ; (ii) finalisation du doc compagnon comme source de vérité de l'architecture livrée ; (iii) rafraîchissement `MISSION.md` (sans ouvrir le chantier éditorial Mission) ; (iv) mises à jour mémoires pertinentes ; (v) tag `mvp-chantier-14-livre`. ~1 session.
-- **Blocages / questions ouvertes** : aucun côté contenu. Côté workflow git sandbox : `.lock` orphelins continuent de s'accumuler à chaque commit (HEAD.lock, index.lock, tmp_obj_*) — nettoyage côté ordi à faire régulièrement (`rm -f .git/*.lock .git/objects/*/tmp_obj_* .git/objects/maintenance.lock` depuis le dossier projet).
+- **Événement majeur de la séance** : **chantier 14 livré**. Étape (d) close en deux commits + un commit de doc finale. Le refactor hexagonal du socle MVP 4 portes est terminé. **Tag final `mvp-chantier-14-livre` posé**. Le chantier 10 (gelé à `5655b03`) peut reprendre.
+- **Trois commits de l'étape (d)** : `f75be8b` retrait code mort `delegationPour` + `DELEGATION` (1 méthode publique 0 usages + 1 table interne, 21 lignes). `18f7ab8` mutualisation `rangFiabilite` dans `CM.IndicateursMeta` (helper dupliqué 3 fois → 1 seul site, héritage du calque strict (c.1)/(c.2)/(c.3)). Commit doc finale (à venir avec le présent rafraîchissement) : §3.4 « Architecture livrée » au doc compagnon + garde-fou architectural à `MISSION.md` + backlog rafraîchi.
+- **Architecture livrée** : trois zones étanches. Domaine (`CM.Referentiel`, `CM.IndicateursMeta`, `CM.Config`, `CM.RequeteMetriques`) — flèches sortantes uniquement. Chemins (`CM.DiagnosticProbleme`, `CM.DiagnosticCadre`, formulation locale dans `CM.VuePorteNiveau`) — traducteurs orthodoxes vers `executer`. Vues (`CM.VuePorteX`, `CM.Composants`, `CM.FicheViewModel`) — rendent les fiches reçues. Détails dans `doc-contrats-chantier-14.md` §3.4.
+- **Note de propreté consignée** : variable locale `rangFiabilite` dans `CM.RequeteMetriques.executer` (~ligne 4125) — homonyme avec la nouvelle fonction publique `CM.IndicateursMeta.rangFiabilite`, scopes distincts, pas de conflit fonctionnel. À renommer éventuellement en passe éditoriale ultérieure (non bloquant).
+- **Workflow git sandbox — découverte de séance** : quand `index.lock` orphelin bloque (EPERM sur unlink côté sandbox), **`mv .git/index.lock .git/index.lock.tmp$(date +%s)`** côté sandbox libère immédiatement (le mount autorise rename mais pas unlink). Plus rapide que `rm` côté ordi qui dépend du timing de propagation. À porter en mémoire.
+- **Prochaines actions ouvertes** :
+  - **Chantier 10** (gelé à `5655b03`) : peut reprendre. Bifurcation deux modes d'entrée, 8 onglets, machinerie mix, panels d'experts pour le catalogue de questions.
+  - **Item 6.9** (matrice 4×7 niveau × tags) : 3 cellules à 0 fiche, 5 à 1-2. Action en 3 étapes (densifier → trancher → 8e tag éventuel). Plus gelé après 14.
+  - **Chantier 9 (panier UI)** : `CM.Panier` extrait + tests verts mais aucun appelant UI. Câblage UI à instruire.
+  - **Chantier 18** : zone aveugle catalogue rôles (audit pyramide vs accordéon Opérationnel, 4 pistes inventoriées).
+  - **Chantiers 12, 13, 15, 16, 17** : en sommeil, non bloqués par 14.
+- **Document central pour la reprise** : `journal-invariants-pre-c.md` (commits `9525f8e` + `c2240b3`) — **à archiver** après bascule (d) puisque les invariants ne sont plus des sentinelles actives mais une trace historique du chantier. À traiter en début de prochaine séance ou au choix (non bloquant).
+- **Chaîne complète des tags** : `baseline-avant-hexagonal` = `5655b03`, `mvp-etape-a-schema-inventorie` = `1ba5112`, `mvp-etape-b-coeur-extrait` = `2a61336`, `mvp-etape-c1-porte-probleme-migree` = `83d3bd2`, `mvp-etape-c2-porte-cadre-migree` = `894ab8a`, `mvp-etape-c3-porte-niveau-migree` = `34366f3`, `mvp-etape-c-portes-migrees` = `b17b776`, **`mvp-chantier-14-livre`** = (commit doc finale, à venir).
+- **Blocages / questions ouvertes** : aucun. Côté workflow git sandbox : pattern `mv .lock` documenté ci-dessus, plus simple que la coopération côté ordi.
 
 ---
 
@@ -437,6 +441,8 @@ Accueil · Mon tableau de bord · Choisir mes indicateurs · Cascade stratégiqu
 
 **Avancement au 26 avril 2026.** Étapes (a), (b), (c.1), (c.2), (c.3), (c.4) livrées. **Étape (c) globalement close** — la migration des 4 portes vers `CM.RequeteMetriques.executer` est actée. (c.4) a été validée comme **acte de documentation** : porte *Par ma maturité* stub d'accueil sans module dédié, emplacement propre par construction, commentaire-balise architectural inséré dans `cadre-indicateurs.html` après `CM.VuePorteNiveau`, contrat futur de `CM.VuePorteMaturite` posé en §c.4 du doc compagnon. **Tag `mvp-etape-c-portes-migrees`** posé sur ce commit. Prochaine étape : **(d) — nettoyage et documentation finale**.
 
+**Avancement au 26 avril 2026, fin de séance — chantier livré.** Étape (d) close en trois commits : (d.1) retrait code mort `delegationPour` + `DELEGATION` (`f75be8b`, 21 lignes) ; (d.2) mutualisation `rangFiabilite` dans `CM.IndicateursMeta` (`18f7ab8`, helper dupliqué 3 fois → 1 seul site) ; (d.3) doc compagnon §3.4 « Architecture livrée » + garde-fou architectural dans `MISSION.md` + backlog rafraîchi (commit du présent rafraîchissement). **Tag final `mvp-chantier-14-livre` posé**. Le doc compagnon est désormais la source de vérité de l'architecture livrée. Le chantier 10 (gelé à `5655b03`) peut reprendre.
+
 
 **Deltas de schéma à intégrer en (b)** (identifiés à l'étape (a), validés 24/04/2026) :
 
@@ -632,9 +638,9 @@ Chaque option a des conséquences sur la mécanique du stepper (nombre d'étapes
 
 ## Prochaine action recommandée
 
-Chantier **14 — refactor hexagonal**. Étapes (a), (b), (c.1), (c.2), (c.3), (c.4) livrées le 26/04/2026 — **étape (c) globalement close, tag `mvp-etape-c-portes-migrees` posé**. Chantier **10 gelé à `5655b03`** (décisions conservées, reprend après livraison 14).
+**Chantier 14 — refactor hexagonal — LIVRÉ le 26/04/2026 fin de séance.** Étapes (a), (b), (c.1), (c.2), (c.3), (c.4), (d) closes. **Tag final `mvp-chantier-14-livre` posé**. L'architecture du socle est désormais hexagonale : domaine isolé, chemins traducteurs orthodoxes, vues consommatrices. Détails : `doc-contrats-chantier-14.md` §3.4. Chantier **10 gelé à `5655b03`** : **peut reprendre**.
 
-**Prochaine étape** = lancer l'**étape (d) — nettoyage et documentation finale**. Cycle court (~1 session) : (i) audit du HTML pour code mort résiduel des anciens chemins (peu probable, on a opéré en façade iso-comportement, à vérifier) ; (ii) finalisation du doc compagnon comme source de vérité de l'architecture livrée ; (iii) rafraîchissement `MISSION.md` (sans ouvrir le chantier éditorial Mission) ; (iv) mises à jour mémoires pertinentes ; (v) tag final `mvp-chantier-14-livre`.
+**Prochaine action recommandée** : reprendre le **chantier 10 — refonte navigation** (8 onglets + 4 portes + machinerie mix, panels d'experts pour le catalogue de questions), ou **chantier 18** (zone aveugle catalogue rôles), ou **item 6.9** (matrice niveau × tags), au choix selon l'énergie. Tous trois étaient gelés derrière 14 ; aucun bloqué désormais. Voir aussi en sommeil : chantiers 9 (panier UI), 12, 13, 15, 16, 17.
 
 **Discipline rappelée.** Tag `baseline-avant-hexagonal` = point de retour absolu. Mot-clé « rollback à l'étape X » entre nous si besoin. Aucun rollback appliqué sans confirmation explicite.
 

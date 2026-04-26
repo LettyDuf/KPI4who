@@ -121,3 +121,7 @@ Tout chantier à venir doit pouvoir répondre à une seule question :
 Si la réponse est claire, le chantier s'engage. Si la réponse est floue, on la clarifie avant d'écrire une ligne de code. Si la réponse est non, le chantier attend.
 
 La mission est stable. Les chantiers s'y plient.
+
+### Garde-fou architectural
+
+Depuis le chantier 14 (livré le 26/04/2026), le socle technique est **hexagonal** : la description des métriques (domaine) est isolée des chemins d'accès (portes, demain catalogue de questions) qui formulent des filtres et délèguent à `CM.RequeteMetriques.executer`. Tout nouveau chemin (porte, vue, question) doit respecter cette séparation : façade orthodoxe, sans accès direct au référentiel ni aux métadonnées. Voir `doc-contrats-chantier-14.md` §3.4 (architecture livrée) et §10.3 (signature `executer`).
