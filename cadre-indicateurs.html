@@ -7979,6 +7979,31 @@ CM.VuePorteNiveau = (function() {
 </script>
 
 
+<!-- ══ MODULE : CM.VuePorteMaturite — Emplacement réservé (chantier 14, étape c.4) ══
+     La porte « Par ma maturité » est aujourd'hui un stub d'accueil
+     (`aria-disabled="true"`, ligne ~2391). Aucun module CM.VuePorteMaturite
+     n'existe — c'est délibéré, l'emplacement est propre par construction
+     (rien à supprimer, rien à migrer).
+
+     Quand la porte sera instruite (panels-on-demand : Lean, modèles de
+     maturité — CMMI / Lean Maturity Assessment, coaching Agile), suivre
+     le patron des trois sœurs (CM.VuePorteProbleme, CM.VuePorteCadre,
+     CM.VuePorteNiveau) :
+       - façade orthodoxe vers CM.RequeteMetriques.executer ;
+       - aucun accès direct à CM.Referentiel ni à CM.IndicateursMeta ;
+       - tri local par fiabilité toléré (cf. doc-contrats-chantier-14.md §10.3).
+     Filtre type pressenti à l'instruction : `{niveau, maturiteMin}` —
+     formulation à arbitrer avec les panels.
+
+     Ne pas confondre avec l'onglet « La maturité ? » (id `vue-maturite` /
+     `contenu-maturite`, vue réflexive — voir CM.App.changerVue('maturite')).
+     La porte est prospective (« par où commencer ? »), l'onglet est
+     réflexif (« qu'est-ce que mon panier vaut ? »). Décision actée
+     chantier 10, cf. project_chantier_10_decisions_ouverture, décision 1.
+
+     Voir doc-contrats-chantier-14.md §c.4 et §10.3. -->
+
+
 <!-- ══ MODULE : CM.App — Etat, navigation et rendu des 4 vues ══ -->
 <script>
 CM.App = (function() {
