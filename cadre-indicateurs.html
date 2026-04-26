@@ -7090,18 +7090,19 @@ CM.DiagnosticCadre = (function() {
   }
 
   /* Indicateurs recommandés pour un couple (cadre, niveau).
-     Critères : ind.niveau === ctx.niveau ET ctx.cadre ∈ cadres(ind).
-     Tri par fiabilité décroissante, comme la porte "problème", pour présenter
-     en tête les mesures les plus exploitables. Pas de plafond appliqué : c'est
-     à l'utilisateur d'arbitrer, pas à l'outil. */
+     Traducteur (zone chemins, chantier 14 §3.1) : formule un filtre conforme
+     §10.3 et délègue à CM.RequeteMetriques.executer. La sémantique du couple
+     niveau × cadres vit désormais dans le cœur, plus dans ce module.
+     Tri par fiabilité décroissante (fiable > précaution > risque) appliqué
+     localement (§10.3 : « les vues qui souhaitent un autre tri trient
+     localement après réception »). Pas de plafond appliqué : c'est à
+     l'utilisateur d'arbitrer, pas à l'outil. */
   // Exemple : recommander({cadre:'dora', niveau:'operationnel'}) → [ind, ind, ...]
   function recommander(ctx) {
     if (!ctx || !ctx.cadre || !ctx.niveau) return [];
-    var tous = CM.Referentiel.tous();
-    var pertinents = tous.filter(function(ind) {
-      if (ind.niveau !== ctx.niveau) return false;
-      var cadres = CM.IndicateursMeta.cadresDe(ind.id);
-      return cadres.indexOf(ctx.cadre) !== -1;
+    var pertinents = CM.RequeteMetriques.executer({
+      niveau: [ctx.niveau],
+      cadres: [ctx.cadre]
     });
     pertinents.sort(function(a, b) {
       return _rangFiabilite(b) - _rangFiabilite(a);
