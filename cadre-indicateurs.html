@@ -872,6 +872,122 @@
       .fi-gemba-question { color: var(--ambre-profond); }
     }
 
+    /* ── Voie lente — zone d'ajout au tableau de bord, pied du tiroir (chantier 9.D) ──
+       Forme arbitrée le 26/04/2026 (option B du mockup preview-9d-voie-lente.html) :
+       deux duo-cartes-statut basculables suivies d'une zone-note conditionnelle.
+       Conteneur ciblable : <div id="voie-lente-tiroir" data-fiche-id="...">
+       Mutation DOM ciblée par CM.App._renderVoieLenteDOM lors des mutations
+       de panier sur la fiche courante. Couleurs reprises de la voie rapide
+       9.C : vert sémantique fiabilité (#2e7d32) / ambre profond. */
+    .voie-lente-tiroir { margin-top: 1.4rem; }
+    .vl-titre {
+      margin: 0 0 0.45rem; padding: 0 0.1rem;
+      font-size: var(--fs-meta); font-weight: var(--fw-bold);
+      text-transform: uppercase; letter-spacing: 1px; color: var(--niv-1);
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .vl-titre svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--niv-1); }
+    .vl-help {
+      margin: 0 0 0.7rem; padding: 0 0.1rem;
+      font-size: 0.82rem; color: var(--texte-2); line-height: 1.5;
+    }
+
+    .vl-duo-cartes { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    .vl-duo-carte {
+      background: var(--fond-2); border: 1.5px solid var(--bordure); border-radius: 10px;
+      padding: 0.75rem 0.85rem; cursor: pointer; transition: var(--trans);
+      display: flex; flex-direction: column; gap: 0.35rem;
+      text-align: left; font-family: inherit;
+    }
+    .vl-duo-carte:hover { border-color: var(--texte-2); transform: translateY(-1px); }
+    .vl-duo-carte:focus-visible { outline: 2px solid var(--niv-1); outline-offset: 2px; }
+    .vl-duo-carte-tete { display: flex; align-items: center; gap: 0.45rem; }
+    .vl-duo-carte-tete svg { width: 18px; height: 18px; color: var(--texte-2); flex-shrink: 0; }
+    .vl-duo-carte-tete b { font-size: 0.88rem; font-weight: 700; color: var(--texte); }
+    .vl-duo-carte-aide { font-size: 0.76rem; color: var(--texte-2); line-height: 1.4; }
+
+    .vl-duo-carte.actif-place {
+      background: rgba(46, 125, 50, 0.08); border-color: #2e7d32;
+    }
+    .vl-duo-carte.actif-place .vl-duo-carte-tete svg,
+    .vl-duo-carte.actif-place .vl-duo-carte-tete b { color: #2e7d32; }
+
+    .vl-duo-carte.actif-idee {
+      background: rgba(183, 121, 31, 0.08); border-color: var(--ambre-profond);
+    }
+    .vl-duo-carte.actif-idee .vl-duo-carte-tete svg,
+    .vl-duo-carte.actif-idee .vl-duo-carte-tete b { color: var(--ambre-profond); }
+
+    .vl-zone-note {
+      margin-top: 0.75rem; padding: 0.85rem 0.95rem;
+      background: var(--fond-2); border: 1px solid var(--bordure); border-radius: 10px;
+    }
+    .vl-zone-note.actif-place {
+      border-color: rgba(46,125,50,0.32); background: rgba(46,125,50,0.03);
+    }
+    .vl-zone-note.actif-idee {
+      border-color: rgba(183,121,31,0.32); background: rgba(183,121,31,0.03);
+    }
+    .vl-zone-note-titre {
+      font-size: 0.74rem; font-weight: 700; color: var(--texte-2);
+      margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.6px;
+    }
+
+    .vl-textarea {
+      width: 100%; resize: vertical; min-height: 66px; max-height: 200px;
+      border: 1px solid var(--bordure); border-radius: 8px;
+      padding: 0.55rem 0.7rem; font-family: inherit; font-size: 0.86rem; line-height: 1.5;
+      color: var(--texte); background: var(--fond-2);
+      transition: border-color var(--trans), box-shadow var(--trans);
+      box-sizing: border-box;
+    }
+    .vl-textarea:focus {
+      outline: none; border-color: var(--niv-1);
+      box-shadow: 0 0 0 3px rgba(26,35,126,0.12);
+    }
+    .vl-textarea::placeholder { color: var(--texte-tertiaire); font-style: italic; }
+    .vl-compteur {
+      font-size: 0.7rem; color: var(--texte-tertiaire);
+      margin-top: 0.25rem; text-align: right;
+    }
+    .vl-compteur.proche-limite { color: var(--ambre-profond); font-weight: 600; }
+
+    .vl-actions {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 0.5rem; margin-top: 0.7rem; flex-wrap: wrap;
+    }
+    .vl-btn-primaire {
+      background: var(--niv-1); color: white; border: none; border-radius: 8px;
+      padding: 0.55rem 1.1rem; font-family: inherit; font-size: 0.86rem; font-weight: 600;
+      cursor: pointer; transition: var(--trans);
+    }
+    .vl-btn-primaire:hover { background: #283593; transform: translateY(-1px); }
+    .vl-btn-primaire:focus-visible { outline: 2px solid var(--niv-1); outline-offset: 2px; }
+    .vl-btn-primaire[disabled] {
+      opacity: 0.4; cursor: not-allowed; transform: none; background: var(--niv-1);
+    }
+
+    .vl-btn-secondaire {
+      background: transparent; color: var(--texte-2); border: none;
+      padding: 0.45rem 0.65rem; font-family: inherit; font-size: 0.82rem; font-weight: 500;
+      cursor: pointer; border-radius: 6px; transition: var(--trans);
+      text-decoration: underline; text-decoration-color: rgba(96,125,139,0.3);
+      text-underline-offset: 3px;
+    }
+    .vl-btn-secondaire:hover { color: #c62828; text-decoration-color: #c62828; }
+    .vl-btn-secondaire:focus-visible { outline: 2px solid #c62828; outline-offset: 2px; }
+
+    .vl-feedback {
+      font-size: 0.78rem; color: #2e7d32; font-weight: 600;
+      opacity: 0; transition: opacity 0.18s ease;
+      display: inline-flex; align-items: center; gap: 0.3rem;
+    }
+    .vl-feedback.visible { opacity: 1; }
+
+    @media (max-width: 540px) {
+      .vl-duo-cartes { grid-template-columns: 1fr; }
+    }
+
     /* Infobulles (term-def) — pédagogie du jargon */
     .term-def {
       position: relative; border-bottom: 1.5px dotted #5e35b1;
@@ -6688,7 +6804,99 @@ CM.Composants = (function() {
          + '</div>';
   }
 
-  // rendreFicheHtml(ind) : orchestrateur — construit le HTML complet d'une fiche-indicateur.
+  /* ── 9.D voie lente : zone d'ajout au tableau de bord (option B arbitrée 26/04/2026) ──
+     Rend la zone qui vit en pied du tiroir de fiche : deux duo-cartes-statut
+     basculables, suivies d'une zone-note conditionnelle (textarea + boutons).
+     Lit l'état courant via CM.Panier.trouver(ind.id). Si la fiche est absente
+     du panier mais qu'une préparation visuelle est en cours (carte cliquée,
+     en attente du bouton primaire), `preparation` apporte le statut sélectionné
+     et la note saisie en cours. Onclick délégué à CM.App.voieLente_*. */
+  function rendreVoieLente(ind, preparation) {
+    var ligne = CM.Panier.trouver(ind.id);
+    var auPanier = !!ligne;
+    var prepActive = !auPanier && !!preparation && preparation.ficheId === ind.id;
+    var statutActif = ligne ? ligne.statut : (prepActive ? preparation.statut : null);
+    var noteCourante = ligne ? ligne.note : (prepActive ? (preparation.note || '') : '');
+
+    var SVG_COCHE   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    var SVG_AMPOULE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'
+      + '<path d="M12 6a5 5 0 0 0-3 8.9c.5.4.7 1 .7 1.6v0.5h4.6V16.5c0-.6.2-1.2.7-1.6A5 5 0 0 0 12 6z"/>'
+      + '<line x1="9.5" y1="19" x2="14.5" y2="19"/><line x1="10.5" y1="21.5" x2="13.5" y2="21.5"/>'
+      + '</svg>';
+    var SVG_CIBLE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>';
+
+    var titre = auPanier ? 'Dans mon tableau de bord' : 'Mettre dans mon tableau de bord';
+    var aide  = auPanier
+      ? 'Tu peux changer le statut ou compléter la note de contexte.'
+      : 'Choisis un statut pour cette fiche, puis (optionnel) ajoute une note de contexte.';
+
+    var classCarteEnPlace    = 'vl-duo-carte' + (statutActif === 'en-place'    ? ' actif-place' : '');
+    var classCarteAEnvisager = 'vl-duo-carte' + (statutActif === 'a-envisager' ? ' actif-idee'  : '');
+
+    var aideEnPlace = (statutActif === 'en-place')
+      ? 'Statut actuel — cliquer ne change rien.'
+      : 'Je le mesure déjà — même partiellement.';
+    var aideAEnvisager = (statutActif === 'a-envisager')
+      ? 'Statut actuel — cliquer ne change rien.'
+      : 'Je voudrais le mettre en place.';
+
+    var html = '<div class="voie-lente-tiroir" id="voie-lente-tiroir" data-fiche-id="' + ind.id + '">'
+      + '<div class="vl-titre">' + SVG_CIBLE + titre + '</div>'
+      + '<p class="vl-help">' + aide + '</p>'
+      + '<div class="vl-duo-cartes">'
+        + '<button type="button" class="' + classCarteEnPlace + '" '
+          + 'onclick="CM.App.voieLente_choisirStatut(\'' + ind.id + '\', \'en-place\')">'
+          + '<div class="vl-duo-carte-tete">' + SVG_COCHE + '<b>En place</b></div>'
+          + '<div class="vl-duo-carte-aide">' + aideEnPlace + '</div>'
+        + '</button>'
+        + '<button type="button" class="' + classCarteAEnvisager + '" '
+          + 'onclick="CM.App.voieLente_choisirStatut(\'' + ind.id + '\', \'a-envisager\')">'
+          + '<div class="vl-duo-carte-tete">' + SVG_AMPOULE + '<b>À envisager</b></div>'
+          + '<div class="vl-duo-carte-aide">' + aideAEnvisager + '</div>'
+        + '</button>'
+      + '</div>';
+
+    /* Zone note + actions : visible si en préparation OU déjà au panier. */
+    if (auPanier || prepActive) {
+      var classZone = 'vl-zone-note'
+        + (statutActif === 'en-place'    ? ' actif-place' : '')
+        + (statutActif === 'a-envisager' ? ' actif-idee'  : '');
+      var libelleBoutonPrimaire = auPanier ? 'Mettre à jour' : 'Ajouter à mon tableau de bord';
+      var noteEchappee = (noteCourante || '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      var nbCars = (noteCourante || '').length;
+      var classCompteur = 'vl-compteur' + (nbCars >= 450 ? ' proche-limite' : '');
+      var handlerPrimaire = auPanier ? 'voieLente_mettreAJourNote' : 'voieLente_ajouter';
+
+      html += '<div class="' + classZone + '">'
+        + '<div class="vl-zone-note-titre">Note de contexte</div>'
+        + '<textarea id="vl-textarea-' + ind.id + '" class="vl-textarea" maxlength="500" '
+          + 'placeholder="Optionnel — pourquoi ce choix, à qui en parler, contexte d\'usage…" '
+          + 'oninput="CM.App.voieLente_compteur(\'' + ind.id + '\')">' + noteEchappee + '</textarea>'
+        + '<div id="vl-compteur-' + ind.id + '" class="' + classCompteur + '">' + nbCars + ' / 500</div>'
+        + '<div class="vl-actions">';
+
+      if (auPanier) {
+        html += '<button type="button" class="vl-btn-secondaire" '
+            + 'onclick="CM.App.voieLente_retirer(\'' + ind.id + '\')">Retirer du tableau de bord</button>'
+          + '<span style="display:inline-flex;align-items:center;gap:0.6rem;">'
+          + '<span id="vl-feedback-' + ind.id + '" class="vl-feedback" aria-live="polite">✓ Note enregistrée</span>'
+          + '<button type="button" class="vl-btn-primaire" '
+            + 'onclick="CM.App.' + handlerPrimaire + '(\'' + ind.id + '\')">' + libelleBoutonPrimaire + '</button>'
+          + '</span>';
+      } else {
+        html += '<span></span>'
+          + '<button type="button" class="vl-btn-primaire" '
+            + 'onclick="CM.App.' + handlerPrimaire + '(\'' + ind.id + '\')">' + libelleBoutonPrimaire + '</button>';
+      }
+
+      html += '</div></div>';
+    }
+
+    return html + '</div>';
+  }
+
+    // rendreFicheHtml(ind) : orchestrateur — construit le HTML complet d'une fiche-indicateur.
   // Fonction pure : pas d'accès au DOM, pas d'effet de bord. Entrée = objet indicateur, sortie = string HTML.
   // Responsabilité : dériver le ViewModel via CM.FicheViewModel puis composer les sections.
   // Le rendu proprement dit est délégué aux sous-fonctions rendreXxx() ci-dessus.
@@ -6710,7 +6918,10 @@ CM.Composants = (function() {
          + rendreContexteFiabilite(vm.fib)
          + rendreContexteMaturite(vm.mat)
          + rendreDomaine(vm.ind)
-         + CM.Gemba.htmlEncartFiche(vm.ind.type); /* Encart Terrain — triptyque contextualisé au type */
+         + CM.Gemba.htmlEncartFiche(vm.ind.type) /* Encart Terrain — triptyque contextualisé au type */
+         + rendreVoieLente(vm.ind, (CM.App && CM.App._lireVoieLentePreparation)
+                                      ? CM.App._lireVoieLentePreparation(vm.ind.id)
+                                      : null); /* 9.D voie lente — zone d'ajout au tableau de bord */
   }
 
   // ouvrirTiroir(id) : orchestration — récupère la donnée, délègue le rendu HTML, ouvre le tiroir, gère le focus.
@@ -9210,7 +9421,143 @@ CM.App = (function() {
     CM.Panier.abonner(function(resultat) {
       _rendreTableauDeBord();
       _rafraichirIconesPanier(resultat);
+      _rafraichirVoieLenteSiOuverte(resultat); /* 9.D — voie lente du tiroir */
     });
+  }
+
+  /* ─── 9.D voie lente : préparation visuelle avant ajout au tableau de bord ───
+     Pour une fiche pas encore au panier, le clic sur une duo-carte ne pose
+     pas immédiatement la fiche — il l'arme visuellement et révèle la zone
+     note + le bouton primaire « Ajouter à mon tableau de bord ». L'ajout
+     réel passe par voieLente_ajouter, qui consomme CM.Panier.ajouter.
+     Pour une fiche déjà au panier, le clic sur la carte de l'autre statut
+     déclenche directement CM.Panier.basculer (note conservée). */
+  var _voieLentePreparation = null;  /* { ficheId, statut, note } | null */
+
+  function _lireVoieLentePreparation(ficheId) {
+    if (!_voieLentePreparation) return null;
+    if (_voieLentePreparation.ficheId !== ficheId) return null;
+    return _voieLentePreparation;
+  }
+
+  function voieLente_choisirStatut(ficheId, statut) {
+    var ligne = CM.Panier.trouver(ficheId);
+    if (ligne) {
+      /* Fiche déjà au panier : bascule directe (CM.Panier.basculer conserve la note). */
+      if (ligne.statut !== statut) CM.Panier.basculer(ficheId, statut);
+      /* L'abonnement déclenchera _rafraichirVoieLenteSiOuverte. */
+      return;
+    }
+    /* Pas au panier : préparation visuelle, en attente du bouton primaire.
+       On capture aussi la note potentiellement déjà tapée dans le textarea
+       pour ne pas la perdre en cas de re-bascule entre les deux cartes. */
+    var noteEnCours = _lireNoteTextareaVoieLente(ficheId);
+    _voieLentePreparation = { ficheId: ficheId, statut: statut, note: noteEnCours };
+    _renderVoieLenteDOM(ficheId);
+    _focusTextareaVoieLente(ficheId);
+  }
+
+  function voieLente_ajouter(ficheId) {
+    if (!_voieLentePreparation || _voieLentePreparation.ficheId !== ficheId) return;
+    var note   = _lireNoteTextareaVoieLente(ficheId) || '';
+    var statut = _voieLentePreparation.statut;
+    _voieLentePreparation = null;     /* L'abonnement re-rendera en mode édition. */
+    CM.Panier.ajouter(ficheId, statut, note);
+  }
+
+  function voieLente_mettreAJourNote(ficheId) {
+    var note = _lireNoteTextareaVoieLente(ficheId) || '';
+    var resultat = CM.Panier.modifierNote(ficheId, note);
+    if (resultat && (resultat.action === 'modifie-note' || resultat.action === 'inchange')) {
+      _afficherFeedbackVoieLente(ficheId);
+    }
+  }
+
+  function voieLente_retirer(ficheId) {
+    CM.Panier.retirer(ficheId);
+    /* L'abonnement re-rendera la voie lente en mode neutre (pas-au-panier). */
+  }
+
+  function voieLente_compteur(ficheId) {
+    var ta = document.getElementById('vl-textarea-' + ficheId);
+    var compteur = document.getElementById('vl-compteur-' + ficheId);
+    if (!ta || !compteur) return;
+    var n = ta.value.length;
+    compteur.textContent = n + ' / 500';
+    if (n >= 450) compteur.classList.add('proche-limite');
+    else          compteur.classList.remove('proche-limite');
+    /* Si en préparation, mémoriser la frappe pour résister à un re-render. */
+    if (_voieLentePreparation && _voieLentePreparation.ficheId === ficheId) {
+      _voieLentePreparation = {
+        ficheId: ficheId,
+        statut:  _voieLentePreparation.statut,
+        note:    ta.value
+      };
+    }
+  }
+
+  function _lireNoteTextareaVoieLente(ficheId) {
+    var ta = document.getElementById('vl-textarea-' + ficheId);
+    return ta ? ta.value : '';
+  }
+
+  function _focusTextareaVoieLente(ficheId) {
+    /* Délai 0ms : laisse le DOM se stabiliser après outerHTML. */
+    setTimeout(function() {
+      var ta = document.getElementById('vl-textarea-' + ficheId);
+      if (!ta) return;
+      ta.focus();
+      try {
+        var len = ta.value.length;
+        ta.setSelectionRange(len, len);
+      } catch (e) { /* environnement sans setSelectionRange */ }
+    }, 0);
+  }
+
+  function _afficherFeedbackVoieLente(ficheId) {
+    var fb = document.getElementById('vl-feedback-' + ficheId);
+    if (!fb) return;
+    fb.classList.add('visible');
+    setTimeout(function() { fb.classList.remove('visible'); }, 1800);
+  }
+
+  /* _renderVoieLenteDOM(ficheId) — mutation DOM ciblée de la zone voie lente.
+     Appelé après changement de statut (ajout, bascule, retrait) ou réinit.
+     Idempotent : si le tiroir n'est pas ouvert sur cette fiche, no-op. */
+  function _renderVoieLenteDOM(ficheId) {
+    var conteneur = document.getElementById('voie-lente-tiroir');
+    if (!conteneur) return;
+    if (conteneur.getAttribute('data-fiche-id') !== ficheId) return;
+    var ind = CM.Referentiel.chercher(ficheId);
+    if (!ind) return;
+    conteneur.outerHTML = CM.Composants.rendreVoieLente(ind, _voieLentePreparation);
+  }
+
+  /* _rafraichirVoieLenteSiOuverte(resultat) — ré-aligne la voie lente sur les
+     mutations du panier qui concernent la fiche actuellement dans le tiroir.
+     Cas spécial : 'modifie-note' ne déclenche PAS de re-render — la note
+     dans le textarea est déjà la source de vérité, un re-render écraserait
+     la frappe en cours. Le feedback visuel est piloté à la main par
+     voieLente_mettreAJourNote. */
+  function _rafraichirVoieLenteSiOuverte(resultat) {
+    if (!resultat) return;
+    if (resultat.action === 'inchange'
+     || resultat.action === 'invalide'
+     || resultat.action === 'absent'
+     || resultat.action === 'modifie-note') return;
+
+    var ficheCourante = CM.Hash.lireFicheId();
+    if (!ficheCourante) return;
+
+    if (resultat.action === 'reinitialise') {
+      _renderVoieLenteDOM(ficheCourante);
+      return;
+    }
+
+    var ficheIdMute = (resultat.ligneApres && resultat.ligneApres.ficheId)
+                   || (resultat.ligneAvant && resultat.ligneAvant.ficheId);
+    if (ficheIdMute !== ficheCourante) return;
+    _renderVoieLenteDOM(ficheCourante);
   }
 
   /* API publique */
@@ -9230,6 +9577,12 @@ CM.App = (function() {
     effacerRechercheTexte:   effacerRechercheTexte,   /* 9.B.4 — × du champ recherche */
     basculerFiltreType:      basculerFiltreType,      /* 9.B.4 — chip filtre type */
     basculerFiltreNiveau:    basculerFiltreNiveau,    /* 9.B.4 — chip filtre niveau */
+    voieLente_choisirStatut:    voieLente_choisirStatut,    /* 9.D — clic duo-carte de la voie lente */
+    voieLente_ajouter:          voieLente_ajouter,          /* 9.D — bouton « Ajouter à mon tableau de bord » */
+    voieLente_mettreAJourNote:  voieLente_mettreAJourNote,  /* 9.D — bouton « Mettre à jour » */
+    voieLente_retirer:          voieLente_retirer,          /* 9.D — lien « Retirer du tableau de bord » */
+    voieLente_compteur:         voieLente_compteur,         /* 9.D — compteur live du textarea */
+    _lireVoieLentePreparation:  _lireVoieLentePreparation,  /* 9.D — lu par CM.Composants.rendreVoieLente */
     init:                 init
   };
 })();
