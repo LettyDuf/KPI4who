@@ -473,9 +473,22 @@
        parfois 2 (textes longs) — créait une incohérence visuelle d'une carte à l'autre. */
     .carte-meta-bas { display: flex; flex-direction: column; align-items: flex-start; margin-top: 0.55rem; gap: 0.3rem; }
     .carte-freq { margin-top: 0.55rem; font-size: 0.74rem; color: var(--texte-2); }
-    .carte-pied { padding: 0.6rem 1rem; border-top: 1px solid var(--bordure); display: flex; justify-content: flex-end; }
+    .carte-pied { padding: 0.6rem 1rem; border-top: 1px solid var(--bordure); display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
     .btn-detail { font-size: 0.78rem; color: var(--texte-2); background: none; border: none; cursor: pointer; border-radius: 6px; padding: 0.28rem 0.5rem; transition: var(--trans); font-family: inherit; }
     .btn-detail:hover { background: var(--fond); color: var(--texte); }
+
+    /* ── 9.C voie rapide : icônes panier sur les fiches du référentiel ──
+       Pied de carte (option α arbitrée le 26/04/2026) : deux icônes nues
+       à gauche, bouton « Voir le detail → » à droite. Tons vert/ambre
+       désaturés (cf. mockup 0cc8a49). Pas de chip textuelle redondante. */
+    .panier-icones { display: flex; gap: 0.15rem; }
+    .panier-btn { width: 32px; height: 32px; border-radius: 999px; border: none; background: transparent; color: var(--texte-tertiaire); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; padding: 0; }
+    .panier-btn:hover { background: rgba(96, 125, 139, 0.10); color: var(--texte-secondaire); }
+    .panier-btn.actif-coche { color: #3c6c44; }
+    .panier-btn.actif-coche:hover { background: rgba(60, 108, 68, 0.12); }
+    .panier-btn.actif-idee { color: #8a6a1a; }
+    .panier-btn.actif-idee:hover { background: rgba(138, 106, 26, 0.12); }
+    .panier-btn svg { width: 22px; height: 22px; }
 
     /* Chips « cadres de travail » sous le nom de la carte (DORA, Lean, Scrum…) */
     .carte-chips-cadres { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.4rem; }
@@ -6220,6 +6233,45 @@ CM.Composants = (function() {
     return html + '</div>';
   }
 
+  /* ── 9.C voie rapide : icônes panier (option α arbitrée 26/04/2026) ──
+     Rend les deux icônes nues coche + ampoule pour une fiche donnée.
+     Lit le statut courant via CM.Panier.statut(ficheId) et applique la
+     classe active correspondante (actif-coche / actif-idee). Onclick
+     délégué à CM.App.basculerStatutPanier — voir l'API publique de
+     CM.App pour la logique pose/retire/bascule. Le rafraîchissement
+     visuel après mutation est fait par CM.App via abonnement pub/sub. */
+  function rendreIconesPanier(ind) {
+    var statutCourant = CM.Panier.statut(ind.id);
+    var classCoche = (statutCourant === 'en-place')    ? ' actif-coche' : '';
+    var classIdee  = (statutCourant === 'a-envisager') ? ' actif-idee'  : '';
+    var labelCoche = (statutCourant === 'en-place')    ? 'Retirer du panier' : 'Marquer en place';
+    var labelIdee  = (statutCourant === 'a-envisager') ? 'Retirer du panier' : 'Marquer à envisager';
+
+    var SVG_COCHE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    var SVG_AMPOULE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'
+      + '<path d="M12 6a5 5 0 0 0-3 8.9c.5.4.7 1 .7 1.6v0.5h4.6V16.5c0-.6.2-1.2.7-1.6A5 5 0 0 0 12 6z"/>'
+      + '<line x1="9.5" y1="19" x2="14.5" y2="19"/><line x1="10.5" y1="21.5" x2="13.5" y2="21.5"/>'
+      + '<line x1="12" y1="1.5" x2="12" y2="3.5"/><line x1="3.5" y1="10.5" x2="5.5" y2="10.5"/>'
+      + '<line x1="18.5" y1="10.5" x2="20.5" y2="10.5"/><line x1="5.5" y1="4" x2="6.9" y2="5.4"/>'
+      + '<line x1="18.5" y1="4" x2="17.1" y2="5.4"/>'
+      + '</svg>';
+
+    return '<div class="panier-icones" data-fiche-id="' + ind.id + '">'
+      + '<button type="button" class="panier-btn' + classCoche + '" '
+        + 'data-statut="en-place" '
+        + 'aria-label="' + labelCoche + '" title="' + labelCoche + '" '
+        + 'onclick="event.stopPropagation();CM.App.basculerStatutPanier(\'' + ind.id + '\', \'en-place\')">'
+        + SVG_COCHE
+      + '</button>'
+      + '<button type="button" class="panier-btn' + classIdee + '" '
+        + 'data-statut="a-envisager" '
+        + 'aria-label="' + labelIdee + '" title="' + labelIdee + '" '
+        + 'onclick="event.stopPropagation();CM.App.basculerStatutPanier(\'' + ind.id + '\', \'a-envisager\')">'
+        + SVG_AMPOULE
+      + '</button>'
+      + '</div>';
+  }
+
   function htmlCarte(ind, couleurNiv, prioritaire, contexte) {
     var cfg  = CM.Config;
     var c    = cfg.TYPES_COULEURS[ind.type] || '#546e7a';
@@ -6257,6 +6309,7 @@ CM.Composants = (function() {
       +   rendreChipsCadres(ind.id)
       + '</div>'
       + '<div class="carte-pied">'
+      +   rendreIconesPanier(ind)
       +   '<button class="btn-detail" onclick="event.stopPropagation();CM.Composants.ouvrirTiroir(\'' + ind.id + '\')">Voir le detail →</button>'
       + '</div>'
       + '</div>';
@@ -8238,6 +8291,76 @@ CM.App = (function() {
       + '</div>';
   }
 
+  /* ── 9.C voie rapide : câblage du clic sur les icônes panier ──
+     Logique pose/retire/bascule. Un clic sur une icône inactive pose le
+     statut, un re-clic sur l'icône active retire la fiche du panier, un
+     clic sur l'autre icône bascule. La délégation onclick inline (cf.
+     CM.Composants.rendreIconesPanier) appelle cette fonction. Le
+     rafraîchissement visuel des icônes est fait par _rafraichirIconesPanier
+     via l'abonnement à CM.Panier posé dans init(). */
+  function basculerStatutPanier(ficheId, statut) {
+    var statutCourant = CM.Panier.statut(ficheId);
+    if (statutCourant === statut) {
+      CM.Panier.retirer(ficheId);
+    } else if (statutCourant === null) {
+      CM.Panier.ajouter(ficheId, statut);
+    } else {
+      CM.Panier.basculer(ficheId, statut);
+    }
+  }
+
+  /* ── 9.C voie rapide : mise à jour ciblée du DOM des icônes ──
+     Appelé après chaque mutation du panier via l'abonnement. Met à jour
+     uniquement les icônes de la fiche concernée — pas de re-render
+     complet de la vue. Pour reinitialiser() (action 'reinitialise'), on
+     rafraîchit toutes les icônes affichées. */
+  function _rafraichirIconesPanier(resultat) {
+    if (!resultat) return;
+    if (resultat.action === 'reinitialise') {
+      _rafraichirToutesLesIconesPanier();
+      return;
+    }
+    var ficheId = (resultat.ligneApres && resultat.ligneApres.ficheId)
+               || (resultat.ligneAvant && resultat.ligneAvant.ficheId);
+    if (!ficheId) return;
+    _rafraichirIconesPanierFiche(ficheId);
+  }
+
+  function _rafraichirIconesPanierFiche(ficheId) {
+    var nouveauStatut = CM.Panier.statut(ficheId);
+    var groupes = document.querySelectorAll('.panier-icones[data-fiche-id="' + ficheId + '"]');
+    for (var i = 0; i < groupes.length; i++) {
+      var btns = groupes[i].querySelectorAll('.panier-btn');
+      for (var j = 0; j < btns.length; j++) {
+        var btn = btns[j];
+        var statutBtn = btn.getAttribute('data-statut');
+        btn.classList.remove('actif-coche', 'actif-idee');
+        var actif = (nouveauStatut === statutBtn);
+        if (actif) {
+          btn.classList.add(statutBtn === 'en-place' ? 'actif-coche' : 'actif-idee');
+        }
+        var label = actif
+          ? 'Retirer du panier'
+          : (statutBtn === 'en-place' ? 'Marquer en place' : 'Marquer à envisager');
+        btn.setAttribute('aria-label', label);
+        btn.setAttribute('title', label);
+      }
+    }
+  }
+
+  function _rafraichirToutesLesIconesPanier() {
+    var groupes = document.querySelectorAll('.panier-icones[data-fiche-id]');
+    var ids = {};
+    for (var i = 0; i < groupes.length; i++) {
+      ids[groupes[i].getAttribute('data-fiche-id')] = true;
+    }
+    for (var id in ids) {
+      if (Object.prototype.hasOwnProperty.call(ids, id)) {
+        _rafraichirIconesPanierFiche(id);
+      }
+    }
+  }
+
   /* retirerDuPanier(ficheId) — exposé via l'API publique pour les onclick
      inline générés par _htmlCartePanier. Le rafraîchissement de la vue
      est assuré par l'abonnement à CM.Panier posé dans init() (pub/sub) —
@@ -8570,7 +8693,10 @@ CM.App = (function() {
        CM.Panier notifie → on re-rend le TDB. La vue courante peut ne pas
        être le TDB — le re-rendu du zone #contenu-tdb est silencieux dans
        ce cas, et la vue reflétera l'état à jour au prochain changerVue(). */
-    CM.Panier.abonner(function() { _rendreTableauDeBord(); });
+    CM.Panier.abonner(function(resultat) {
+      _rendreTableauDeBord();
+      _rafraichirIconesPanier(resultat);
+    });
   }
 
   /* API publique */
@@ -8585,6 +8711,7 @@ CM.App = (function() {
     afficherAccueil:      afficherAccueil,
     retirerDuPanier:      retirerDuPanier,   /* 9.B.1 — consommé par onclick inline */
     reinitialiserPanier:  reinitialiserPanier, /* 9.B.3 — bouton ↻ Réinitialiser */
+    basculerStatutPanier: basculerStatutPanier, /* 9.C — voie rapide ic. panier sur les fiches */
     init:                 init
   };
 })();
