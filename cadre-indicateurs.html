@@ -6050,22 +6050,24 @@ CM.DiagnosticProbleme = (function() {
   }
 
   /* Indicateurs recommandés pour un couple (niveau, problème).
-     Critères : ind.niveau === ctx.niveau ET ctx.probleme ∈ tags(ind).
-     Le domaine (ctx.domaine, optionnel) filtre au niveau opérationnel uniquement.
-     Tri par fiabilité décroissante (fiable > précaution > risque) pour présenter
-     les métriques les plus exploitables en tête — sans masquer les autres.
-     Pas de plafond appliqué : les étapes du parcours (niveau, problème, domaine)
-     jouent déjà le rôle de filtres explicites ; couper arbitrairement la liste
-     créerait un biais d'information invisible. À l'utilisateur d'arbitrer ce
-     qu'il retient, pas au produit de décider pour lui. */
+     Traducteur (zone chemins, chantier 14 §3.1) : formule un filtre conforme
+     §10.3 et délègue à CM.RequeteMetriques.executer. La sémantique du couple
+     niveau × probleme (+ domaine optionnel au niveau opérationnel) vit
+     désormais dans le cœur, plus dans ce module.
+     Tri par fiabilité décroissante (fiable > précaution > risque) appliqué
+     localement (§10.3 : « les vues qui souhaitent un autre tri trient
+     localement après réception »). Pas de plafond appliqué : les étapes du
+     parcours (niveau, problème, domaine) jouent déjà le rôle de filtres
+     explicites ; couper arbitrairement la liste créerait un biais
+     d'information invisible. */
   // Exemple : recommander({niveau:'operationnel', probleme:'flux'}) → [ind, ind, ...]
   function recommander(ctx) {
     if (!ctx || !ctx.niveau || !ctx.probleme) return [];
-    var tous = CM.Referentiel.tous();
-    var pertinents = [];
-    for (var i = 0; i < tous.length; i++) {
-      if (_estPertinent(tous[i], ctx)) pertinents.push(tous[i]);
+    var filtre = { niveau: [ctx.niveau], probleme: ctx.probleme };
+    if (ctx.niveau === 'operationnel' && ctx.domaine) {
+      filtre.domaine = [ctx.domaine];
     }
+    var pertinents = CM.RequeteMetriques.executer(filtre);
     pertinents.sort(function(a, b) {
       return _rangFiabilite(b) - _rangFiabilite(a);
     });
@@ -6093,15 +6095,6 @@ CM.DiagnosticProbleme = (function() {
   }
 
   /* ─── Internes ─────────────────────────────────────────────────── */
-  function _estPertinent(ind, ctx) {
-    if (ind.niveau !== ctx.niveau) return false;
-    if (ctx.niveau === 'operationnel' && ctx.domaine) {
-      if (ind.domaine && ind.domaine !== ctx.domaine) return false;
-    }
-    var tags = CM.IndicateursMeta.tagsDe(ind.id);
-    return tags.indexOf(ctx.probleme) !== -1;
-  }
-
   /* Score numérique pour ordonner les indicateurs par qualité de mesure.
      Reflète la hiérarchie pédagogique : on présente d'abord ce qui est fiable,
      puis ce qui demande de la précaution, puis ce qui est risqué (Goodhart).
