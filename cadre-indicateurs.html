@@ -1896,6 +1896,76 @@
       cursor: not-allowed;
     }
 
+    /* ── Bandeau de recherche — chantier 9.B.4 ───────────────
+       Champ texte + chips filtres Type/Niveau peuplés dynamiquement
+       avec ce qui existe dans le panier. État de recherche piloté par
+       _etatRechercheTdb dans le module App. */
+    .panier-recherche {
+      display: flex; align-items: center;
+      gap: 0.55rem; flex-wrap: wrap;
+      padding: 0.3rem 0;
+    }
+    .panier-recherche-input-wrap {
+      position: relative; flex: 1 1 280px; min-width: 220px;
+    }
+    .panier-recherche-input {
+      width: 100%;
+      padding: 0.5rem 2.1rem 0.5rem 2.1rem;
+      border: 1px solid var(--bordure); border-radius: 8px;
+      font-size: 0.86rem; font-family: inherit;
+      background: var(--fond-2); color: var(--texte-primaire);
+      transition: var(--trans);
+    }
+    .panier-recherche-input:focus {
+      outline: none; border-color: var(--niv-1-moyen);
+      box-shadow: 0 0 0 3px rgba(57,73,171,0.1);
+    }
+    .panier-recherche-icone {
+      position: absolute; left: 0.7rem; top: 50%;
+      transform: translateY(-50%); color: var(--texte-secondaire);
+      font-size: 0.9rem; pointer-events: none;
+    }
+    .panier-recherche-effacer {
+      position: absolute; right: 0.45rem; top: 50%;
+      transform: translateY(-50%);
+      background: transparent; border: none;
+      color: var(--texte-secondaire); font-size: 0.95rem;
+      cursor: pointer; padding: 0.2rem 0.4rem;
+      border-radius: 4px; font-family: inherit; line-height: 1;
+    }
+    .panier-recherche-effacer:hover { color: var(--niv-1); background: var(--niv-1-clair); }
+    .panier-recherche-resultat {
+      font-size: 0.76rem; color: var(--texte-secondaire);
+      font-style: italic;
+    }
+
+    .panier-filtres { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+    .panier-filtre-label {
+      font-size: 0.72rem; color: var(--texte-secondaire);
+      align-self: center; margin-right: 0.2rem;
+    }
+    .panier-filtre {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      padding: 0.28rem 0.65rem; border-radius: 16px;
+      border: 1px solid var(--bordure); background: var(--fond-2);
+      color: var(--texte-2);
+      font-size: 0.72rem; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: var(--trans);
+    }
+    .panier-filtre:hover { border-color: var(--niv-1-moyen); color: var(--niv-1-moyen); }
+    .panier-filtre.actif {
+      background: var(--niv-1); color: white;
+      border-color: var(--niv-1);
+    }
+    .panier-filtre-coche { font-size: 0.78rem; }
+
+    /* Estompage des cartes non-correspondantes (recherche active). */
+    .panier-carte.estompee { opacity: 0.32; filter: grayscale(0.35); }
+    .panier-carte-nom mark {
+      background: #fff3a8; padding: 0 2px;
+      border-radius: 2px; color: inherit;
+    }
+
     /* Grille miroir — deux colonnes côte à côte.
        Bascule empilée dans la section RESPONSIVE ci-dessous. */
     .panier-tdb-grille {
@@ -8321,26 +8391,203 @@ CM.App = (function() {
   }
 
   /* ─── VUE 1 : Tableau de bord — Panier personnel ─── */
-  /* Chantier 9.B.1 — squelette + état vide.
-     La vue consomme CM.Panier (service domaine) et s'abonne dans init()
-     pour se rafraîchir à chaque mutation. Rendu minimaliste : nom + ×.
-     Les chips type/niveau/fiabilité arrivent en 9.B.2.
-     Le bouton réinitialiser est présent mais désactivé (câblage en 9.B.3). */
+  /* Chantier 9.B.1 → 9.B.4. Composition :
+       - 9.B.1 : squelette + état vide
+       - 9.B.2 : chips type/niveau/fiabilité
+       - 9.B.3 : bouton réinitialiser
+       - 9.B.4 : barre de recherche + chips filtres Type/Niveau peuplés
+                 dynamiquement par CM.PanierRecherche, estompage des
+                 cartes non-correspondantes (au lieu de masquage)
+     La vue s'abonne à CM.Panier dans init() pour se rafraîchir à chaque
+     mutation. Le filtre est piloté par _etatRechercheTdb (état local au
+     module), volontairement non persistant — F5 réinitialise le panier
+     ET la recherche, cohérent avec la posture v1 « session éphémère ». */
+
+  /* État de la recherche dans la vue panier (chantier 9.B.4).
+     Les types/niveaux actifs sont stockés en dictionnaires (Object.create(null))
+     pour éviter toute collision avec __proto__ et permettre Object.keys().
+     L'état est local au module — pas de fuite côté CM.Panier (la
+     recherche est un comportement de vue, pas un comportement métier). */
+  var _etatRechercheTdb = {
+    texte:   '',
+    types:   Object.create(null),
+    niveaux: Object.create(null)
+  };
+
+  function _typesActifsTdb()    { return Object.keys(_etatRechercheTdb.types); }
+  function _niveauxActifsTdb()  { return Object.keys(_etatRechercheTdb.niveaux); }
+  function _rechercheActiveTdb() {
+    return _etatRechercheTdb.texte !== ''
+        || _typesActifsTdb().length > 0
+        || _niveauxActifsTdb().length > 0;
+  }
+
+  /* Libellé court d'un niveau à partir du code data (operationnel,
+     programme, tactique, strategique). Cohérent avec
+     CM.FicheViewModel.from() qui dérive le même libellé. */
+  function _libelleCourtNiveauTdb(code) {
+    var cfg = CM.Config;
+    for (var i = 0; i < cfg.NIVEAUX.length; i++) {
+      if (cfg.NIVEAUX[i].niveauData === code) {
+        return cfg.NIVEAUX[i].libelle.replace(/^Niveau\s+/i, '');
+      }
+    }
+    return code;
+  }
+
+  /* Auto-correction des chips obsolètes : si l'utilisateur retire la
+     dernière fiche qui portait un type/niveau actif, on désactive
+     silencieusement ce filtre. Sinon le chip disparaît mais reste
+     « actif » dans l'état, ce qui rendrait la recherche figée. */
+  function _purgerChipsObsoletesTdb(typesPresents, niveauxPresents) {
+    var setT = {}, setN = {};
+    for (var i = 0; i < typesPresents.length; i++)   setT[typesPresents[i]]   = true;
+    for (var j = 0; j < niveauxPresents.length; j++) setN[niveauxPresents[j]] = true;
+    var modifie = false;
+    for (var t in _etatRechercheTdb.types)   if (!setT[t]) { delete _etatRechercheTdb.types[t]; modifie = true; }
+    for (var n in _etatRechercheTdb.niveaux) if (!setN[n]) { delete _etatRechercheTdb.niveaux[n]; modifie = true; }
+    return modifie;
+  }
+
   function _rendreTableauDeBord() {
     var zone = document.getElementById('contenu-tdb');
     if (!zone) return;
 
-    var total      = CM.Panier.taille();
-    var enPlace    = CM.Panier.lister({ statut: 'en-place' });
-    var aEnvisager = CM.Panier.lister({ statut: 'a-envisager' });
+    var total = CM.Panier.taille();
+    var lignes = CM.Panier.lister();
+
+    /* Filtrage pur via CM.PanierRecherche — la vue ne calcule rien
+       elle-même au-delà du tri par statut. */
+    var requete = {
+      texte:   _etatRechercheTdb.texte,
+      types:   _typesActifsTdb(),
+      niveaux: _niveauxActifsTdb()
+    };
+    var resultat = CM.PanierRecherche.filtrer({
+      lignes:      lignes,
+      referentiel: CM.Referentiel,
+      requete:     requete
+    });
+
+    /* Auto-correction : si une fiche retirée a fait disparaître un type
+       ou un niveau actif, on purge l'état avant de rendre. */
+    _purgerChipsObsoletesTdb(resultat.typesPresents, resultat.niveauxPresents);
+
+    /* Répartir les résultats par statut tout en préservant l'ordre. */
+    var enPlace = [], aEnvisager = [];
+    for (var i = 0; i < resultat.resultats.length; i++) {
+      var r = resultat.resultats[i];
+      if (r.ligne.statut === 'en-place')        enPlace.push(r);
+      else if (r.ligne.statut === 'a-envisager') aEnvisager.push(r);
+    }
 
     var html = '<div class="panier-tdb">'
       + _htmlPanierHeader(total)
+      + (total > 0 ? _htmlPanierRecherche(resultat) : '')
       + _htmlPanierGrille(enPlace, aEnvisager)
       + (total === 0 ? _htmlPanierVideInvite() : '')
       + '</div>';
 
     zone.innerHTML = html;
+
+    /* Rendre le focus à l'input après re-render si l'utilisateur tapait.
+       Sans cette ligne, chaque keypress ferait perdre le focus puisque
+       le innerHTML reconstruit complètement le DOM. */
+    if (_etatRechercheTdb.texte !== '') {
+      var input = document.getElementById('panier-recherche-input');
+      if (input) {
+        input.focus();
+        var l = input.value.length;
+        try { input.setSelectionRange(l, l); } catch (e) { /* navigateur sans setSelectionRange */ }
+      }
+    }
+  }
+
+  /* Bandeau de recherche — chantier 9.B.4.
+     Rendu uniquement si le panier contient au moins une fiche.
+     - Input texte avec icône loupe + croix d'effacement (visible quand non-vide)
+     - Compteur « X sur N correspondent » à droite du champ
+     - Chips Type peuplés à partir de resultat.typesPresents (codes courts DORA, FLUX…)
+     - Chips Niveau peuplés à partir de resultat.niveauxPresents (codes data,
+       libellés via _libelleCourtNiveauTdb) */
+  function _htmlPanierRecherche(resultat) {
+    var texte = _etatRechercheTdb.texte;
+    var nbCorr = resultat.nbCorrespondants;
+    var total = resultat.total;
+
+    var afficheEffacer = (texte !== '');
+    var afficheCompteur = _rechercheActiveTdb();
+
+    var html = ''
+      + '<div class="panier-recherche">'
+        + '<div class="panier-recherche-input-wrap">'
+          + '<span class="panier-recherche-icone" aria-hidden="true">🔍</span>'
+          + '<input type="text" id="panier-recherche-input"'
+            + ' class="panier-recherche-input"'
+            + ' placeholder="Rechercher dans mon panier…"'
+            + ' value="' + _echapperHtml(texte) + '"'
+            + ' oninput="CM.App.appliquerRechercheTexte(this.value)"'
+            + ' aria-label="Rechercher dans le panier" />'
+          + (afficheEffacer
+              ? '<button type="button" class="panier-recherche-effacer"'
+                + ' onclick="CM.App.effacerRechercheTexte()"'
+                + ' aria-label="Effacer la recherche" title="Effacer">×</button>'
+              : '')
+        + '</div>'
+        + (afficheCompteur
+            ? '<span class="panier-recherche-resultat">'
+              + nbCorr + ' sur ' + total + ' correspond' + (nbCorr > 1 ? 'ent' : '')
+              + '</span>'
+            : '')
+      + '</div>';
+
+    /* Bloc chips — affiché uniquement s'il y a au moins un chip à proposer. */
+    var typesP = resultat.typesPresents.slice().sort();
+    var niveauxP = resultat.niveauxPresents.slice().sort(function(a, b) {
+      /* Ordre métier des niveaux : opérationnel → programme → tactique → stratégique. */
+      var ordre = ['operationnel', 'programme', 'tactique', 'strategique'];
+      return ordre.indexOf(a) - ordre.indexOf(b);
+    });
+
+    if (typesP.length === 0 && niveauxP.length === 0) return html;
+
+    html += '<div class="panier-recherche">';
+
+    if (typesP.length > 0) {
+      html += '<span class="panier-filtre-label">Type :</span>';
+      html += '<div class="panier-filtres">';
+      for (var i = 0; i < typesP.length; i++) {
+        var code = typesP[i];
+        var actif = !!_etatRechercheTdb.types[code];
+        html += '<button type="button" class="panier-filtre' + (actif ? ' actif' : '') + '"'
+          + ' onclick="CM.App.basculerFiltreType(\''  + code + '\')"'
+          + ' aria-pressed="' + (actif ? 'true' : 'false') + '">'
+          + (actif ? '<span class="panier-filtre-coche" aria-hidden="true">✓</span>' : '')
+          + _echapperHtml(code)
+          + '</button>';
+      }
+      html += '</div>';
+    }
+
+    if (niveauxP.length > 0) {
+      html += '<span class="panier-filtre-label" style="margin-left:0.5rem;">Niveau :</span>';
+      html += '<div class="panier-filtres">';
+      for (var j = 0; j < niveauxP.length; j++) {
+        var nivCode = niveauxP[j];
+        var nivActif = !!_etatRechercheTdb.niveaux[nivCode];
+        var nivLibelle = _libelleCourtNiveauTdb(nivCode);
+        html += '<button type="button" class="panier-filtre' + (nivActif ? ' actif' : '') + '"'
+          + ' onclick="CM.App.basculerFiltreNiveau(\''  + nivCode + '\')"'
+          + ' aria-pressed="' + (nivActif ? 'true' : 'false') + '">'
+          + (nivActif ? '<span class="panier-filtre-coche" aria-hidden="true">✓</span>' : '')
+          + _echapperHtml(nivLibelle)
+          + '</button>';
+      }
+      html += '</div>';
+    }
+
+    html += '</div>';
+    return html;
   }
 
   /* En-tête global : titre + légende (compteur total) + bouton réinitialiser.
@@ -8372,7 +8619,9 @@ CM.App = (function() {
      Même structure que le panier soit vide ou rempli : une colonne sans
      lignes affiche un placeholder interne. Quand le panier est
      entièrement vide, l'invitation centrée est rendue sous la grille
-     (arbitrage 9.B.0 : E1 hybride). */
+     (arbitrage 9.B.0 : E1 hybride).
+     Les paramètres sont des tableaux de meta-résultats `{ ligne, fiche, correspond }`
+     produits par CM.PanierRecherche.filtrer(). */
   function _htmlPanierGrille(enPlace, aEnvisager) {
     return ''
       + '<div class="panier-tdb-grille">'
@@ -8381,17 +8630,21 @@ CM.App = (function() {
       + '</div>';
   }
 
-  /* Une colonne : titre + chip compteur + aide + cartes (ou placeholder). */
-  function _htmlColonne(statut, titre, aide, lignes) {
-    var contenu = (lignes.length === 0)
+  /* Une colonne : titre + chip compteur + aide + cartes (ou placeholder).
+     Le compteur affiche TOUJOURS la taille brute de la colonne (avant
+     filtrage), pour que l'utilisateur garde la conscience de son panier
+     complet. Le compteur de résultats filtrés est dans le bandeau de
+     recherche (`X sur N correspondent`). */
+  function _htmlColonne(statut, titre, aide, metaResultats) {
+    var contenu = (metaResultats.length === 0)
       ? '<div class="panier-col-vide">Aucune métrique dans cette section.</div>'
-      : '<div class="panier-cartes">' + lignes.map(_htmlCartePanier).join('') + '</div>';
+      : '<div class="panier-cartes">' + metaResultats.map(_htmlCartePanier).join('') + '</div>';
     return ''
       + '<div class="panier-colonne ' + statut + '">'
         + '<div class="panier-col-head">'
           + '<div class="panier-col-titre">'
             + titre
-            + '<span class="panier-col-compte">' + lignes.length + '</span>'
+            + '<span class="panier-col-compte">' + metaResultats.length + '</span>'
           + '</div>'
           + '<div class="panier-col-aide">' + aide + '</div>'
         + '</div>'
@@ -8407,15 +8660,26 @@ CM.App = (function() {
      profondeur.
      Les chips ne s'affichent que si la fiche est retrouvée — en cas de
      désynchronisation référentiel/panier, la carte retombe sur le
-     rendu minimaliste 9.B.1 plutôt que de casser la vue. */
-  function _htmlCartePanier(ligne) {
-    var fiche = CM.Referentiel.chercher(ligne.ficheId);
+     rendu minimaliste 9.B.1 plutôt que de casser la vue.
+
+     Chantier 9.B.4 : reçoit un meta-résultat `{ ligne, fiche, correspond }`.
+     Les cartes non-correspondantes portent la classe `estompee` (au lieu
+     d'être masquées — on garde la conscience du panier complet). Le
+     fragment du nom qui matche le texte recherché est entouré d'un
+     `<mark>` pour la mise en évidence. */
+  function _htmlCartePanier(meta) {
+    var ligne = meta.ligne;
+    var fiche = meta.fiche;
+    var correspond = meta.correspond;
     var nom = fiche ? fiche.nom : '(fiche introuvable : ' + ligne.ficheId + ')';
-    var nomEchappe = _echapperHtml(nom);
+    var nomHtmlInterne = _surlignerSiPertinent(nom, _etatRechercheTdb.texte);
 
     var nomHtml = fiche
-      ? '<a class="panier-carte-nom" href="#fiche=' + ligne.ficheId + '">' + nomEchappe + '</a>'
-      : '<span class="panier-carte-nom">' + nomEchappe + '</span>';
+      ? '<a class="panier-carte-nom" href="#fiche=' + ligne.ficheId + '">' + nomHtmlInterne + '</a>'
+      : '<span class="panier-carte-nom">' + nomHtmlInterne + '</span>';
+
+    var classeCarte = 'panier-carte';
+    if (_rechercheActiveTdb() && !correspond) classeCarte += ' estompee';
 
     var piedHtml = '';
     if (fiche) {
@@ -8440,7 +8704,7 @@ CM.App = (function() {
     }
 
     return ''
-      + '<div class="panier-carte">'
+      + '<div class="' + classeCarte + '">'
         + '<button type="button" class="panier-retirer" '
           + 'onclick="CM.App.retirerDuPanier(\'' + ligne.ficheId + '\')" '
           + 'aria-label="Retirer du panier" title="Retirer">'
@@ -8449,6 +8713,43 @@ CM.App = (function() {
         + nomHtml
         + piedHtml
       + '</div>';
+  }
+
+  /* Helper de surlignage — entoure d'un `<mark>` la première occurrence
+     (insensible à la casse et aux accents) du texte recherché dans le
+     nom de la fiche. Si pas de texte de recherche actif, retourne
+     simplement le nom échappé.
+
+     Implémentation : on calcule la position du match sur la version
+     normalisée (NFD sans accents en minuscule) ; comme la normalisation
+     NFD préserve la longueur en code units pour les caractères latin
+     accentués (é → e + ́), les indices de la version normalisée
+     pointent vers les bonnes positions du texte original — on peut donc
+     surligner sur la chaîne d'origine et préserver les accents. */
+  function _surlignerSiPertinent(nom, texteRecherche) {
+    if (!texteRecherche || texteRecherche === '') return _echapperHtml(nom);
+    var nomNorm = CM.PanierRecherche._normaliser(nom);
+    var rqNorm = CM.PanierRecherche._normaliser(texteRecherche);
+    var pos = nomNorm.indexOf(rqNorm);
+    if (pos === -1) return _echapperHtml(nom);
+    /* Sur des caractères latin standards (français), longueur(NFD) ===
+       longueur(orig) + nombre de diacritiques. Pour rester sûrs, on
+       calcule la longueur du fragment d'origine en mappant les indices :
+       chaque code unit de l'original correspond à 1 ou 2 code units
+       en NFD (1 si pas de diacritique, 2 sinon : base + combiner).
+       Approximation pragmatique : on surligne sur l'original aux mêmes
+       indices, ce qui marche pour 95% des cas (nom de fiche = ASCII pur
+       ou très peu accentué). En cas de désalignement, on retombe sur
+       l'échappement simple. */
+    var avant = nom.substring(0, pos);
+    var pendant = nom.substring(pos, pos + rqNorm.length);
+    var apres = nom.substring(pos + rqNorm.length);
+    /* Garde-fou : si la normalisation a décalé la longueur, on retombe
+       sur le rendu non surligné pour ne pas afficher un mark déplacé. */
+    if (CM.PanierRecherche._normaliser(pendant) !== rqNorm) return _echapperHtml(nom);
+    return _echapperHtml(avant)
+      + '<mark>' + _echapperHtml(pendant) + '</mark>'
+      + _echapperHtml(apres);
   }
 
   /* Invitation centrée — affichée SOUS la grille miroir quand le panier
@@ -8568,6 +8869,39 @@ CM.App = (function() {
     if (window.confirm(message)) {
       CM.Panier.reinitialiser();
     }
+  }
+
+  /* ── 9.B.4 Handlers de la barre de recherche du panier ──
+     Tous mutent _etatRechercheTdb puis re-rendent la vue. Le focus est
+     restauré dans _rendreTableauDeBord après le innerHTML pour que
+     l'utilisateur puisse continuer à taper sans le perdre.
+
+     Volontairement pas de debounce sur appliquerRechercheTexte : le
+     panier reste petit (5-30 fiches typiquement), le coût d'un
+     re-render est négligeable, et le retour visuel immédiat est plus
+     important que la micro-optimisation. */
+  function appliquerRechercheTexte(valeur) {
+    _etatRechercheTdb.texte = String(valeur || '');
+    _rendreTableauDeBord();
+  }
+
+  function effacerRechercheTexte() {
+    _etatRechercheTdb.texte = '';
+    _rendreTableauDeBord();
+  }
+
+  function basculerFiltreType(code) {
+    if (!code) return;
+    if (_etatRechercheTdb.types[code]) delete _etatRechercheTdb.types[code];
+    else _etatRechercheTdb.types[code] = true;
+    _rendreTableauDeBord();
+  }
+
+  function basculerFiltreNiveau(code) {
+    if (!code) return;
+    if (_etatRechercheTdb.niveaux[code]) delete _etatRechercheTdb.niveaux[code];
+    else _etatRechercheTdb.niveaux[code] = true;
+    _rendreTableauDeBord();
   }
 
   /* Échappement HTML minimal — défense en profondeur pour tout texte
@@ -8889,9 +9223,13 @@ CM.App = (function() {
     reinitQuestionnaire:  reinitQuestionnaire,
     basculerAccueil:      basculerAccueil,
     afficherAccueil:      afficherAccueil,
-    retirerDuPanier:      retirerDuPanier,   /* 9.B.1 — consommé par onclick inline */
-    reinitialiserPanier:  reinitialiserPanier, /* 9.B.3 — bouton ↻ Réinitialiser */
-    basculerStatutPanier: basculerStatutPanier, /* 9.C — voie rapide ic. panier sur les fiches */
+    retirerDuPanier:        retirerDuPanier,     /* 9.B.1 — consommé par onclick inline */
+    reinitialiserPanier:    reinitialiserPanier, /* 9.B.3 — bouton ↻ Réinitialiser */
+    basculerStatutPanier:   basculerStatutPanier, /* 9.C — voie rapide ic. panier sur les fiches */
+    appliquerRechercheTexte: appliquerRechercheTexte, /* 9.B.4 — input recherche panier */
+    effacerRechercheTexte:   effacerRechercheTexte,   /* 9.B.4 — × du champ recherche */
+    basculerFiltreType:      basculerFiltreType,      /* 9.B.4 — chip filtre type */
+    basculerFiltreNiveau:    basculerFiltreNiveau,    /* 9.B.4 — chip filtre niveau */
     init:                 init
   };
 })();
