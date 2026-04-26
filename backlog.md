@@ -15,7 +15,7 @@ Dernière mise à jour : **26 avril 2026 — chantier 9.C livré** (voie rapide 
 - **Backlog enrichi** : commit `6df8c2f` ajoute en pied des Articulations du chantier 10 une ligne *Friction confirmée par l'usage* sur le chemin laborieux de la pyramide vers TDB (3 étapes pour une consultation qui devrait être à un clic) — preuve par l'usage de la pertinence de la fusion portes+onglets portée par le chantier 10.
 - **Workflow git sandbox** : pattern `mv .git/index.lock .git/index.lock.tmp$(date +%s)` toujours appliqué avant chaque commit ; les warnings `unable to unlink` sur `.git/objects/maintenance.lock` et `.git/HEAD.lock` persistent côté sandbox mais ne bloquent aucun commit (à nettoyer côté ordi en fin de séance).
 - **Prochaines actions ouvertes (chantier 9 — tranches restantes)** :
-  - **9.B vue panier** : déjà partiellement livrée (`_rendreTableauDeBord` + `_htmlCartePanier`, voir `MISSION.md` et backlog §9). Audit à faire pour voir s'il reste des items non fermés (recherche globale, chips type/niveau/fiabilité enrichies, etc.).
+  - **9.B vue panier** : audit de reprise mené le 26/04/2026 — 9.B.0 → 9.B.3 livrés le 22/04 (squelette miroir + état vide + chips type/niveau/fiabilité + bouton réinitialiser), mais la décision ferme **« recherche globale + 1-2 filtres contextuels »** (cadrage 22/04) n'a jamais été codée. Tranche **9.B.4 rouverte** (option A arbitrée) pour livrer cette dette. Mockup-preview *input seul vs input + chips* à produire avant code. Détail dans backlog §9.
   - **9.D voie lente** : zone d'ajout dans le tiroir de fiche ouverte, avec note de contexte. Non démarrée. Consomme `CM.Panier.modifierNote` déjà au contrat.
   - **9.G garde-fou `beforeunload`** : confirmation si le panier n'est pas vide. Non démarré.
   - **9.E/F vue imprimable + export PDF** : one-pager A4 minimaliste arbitré sur `preview-panier-impression.html` (commit `494a4b9`). Non démarré.
@@ -319,6 +319,12 @@ Audit complet livré dans [`AUDIT-UNIFORMITE-PORTES.md`](./AUDIT-UNIFORMITE-PORT
 **Questions résiduelles à trancher au démarrage.**
 
 *Aucune en attente. Le cadrage du chantier 9 est clos. Les trois arbitrages majeurs (vue imprimable, persistance, interaction d'ajout) sont tous actés en Décisions fermes. Le code peut démarrer.*
+
+**Tranche 9.B.4 — recherche globale dans la vue panier (rouverte 26/04/2026).**
+
+Audit de reprise mené le 26/04/2026 après livraison du chantier 9.C : la **décision ferme « Recherche globale avec 1-2 filtres contextuels optionnels »** (cadrage 22/04) n'a jamais été codée. Les tranches livrées le 22/04 soir s'arrêtent à 9.B.0 → 9.B.3 (squelette + état vide + chips + bouton réinitialiser). Indice révélateur : la prose des *Pistes futures* sur les liens cliquables PDF s'appuie sur cette recherche supposée acquise (*« la barre de recherche globale du panier permet déjà de retrouver une fiche par son nom »*) — la dette se voit en miroir.
+
+Arbitrages 26/04/2026 : option A retenue (coder 9.B.4 maintenant) plutôt qu'un report en piste future. Choix entre *input seul* et *input + 1-2 chips filtres* à arbitrer sur mockup-preview côte à côte avant de toucher `cadre-indicateurs.html`. Aucun changement attendu sur `CM.Panier` — la recherche est un filtre côté vue qui consomme `CM.Panier.lister()` existant.
 
 **Dette technique identifiée en cours de chantier (hors scope, à refondre après 9).**
 
