@@ -572,6 +572,61 @@ Ces trois disciplines forment un **triptyque à relire en ouverture** de chaque 
 
 ---
 
+## 18. Couverture du catalogue de rôles — zone aveugle Affaires + TI sécurité/exploitation *(📋 post-14)*
+
+**Déclenchement.** Après livraison du MVP hexagonal (chantier 14 clos, tag `mvp-chantier-14-livre`). Préalable nécessaire à l'étape D de 7.2a-code.3 (« câblage tuile d'accueil — remplace pyramide »), qui ne peut pas être livrée tant que la cartouche Opérationnel ne couvre pas toutes les portes que la pyramide ouvre aujourd'hui.
+
+**Origine.** Audit factuel du 26/04/2026 — comparaison entre la pyramide (`<div class="pyramide">` lignes 2160-2256) et l'accordéon de la porte niveau (cartouche **Opérationnel**, 13 rôles dans `inventaire-roles-porte-niveau.md` §1).
+
+**Constat — couverture asymétrique au niveau Opérationnel.**
+
+La pyramide expose **10 portes d'entrée** au niveau Équipes : 4 domaines TI (Développement, Plateforme & DevOps, Operations & Support, Sécurité) + 6 domaines Affaires (Commercial, Marketing, Finance, RH, Operations métier, Service client).
+
+L'accordéon Opérationnel propose 13 rôles, fortement biaisés Agile/Lean/IT (Scrum Guide, SAFe, LSS, BABOK, ASQ, DAMA, Google SRE…) :
+
+| Domaine pyramide | Rôles accordéon couvrants | Manque |
+|---|---|---|
+| TI / Développement | Développeur, Tech Lead, QA, BA, Designer UX/UI, Coordinateur de livraison, Ingénieur data, PO mono-équipe | — |
+| TI / Plateforme & DevOps | SRE / DevOps | — |
+| TI / Operations & Support | *(rien)* | Ingénieur exploitation, Technicien support N1/N2/N3, Administrateur système / réseau |
+| TI / Sécurité | *(rien)* | Analyste SOC, Pentester, Ingénieur sécurité applicative |
+| Affaires / Commercial | *(rien)* | Account Manager, Sales rep, Sales engineer |
+| Affaires / Marketing | *(rien)* | Chargé marketing, Brand manager, Growth analyst |
+| Affaires / Finance | *(rien)* | Comptable, Contrôleur de gestion |
+| Affaires / RH | *(rien)* | Chargé RH, Recruteur, Spécialiste talent |
+| Affaires / Operations métier | *(rien)* | Responsable production, Logisticien, Acheteur |
+| Affaires / Service client | *(rien)* | Conseiller clientèle, Agent support, CSM |
+
+Rôles transverses qui n'ancrent pas un métier spécifique : *Scrum Master*, *Yellow / Green Belt*, *Chef d'équipe* (descriptif neutre). Ils ne suffisent pas à reconnaître un Account Manager ou une Chargée RH.
+
+**Note** — aux strates **Tactique** et **Portefeuille**, la branche Affaires réapparaît (Chef de service, Business Owner, Champion LSS, Director métier, VP Product, Directeur de business unit, Directeur de domaine métier). Le trou est circonscrit à la strate Opérationnelle.
+
+**Question doctrinale ouverte.**
+
+La porte « Par mon niveau / Quel est mon rôle ? » veut-elle être :
+
+- **(α) universelle** — couvrir l'éventail de la pyramide (4 TI + 6 Affaires + transverses), ce qui suppose d'enrichir le catalogue d'une vingtaine de rôles métier individuels, et
+- **(β) délibérément Lean‑Agile/IT** — assumer le périmètre actuel comme un choix éditorial, et conserver la pyramide comme deuxième porte (contradictoire avec l'intention « remplace pyramide » consignée dans le code ligne 7457).
+
+Le choix entre (α) et (β) conditionne tout le reste du chantier.
+
+**Axe de réflexion — mécanique côté parcours.**
+
+Indépendamment de l'élargissement du catalogue, **serait-il pertinent d'ajouter une case à cocher ou une étape supplémentaire dans le processus des portes** pour qualifier la branche (TI / Affaires) ou le domaine (parmi les 10) ? Plusieurs pistes à explorer au moment de l'ouverture du chantier :
+
+- **Étape 0 *Branche*** avant le rôle — cocher *TI* ou *Affaires* pour pré-filtrer la liste des rôles affichés dans l'accordéon, et alléger la lecture quand le catalogue sera dense (~30-35 rôles à terme côté Opérationnel si (α) est retenu).
+- **Case à cocher *Domaine*** sur la fiche rôle — le rôle reste la donnée principale, mais l'utilisateur précise son domaine (parmi les 10) pour affiner le `ctx` envoyé à `CM.RequeteMetriques.executer` (clauses `branche` + `domaine`, déjà supportées par le contrat §10.3 du chantier 14).
+- **Sous-cartouches dans Opérationnel** — l'accordéon affiche d'abord *TI* / *Affaires* / *Transverse*, puis les rôles à l'intérieur de chacune. Préserve la lisibilité sans imposer une étape supplémentaire dans le stepper.
+- **Statu quo enrichi** — pas de nouvelle étape, on liste tous les rôles à plat dans la cartouche Opérationnel et on assume une liste longue à scroller.
+
+Chaque option a des conséquences sur la mécanique du stepper (nombre d'étapes variable, déjà prévu §3.2 doc-contrats-stepper-roles), sur la grammaire mentale de l'utilisateur (combien de décisions avant d'avoir des résultats ?), et sur la fidélité au contrat de cohérence entre portes (`project_contrat_coherence_portes.md`). Décision à instruire avec preview-mockup au moment de l'ouverture du chantier 18.
+
+**Hors scope chantier 14.** Le chantier 14 est iso-comportement strict — il ne touche ni au catalogue de rôles ni à la mécanique du stepper. Cette zone aveugle est consignée ici comme item à part, à instruire après la livraison de 14.
+
+**Priorité : 🟡 moyenne.** Dépendance dure : MVP chantier 14 livré + arbitrage doctrinal (α / β) + arbitrage mécanique (étape supplémentaire ou non). Temps estimé selon scénario : (α) ~8-12 sessions (rédaction des fiches + tests anti-doublons) + 2-3 sessions de mécanique stepper si une étape est ajoutée ; (β) 1-2 sessions pour formaliser la doctrine de cohabitation pyramide + porte rôle.
+
+---
+
 ## Prochaine action recommandée
 
 Chantier **14 — refactor hexagonal** ouvert le 23/04/2026 fin de journée. Chantier **10 gelé à `5655b03`** (décisions conservées).
