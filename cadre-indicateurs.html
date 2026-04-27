@@ -2399,6 +2399,129 @@
       /* Override des fonds colorés de l'écran. */
       body { background: white !important; }
     }
+
+    /* ═══════════════════════════════════════════════════════════
+       ONE-PAGER IMPRIMABLE — chantier 9.E.3 (26/04/2026)
+
+       Styles scopés sous #impression-onepager. La section reste
+       invisible à l'écran (cf. règle @media screen 9.E.2 plus haut),
+       donc ces règles n'agissent qu'au moment du Cmd-P / aperçu print.
+       Définis hors @media pour rester débugables (DevTools sur la
+       section affiche le rendu réel sans simuler le mode print).
+
+       Couleurs des chips niveau alignées sur CM.Config.NIVEAUX :
+       strategique → indigo, portefeuille → bleu, programme → vert,
+       equipe → canard. Cohérent avec la palette de l'app à l'écran.
+       ═══════════════════════════════════════════════════════════ */
+    #impression-onepager {
+      font-family: -apple-system, 'Segoe UI', system-ui, 'Helvetica Neue', sans-serif;
+      color: #1a1a2e;
+      line-height: 1.4;
+      font-size: 10pt;
+    }
+    #impression-onepager .imp-entete {
+      border-bottom: 2px solid var(--niv-1);
+      padding-bottom: 4mm; margin-bottom: 5mm;
+      display: flex; justify-content: space-between; align-items: flex-end;
+    }
+    #impression-onepager .imp-titre {
+      font-size: 16pt; font-weight: 700;
+      color: var(--niv-1); letter-spacing: -0.3px;
+    }
+    #impression-onepager .imp-sous-titre {
+      font-size: 9pt; color: #607d8b; margin-top: 1.5mm;
+    }
+    #impression-onepager .imp-date-jour {
+      font-size: 8.5pt; color: #607d8b;
+    }
+    #impression-onepager .imp-section-titre {
+      font-size: 10.5pt; font-weight: 700;
+      color: var(--niv-1); margin: 5mm 0 2.5mm;
+    }
+    #impression-onepager .imp-count {
+      font-size: 8pt; font-weight: 500;
+      color: #607d8b; margin-left: 2.5mm;
+    }
+    #impression-onepager .imp-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 8.5pt; margin-bottom: 1mm;
+    }
+    #impression-onepager .imp-table th {
+      text-align: left; font-weight: 600; font-size: 7.5pt;
+      text-transform: uppercase; letter-spacing: 0.06em; color: #607d8b;
+      padding: 1.5mm; border-bottom: 1px solid #e0e4eb;
+    }
+    #impression-onepager .imp-table td {
+      padding: 1.8mm 1.5mm; border-bottom: 1px solid #f1f3f8; vertical-align: top;
+    }
+    #impression-onepager .imp-pastille {
+      display: inline-block; width: 6pt; height: 6pt;
+      border-radius: 50%; margin-right: 1.5mm; vertical-align: middle;
+    }
+    #impression-onepager .imp-pastille.fiable     { background: #2e7d32; }
+    #impression-onepager .imp-pastille.precaution { background: #b7791f; }
+    #impression-onepager .imp-pastille.risque     { background: #c62828; }
+    #impression-onepager .imp-nom-ind {
+      font-weight: 600; color: #1a1a2e;
+    }
+    #impression-onepager .imp-pourquoi {
+      font-size: 8pt; color: #1a1a2e; line-height: 1.35;
+    }
+    #impression-onepager .imp-pourquoi.vide {
+      color: #c4c8d4; font-style: italic; font-size: 7.5pt;
+    }
+    #impression-onepager .imp-niv-chip {
+      display: inline-block; font-size: 7pt; font-weight: 600;
+      padding: 0.5mm 1.5mm; border-radius: 3pt; letter-spacing: 0.04em;
+    }
+    #impression-onepager .imp-niv-chip.strategique  { background: #e8eaf6; color: #1a237e; }
+    #impression-onepager .imp-niv-chip.portefeuille { background: #e1f5fe; color: #01579b; }
+    #impression-onepager .imp-niv-chip.programme    { background: #f1f8e9; color: #1b5e20; }
+    #impression-onepager .imp-niv-chip.equipe       { background: #e0f2f1; color: #004d40; }
+    #impression-onepager .imp-bandeau-terrain {
+      margin-top: 5mm; background: #fffaf0;
+      border-left: 3pt solid #b7791f;
+      padding: 2.5mm 3.5mm; font-size: 8.5pt; color: #6b4a00;
+      line-height: 1.45; font-style: italic;
+    }
+    #impression-onepager .imp-bandeau-terrain strong {
+      font-style: normal; font-weight: 700; display: block; margin-bottom: 1mm;
+      color: #6b4a00; text-transform: uppercase; letter-spacing: 0.05em; font-size: 7pt;
+    }
+    #impression-onepager .imp-questions {
+      margin-top: 3.5mm; font-size: 8.5pt;
+    }
+    #impression-onepager .imp-questions h3 {
+      font-size: 8.5pt; font-weight: 700; color: #1a1a2e; margin-bottom: 2mm;
+    }
+    #impression-onepager .imp-questions ul {
+      list-style: none; padding-left: 0; margin: 0;
+    }
+    #impression-onepager .imp-questions li {
+      padding: 1.2mm 0 1.2mm 5mm; position: relative;
+      color: #1a1a2e; line-height: 1.4;
+    }
+    #impression-onepager .imp-questions li::before {
+      content: "→"; position: absolute; left: 0;
+      color: var(--niv-1); font-weight: 700;
+    }
+    #impression-onepager .imp-pied {
+      margin-top: 6mm; padding-top: 2.5mm;
+      border-top: 1px solid #e0e4eb;
+      display: flex; justify-content: space-between;
+      font-size: 7.5pt; color: #607d8b;
+    }
+    #impression-onepager .imp-pied em {
+      font-style: italic; color: #1a1a2e;
+    }
+    #impression-onepager .imp-vide-msg {
+      text-align: center; font-size: 12pt; color: #607d8b;
+      font-style: italic; margin-top: 80mm;
+    }
+    #impression-onepager .imp-vide-msg strong {
+      display: block; font-size: 14pt; font-style: normal;
+      font-weight: 700; color: var(--niv-1); margin-bottom: 4mm;
+    }
   </style>
 </head>
 <body>
@@ -8536,6 +8659,219 @@ CM.VuePorteNiveau = (function() {
      Voir doc-contrats-chantier-14.md §c.4 et §10.3. -->
 
 
+<!-- ══ MODULE : CM.PanierImpression — Rendu du scorecard imprimé (9.E.3) ══
+
+     Recompose le contenu HTML de #impression-onepager à partir de l'état
+     courant du panier juste avant l'aperçu d'impression. Branché sur
+     l'événement `beforeprint` du navigateur — déclenché par Cmd-P, par
+     le bouton « Imprimer » (à venir en 9.E.4), ou par window.print().
+
+     Architecture : pas d'état interne, render() est idempotent et re-lit
+     toujours CM.Panier.lister() + CM.Referentiel.chercher(). La section
+     reste vide entre deux impressions — pas de cache, simplicité avant tout.
+
+     Données consommées :
+     - CM.Panier.lister() → [{ ficheId, statut, note, ajouteeLe }, ...]
+     - CM.Referentiel.chercher(ficheId) → fiche complète (peut renvoyer null)
+     - CM.FicheViewModel.from(fiche) → { fib, niveau, libelleType, ... }
+
+     Texte rédactionnel : option A retenue le 26/04/2026 (cf. backlog
+     § 9, tranche 9.E.5). Bandeau aphorisme universel + trois questions
+     génériques fixes valables pour tout scorecard. Aucune saisie. -->
+<script>
+CM.PanierImpression = (function() {
+
+  /* Bandeau aphorisme universel (option A, fige le 26/04/2026). */
+  var BANDEAU_TERRAIN_TXT =
+      'Le chiffre alerte. Le terrain explique. '
+    + 'Aucune métrique n\'est un verdict — chacune est une invitation à '
+    + 'questionner ce qui se joue vraiment dans mes équipes.';
+
+  /* Trois questions génériques fixes (option A). Toute évolution doit
+     rester vraie pour 100 % des scorecards — sinon la question devient
+     du bruit. Si feedback terrain réclame du sur-mesure, rouverture en
+     9.E.bis (cf. backlog), pas de modification ici. */
+  var QUESTIONS_FIXES = [
+    "Lequel de ces indicateurs n'a jamais déclenché d'action concrète chez nous ?",
+    "Que voyons-nous tous les jours sans le mesurer — et que veulent dire ces silences ?",
+    "Si je n'avais qu'un seul de ces chiffres, lequel garderais-je et pourquoi ?"
+  ];
+
+  /* Date du jour formatée en français : « 26 avril 2026 ». Re-calculée
+     à chaque appel de render() — l'impression montre toujours la date
+     du jour où Cmd-P a été pressé, pas la date d'ouverture de la page. */
+  function _dateJourFr() {
+    var d = new Date();
+    return d.toLocaleDateString('fr-FR', {
+      day: 'numeric', month: 'long', year: 'numeric'
+    });
+  }
+
+  /* Échappement HTML local — défense en profondeur. Les noms de fiche
+     viennent du référentiel embarqué (sûrs) et les notes sont validées
+     par CM.Panier (longueur max + type string), mais on échappe quand
+     même : c'est sans coût et ça nous protège d'une régression future. */
+  function _esc(s) {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  /* En-tête : titre fixe + sous-titre + date du jour. Pas de zone auteur
+     (décision 26/04/2026 : posture « outil de conversation, pas auteur »). */
+  function _htmlEntete() {
+    return '<header class="imp-entete">'
+      +   '<div>'
+      +     '<div class="imp-titre">Mon scorecard</div>'
+      +     '<div class="imp-sous-titre">Ce que je mesure déjà · ce que j\'envisage de mesurer</div>'
+      +   '</div>'
+      +   '<div class="imp-date-jour">' + _esc(_dateJourFr()) + '</div>'
+      + '</header>';
+  }
+
+  /* Une section (En place / À envisager). Tableau si non vide, ligne
+     d'absence sinon — la section reste visible même vide pour que la
+     personne se rende compte du déséquilibre (« je ne mesure rien »). */
+  function _htmlSection(titreSection, libelleColPourquoi, lignes) {
+    var titre = '<h2 class="imp-section-titre">'
+      +   _esc(titreSection)
+      +   '<span class="imp-count">' + lignes.length
+      +   ' métrique' + (lignes.length > 1 ? 's' : '') + '</span>'
+      + '</h2>';
+
+    if (lignes.length === 0) {
+      return titre
+        + '<p class="imp-pourquoi vide" style="margin-bottom:3mm;">'
+        +   'Aucune fiche dans cette section.'
+        + '</p>';
+    }
+
+    var corps = '';
+    for (var i = 0; i < lignes.length; i++) {
+      corps += _htmlLigne(lignes[i]);
+    }
+    return titre
+      + '<table class="imp-table">'
+      +   '<thead><tr>'
+      +     '<th style="width:38%">Indicateur</th>'
+      +     '<th style="width:16%">Fiabilité</th>'
+      +     '<th style="width:16%">Niveau</th>'
+      +     '<th style="width:30%">' + _esc(libelleColPourquoi) + '</th>'
+      +   '</tr></thead>'
+      +   '<tbody>' + corps + '</tbody>'
+      + '</table>';
+  }
+
+  /* Une ligne de tableau. Si la fiche est introuvable (désynchro
+     improbable référentiel/panier), rendu minimaliste plutôt qu'erreur
+     — fail-soft, comme la vue panier à l'écran (cf. _htmlCartePanier). */
+  function _htmlLigne(ligne) {
+    var fiche = CM.Referentiel.chercher(ligne.ficheId);
+    var note = ligne.note || '';
+    var pourquoiCls  = (note === '') ? 'imp-pourquoi vide' : 'imp-pourquoi';
+    var pourquoiHtml = (note === '') ? '—' : _esc(note);
+
+    if (!fiche) {
+      return '<tr>'
+        +   '<td><span class="imp-nom-ind">(' + _esc(ligne.ficheId) + ' introuvable)</span></td>'
+        +   '<td>—</td><td>—</td>'
+        +   '<td class="' + pourquoiCls + '">' + pourquoiHtml + '</td>'
+        + '</tr>';
+    }
+
+    var vm = CM.FicheViewModel.from(fiche);
+    var fiabKey = fiche.fiabilite || 'fiable';
+    var nivKey  = vm.niveau.positionKey;
+
+    return '<tr>'
+      +   '<td><span class="imp-nom-ind">' + _esc(fiche.nom) + '</span></td>'
+      +   '<td><span class="imp-pastille ' + _esc(fiabKey) + '"></span>'
+      +     _esc(vm.fib.label_court) + '</td>'
+      +   '<td><span class="imp-niv-chip ' + _esc(nivKey) + '">'
+      +     _esc(vm.niveau.libelleCourt) + '</span></td>'
+      +   '<td class="' + pourquoiCls + '">' + pourquoiHtml + '</td>'
+      + '</tr>';
+  }
+
+  function _htmlBandeau() {
+    return '<div class="imp-bandeau-terrain">'
+      +   '<strong>Terrain</strong>'
+      +   _esc(BANDEAU_TERRAIN_TXT)
+      + '</div>';
+  }
+
+  function _htmlQuestions() {
+    var html = '<div class="imp-questions">'
+      + '<h3>Trois questions à poser à mon équipe</h3>'
+      + '<ul>';
+    for (var i = 0; i < QUESTIONS_FIXES.length; i++) {
+      html += '<li>' + _esc(QUESTIONS_FIXES[i]) + '</li>';
+    }
+    html += '</ul></div>';
+    return html;
+  }
+
+  function _htmlPied() {
+    return '<div class="imp-pied">'
+      +   '<span>cadre-indicateurs · panier v1</span>'
+      +   '<span><em>La métrique n\'est pas un objectif. C\'est une lunette.</em></span>'
+      +   '<span>1/1</span>'
+      + '</div>';
+  }
+
+  /* Cas du panier vide : message centré explicite plutôt qu'une page
+     blanche, pour que la personne comprenne pourquoi rien ne s'imprime
+     (et puisse fermer l'aperçu sans gaspillage). */
+  function _htmlVide() {
+    return '<div class="imp-vide-msg">'
+      +   '<strong>Votre tableau de bord est vide.</strong>'
+      +   'Il n\'y a rien à imprimer pour l\'instant.'
+      + '</div>';
+  }
+
+  /* render() — recompose le contenu de #impression-onepager. Idempotent.
+     Appelée par l'événement beforeprint (Cmd-P) ou directement. Aucune
+     mutation de l'état panier — juste lecture + rendu. */
+  function render() {
+    var section = document.getElementById('impression-onepager');
+    if (!section) return;
+
+    var lignes = CM.Panier.lister();
+    if (lignes.length === 0) {
+      section.innerHTML = _htmlVide();
+      return;
+    }
+
+    var enPlace = [];
+    var aEnvisager = [];
+    for (var i = 0; i < lignes.length; i++) {
+      if      (lignes[i].statut === 'en-place')    enPlace.push(lignes[i]);
+      else if (lignes[i].statut === 'a-envisager') aEnvisager.push(lignes[i]);
+    }
+
+    section.innerHTML = ''
+      + _htmlEntete()
+      + _htmlSection('En place', 'Pourquoi je la suis', enPlace)
+      + _htmlSection('À envisager', 'Ce qu\'elle éclairerait', aEnvisager)
+      + _htmlBandeau()
+      + _htmlQuestions()
+      + _htmlPied();
+  }
+
+  /* init() — abonnement à beforeprint (idempotent : un seul listener,
+     posé une fois à l'init). render() recalcule tout à chaque appel,
+     pas d'état interne donc pas de risque de désynchro. */
+  function init() {
+    window.addEventListener('beforeprint', render);
+  }
+
+  return { render: render, init: init };
+})();
+</script>
+
+
 <!-- ══ MODULE : CM.App — Etat, navigation et rendu des 4 vues ══ -->
 <script>
 CM.App = (function() {
@@ -9515,6 +9851,12 @@ CM.App = (function() {
         e.returnValue = '';
       }
     });
+
+    /* Chantier 9.E.3 — Branchement de l'impression du scorecard.
+       CM.PanierImpression.init() pose un seul listener beforeprint qui
+       régénère #impression-onepager à partir de l'état courant du panier
+       avant chaque aperçu. Idempotent, pas d'état interne. */
+    CM.PanierImpression.init();
   }
 
   /* ─── 9.D voie lente : handlers du tiroir ───────────────────────
