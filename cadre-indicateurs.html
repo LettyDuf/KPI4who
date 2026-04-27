@@ -2439,6 +2439,18 @@
 
       /* Override des fonds colorés de l'écran. */
       body { background: white !important; }
+
+      /* Neutralisation des min-height: 100vh hérités du mode écran (body,
+         html, et indirectement #app/#accueil même cachés). En print, vh est
+         résolu à la hauteur réelle de la page (~297mm en A4 portrait), or
+         la zone imprimable utile fait ~277mm avec @page { margin: 10mm }.
+         Sans cette neutralisation, le body force une boîte plus grande que
+         la zone utile et déborde sur une 2e page blanche après le scorecard.
+         Symptôme observé le 26/04/2026 sur Safari avant ce correctif. */
+      html, body {
+        min-height: 0 !important;
+        height: auto !important;
+      }
     }
 
     /* ═══════════════════════════════════════════════════════════
