@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **26 avril 2026 — chantier 9.G livré** (garde-fou `beforeunload` : confirmation native du navigateur dès qu'au moins une fiche est au tableau de bord, justifié par le stockage RAM du panier qui se perd à la fermeture/rafraîchissement). Tag `mvp-9g-beforeunload` sur `3fb133b`. Séance précédente : chantier 9.D voie lente livré (tag `mvp-9d-voie-lente` sur `9959872`).
+Dernière mise à jour : **26 avril 2026 — chantier 9.E livré** (vue imprimable web du scorecard, one-pager A4 sur 1 page). Tag `mvp-9e-impression-web` sur `1abda1a`. Séances précédentes de la même journée : chantier 9.G garde-fou `beforeunload` (tag `mvp-9g-beforeunload` sur `3fb133b`), chantier 9.D voie lente (tag `mvp-9d-voie-lente` sur `9959872`).
 
 ---
 
@@ -9,17 +9,16 @@ Dernière mise à jour : **26 avril 2026 — chantier 9.G livré** (garde-fou `b
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événement majeur de la séance** : **chantier 9.G livré** (garde-fou `beforeunload`). Listener idempotent posé une seule fois dans `CM.App.init` après l'abonnement panier (`3fb133b`, ~20 lignes dont 14 de commentaire pédagogique). Déclenche la confirmation native du navigateur si `CM.Panier.estVide() === false`. Justifié par le stockage RAM (`MemoireDepot`) qui perd l'intégralité du TDB et des notes à la fermeture/rafraîchissement. Wording imposé par les navigateurs depuis Chrome 51 / Firefox 44 : on pose seulement `e.preventDefault()` + `e.returnValue = ''` (compat Edge legacy / Safari).
-- **Arbitrage UX** : déclencheur **option A** retenu (1+ fiche au TDB → confirm), pas option B (note saisie uniquement). Justification : la voie lente 9.D rend l'ajout quasi gratuit, donc même un TDB tout juste rempli mérite protection. Bascule vers B sans douleur si l'effet est jugé trop intrusif plus tard.
-- **Test interactif validé** par Lætitia sur 3 cas : TDB vide → fermeture sans confirm ; TDB non vide → boîte native ; TDB rempli puis vidé/réinitialisé → fermeture sans confirm.
-- **Workflow git sandbox** : pattern `mv .git/index.lock .git/index.lock.tmp$N` + `mv .git/HEAD.lock .git/HEAD.lock.tmp$N` toujours appliqué avant chaque commit ; warnings `unable to unlink` persistent côté sandbox sans bloquer (à nettoyer côté ordi si gênant).
-- **Prochaines actions ouvertes (chantier 9 — tranches restantes)** :
-  - **9.D voie lente** : ✅ **clos** — tag `mvp-9d-voie-lente` sur `9959872`.
-  - **9.G garde-fou `beforeunload`** : ✅ **clos** — tag `mvp-9g-beforeunload` sur `3fb133b`.
-  - **9.E/F vue imprimable + export PDF** : one-pager A4 minimaliste arbitré sur `preview-panier-impression.html` (`494a4b9`). Non démarré, plus gros chantier — seule tranche 9 restante.
-- **Autres chantiers ouverts** : Chantier 10 (gelé à `5655b03`) peut reprendre, item 6.9 (matrice 4×7 niveau × tags), chantier 18 (audit catalogue rôles), chantiers 12/13/15/16/17 en sommeil.
-- **Tag posé** : **`mvp-9g-beforeunload`** sur `3fb133b`. Chaîne complète : `mvp-chantier-14-livre` → `mvp-9c-voie-rapide` (`45bdc62`) → `mvp-9b4-recherche-globale` → `mvp-9d-voie-lente` (`9959872`) → **`mvp-9g-beforeunload`** (`3fb133b`, fin de séance).
-- **Blocages / questions ouvertes** : aucun.
+- **Événement majeur de la séance** : **chantier 9.E livré** (vue imprimable web du scorecard, one-pager A4). Quatre commits de code atomiques + trois commits doc. Squelette CSS `@media print` + section `#impression-onepager` (`931146f`), rendu HTML via module `CM.PanierImpression` branché sur `beforeprint` (`d2b6fd3`), bouton « 🖨 Imprimer » dans le header du TDB désactivé si panier vide (`96c1612`), compactage espacements + page-break propres (`f65c27c`), correctif `min-height: 100vh` qui forçait une 2e page vide (`1abda1a`). Tag `mvp-9e-impression-web` sur `1abda1a`.
+- **Décisions de cadrage actées** (cf. backlog § 9 tranche 9.E) : en-tête imprimé = titre fixe + date du jour, **pas de zone auteur** ; colonne *Pourquoi* = note utilisateur stricte (cellule vide si pas de note saisie via voie lente) ; bandeau terrain + 3 questions = **option A texte fixe rédactionnel** retenue après mockup-preview côte à côte ([`preview-panier-impression-bandeau.html`](./preview-panier-impression-bandeau.html), commit `a1be292`).
+- **Bug pédagogique du jour** : 2e page blanche en print causée par `body { min-height: 100vh }` hérité du mode écran, qui en print impose 297mm dans une zone imprimable de 277mm. Diagnostic posé en lisant les règles CSS top-level plutôt qu'en chassant un débordement de contenu inexistant. À retenir : *quand l'aperçu print déborde mais que la page suivante est blanche, chercher d'abord les règles `vh`/`min-height` héritées avant de toucher au contenu.*
+- **Test interactif validé** par Lætitia sur 4-6 fiches : rendu complet (en-tête + tableaux + pastilles + chips + bandeau + 3 questions + pied), couleurs préservées en print, scorecard tient sur 1 page A4 unique.
+- **Workflow git sandbox** : pattern `mv .git/index.lock` toujours appliqué avant chaque commit ; warnings `unable to unlink` persistent côté sandbox sans bloquer.
+- **Prochaines actions ouvertes (tranches 9 restantes)** :
+  - **9.F export PDF** : transposer le rendu print en PDF téléchargeable (`window.print()` ouvre déjà l'aperçu où *Enregistrer en PDF* est natif sur macOS — étudier si une vraie commande PDF interne est nécessaire ou si l'aperçu système suffit pour la v1). Non démarré.
+- **Autres chantiers ouverts** : chantier 10 (gelé à `5655b03`) peut reprendre, item 6.9 (matrice 4×7 niveau × tags), chantier 18 (audit catalogue rôles), chantiers 12/13/15/16/17 en sommeil. Dette `tests-porte-niveau.html` toujours ouverte.
+- **Tag posé** : **`mvp-9e-impression-web`** sur `1abda1a`. Chaîne complète : `mvp-chantier-14-livre` → `mvp-9c-voie-rapide` (`45bdc62`) → `mvp-9b4-recherche-globale` → `mvp-9d-voie-lente` (`9959872`) → `mvp-9g-beforeunload` (`3fb133b`) → **`mvp-9e-impression-web`** (`1abda1a`, fin de séance).
+- **Blocages / questions ouvertes** : aucun. Fichiers `.todelete` à nettoyer côté ordi (sandbox interdit l'unlink) : 9 fichiers `*.preedit*.todelete` et `*.bak.todelete` cumulés sur la séance.
 
 ## 0. Chantiers majeurs livrés → archivés
 
