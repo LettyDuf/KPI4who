@@ -41,6 +41,23 @@ Règle appliquée : chaque fiche doit distinguer **ce qu'elle mesure** (output) 
 
 **Portée actuelle du standard 2026-04** — les fiches du tableau ci-dessus (axes DevOps, Programme, Portefeuille, Affaires/FLUX) + les fiches du chantier 3 (s6 à s10, t6, t7, p6, p7) nativement rédigées à ce standard. Prochaines fiches à reprendre : d'autres axes (Qualité, Humain, Risque, Sécurité, Données, Produit), à déclencher sur remontée d'incohérence ou de besoin terrain.
 
+### 1.bis Dette éditoriale — acronymes secs dans le texte affiché *(post-6.9, ouverte le 27/04/2026)*
+
+**Origine.** Lors du chantier 6.9 (densification de la matrice problèmes × niveaux), Lætitia a signalé sur la fiche `p8` que les acronymes non explicités (« CR ») n'avaient « aucun sens pour l'utilisateur ». Vérification systématique en suivant : la règle s'applique à une trentaine d'autres fiches du référentiel.
+
+**Constat.** Diagnostic mené par parsing automatique des champs `definition / objectif / exemple_ent / exemple_eq / risque / alt` des 137 fiches, en retirant les attributs HTML pour ne garder que le texte affiché. Acronymes détectés (non exhaustif, à filtrer ensuite par pertinence) :
+
+- *Stratégique/Tactique* : ADKAR (s6), NIST CSF / COSO ERM / ISO 31000 / FAIR (s9, s10), LPM (t6, t7), DORA (t2), ROI (t1)
+- *Programme* : CRM (p5)
+- *Opérationnel TI* : DORA (o1, o2), FCR (ti-o2), MTTD / SIEM (ti-s1), SAST / DAST (ti-s4), RGPD / SOC2 / PCI-DSS (ti-s5), KR (o6), ORC (x5)
+- *Opérationnel Affaires* (volume principal) : LTV / CAC (af-c3, af-m1, af-m3), MQL / CPL / SEO (af-m2, af-m3), ROAS (af-m4), DSO (af-f1), ESG (af-f4), OEE (af-op1), DPMO / DMAIC (af-op2), VSM (af-op4), CSAT / CES / NPS / FCR / TTFR (af-sc1 à sc5), PME / SPIN / BANT / AE (af-c2, af-m3, af-m5)
+
+**Règle à appliquer** (consignée dans `feedback_redaction_fiches_referentiel.md`) : pas d'acronyme non défini en circulation libre dans le texte. Soit définir au premier usage dans un `<span class="term-def">`, soit remplacer par la version française pleine. Cas limites légitimes : devises (EUR), normes nommées par leur préfixe ISO en parenthèse, acronymes vraiment passés en langage courant (CRM, SEO, ROI à la limite).
+
+**Découpage proposé** : passe par axe (Stratégique → Tactique → Programme → Opérationnel TI → Opérationnel Affaires), 1 commit par axe. Estimation : 3-4 sessions courtes selon la profondeur de redéfinition (un acronyme comme COSO ERM ou ADKAR demande une définition pédagogique courte mais juste, pas un simple développement du sigle).
+
+**Ne pas confondre** avec la dette « ids techniques en clair » (p5, p6, p7, o1) qui a été éteinte le 27/04/2026 dans le commit `b4b327a` après la même remontée Lætitia. Cette sous-dette acronymes est ce qui reste.
+
 ---
 
 ## 2. UX à vérifier (harmonisation visuelle)
