@@ -5,7 +5,7 @@
   <title>Tests — Porte niveau (C.1 + C.2 + C.3)</title>
 
   <!-- ══════════════════════════════════════════════════════════════════════
-       Harnais de consolidation — 7.2a-code.3
+       Harnais de consolidation — 7.2a-code.3 (refondu 27/04/2026)
 
        Intention : vérifier le parcours complet de la porte niveau —
        filtrage des problèmes par niveau dérivé (C.1), rendu de la
@@ -14,17 +14,27 @@
        couvrir : la porte est fonctionnellement complète à partir de ce
        harnais.
 
-       Mécanique : le harnais charge cadre-indicateurs.html dans un iframe
-       caché, accède aux modules CM.* par window.contentWindow, et exerce
-       l'API publique (CM.VuePorteNiveau.ouvrir / setRole). Les assertions
-       portent sur le DOM rendu, pas sur des fonctions internes privées.
-       Ce choix est intentionnel : on teste le comportement observable
-       depuis un navigateur — ce qui survit aux refactors internes.
+       Mécanique (refonte 27/04/2026) : le harnais ne charge plus
+       cadre-indicateurs.html dans un iframe — Chrome moderne sur file://
+       attribuait à l'iframe une origine "null" distincte qui bloquait
+       l'accès à `iframe.contentWindow.CM`. À la place, le générateur
+       Node `outils/construire-tests-porte-niveau.js` extrait la zone
+       JS de prod (entre les marqueurs ZONE-TESTS-PORTE-NIVEAU BEGIN/END
+       de cadre-indicateurs.html), fusionne les <script> multiples en
+       un mégascript, et l'inline ici entre les marqueurs
+       TESTS-PORTE-NIVEAU-INJECTION-BEGIN/END. Tous les modules CM.*
+       sont alors directement disponibles sur `window.CM` — même origine
+       garantie, plus de blocage. La variable `W` est conservée comme
+       alias de `window` pour ne pas toucher au corps des 9 suites.
 
        Architecture hexagonale : le domaine (CM.Roles, CM.DiagnosticProbleme,
        CM.VuePorteNiveau) reste intact. Ce harnais joue le rôle d'adapter
        driver qui consomme le domaine par ses ports publics. Zéro couplage
-       avec l'implémentation interne, zéro duplication du code de prod.
+       avec l'implémentation interne, zéro duplication du code de prod
+       (le générateur est la source unique de vérité).
+
+       Régénération : `node outils/construire-tests-porte-niveau.js`
+       à exécuter après chaque modification d'un module CM.* en prod.
 
        Ouverture : ouvrir ce fichier dans un navigateur. Les résultats
        s'affichent automatiquement. Aucune dépendance externe, aucun
@@ -108,12 +118,6 @@
       word-break: break-word;
     }
 
-    iframe#sut {
-      /* L'iframe reste dans le flux mais invisible : certaines
-         mises en page d'accessibilité iOS refusent de peupler
-         une iframe avec `display: none`. */
-      position: absolute; left: -10000px; width: 800px; height: 600px;
-    }
   </style>
 </head>
 <body>
@@ -122,16 +126,23 @@
 <p class="sous-titre">Harnais de consolidation du chantier <code>7.2a-code.3</code>, étape&nbsp;C.1.</p>
 
 <p class="lead">
-  Charge <code>cadre-indicateurs.html</code> dans un iframe caché, exerce l'API publique
+  Inline les modules <code>CM.*</code> de cadre-indicateurs.html (via générateur Node), exerce l'API publique
   <code>CM.VuePorteNiveau</code> puis vérifie le DOM rendu. Le niveau n'est jamais un choix
   utilisateur dans la porte niveau&nbsp;: il se dérive du rôle validé à l'étape&nbsp;1.
   Le harnais valide cette dérivation sur l'inventaire complet des rôles.
 </p>
 
-<div id="resume" class="resume pending">Chargement de l'iframe de test…</div>
+<div id="resume" class="resume pending">Préparation des suites…</div>
 <div id="resultats"></div>
 
-<iframe id="sut" src="cadre-indicateurs.html" title="Système sous test"></iframe>
+<!-- DOM-cible attendu par CM.VuePorteNiveau pour rendre les étapes -->
+<div id="porte-niveau-etapes" aria-live="polite"></div>
+
+<!-- Code de prod (22 modules CM.*) inliné par outils/construire-tests-porte-niveau.js.
+     Régénérer avec : node outils/construire-tests-porte-niveau.js -->
+<!-- TESTS-PORTE-NIVEAU-INJECTION-BEGIN -->
+<script>window.CM = window.CM || {};</script>
+<!-- TESTS-PORTE-NIVEAU-INJECTION-END -->
 
 <script>
 (function() {
@@ -225,8 +236,11 @@
      DOM (#porte-niveau-etapes, .option-btn, .encart-posture, .message-vide).
      Si ces sélecteurs bougent, ajuster ici — jamais dans les tests eux-mêmes. */
 
-  var iframe = document.getElementById('sut');
-  var W;  // raccourci vers iframe.contentWindow après l'événement load
+  /* Alias historique : le corps des 9 suites accède aux modules CM.*
+     via W.CM.X. Depuis la refonte du 27/04/2026, le code de prod est
+     inliné dans cette même page, donc W = window. La forme `W.CM.X`
+     est conservée pour minimiser le diff sur les 9 suites. */
+  var W = window;
 
   function zoneEtapes() {
     return W.document.getElementById('porte-niveau-etapes');
@@ -328,8 +342,13 @@
 
   /* ══════ Orchestration ════════════════════════════════════════════════ */
 
-  iframe.addEventListener('load', function() {
-    W = iframe.contentWindow;
+  /* Plus d'iframe : le code de prod est inliné dans cette même page
+     (zone TESTS-PORTE-NIVEAU-INJECTION). Les modules CM.* sont déjà
+     posés sur `window` au moment où ce script s'exécute, puisque le
+     bloc d'injection est ordonné AVANT ce script dans le DOM. On
+     enveloppe tout de même dans DOMContentLoaded pour garantir que
+     le DOM-cible #porte-niveau-etapes est prêt. */
+  document.addEventListener('DOMContentLoaded', function() {
     try {
       executerSuites();
     } catch (e) {
