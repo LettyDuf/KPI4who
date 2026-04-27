@@ -2359,6 +2359,46 @@
          Au-dessus, la grille auto-fill avec minmax(clamp(280px, 22vw, 340px), 1fr) gère 2+ colonnes naturellement. */
       .grille-cartes { grid-template-columns: 1fr; }
     }
+
+    /* ═══════════════════════════════════════════════════════════
+       IMPRESSION — chantier 9.E.2 (26/04/2026)
+
+       Vue imprimée = scorecard du panier en one-pager A4. Peu importe
+       l'endroit d'où on Cmd-P, le rendu imprimé est toujours le panier.
+       La section #impression-onepager est invisible à l'écran et reçoit
+       son contenu généré dynamiquement par CM.PanierImpression (9.E.3).
+
+       Squelette en 9.E.2 : aucun rendu HTML pour l'instant, juste les
+       règles d'isolation (cacher tout sauf cette section, A4, couleurs
+       préservées). Cmd-P à ce stade donne une page blanche, c'est attendu.
+       ═══════════════════════════════════════════════════════════ */
+    @media screen {
+      #impression-onepager { display: none; }
+    }
+    @media print {
+      @page { size: A4; margin: 14mm; }
+
+      /* Préserver les couleurs (pastilles fiabilité, chips niveau, bandeau
+         terrain) — sinon les imprimantes/PDF les rendent en gris fade.
+         print-color-adjust: exact est la propriété standard ; le préfixe
+         -webkit- couvre Safari et les vieux Chrome. */
+      *, *::before, *::after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      /* Isolation : on cache tous les enfants directs du body, puis on
+         rétablit la seule section d'impression. Approche radicale mais
+         simple à raisonner — pas de liste à maintenir des éléments à
+         cacher (en-tête, onglets, sidebar, modales, tiroir, accueil,
+         portes, etc.). Si un nouveau bloc top-level est ajouté plus
+         tard, il sera automatiquement masqué en print sans modification. */
+      body > * { display: none !important; }
+      body > #impression-onepager { display: block !important; }
+
+      /* Override des fonds colorés de l'écran. */
+      body { background: white !important; }
+    }
   </style>
 </head>
 <body>
@@ -9649,6 +9689,16 @@ CM.App = (function() {
 <script>
 CM.App.init();
 </script>
+
+<!-- ══════════════════════════════════════════════════════
+     IMPRESSION — section dédiée au scorecard imprimé
+     ════════════════════════════════════════════════════════
+     Squelette posé en 9.E.2 (26/04/2026). Visible uniquement
+     en @media print (cf. règles CSS plus haut). Contenu rendu
+     dynamiquement par CM.PanierImpression (à venir en 9.E.3).
+     Vide à ce stade : Cmd-P imprime une page blanche A4, c'est
+     le comportement attendu de cette tranche de squelette. -->
+<section id="impression-onepager" aria-hidden="true"></section>
 
 </body>
 </html>
