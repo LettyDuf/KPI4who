@@ -2417,7 +2417,7 @@
       #impression-onepager { display: none; }
     }
     @media print {
-      @page { size: A4; margin: 14mm; }
+      @page { size: A4; margin: 10mm 14mm; }
 
       /* Préserver les couleurs (pastilles fiabilité, chips niveau, bandeau
          terrain) — sinon les imprimantes/PDF les rendent en gris fade.
@@ -2462,7 +2462,7 @@
     }
     #impression-onepager .imp-entete {
       border-bottom: 2px solid var(--niv-1);
-      padding-bottom: 4mm; margin-bottom: 5mm;
+      padding-bottom: 3mm; margin-bottom: 3.5mm;
       display: flex; justify-content: space-between; align-items: flex-end;
     }
     #impression-onepager .imp-titre {
@@ -2477,7 +2477,9 @@
     }
     #impression-onepager .imp-section-titre {
       font-size: 10.5pt; font-weight: 700;
-      color: var(--niv-1); margin: 5mm 0 2.5mm;
+      color: var(--niv-1); margin: 3.5mm 0 2mm;
+      /* Garder le titre attaché à son tableau si page-break. */
+      page-break-after: avoid; break-after: avoid;
     }
     #impression-onepager .imp-count {
       font-size: 8pt; font-weight: 500;
@@ -2485,15 +2487,19 @@
     }
     #impression-onepager .imp-table {
       width: 100%; border-collapse: collapse;
-      font-size: 8.5pt; margin-bottom: 1mm;
+      font-size: 8.5pt; margin-bottom: 0.5mm;
     }
     #impression-onepager .imp-table th {
       text-align: left; font-weight: 600; font-size: 7.5pt;
       text-transform: uppercase; letter-spacing: 0.06em; color: #607d8b;
-      padding: 1.5mm; border-bottom: 1px solid #e0e4eb;
+      padding: 1.2mm; border-bottom: 1px solid #e0e4eb;
     }
     #impression-onepager .imp-table td {
-      padding: 1.8mm 1.5mm; border-bottom: 1px solid #f1f3f8; vertical-align: top;
+      padding: 1.3mm 1.5mm; border-bottom: 1px solid #f1f3f8; vertical-align: top;
+    }
+    /* Ne pas couper une ligne au milieu en cas de page-break — chantier 9.E.7. */
+    #impression-onepager .imp-table tr {
+      page-break-inside: avoid; break-inside: avoid;
     }
     #impression-onepager .imp-pastille {
       display: inline-block; width: 6pt; height: 6pt;
@@ -2520,17 +2526,21 @@
     #impression-onepager .imp-niv-chip.programme    { background: #f1f8e9; color: #1b5e20; }
     #impression-onepager .imp-niv-chip.equipe       { background: #e0f2f1; color: #004d40; }
     #impression-onepager .imp-bandeau-terrain {
-      margin-top: 5mm; background: #fffaf0;
+      margin-top: 3mm; background: #fffaf0;
       border-left: 3pt solid #b7791f;
-      padding: 2.5mm 3.5mm; font-size: 8.5pt; color: #6b4a00;
+      padding: 2mm 3mm; font-size: 8.5pt; color: #6b4a00;
       line-height: 1.45; font-style: italic;
+      /* Bandeau insécable : reste d'un seul tenant en cas de page-break. */
+      page-break-inside: avoid; break-inside: avoid;
     }
     #impression-onepager .imp-bandeau-terrain strong {
       font-style: normal; font-weight: 700; display: block; margin-bottom: 1mm;
       color: #6b4a00; text-transform: uppercase; letter-spacing: 0.05em; font-size: 7pt;
     }
     #impression-onepager .imp-questions {
-      margin-top: 3.5mm; font-size: 8.5pt;
+      margin-top: 2.5mm; font-size: 8.5pt;
+      /* Bloc des questions insécable. */
+      page-break-inside: avoid; break-inside: avoid;
     }
     #impression-onepager .imp-questions h3 {
       font-size: 8.5pt; font-weight: 700; color: #1a1a2e; margin-bottom: 2mm;
@@ -2539,7 +2549,7 @@
       list-style: none; padding-left: 0; margin: 0;
     }
     #impression-onepager .imp-questions li {
-      padding: 1.2mm 0 1.2mm 5mm; position: relative;
+      padding: 0.8mm 0 0.8mm 5mm; position: relative;
       color: #1a1a2e; line-height: 1.4;
     }
     #impression-onepager .imp-questions li::before {
@@ -2547,7 +2557,7 @@
       color: var(--niv-1); font-weight: 700;
     }
     #impression-onepager .imp-pied {
-      margin-top: 6mm; padding-top: 2.5mm;
+      margin-top: 3.5mm; padding-top: 2mm;
       border-top: 1px solid #e0e4eb;
       display: flex; justify-content: space-between;
       font-size: 7.5pt; color: #607d8b;
