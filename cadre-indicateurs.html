@@ -4115,13 +4115,13 @@ CM.IndicateursMeta = (function() {
     'x3': { tags:['flux','humain'],              cadres:['generique'] },
 
     /* Programme */
-    'p1': { tags:['delais','alignement'],        cadres:['safe','generique'] },
-    'p2': { tags:['valeur'],                     cadres:['safe','generique'] },
+    'p1': { tags:['delais','qualite','alignement'], cadres:['safe','generique'] },
+    'p2': { tags:['valeur','delais'],            cadres:['safe','generique'] },
     'p3': { tags:['risque'],                     cadres:['safe','itil','generique'] },
     'p4': { tags:['humain','alignement'],        cadres:['safe','generique'] },
     'p5': { tags:['flux','valeur'],              cadres:['lean','safe','kanban'] },
-    'p6': { tags:['qualite','alignement'],       cadres:['generique'] },
-    'p7': { tags:['qualite','valeur'],           cadres:['lean','generique'] },
+    'p6': { tags:['qualite','alignement','humain'], cadres:['generique'] },
+    'p7': { tags:['qualite','valeur','flux','humain'], cadres:['lean','generique'] },
 
     /* Équipes — DORA / livraison logicielle */
     'o1': { tags:['flux','delais'],              cadres:['dora'] },
