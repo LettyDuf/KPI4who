@@ -316,6 +316,14 @@ Audit complet livré dans [`AUDIT-UNIFORMITE-PORTES.md`](./AUDIT-UNIFORMITE-PORT
 
 *Aucune en attente. Le cadrage du chantier 9 est clos. Les trois arbitrages majeurs (vue imprimable, persistance, interaction d'ajout) sont tous actés en Décisions fermes. Le code peut démarrer.*
 
+**Tranche 9.E — précisions de cadrage du 26/04/2026 (impression web).**
+
+Au moment de démarrer le code de la tranche 9.E (vue imprimable web, antérieure à 9.F export PDF), trois zones du mockup `preview-panier-impression.html` se sont avérées sous-spécifiées et ont fait l'objet d'arbitrages explicites avant écriture de code.
+
+- **En-tête du one-pager : titre fixe + date du jour, pas de zone auteur/rôle/niveau.** *Arbitrée le 26/04/2026.* Le mockup affichait un bloc meta fictif (« Marie Dubois · Directrice Produit · Niveau programme »). Décision : on supprime ce bloc. L'en-tête réel se réduit au titre *« Mon scorecard »*, au sous-titre, et à la date du jour calculée à l'impression. Justification : cohérent avec la posture *« outil de conversation »* — le scorecard est l'objet, pas l'auteur. Pas de saisie, pas de stockage de profil, zero friction.
+- **Colonne « Pourquoi je la suis / Ce qu'elle éclairerait » : note utilisateur stricte (voie lente).** *Arbitrée le 26/04/2026.* La cellule est nourrie exclusivement par le champ `note` saisi via la voie lente du tiroir de fiche (chantier 9.D). Si la note est vide, la cellule est vide — pas de placeholder, pas de fallback sur la définition de la fiche. Justification : fidèle à la voix de la personne qui a saisi le scorecard. Une cellule vide invite naturellement à compléter avant la réunion, sans intrusion typographique.
+- **Bandeau terrain et trois questions à poser à l'équipe : à arbitrer via mockup-preview côte à côte.** *Ouvert le 26/04/2026.* Le mockup d'origine présentait ces deux zones avec du contenu rédactionnel spécifique aux fiches retenues. Plusieurs options possibles (texte fixe pur, bandeau fixe + 3Q éditables, tout supprimé en v1). Mockup-preview à créer (`preview-panier-impression-bandeau.html`) avant d'écrire la moindre ligne de CSS print. Tranche 9.E.5.
+
 **Tranche 9.B.4 — recherche globale dans la vue panier (rouverte 26/04/2026).**
 
 Audit de reprise mené le 26/04/2026 après livraison du chantier 9.C : la **décision ferme « Recherche globale avec 1-2 filtres contextuels optionnels »** (cadrage 22/04) n'a jamais été codée. Les tranches livrées le 22/04 soir s'arrêtent à 9.B.0 → 9.B.3 (squelette + état vide + chips + bouton réinitialiser). Indice révélateur : la prose des *Pistes futures* sur les liens cliquables PDF s'appuie sur cette recherche supposée acquise (*« la barre de recherche globale du panier permet déjà de retrouver une fiche par son nom »*) — la dette se voit en miroir.
