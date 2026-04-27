@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **26 avril 2026 — chantier 9.E livré** (vue imprimable web du scorecard, one-pager A4 sur 1 page). Tag `mvp-9e-impression-web` sur `1abda1a`. Séances précédentes de la même journée : chantier 9.G garde-fou `beforeunload` (tag `mvp-9g-beforeunload` sur `3fb133b`), chantier 9.D voie lente (tag `mvp-9d-voie-lente` sur `9959872`).
+Dernière mise à jour : **27 avril 2026 — chantier 9.F clos** (libellé bouton « 🖨 Imprimer / PDF » + tooltip pédagogique, sans export PDF interne). Tag `mvp-9f-libelle-pdf` sur `e8649e9`. Séance précédente : chantier 9.E livré le 26/04/2026 (vue imprimable web du scorecard, tag `mvp-9e-impression-web` sur `1abda1a`).
 
 ---
 
@@ -9,16 +9,15 @@ Dernière mise à jour : **26 avril 2026 — chantier 9.E livré** (vue imprimab
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événement majeur de la séance** : **chantier 9.E livré** (vue imprimable web du scorecard, one-pager A4). Quatre commits de code atomiques + trois commits doc. Squelette CSS `@media print` + section `#impression-onepager` (`931146f`), rendu HTML via module `CM.PanierImpression` branché sur `beforeprint` (`d2b6fd3`), bouton « 🖨 Imprimer » dans le header du TDB désactivé si panier vide (`96c1612`), compactage espacements + page-break propres (`f65c27c`), correctif `min-height: 100vh` qui forçait une 2e page vide (`1abda1a`). Tag `mvp-9e-impression-web` sur `1abda1a`.
+- **Événement majeur de la séance** : **chantier 9.F clos** sans code lourd. Arbitrage initial : sur macOS, l'aperçu système ouvert par `window.print()` propose nativement *Enregistrer en PDF* dans le menu déroulant « PDF » en bas à gauche — un export PDF interne (jsPDF / html2pdf) ajouterait une dépendance et un risque de drift visuel pour reproduire ce qui existe déjà. Décision : rendre la double fonction explicite par un libellé enrichi (variante C du mockup `preview-bouton-imprimer.html`). Bouton du tableau de bord : « 🖨 Imprimer » → « 🖨 Imprimer / PDF », `aria-label` mis à jour, `title` ajouté avec l'astuce. 1 commit code (`e8649e9`). Tag `mvp-9f-libelle-pdf` sur `e8649e9`.
 - **Décisions de cadrage actées** (cf. backlog § 9 tranche 9.E) : en-tête imprimé = titre fixe + date du jour, **pas de zone auteur** ; colonne *Pourquoi* = note utilisateur stricte (cellule vide si pas de note saisie via voie lente) ; bandeau terrain + 3 questions = **option A texte fixe rédactionnel** retenue après mockup-preview côte à côte ([`preview-panier-impression-bandeau.html`](./preview-panier-impression-bandeau.html), commit `a1be292`).
-- **Bug pédagogique du jour** : 2e page blanche en print causée par `body { min-height: 100vh }` hérité du mode écran, qui en print impose 297mm dans une zone imprimable de 277mm. Diagnostic posé en lisant les règles CSS top-level plutôt qu'en chassant un débordement de contenu inexistant. À retenir : *quand l'aperçu print déborde mais que la page suivante est blanche, chercher d'abord les règles `vh`/`min-height` héritées avant de toucher au contenu.*
-- **Test interactif validé** par Lætitia sur 4-6 fiches : rendu complet (en-tête + tableaux + pastilles + chips + bandeau + 3 questions + pied), couleurs préservées en print, scorecard tient sur 1 page A4 unique.
+- **Apprentissage du jour** : sur une option « clore sans code, juste micro-mention pédagogique », ne pas placer la mention dans le rendu imprimable lui-même (paradoxe : un PDF qui dit comment l'enregistrer en PDF). La mention doit vivre à l'écran, attachée au déclencheur. Mockup-preview en 3 variantes (tooltip seul, sous-libellé, libellé combiné) a tranché sans débat de prose.
+- **Validation par Lætitia** : variante C retenue après preview côte à côte ([`preview-bouton-imprimer.html`](./preview-bouton-imprimer.html)).
 - **Workflow git sandbox** : pattern `mv .git/index.lock` toujours appliqué avant chaque commit ; warnings `unable to unlink` persistent côté sandbox sans bloquer.
-- **Prochaines actions ouvertes (tranches 9 restantes)** :
-  - **9.F export PDF** : transposer le rendu print en PDF téléchargeable (`window.print()` ouvre déjà l'aperçu où *Enregistrer en PDF* est natif sur macOS — étudier si une vraie commande PDF interne est nécessaire ou si l'aperçu système suffit pour la v1). Non démarré.
+- **Prochaines actions ouvertes** : aucune tranche du chantier 9 restante. Chantier 9 dans son ensemble clos (de 9.A à 9.G + 9.F).
 - **Autres chantiers ouverts** : chantier 10 (gelé à `5655b03`) peut reprendre, item 6.9 (matrice 4×7 niveau × tags), chantier 18 (audit catalogue rôles), chantiers 12/13/15/16/17 en sommeil. Dette `tests-porte-niveau.html` toujours ouverte.
-- **Tag posé** : **`mvp-9e-impression-web`** sur `1abda1a`. Chaîne complète : `mvp-chantier-14-livre` → `mvp-9c-voie-rapide` (`45bdc62`) → `mvp-9b4-recherche-globale` → `mvp-9d-voie-lente` (`9959872`) → `mvp-9g-beforeunload` (`3fb133b`) → **`mvp-9e-impression-web`** (`1abda1a`, fin de séance).
-- **Blocages / questions ouvertes** : aucun. Fichiers `.todelete` à nettoyer côté ordi (sandbox interdit l'unlink) : 9 fichiers `*.preedit*.todelete` et `*.bak.todelete` cumulés sur la séance.
+- **Tag posé** : **`mvp-9f-libelle-pdf`** sur `e8649e9`. Chaîne complète : `mvp-chantier-14-livre` → `mvp-9c-voie-rapide` (`45bdc62`) → `mvp-9b4-recherche-globale` → `mvp-9d-voie-lente` (`9959872`) → `mvp-9g-beforeunload` (`3fb133b`) → `mvp-9e-impression-web` (`1abda1a`) → **`mvp-9f-libelle-pdf`** (`e8649e9`, fin de séance).
+- **Blocages / questions ouvertes** : aucun. Fichiers `.todelete` toujours en attente de nettoyage côté ordi (sandbox interdit l'unlink), aucun nouveau ajouté ce 27/04/2026.
 
 ## 0. Chantiers majeurs livrés → archivés
 
@@ -317,7 +316,7 @@ Audit complet livré dans [`AUDIT-UNIFORMITE-PORTES.md`](./AUDIT-UNIFORMITE-PORT
 
 **Tranche 9.E — précisions de cadrage du 26/04/2026 (impression web).**
 
-Au moment de démarrer le code de la tranche 9.E (vue imprimable web, antérieure à 9.F export PDF), trois zones du mockup `preview-panier-impression.html` se sont avérées sous-spécifiées et ont fait l'objet d'arbitrages explicites avant écriture de code.
+Au moment de démarrer le code de la tranche 9.E (vue imprimable web, antérieure à la clôture 9.F du 27/04/2026), trois zones du mockup `preview-panier-impression.html` se sont avérées sous-spécifiées et ont fait l'objet d'arbitrages explicites avant écriture de code.
 
 - **En-tête du one-pager : titre fixe + date du jour, pas de zone auteur/rôle/niveau.** *Arbitrée le 26/04/2026.* Le mockup affichait un bloc meta fictif (« Marie Dubois · Directrice Produit · Niveau programme »). Décision : on supprime ce bloc. L'en-tête réel se réduit au titre *« Mon scorecard »*, au sous-titre, et à la date du jour calculée à l'impression. Justification : cohérent avec la posture *« outil de conversation »* — le scorecard est l'objet, pas l'auteur. Pas de saisie, pas de stockage de profil, zero friction.
 - **Colonne « Pourquoi je la suis / Ce qu'elle éclairerait » : note utilisateur stricte (voie lente).** *Arbitrée le 26/04/2026.* La cellule est nourrie exclusivement par le champ `note` saisi via la voie lente du tiroir de fiche (chantier 9.D). Si la note est vide, la cellule est vide — pas de placeholder, pas de fallback sur la définition de la fiche. Justification : fidèle à la voix de la personne qui a saisi le scorecard. Une cellule vide invite naturellement à compléter avant la réunion, sans intrusion typographique.
@@ -328,6 +327,18 @@ Au moment de démarrer le code de la tranche 9.E (vue imprimable web, antérieur
 Audit de reprise mené le 26/04/2026 après livraison du chantier 9.C : la **décision ferme « Recherche globale avec 1-2 filtres contextuels optionnels »** (cadrage 22/04) n'a jamais été codée. Les tranches livrées le 22/04 soir s'arrêtent à 9.B.0 → 9.B.3 (squelette + état vide + chips + bouton réinitialiser). Indice révélateur : la prose des *Pistes futures* sur les liens cliquables PDF s'appuie sur cette recherche supposée acquise (*« la barre de recherche globale du panier permet déjà de retrouver une fiche par son nom »*) — la dette se voit en miroir.
 
 Arbitrages 26/04/2026 : (a) option A retenue contre report en piste future — coder 9.B.4 maintenant. (b) Sur mockup-preview côte à côte ([`preview-panier-recherche.html`](./preview-panier-recherche.html), commit `00fb711`), **option B retenue** — input + chips filtres Type et Niveau peuplés dynamiquement (un chip n'apparaît que si au moins une fiche du panier porte ce type ou ce niveau). Choix d'estompage des fiches non-correspondantes (au lieu de masquage) pour garder la conscience du panier complet. Aucun changement attendu sur `CM.Panier` — la recherche est un filtre côté vue qui consomme `CM.Panier.lister()` existant. Architecture cible : module pur `CM.PanierRecherche.filtrer({lignes, referentiel, requete}) → {resultats, comptesType, comptesNiveau}`, sans dépendance DOM ni couplage à `CM.Panier` (séparation des préoccupations — la recherche est un comportement de vue, pas un comportement métier du panier).
+
+**Tranche 9.F — clôture du 27/04/2026 (libellé bouton « 🖨 Imprimer / PDF »).**
+
+À l'ouverture de la tranche, arbitrage de périmètre : la décision ferme du chantier 9 disait *« Sortie canonique : impression + export PDF du même rendu. Le PDF est une copie fidèle du one-pager imprimable, pas une transposition vers un autre format. »* Sur macOS, l'aperçu système ouvert par `window.print()` propose nativement *Enregistrer en PDF* dans le menu déroulant « PDF » en bas à gauche — ce qui satisfait déjà la décision sans coder un export PDF interne. Un export interne (jsPDF / html2pdf) ajouterait une dépendance externe et un risque de drift visuel pour reproduire ce qui existe déjà nativement, contrevenant à la doctrine zéro-dépendance.
+
+Décision retenue : clore 9.F en rendant la double fonction du bouton 🖨 explicite à l'écran, sans toucher au moteur d'impression. Mockup-preview en trois variantes côte à côte ([`preview-bouton-imprimer.html`](./preview-bouton-imprimer.html)) — tooltip enrichi seul, sous-libellé sous le bouton, libellé combiné. **Variante C retenue** : le bouton affiche directement « 🖨 Imprimer / PDF », `aria-label` mis à jour pour les lecteurs d'écran (« Imprimer ou enregistrer en PDF le tableau de bord »), `title` ajouté pour l'astuce (« Cmd+P puis « Enregistrer en PDF » dans le menu PDF de l'aperçu »).
+
+Implémentation : 1 commit code (`e8649e9`) — 3 lignes modifiées dans `_htmlPanierHeader()` du module `CM.Composants`. Tag `mvp-9f-libelle-pdf` posé. Aucune dépendance ajoutée, aucun changement CSS, aucun changement de mise en page.
+
+*Apprentissage du jour* : sur une option « clore sans code, juste micro-mention pédagogique », ne pas placer la mention dans le rendu imprimable lui-même (paradoxe : un PDF qui dit comment l'enregistrer en PDF). La mention doit vivre à l'écran, attachée au déclencheur.
+
+**Clôture du chantier 9.** Avec la tranche 9.F close, le chantier 9 est entièrement livré : 9.A (squelette panier), 9.B.0-3 (TDB grille miroir), 9.B.4 (recherche globale), 9.C (voie rapide icônes), 9.D (voie lente tiroir), 9.E (vue imprimable web), 9.G (garde-fou `beforeunload`), 9.F (libellé bouton). Reste la dette technique listée ci-dessous (refonte de `tests-porte-niveau.html`).
 
 **Dette technique identifiée en cours de chantier (hors scope, à refondre après 9).**
 
