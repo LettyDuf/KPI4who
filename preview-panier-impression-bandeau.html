@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mockup-preview — Bandeau terrain + trois questions (chantier 9.E.5)</title>
+  <style>
+    /* ─────────────────────────────────────────────────────────────
+       MOCKUP-PREVIEW — Trois rendus pour arbitrer le pied de page
+       imprimé du scorecard (chantier 9.E.5, 26/04/2026).
+
+       Posé avant d'écrire le moindre CSS @media print de
+       cadre-indicateurs.html : Lætitia tranche visuellement, puis
+       le code suit l'option retenue.
+
+       Décisions déjà actées (n'apparaissent plus comme variantes) :
+       - en-tête : titre fixe + date du jour, pas de zone auteur
+       - colonne « Pourquoi » : note utilisateur stricte (vide si pas
+         de note saisie via la voie lente)
+       Voir backlog § 9 — Tranche 9.E précisions du 26/04/2026.
+       ────────────────────────────────────────────────────────── */
+
+    :root {
+      --niv-1:        #1a237e;
+      --niv-1-clair:  #e8eaf6;
+      --niv-2:        #01579b;
+      --niv-2-clair:  #e1f5fe;
+      --niv-3:        #004d40;
+      --niv-3-clair:  #e0f2f1;
+      --accent:       #e65100;
+      --fond:         #f5f6fa;
+      --fond-2:       #ffffff;
+      --texte:        #1a1a2e;
+      --texte-2:      #607d8b;
+      --bordure:      #e0e4eb;
+      --ambre-profond: #b7791f;
+      --ambre-texte:  #6b4a00;
+      --ambre-fond:   #fffaf0;
+      --ambre-bord:   #f3e3b8;
+      --fiab-fiable:  #2e7d32;
+      --fiab-precaution: #b7791f;
+      --fiab-risque:  #c62828;
+      --rayon:        10px;
+      --ombre:        0 2px 12px rgba(26,35,126,0.08);
+      --ombre-forte:  0 8px 32px rgba(26,35,126,0.14);
+
+      /* Page A4 réduite à ~0.55 pour 3 pages côte à côte sur ~1500px. */
+      --a4-w: 210mm;
+      --a4-h: 297mm;
+      --a4-scale: 0.55;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, 'Segoe UI', system-ui, 'Helvetica Neue', sans-serif;
+      background: var(--fond);
+      color: var(--texte);
+      line-height: 1.55;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    /* ── En-tête du mockup ────────────────────────────────── */
+    .mockup-header { max-width: 1500px; margin: 0 auto 2rem; text-align: center; }
+    .mockup-header .eyebrow {
+      display: inline-block; font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--niv-1); background: var(--niv-1-clair);
+      padding: 0.3rem 0.8rem; border-radius: 999px; margin-bottom: 1rem;
+    }
+    .mockup-header h1 { font-size: 1.65rem; font-weight: 700; color: var(--niv-1); margin-bottom: 0.5rem; }
+    .mockup-header p { font-size: 0.95rem; color: var(--texte-2); max-width: 760px; margin: 0 auto; }
+    .mockup-header .context { font-size: 0.85rem; color: var(--texte-2); font-style: italic; margin-top: 0.6rem; }
+    .mockup-header .actes {
+      max-width: 760px; margin: 1rem auto 0; font-size: 0.82rem; color: var(--texte-2);
+      background: var(--fond-2); border: 1px solid var(--bordure); border-left: 3px solid var(--niv-1);
+      border-radius: 6px; padding: 0.75rem 1rem; text-align: left; line-height: 1.55;
+    }
+    .mockup-header .actes strong {
+      font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+      font-size: 0.7rem; display: block; margin-bottom: 0.35rem; color: var(--niv-1);
+    }
+
+    /* ── Layout 3 colonnes ─────────────────────────────────── */
+    .comparatif {
+      max-width: 1500px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; align-items: flex-start;
+    }
+    @media (max-width: 1280px) { .comparatif { grid-template-columns: 1fr; } }
+    .option {
+      background: var(--fond-2); border: 1px solid var(--bordure);
+      border-radius: var(--rayon); box-shadow: var(--ombre); padding: 1.25rem;
+    }
+    .option-label {
+      display: inline-block; font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.25rem 0.6rem; border-radius: 999px; margin-bottom: 0.6rem;
+    }
+    .option.A .option-label { background: #e0f2f1; color: #004d40; }
+    .option.B .option-label { background: #e8eaf6; color: var(--niv-1); }
+    .option.C .option-label { background: #fff3e0; color: var(--accent); }
+    .option h2 { font-size: 1.15rem; font-weight: 700; color: var(--texte); margin-bottom: 0.35rem; }
+    .option .pitch { font-size: 0.85rem; color: var(--texte-2); margin-bottom: 0.85rem; line-height: 1.5; }
+    .option .trade-offs {
+      font-size: 0.82rem; color: var(--texte); margin-bottom: 1rem;
+      display: grid; grid-template-columns: 1fr; gap: 0.4rem;
+    }
+    .option .trade-offs .cell {
+      background: var(--fond); border-left: 3px solid var(--bordure);
+      padding: 0.45rem 0.65rem; border-radius: 4px; line-height: 1.4;
+    }
+    .option .trade-offs .plus  { border-left-color: #2e7d32; }
+    .option .trade-offs .moins { border-left-color: #b7791f; }
+    .option .trade-offs .tag {
+      font-size: 0.62rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; margin-right: 0.35rem;
+    }
+    .option .trade-offs .plus  .tag { color: #2e7d32; }
+    .option .trade-offs .moins .tag { color: #b7791f; }
+
+    /* ── Page A4 mise à l'échelle ───────────────────────────── */
+    .page-wrap {
+      width: calc(var(--a4-w) * var(--a4-scale));
+      height: calc(var(--a4-h) * var(--a4-scale));
+      position: relative; margin: 1rem auto 0.5rem;
+      box-shadow: var(--ombre-forte); background: white; overflow: hidden;
+    }
+    .page {
+      width: var(--a4-w); height: var(--a4-h);
+      padding: 14mm 14mm; background: white;
+      transform: scale(var(--a4-scale)); transform-origin: top left;
+      font-size: 10pt; line-height: 1.4; color: var(--texte);
+      position: absolute; top: 0; left: 0;
+    }
+    .page-label {
+      text-align: center; font-size: 0.75rem; color: var(--texte-2);
+      font-style: italic; margin-top: 0.25rem;
+    }
+
+    /* Style commun aux 3 one-pagers */
+    .onepager .entete {
+      border-bottom: 2px solid var(--niv-1);
+      padding-bottom: 4mm; margin-bottom: 5mm;
+      display: flex; justify-content: space-between; align-items: flex-end;
+    }
+    .onepager .entete .titre { font-size: 16pt; font-weight: 700; color: var(--niv-1); letter-spacing: -0.3px; }
+    .onepager .entete .sous-titre { font-size: 9pt; color: var(--texte-2); margin-top: 1.5mm; }
+    .onepager .entete .date-jour { text-align: right; font-size: 8.5pt; color: var(--texte-2); }
+    .onepager .section-titre {
+      font-size: 10.5pt; font-weight: 700; color: var(--niv-1);
+      margin: 5mm 0 2.5mm; display: flex; align-items: baseline; gap: 2.5mm;
+    }
+    .onepager .section-titre .count { font-size: 8pt; font-weight: 500; color: var(--texte-2); }
+    .onepager table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
+    .onepager table th {
+      text-align: left; font-weight: 600; font-size: 7.5pt;
+      text-transform: uppercase; letter-spacing: 0.06em; color: var(--texte-2);
+      padding: 1.5mm 1.5mm; border-bottom: 1px solid var(--bordure);
+    }
+    .onepager table td { padding: 1.8mm 1.5mm; border-bottom: 1px solid #f1f3f8; vertical-align: top; }
+    .onepager .pastille {
+      display: inline-block; width: 6pt; height: 6pt; border-radius: 50%;
+      margin-right: 1.5mm; vertical-align: middle;
+    }
+    .onepager .pastille.fiable { background: var(--fiab-fiable); }
+    .onepager .pastille.precaution { background: var(--fiab-precaution); }
+    .onepager .pastille.risque { background: var(--fiab-risque); }
+    .onepager .nom-ind { font-weight: 600; color: var(--texte); }
+    .onepager .pourquoi { font-size: 8pt; color: var(--texte); line-height: 1.35; }
+    .onepager .pourquoi.vide { color: #c4c8d4; font-style: italic; font-size: 7.5pt; }
+    .onepager .niveau-chip {
+      display: inline-block; font-size: 7pt; font-weight: 600;
+      padding: 0.5mm 1.5mm; border-radius: 3pt; letter-spacing: 0.04em;
+    }
+    .onepager .niveau-equipe { background: var(--niv-3-clair); color: var(--niv-3); }
+    .onepager .niveau-programme { background: var(--niv-2-clair); color: var(--niv-2); }
+    .onepager .niveau-entreprise { background: var(--niv-1-clair); color: var(--niv-1); }
+
+    /* Bandeau terrain */
+    .onepager .bandeau-terrain {
+      margin-top: 5mm; background: var(--ambre-fond);
+      border-left: 3pt solid var(--ambre-profond);
+      padding: 2.5mm 3.5mm; font-size: 8.5pt; color: var(--ambre-texte);
+      line-height: 1.45; font-style: italic;
+    }
+    .onepager .bandeau-terrain strong {
+      font-style: normal; font-weight: 700; display: block; margin-bottom: 1mm;
+      color: var(--ambre-texte); text-transform: uppercase; letter-spacing: 0.05em; font-size: 7pt;
+    }
+
+    /* Trois questions */
+    .onepager .questions { margin-top: 3.5mm; font-size: 8.5pt; }
+    .onepager .questions h3 { font-size: 8.5pt; font-weight: 700; color: var(--texte); margin-bottom: 2mm; }
+    .onepager .questions ul { list-style: none; padding-left: 0; }
+    .onepager .questions li { padding: 1.2mm 0 1.2mm 5mm; position: relative; color: var(--texte); line-height: 1.4; }
+    .onepager .questions li::before {
+      content: "→"; position: absolute; left: 0; color: var(--niv-1); font-weight: 700;
+    }
+
+    /* Visualisation des champs éditables (option B) */
+    .onepager .editable-field {
+      border: 1pt dashed #b9bdc9; border-radius: 2pt;
+      padding: 0.5mm 1.5mm; background: rgba(232, 234, 246, 0.35);
+      color: var(--texte-2); font-style: italic;
+    }
+    .onepager .editable-hint {
+      font-size: 6.5pt; color: var(--niv-1); letter-spacing: 0.05em;
+      text-transform: uppercase; font-weight: 600; margin-bottom: 1.5mm; display: block;
+    }
+
+    /* Pied */
+    .onepager .pied {
+      position: absolute; bottom: 14mm; left: 14mm; right: 14mm;
+      padding-top: 2.5mm; border-top: 1px solid var(--bordure);
+      display: flex; justify-content: space-between; font-size: 7.5pt; color: var(--texte-2);
+    }
+    .onepager .pied em { font-style: italic; color: var(--texte); }
+
+    .option.C .onepager .section-titre { margin-top: 7mm; }
+  </style>
+</head>
+<body>
+
+  <header class="mockup-header">
+    <span class="eyebrow">Mockup-preview · 26 avril 2026</span>
+    <h1>Bandeau terrain + trois questions à poser à l'équipe</h1>
+    <p>Trois manières de fermer le scorecard imprimé. À choisir avant d'écrire le CSS print.</p>
+    <p class="context">Mêmes données fictives sur les trois pages — ce qui change, c'est seulement le pied.</p>
+    <div class="actes">
+      <strong>Décisions déjà actées (identiques sur les trois pages)</strong>
+      En-tête réduit au titre <em>« Mon scorecard »</em> + date du jour, pas d'auteur.
+      Colonne <em>Pourquoi</em> nourrie par la note saisie via la voie lente du tiroir — cellule vide
+      si pas de note (visible ici sur la ligne <em>« Velocity d'équipe »</em>, volontairement laissée vide).
+    </div>
+  </header>
+
+  <div class="comparatif">
+
+    <section class="option A">
+      <span class="option-label">Option A</span>
+      <h2>Texte fixe rédactionnel</h2>
+      <p class="pitch">
+        Bandeau-aphorisme universel + trois questions génériques valables pour tout scorecard,
+        identiques pour tout le monde. Aucune saisie, aucun JS, aucun champ éditable.
+      </p>
+      <div class="trade-offs">
+        <div class="cell plus">
+          <span class="tag">Privilégie</span> la simplicité d&rsquo;implémentation, l&rsquo;unicité du message,
+          la posture éditoriale assumée.
+        </div>
+        <div class="cell moins">
+          <span class="tag">Vigilance</span> trois questions formulées une fois doivent rester
+          vraies pour 100 % des scorecards — sinon elles deviennent du bruit.
+        </div>
+      </div>
+
+      <div class="page-wrap">
+        <div class="page onepager">
+          <header class="entete">
+            <div>
+              <div class="titre">Mon scorecard</div>
+              <div class="sous-titre">Ce que je mesure déjà · ce que j&rsquo;envisage de mesurer</div>
+            </div>
+            <div class="date-jour">26 avril 2026</div>
+          </header>
+
+          <h2 class="section-titre">
+            <span>En place</span><span class="count">3 métriques</span>
+          </h2>
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 38%">Indicateur</th>
+                <th style="width: 16%">Fiabilité</th>
+                <th style="width: 16%">Niveau</th>
+                <th style="width: 30%">Pourquoi je la suis</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="nom-ind">NPS global</span></td>
+                <td><span class="pastille precaution"></span>Précaution</td>
+                <td><span class="niveau-chip niveau-entreprise">Entreprise</span></td>
+                <td class="pourquoi">Suivi mensuel existant, mais corrélation faible à la rétention réelle.</td>
+              </tr>
+              <tr>
+                <td><span class="nom-ind">Velocity d&rsquo;équipe</span></td>
+                <td><span class="pastille risque"></span>À risque</td>
+                <td><span class="niveau-chip niveau-equipe">Équipe</span></td>
+                <td class="pourquoi vide">—</td>
+              </tr>
+              <tr>
+                <td><span class="nom-ind">Budget mensuel consommé</span></td>
+                <td><span class="pastille fiable"></span>Fiable</td>
+                <td><span class="niveau-chip niveau-programme">Programme</span></td>
+                <td class="pourquoi">Signal clair pour le comité. Conservée.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 class="section-titre">
+            <span>À envisager</span><span class="count">2 métriques</span>
+          </h2>
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 38%">Indicateur</th>
+                <th style="width: 16%">Fiabilité</th>
+                <th style="width: 16%">Niveau</th>
+                <th style="width: 30%">Ce qu&rsquo;elle éclairerait</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="nom-ind">Lead Time (cycle time)</span></td>
+                <td><span class="pastille fiable"></span>Fiable</td>
+                <td><span class="niveau-chip niveau-equipe">Équipe</span></td>
+                <td class="pourquoi">Remplace la Velocity sans inviter au gaming.</td>
+              </tr>
+              <tr>
+                <td><span class="nom-ind">First Call Resolution</span></td>
+                <td><span class="pastille precaution"></span>Précaution</td>
+                <td><span class="niveau-chip niveau-programme">Programme</span></td>
+                <td class="pourquoi">Rendrait visible la qualité d&rsquo;interaction.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="bandeau-terrain">
+            <strong>Terrain</strong>
+            Le chiffre alerte. Le terrain explique. Aucune métrique n&rsquo;est un verdict —
+            chacune est une invitation à questionner ce qui se joue vraiment dans mes équipes.
+          </div>
+          <div class="questions">
+            <h3>Trois questions à poser à mon équipe</h3>
+            <ul>
+              <li>Lequel de ces indicateurs n&rsquo;a jamais déclenché d&rsquo;action concrète chez nous ?</li>
+              <li>Que voyons-nous tous les jours sans le mesurer — et que veulent dire ces silences ?</li>
+              <li>Si je n&rsquo;avais qu&rsquo;un seul de ces chiffres, lequel garderais-je et pourquoi ?</li>
+            </ul>
+          </div>
+          <div class="pied">
+            <span>cadre-indicateurs · panier v1</span>
+            <span><em>La métrique n&rsquo;est pas un objectif. C&rsquo;est une lunette.</em></span>
+            <span>1/1</span>
+          </div>
+        </div>
+      </div>
+      <div class="page-label">Option A · texte universel, zéro saisie</div>
+    </section>
+
+    <section class="option B">
+      <span class="option-label">Option B</span>
+      <h2>Bandeau fixe + 3 questions éditables</h2>
+      <p class="pitch">
+        Bandeau-aphorisme universel (identique partout). Les trois questions sont une zone
+        contenteditable : la personne saisit ses propres questions avant impression — celles
+        qu&rsquo;elle veut vraiment poser à <em>son</em> équipe sur <em>son</em> scorecard.
+      </p>
+      <div class="trade-offs">
+        <div class="cell plus">
+          <span class="tag">Privilégie</span> la conversation réelle : les questions sont les
+          siennes, pas génériques. Le scorecard devient l&rsquo;agenda d&rsquo;une réunion concrète.
+        </div>
+        <div class="cell moins">
+          <span class="tag">Vigilance</span> +1 zone éditable RAM, gestion clavier/a11y,
+          placeholder qui doit inviter sans imposer un schéma de pensée.
+        </div>
+      </div>
+
+      <div class="page-wrap">
+        <div class="page onepager">
+          <header class="entete">
+            <div>
+              <div class="titre">Mon scorecard</div>
+              <div class="sous-titre">Ce que je mesure déjà · ce que j&rsquo;envisage de mesurer</div>
+            </div>
+            <div class="date-jour">26 avril 2026</div>
+          </header>
+
+          <h2 class="section-titre">
+            <span>En place</span><span class="count">3 métriques</span>
+          </h2>
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 38%">Indicateur</th>
+                <th style="width: 16%">Fiabilité</th>
+                <th style="width: 16%">Niveau</th>
+                <th style="width: 30%">Pourquoi je la suis</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="nom-ind">NPS global</span></td>
+                <td><span class="pastille precaution"></span>Précaution</td>
+                <td><span class="niveau-chip niveau-entreprise">Entreprise</span></td>
+                <td class="pourquoi">Suivi mensuel existant, mais corrélation faible à la rétention réelle.</td>
+              </tr>
+              <tr>
+                <td><span class="nom-ind">Velocity d&rsquo;équipe</span></td>
+                <td><span class="pastille risque"></span>À risque</td>
+                <td><span class="niveau-chip niveau-equipe">Équipe</span></td>
+                <td class="pourquoi vide">—</td>
+              </tr>
+              <tr>
+                <td><span class="nom-ind">Budget mensuel consommé</span></td>
+                <td><span class="pastille fiable"></span>Fiable</td>
+                <td><span class="niveau-chip niveau-programme">Programme</span></td>
+                <td class="pourquoi">Signal clair pour le comité. Conservée.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 class="section-titre">
+            <span>À envisager</span><span class="count">2 métriques</span>
+          </h2>
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 38%">Indicateur</th>
+                <th style="width: 16%">Fiabilité</th>
+                <th style="width: 16%">Niveau</th>
+                <th style="width: 30%">Ce qu&rsquo;elle éclairerait</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="nom-ind">Lead Time (cycle time)</span></td>
+                <td><span class="pastille fiable"></span>Fiable</td>
+                <td><span class="niveau-chip niveau-equipe">Équipe</span></td>
+                <td class="pourquoi">Remplace la Velocity sans inviter au gaming.</td>
+              </tr>
+              <tr>
+                <td><span class="nom-ind">First Call Resolution</span></td>
+                <td><span class="pastille precaution"></span>Précaution</td>
+                <td><span class="niveau-chip niveau-programme">Programme</span></td>
+                <td class="pourquoi">Rendrait visible la qualité d&rsquo;interaction.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="bandeau-terrain">
+            <strong>Terrain</strong>
+            Le chiffre alerte. Le terrain explique. Aucune métrique n&rsquo;est un verdict —
+            chacune est une invitation à questionner ce qui se joue vraiment dans mes équipes.
+          </div>
+          <div class="questions">
+            <h3>Trois questions à poser à mon équipe</h3>
+            <span class="editable-hint">✏️ Zone éditable · cliquer pour saisir</span>
+            <ul>
+              <li><span class="editable-field">Que voulez-vous vraiment poser à propos de la Velocity ?</span></li>
+              <li><span class="editable-field">Quelle question le Lead Time soulève-t-il chez vous ?</span></li>
+              <li><span class="editable-field">Que cherchez-vous à comprendre que le NPS ne dit pas ?</span></li>
+            </ul>
+          </div>
+          <div class="pied">
+            <span>cadre-indicateurs · panier v1</span>
+            <span><em>La métrique n&rsquo;est pas un objectif. C&rsquo;est une lunette.</em></span>
+            <span>1/1</span>
+          </div>
+        </div>
+      </div>
+      <div class="page-label">Option B · bandeau fixe, questions sur-mesure</div>
+    </section>
+
+    <section class="option C">
+      <span class="option-label">Option C</span>
+      <h2>Tout supprimé en v1</h2>
+      <p class="pitch">
+        Le pied disparaît. Plus que les deux tableaux + en-tête + pied technique.
+        Si retour terrain réclame plus tard un bandeau ou des questions, on rouvre un 9.E.bis.
+      </p>
+      <div class="trade-offs">
+        <div class="cell plus">
+          <span class="tag">Privilégie</span> la livraison rapide, la sobriété, le respect
+          strict du « outil de conversation, pas document autonome ».
+        </div>
+        <div class="cell moins">
+          <span class="tag">Vigilance</span> sans bandeau ni questions, le scorecard tend
+          vers le tableau brut — risque de perte de la voix éditoriale qui invite à parler.
+        </div>
+      </div>
+
+      <div class="page-wrap">
+        <div class="page onepager">
+          <header class="entete">
+            <div>
+              <div class="titre">Mon scorecard</div>
+              <div class="sous-titre">Ce que je mesure déjà · ce que j&rsquo;envisage de mesurer</div>
+            </div>
+            <div class="date-jour">26 avril 2026</div>
+          </header>
+
+          <h2 class="section-titre">
+            <span>En place</span><span class="count">3 métriques</span>
+          </h2>
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 38%">Indicateur</th>
+                <th style="width: 16%">Fiabilité</th>
+                <th style="width: 16%">Niveau</th>
+                <th style="width: 30%">Pourquoi je la suis</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="nom-ind">NPS global</span></td>
+                <td><span class="pastille precaution"></span>Précaution</td>
+                <td><span class="niveau-chip niveau-entreprise">Entreprise</span></td>
+                <td class="pourquoi">Suivi mensuel existant, mais corrélation faible à la rétention réelle.</td>
+              </tr>
+              <tr>
+                <td><span class="nom-ind">Velocity d&rsquo;équipe</span></td>
+                <td><span class="pastille risque"></span>À risque</td>
+                <td><span class="niveau-chip niveau-equipe">Équipe</span></td>
+                <td class="pourquoi vide">—</td>
+              </tr>
+              <tr>
+                <td><span class="nom-ind">Budget mensuel consommé</span></td>
+                <td><span class="pastille fiable"></span>Fiable</td>
+                <td><span class="niveau-chip niveau-programme">Programme</span></td>
+                <td class="pourquoi">Signal clair pour le comité. Conservée.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 class="section-titre">
+            <span>À envisager</span><span class="count">2 métriques</span>
+          </h2>
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 38%">Indicateur</th>
+                <th style="width: 16%">Fiabilité</th>
+                <th style="width: 16%">Niveau</th>
+                <th style="width: 30%">Ce qu&rsquo;elle éclairerait</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="nom-ind">Lead Time (cycle time)</span></td>
+                <td><span class="pastille fiable"></span>Fiable</td>
+                <td><span class="niveau-chip niveau-equipe">Équipe</span></td>
+                <td class="pourquoi">Remplace la Velocity sans inviter au gaming.</td>
+              </tr>
+              <tr>
+                <td><span class="nom-ind">First Call Resolution</span></td>
+                <td><span class="pastille precaution"></span>Précaution</td>
+                <td><span class="niveau-chip niveau-programme">Programme</span></td>
+                <td class="pourquoi">Rendrait visible la qualité d&rsquo;interaction.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="pied">
+            <span>cadre-indicateurs · panier v1</span>
+            <span>26 avril 2026</span>
+            <span>1/1</span>
+          </div>
+        </div>
+      </div>
+      <div class="page-label">Option C · sobriété stricte, pas de pied éditorial</div>
+    </section>
+
+  </div>
+
+</body>
+</html>
