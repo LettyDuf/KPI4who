@@ -9297,8 +9297,9 @@ CM.App = (function() {
              d'imprimer une page « tableau de bord vide » par accident. */
           + '<button type="button" class="panier-tdb-imprimer"' + disabledAttr
             + ' onclick="window.print()"'
-            + ' aria-label="Imprimer le tableau de bord">'
-            + '🖨 Imprimer'
+            + ' aria-label="Imprimer ou enregistrer en PDF le tableau de bord"'
+            + ' title="Cmd+P puis « Enregistrer en PDF » dans le menu PDF de l’aperçu">'
+            + '🖨 Imprimer / PDF'
           + '</button>'
           + '<button type="button" class="panier-tdb-reinit"' + disabledAttr
             + ' onclick="CM.App.reinitialiserPanier()"'
