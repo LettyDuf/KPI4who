@@ -988,6 +988,26 @@
       .vl-duo-cartes { grid-template-columns: 1fr; }
     }
 
+    /* Zone note pliable (correctif 9.D 26/04/2026 — la note s'impose moins) */
+    .vl-zone-note .vl-note-deplie { display: none; }
+    .vl-zone-note.deplie .vl-note-pliee { display: none; }
+    .vl-zone-note.deplie .vl-note-deplie { display: block; }
+    .vl-zone-note .vl-note-pliee {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 0.5rem; flex-wrap: wrap; padding: 0.15rem 0.1rem;
+    }
+    .vl-btn-tertiaire {
+      background: transparent; color: var(--niv-1); border: none;
+      padding: 0.45rem 0.65rem; font-family: inherit; font-size: 0.84rem; font-weight: 600;
+      cursor: pointer; border-radius: 6px; transition: var(--trans);
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      text-decoration: underline; text-decoration-color: rgba(26,35,126,0.3);
+      text-underline-offset: 3px;
+    }
+    .vl-btn-tertiaire:hover { color: var(--accent); text-decoration-color: var(--accent); }
+    .vl-btn-tertiaire:focus-visible { outline: 2px solid var(--niv-1); outline-offset: 2px; }
+    .vl-btn-tertiaire svg { width: 14px; height: 14px; flex-shrink: 0; }
+
     /* Infobulles (term-def) — pédagogie du jargon */
     .term-def {
       position: relative; border-bottom: 1.5px dotted #5e35b1;
@@ -6858,33 +6878,53 @@ CM.Composants = (function() {
         + '</button>'
       + '</div>';
 
-    /* Zone note + actions : visible si déjà au tableau de bord. */
+    /* Zone note + actions : visible si déjà au tableau de bord.
+       État par défaut « plié » (note vide ET non dépliée par l'utilisateur) :
+       deux liens discrets « ✎ Ajouter une note » et « Retirer du tableau de
+       bord ». La note ne s'impose pas — elle est ajoutée à la demande.
+       État « déplié » (note non vide OU clic « Ajouter une note ») :
+       textarea + compteur + bouton « Mettre à jour » + lien « Retirer ». */
     if (auPanier) {
+      var aDejaUneNote = !!(noteCourante && noteCourante.length > 0);
       var classZone = 'vl-zone-note'
         + (statutActif === 'en-place'    ? ' actif-place' : '')
-        + (statutActif === 'a-envisager' ? ' actif-idee'  : '');
+        + (statutActif === 'a-envisager' ? ' actif-idee'  : '')
+        + (aDejaUneNote                  ? ' deplie'      : '');
       var noteEchappee = (noteCourante || '')
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
       var nbCars = (noteCourante || '').length;
       var classCompteur = 'vl-compteur' + (nbCars >= 450 ? ' proche-limite' : '');
 
+      var SVG_PLUME = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>';
+
       html += '<div class="' + classZone + '">'
-        + '<div class="vl-zone-note-titre">Note de contexte</div>'
-        + '<textarea id="vl-textarea-' + ind.id + '" class="vl-textarea" maxlength="500" '
-          + 'placeholder="Optionnel — pourquoi ce choix, à qui en parler, contexte d\'usage…" '
-          + 'oninput="CM.App.voieLente_compteur(\'' + ind.id + '\')">' + noteEchappee + '</textarea>'
-        + '<div id="vl-compteur-' + ind.id + '" class="' + classCompteur + '">' + nbCars + ' / 500</div>'
-        + '<div class="vl-actions">';
-
-      html += '<button type="button" class="vl-btn-secondaire" '
-          + 'onclick="CM.App.voieLente_retirer(\'' + ind.id + '\')">Retirer du tableau de bord</button>'
-        + '<span style="display:inline-flex;align-items:center;gap:0.6rem;">'
-        + '<span id="vl-feedback-' + ind.id + '" class="vl-feedback" aria-live="polite">✓ Note enregistrée</span>'
-        + '<button type="button" class="vl-btn-primaire" '
-          + 'onclick="CM.App.voieLente_mettreAJourNote(\'' + ind.id + '\')">Mettre à jour</button>'
-        + '</span>';
-
-      html += '</div></div>';
+        /* État plié : actions discrètes en ligne */
+        + '<div class="vl-note-pliee">'
+          + '<button type="button" class="vl-btn-tertiaire" '
+            + 'onclick="CM.App.voieLente_deplierNote(\'' + ind.id + '\')">'
+            + SVG_PLUME + 'Ajouter une note'
+          + '</button>'
+          + '<button type="button" class="vl-btn-secondaire" '
+            + 'onclick="CM.App.voieLente_retirer(\'' + ind.id + '\')">Retirer du tableau de bord</button>'
+        + '</div>'
+        /* État déplié : textarea + compteur + boutons */
+        + '<div class="vl-note-deplie">'
+          + '<div class="vl-zone-note-titre">Note de contexte</div>'
+          + '<textarea id="vl-textarea-' + ind.id + '" class="vl-textarea" maxlength="500" '
+            + 'placeholder="Optionnel — pourquoi ce choix, à qui en parler, contexte d\'usage…" '
+            + 'oninput="CM.App.voieLente_compteur(\'' + ind.id + '\')">' + noteEchappee + '</textarea>'
+          + '<div id="vl-compteur-' + ind.id + '" class="' + classCompteur + '">' + nbCars + ' / 500</div>'
+          + '<div class="vl-actions">'
+            + '<button type="button" class="vl-btn-secondaire" '
+              + 'onclick="CM.App.voieLente_retirer(\'' + ind.id + '\')">Retirer du tableau de bord</button>'
+            + '<span style="display:inline-flex;align-items:center;gap:0.6rem;">'
+              + '<span id="vl-feedback-' + ind.id + '" class="vl-feedback" aria-live="polite">✓ Note enregistrée</span>'
+              + '<button type="button" class="vl-btn-primaire" '
+                + 'onclick="CM.App.voieLente_mettreAJourNote(\'' + ind.id + '\')">Mettre à jour</button>'
+            + '</span>'
+          + '</div>'
+        + '</div>'
+      + '</div>';
     }
 
     return html + '</div>';
@@ -9453,6 +9493,14 @@ CM.App = (function() {
     /* L'abonnement re-rendera la voie lente en mode neutre (pas-au-panier). */
   }
 
+  function voieLente_deplierNote(ficheId) {
+    var conteneur = document.getElementById('voie-lente-tiroir');
+    if (!conteneur) return;
+    var zone = conteneur.querySelector('.vl-zone-note');
+    if (zone) zone.classList.add('deplie');
+    _focusTextareaVoieLente(ficheId);
+  }
+
   function voieLente_compteur(ficheId) {
     var ta = document.getElementById('vl-textarea-' + ficheId);
     var compteur = document.getElementById('vl-compteur-' + ficheId);
@@ -9497,7 +9545,14 @@ CM.App = (function() {
     if (conteneur.getAttribute('data-fiche-id') !== ficheId) return;
     var ind = CM.Referentiel.chercher(ficheId);
     if (!ind) return;
-    conteneur.outerHTML = CM.Composants.rendreVoieLente(ind);
+    /* replaceChild plutôt que outerHTML : remplacement in-place plus fiable
+       sur Safari et idempotent (l'ancien node est détaché, le nouveau prend
+       sa place dans le parent). */
+    var temp = document.createElement('div');
+    temp.innerHTML = CM.Composants.rendreVoieLente(ind);
+    var nouveau = temp.firstElementChild;
+    if (!nouveau) return;
+    conteneur.parentNode.replaceChild(nouveau, conteneur);
   }
 
   /* _rafraichirVoieLenteSiOuverte(resultat) — ré-aligne la voie lente sur les
@@ -9532,11 +9587,9 @@ CM.App = (function() {
                    || (resultat.ligneAvant && resultat.ligneAvant.ficheId);
     if (ficheIdMute !== ficheCourante) return;
     _renderVoieLenteDOM(ficheCourante);
-    /* Auto-focus textarea après ajout/bascule via la voie lente : prolonge
-       le geste, l'utilisateur enchaîne sur la note sans détour clavier. */
-    if (resultat.action === 'ajoute' || resultat.action === 'bascule') {
-      _focusTextareaVoieLente(ficheCourante);
-    }
+    /* Pas d'auto-focus : la zone note est pliée par défaut (correctif 26/04
+       2026), l'utilisateur déplie via le lien « ✎ Ajouter une note » qui
+       gère lui-même le focus du textarea. */
   }
 
   /* API publique */
@@ -9557,6 +9610,7 @@ CM.App = (function() {
     basculerFiltreType:      basculerFiltreType,      /* 9.B.4 — chip filtre type */
     basculerFiltreNiveau:    basculerFiltreNiveau,    /* 9.B.4 — chip filtre niveau */
     voieLente_choisirStatut:    voieLente_choisirStatut,    /* 9.D — clic duo-carte de la voie lente */
+    voieLente_deplierNote:      voieLente_deplierNote,      /* 9.D — lien « ✎ Ajouter une note » */
     voieLente_mettreAJourNote:  voieLente_mettreAJourNote,  /* 9.D — bouton « Mettre à jour » */
     voieLente_retirer:          voieLente_retirer,          /* 9.D — lien « Retirer du tableau de bord » */
     voieLente_compteur:         voieLente_compteur,         /* 9.D — compteur live du textarea */
