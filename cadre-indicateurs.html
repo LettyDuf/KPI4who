@@ -9455,6 +9455,26 @@ CM.App = (function() {
       _rafraichirIconesPanier(resultat);
       _rafraichirVoieLenteSiOuverte(resultat); /* 9.D — voie lente du tiroir */
     });
+
+    /* Chantier 9.G — Garde-fou beforeunload (perte de RAM).
+       CM.Panier stocke en mémoire JS (MemoireDepot) : fermer l'onglet ou
+       rafraîchir la page efface l'intégralité du tableau de bord et des
+       notes saisies. On déclenche la confirmation native du navigateur dès
+       qu'au moins une fiche est présente — la voie lente 9.D rend l'ajout
+       quasi gratuit, donc même un TDB tout juste rempli mérite protection.
+
+       Note : depuis Chrome 51 / Firefox 44, le wording de la boîte est imposé
+       par le navigateur ; un message custom est ignoré. preventDefault() +
+       returnValue = '' suffisent à armer le garde-fou (returnValue reste
+       requis pour la compatibilité Edge legacy et certaines versions de
+       Safari). Listener idempotent posé une seule fois ici, jamais retiré :
+       il interroge l'état courant du panier à chaque déclenchement. */
+    window.addEventListener('beforeunload', function(e) {
+      if (CM.Panier && !CM.Panier.estVide()) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    });
   }
 
   /* ─── 9.D voie lente : handlers du tiroir ───────────────────────
