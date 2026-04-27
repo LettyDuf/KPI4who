@@ -2032,6 +2032,47 @@
       cursor: not-allowed;
     }
 
+    /* Wrapper boutons d'actions du tableau de bord — chantier 9.E.4.
+       Permet de placer côte à côte « Imprimer » et « Réinitialiser »
+       à droite du titre, avec un espacement cohérent et un wrap natif
+       sur écrans étroits. */
+    .panier-tdb-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* Bouton « Imprimer » du tableau de bord — chantier 9.E.4.
+       Styles dérivés de .panier-tdb-reinit pour cohérence visuelle
+       (même hauteur, même typographie, même padding). Couleur de
+       hover différenciée : bleu niv-1 plutôt que rouge — l'impression
+       est une action constructive, contrairement à la réinitialisation
+       qui est destructive. */
+    .panier-tdb-imprimer {
+      background: transparent;
+      border: 1px solid var(--bordure);
+      color: var(--texte-2);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: inherit;
+      transition: var(--trans);
+    }
+    .panier-tdb-imprimer:hover:not(:disabled) {
+      background: var(--niv-1-clair);
+      color: var(--niv-1);
+      border-color: var(--niv-1-moyen);
+    }
+    .panier-tdb-imprimer:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
     /* ── Bandeau de recherche — chantier 9.B.4 ───────────────
        Champ texte + chips filtres Type/Niveau peuplés dynamiquement
        avec ce qui existe dans le panier. État de recherche piloté par
@@ -9226,11 +9267,23 @@ CM.App = (function() {
           + 'Mon tableau de bord '
           + '<span style="font-weight:400;color:var(--texte-secondaire)">· ' + legende + '</span>'
         + '</div>'
-        + '<button type="button" class="panier-tdb-reinit"' + disabledAttr
-          + ' onclick="CM.App.reinitialiserPanier()"'
-          + ' aria-label="Réinitialiser le tableau de bord">'
-          + '↻ Réinitialiser'
-        + '</button>'
+        + '<div class="panier-tdb-actions">'
+          /* Bouton « Imprimer » — chantier 9.E.4. window.print() déclenche
+             l'événement beforeprint que CM.PanierImpression.init() écoute :
+             le rendu one-pager #impression-onepager est régénéré juste à
+             temps avant l'aperçu. Disabled si panier vide pour éviter
+             d'imprimer une page « tableau de bord vide » par accident. */
+          + '<button type="button" class="panier-tdb-imprimer"' + disabledAttr
+            + ' onclick="window.print()"'
+            + ' aria-label="Imprimer le tableau de bord">'
+            + '🖨 Imprimer'
+          + '</button>'
+          + '<button type="button" class="panier-tdb-reinit"' + disabledAttr
+            + ' onclick="CM.App.reinitialiserPanier()"'
+            + ' aria-label="Réinitialiser le tableau de bord">'
+            + '↻ Réinitialiser'
+          + '</button>'
+        + '</div>'
       + '</div>';
   }
 
