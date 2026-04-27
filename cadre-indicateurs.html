@@ -9540,19 +9540,25 @@ CM.App = (function() {
      Appelé après changement de statut (ajout, bascule, retrait) ou réinit.
      Idempotent : si le tiroir n'est pas ouvert sur cette fiche, no-op. */
   function _renderVoieLenteDOM(ficheId) {
+    /* Re-render complet du tiroir via le même mécanisme qu'ouvrirTiroir.
+       Approche choisie après échec de outerHTML puis de replaceChild ciblé
+       sur #voie-lente-tiroir (test interactif Lætitia 26/04/2026, après
+       commits 0c26f46 / 004581a / aae08c3) : la mutation ciblée du seul
+       node voie-lente ne se propage pas visuellement dans certains contextes
+       d'ouverture (depuis Choisir mes indicateurs, depuis Mon tableau de
+       bord). Le re-render complet de #t-fiche calque ouvrirTiroir, qui
+       fonctionne — donc fiable par construction. Coût : un re-render de la
+       fiche entière, négligeable (≈ une fiche par mutation).
+       Garde-fou : on vérifie d'abord que le tiroir est bien ouvert sur
+       cette fiche (via #voie-lente-tiroir[data-fiche-id]) — sinon no-op. */
     var conteneur = document.getElementById('voie-lente-tiroir');
     if (!conteneur) return;
     if (conteneur.getAttribute('data-fiche-id') !== ficheId) return;
     var ind = CM.Referentiel.chercher(ficheId);
     if (!ind) return;
-    /* replaceChild plutôt que outerHTML : remplacement in-place plus fiable
-       sur Safari et idempotent (l'ancien node est détaché, le nouveau prend
-       sa place dans le parent). */
-    var temp = document.createElement('div');
-    temp.innerHTML = CM.Composants.rendreVoieLente(ind);
-    var nouveau = temp.firstElementChild;
-    if (!nouveau) return;
-    conteneur.parentNode.replaceChild(nouveau, conteneur);
+    var tFiche = document.getElementById('t-fiche');
+    if (!tFiche) return;
+    tFiche.innerHTML = CM.Composants.rendreFicheHtml(ind);
   }
 
   /* _rafraichirVoieLenteSiOuverte(resultat) — ré-aligne la voie lente sur les
