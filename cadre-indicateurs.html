@@ -4111,7 +4111,7 @@ CM.IndicateursMeta = (function() {
     't4': { tags:['flux'],                       cadres:['lean','kanban','safe'] },
     't5': { tags:['delais'],                     cadres:['generique'] },
     't6': { tags:['risque'],                     cadres:['safe','generique'] },
-    't7': { tags:['risque','flux'],              cadres:['safe','lean','generique'] },
+    't7': { tags:['risque','flux'],              cadres:['safe','generique'] },
     'x3': { tags:['flux','humain'],              cadres:['generique'] },
 
     /* Programme */
@@ -4132,34 +4132,34 @@ CM.IndicateursMeta = (function() {
     'o5': { tags:['flux','delais'],              cadres:['lean','kanban','dora'] },
     'o6': { tags:['flux'],                       cadres:['lean','kanban','scrum'] },
     'o7': { tags:['flux'],                       cadres:['kanban','lean'] },
-    'o8': { tags:['qualite'],                    cadres:['lean','generique'] },
+    'o8': { tags:['qualite'],                    cadres:['generique'] },
     'o9': { tags:['alignement'],                 cadres:['okr','mbo'] },
 
     /* Équipes — TI / Dev */
-    'ti-d1': { tags:['qualite','risque'],        cadres:['lean','generique'] },
+    'ti-d1': { tags:['qualite','risque'],        cadres:['generique'] },
     'ti-d2': { tags:['delais','flux'],           cadres:['scrum'] },
     'ti-d3': { tags:['qualite'],                 cadres:['dora','lean'] },
-    'ti-d4': { tags:['flux','delais'],           cadres:['dora','lean'] },
+    'ti-d4': { tags:['flux','delais'],           cadres:['dora'] },
 
     /* Équipes — TI / Pipeline CI/CD */
     'ti-p1': { tags:['qualite','risque'],        cadres:['dora','itil'] },
-    'ti-p2': { tags:['flux','delais'],           cadres:['dora','lean'] },
+    'ti-p2': { tags:['flux','delais'],           cadres:['dora'] },
     'ti-p3': { tags:['qualite','flux'],          cadres:['dora'] },
-    'ti-p4': { tags:['delais','flux'],           cadres:['dora','lean'] },
+    'ti-p4': { tags:['delais','flux'],           cadres:['dora'] },
     'ti-p5': { tags:['qualite','risque'],        cadres:['dora','generique'] },
 
     /* Équipes — TI / Ops / support */
     'ti-o1': { tags:['qualite','risque'],        cadres:['itil','generique'] },
     'ti-o2': { tags:['qualite','humain'],        cadres:['itil','generique'] },
     'ti-o3': { tags:['qualite','delais'],        cadres:['itil','generique'] },
-    'ti-o4': { tags:['qualite','risque'],        cadres:['itil','lean'] },
-    'ti-o5': { tags:['valeur','flux'],           cadres:['itil','lean'] },
+    'ti-o4': { tags:['qualite','risque'],        cadres:['itil'] },
+    'ti-o5': { tags:['valeur','flux'],           cadres:['itil'] },
 
     /* Équipes — TI / Sécurité */
     'ti-s1': { tags:['risque'],                  cadres:['itil','generique'] },
     'ti-s2': { tags:['risque','qualite'],        cadres:['dora','itil'] },
     'ti-s3': { tags:['risque'],                  cadres:['itil','generique'] },
-    'ti-s4': { tags:['qualite','risque'],        cadres:['lean','generique'] },
+    'ti-s4': { tags:['qualite','risque'],        cadres:['generique'] },
     'ti-s5': { tags:['risque'],                  cadres:['generique'] },
 
     /* Équipes — agile générique */
@@ -4170,7 +4170,7 @@ CM.IndicateursMeta = (function() {
 
     /* Équipes — Commercial */
     'af-c1': { tags:['valeur'],                  cadres:['generique'] },
-    'af-c2': { tags:['delais','flux'],           cadres:['lean','generique'] },
+    'af-c2': { tags:['delais','flux'],           cadres:['generique'] },
     'af-c3': { tags:['valeur'],                  cadres:['generique'] },
     'af-c4': { tags:['valeur','alignement'],     cadres:['mbo','generique'] },
     'af-c5': { tags:['flux','valeur'],           cadres:['generique'] },
@@ -4178,19 +4178,19 @@ CM.IndicateursMeta = (function() {
     /* Équipes — Marketing */
     'af-m1': { tags:['valeur'],                  cadres:['generique'] },
     'af-m2': { tags:['valeur'],                  cadres:['generique'] },
-    'af-m3': { tags:['flux','valeur'],           cadres:['lean','generique'] },
+    'af-m3': { tags:['flux','valeur'],           cadres:['generique'] },
     'af-m4': { tags:['valeur'],                  cadres:['generique'] },
     'af-m5': { tags:['valeur'],                  cadres:['generique'] },
 
     /* Équipes — Finance */
-    'af-f1': { tags:['delais','valeur'],         cadres:['lean','generique'] },
+    'af-f1': { tags:['delais','valeur'],         cadres:['generique'] },
     'af-f2': { tags:['qualite','valeur'],        cadres:['generique'] },
     'af-f3': { tags:['delais','flux'],           cadres:['lean','generique'] },
     'af-f4': { tags:['risque'],                  cadres:['generique'] },
 
     /* Équipes — RH */
     'af-r1': { tags:['humain'],                  cadres:['generique'] },
-    'af-r2': { tags:['delais','flux'],           cadres:['lean','generique'] },
+    'af-r2': { tags:['delais','flux'],           cadres:['generique'] },
     'af-r3': { tags:['humain','risque'],         cadres:['generique'] },
     'af-r4': { tags:['humain','qualite'],        cadres:['generique'] },
 
@@ -4203,9 +4203,9 @@ CM.IndicateursMeta = (function() {
     /* Équipes — Service Client */
     'af-sc1': { tags:['qualite','humain'],       cadres:['itil','generique'] },
     'af-sc2': { tags:['qualite','humain'],       cadres:['itil','generique'] },
-    'af-sc3': { tags:['qualite','humain'],       cadres:['lean','itil'] },
+    'af-sc3': { tags:['qualite','humain'],       cadres:['itil'] },
     'af-sc4': { tags:['qualite','delais'],       cadres:['itil','generique'] },
-    'af-sc5': { tags:['delais'],                 cadres:['itil','lean'] }
+    'af-sc5': { tags:['delais'],                 cadres:['itil'] }
   };
 
   /* ── API publique ── */
