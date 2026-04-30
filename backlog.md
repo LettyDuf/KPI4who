@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **27 avril 2026 — dette `tests-porte-niveau.html` éteinte** (refonte hors-iframe via générateur Node, 9 suites au vert). Tag `mvp-dette-tests-porte-niveau-eteinte` sur `bc3042d`. Plus tôt dans la journée : chantier 9.F clos (libellé bouton « 🖨 Imprimer / PDF », tag `mvp-9f-libelle-pdf` sur `e8649e9`).
+Dernière mise à jour : **30 avril 2026 — axe Stratégique de 1.bis clos** (1 phrase corrigée sur `s9`, term-def sur `COSO ERM` + `ISO 31000`, commit `ba690cb`). Méthode d'audit corrigée (vérification d'inclusion dans un span term-def) à reprendre pour les axes Tactique / Programme / Op TI / Op Affaires. Plus tôt : dette `tests-porte-niveau.html` éteinte (refonte hors-iframe via générateur Node, 9 suites au vert). Tag `mvp-dette-tests-porte-niveau-eteinte` sur `bc3042d`. Plus tôt dans la journée : chantier 9.F clos (libellé bouton « 🖨 Imprimer / PDF », tag `mvp-9f-libelle-pdf` sur `e8649e9`).
 
 ---
 
@@ -9,15 +9,13 @@ Dernière mise à jour : **27 avril 2026 — dette `tests-porte-niveau.html` ét
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événements majeurs de la séance (2 chantiers livrés)** : **(1) chantier 9.F clos** sans code lourd — libellé bouton « 🖨 Imprimer » → « 🖨 Imprimer / PDF », `aria-label` et `title` enrichis (variante C de `preview-bouton-imprimer.html`). 1 commit code (`e8649e9`), tag `mvp-9f-libelle-pdf`. **(2) Dette `tests-porte-niveau.html` éteinte** — direction C retenue après vulgarisation à 3 niveaux d'options : reconstruire le harnais avec la même couverture qu'avant. Marqueurs `ZONE-TESTS-PORTE-NIVEAU` posés sur 5953 lignes de prod (22 modules CM.* de Config à PanierImpression), générateur Node `outils/construire-tests-porte-niveau.js` créé (clone du patron panier avec fusion multi-`<script>` → mégascript), harnais refondu hors-iframe (`var W = window` comme alias historique pour préserver les 9 suites), première régénération à 5954 lignes JS injectées. **Test interactif validé : 9 suites au vert.** 4 commits code (`1df9460` marqueurs, `6a2e4b3` générateur, `0492cfe` refonte harnais, `bc3042d` régénération). Tag `mvp-dette-tests-porte-niveau-eteinte` sur `bc3042d`.
-- **Décisions de cadrage actées** (cf. backlog § 9 tranche 9.E) : en-tête imprimé = titre fixe + date du jour, **pas de zone auteur** ; colonne *Pourquoi* = note utilisateur stricte (cellule vide si pas de note saisie via voie lente) ; bandeau terrain + 3 questions = **option A texte fixe rédactionnel** retenue après mockup-preview côte à côte ([`preview-panier-impression-bandeau.html`](./preview-panier-impression-bandeau.html), commit `a1be292`).
-- **Apprentissages du jour (2)** : (1) Pour clore un chantier *« sans code lourd »* avec micro-mention pédagogique, la mention doit vivre à l'écran attachée au déclencheur — pas dans le rendu imprimable (paradoxe : un PDF qui dit comment l'enregistrer en PDF). (2) Quand on présente un arbitrage technique à un non-développeur, vulgariser par paliers : nommer ce qu'est un test, traduire chaque suite en français de tous les jours, puis présenter les options par effort croissant (modeste / équilibrée / exhaustive). Lætitia a choisi exhaustive (« reconstruire ce qu'on avait ») — instinct juste : la couverture exhaustive existante valait l'investissement, et le test interactif vert l'a confirmé.
-- **Validation par Lætitia (2)** : (1) variante C du bouton Imprimer / PDF retenue après preview côte à côte ([`preview-bouton-imprimer.html`](./preview-bouton-imprimer.html)) ; (2) test interactif `tests-porte-niveau.html` ouvert dans le navigateur — bandeau vert, 9 suites au vert sans régression du chantier 14.
-- **Workflow git sandbox** : pattern `mv .git/index.lock` toujours appliqué avant chaque commit ; warnings `unable to unlink` persistent côté sandbox sans bloquer.
-- **Prochaines actions ouvertes** : aucune tranche du chantier 9 restante (chantier 9 clos), aucune dette technique en cours. Chantier 10 (gelé à `5655b03`) peut reprendre, ou items 6.9 / 18 / 12-17.
-- **Autres chantiers ouverts** : chantier 10 (gelé à `5655b03`) peut reprendre, item 6.9 (matrice 4×7 niveau × tags), chantier 18 (audit catalogue rôles), chantiers 12/13/15/16/17 en sommeil.
-- **Tag posé** : **`mvp-dette-tests-porte-niveau-eteinte`** sur `bc3042d`. Chaîne complète : `mvp-chantier-14-livre` → `mvp-9c-voie-rapide` (`45bdc62`) → `mvp-9b4-recherche-globale` → `mvp-9d-voie-lente` (`9959872`) → `mvp-9g-beforeunload` (`3fb133b`) → `mvp-9e-impression-web` (`1abda1a`) → `mvp-9f-libelle-pdf` (`e8649e9`) → **`mvp-dette-tests-porte-niveau-eteinte`** (`bc3042d`, fin de séance).
-- **Blocages / questions ouvertes** : aucun. Fichiers `.todelete` toujours en attente de nettoyage côté ordi (sandbox interdit l'unlink), aucun nouveau ajouté ce 27/04/2026.
+- **Événement majeur de la séance (1 chantier de tranche)** : **axe Stratégique de 1.bis clos**. Audit méthodique mené avec une méthode corrigée (vérifier la couverture par `term-def` au premier usage hors `data-def`, et pas seulement compter les occurrences brutes). Résultat : **1 phrase à corriger** sur la fiche `s9` champ `objectif` — ajout de term-def sur `COSO ERM` et `ISO 31000` (définitions reprises mot-à-mot de `s10` pour cohérence cross-fiches). 1 commit code (`ba690cb`). Constat de méthode : le diagnostic initial du backlog 1.bis surévaluait la dette d'un facteur ~4 sur cet axe — la même méthode d'audit corrigée doit être appliquée aux 4 axes restants.
+- **Apprentissage du jour** : un diagnostic « par parsing brut » qui n'isole pas les attributs HTML (`data-def="..."`) et qui ne distingue pas « occurrence couverte par term-def » de « occurrence en circulation libre » donne une dette gonflée. Toujours croiser les chiffres bruts avec un test d'inclusion (l'occurrence tombe-t-elle dans un span term-def ?) avant d'estimer l'effort.
+- **Validation par Lætitia** : reprise mot-à-mot des définitions de `s10` validée — pas d'esquisse de variante courte sur `s9`.
+- **Workflow git sandbox** : pattern `mv .git/index.lock` toujours appliqué, plus déplacement du `HEAD.lock` orphelin (relicat des sessions précédentes). Warnings `unable to unlink` persistent sans bloquer.
+- **Prochaines actions ouvertes** : 1.bis axes restants — Tactique (LPM, DORA, ROI), Programme (CRM, probable faux positif), Op TI, Op Affaires (volume principal). Chantier 10 (gelé à `5655b03`) peut reprendre. Items 6.9, 18, 12-17 en sommeil.
+- **Tag posé** : aucun (modif éditoriale ponctuelle, pas de jalon MVP). Dernière référence taggée : `mvp-dette-tests-porte-niveau-eteinte` sur `bc3042d`.
+- **Blocages / questions ouvertes** : aucun. Fichiers `.todelete` toujours en attente côté ordi. Plusieurs `.git/*.lock.tmp*` accumulés (workflow sandbox), nettoyage à faire un jour côté ordi.
 
 ## 0. Chantiers majeurs livrés → archivés
 
@@ -55,6 +53,18 @@ Règle appliquée : chaque fiche doit distinguer **ce qu'elle mesure** (output) 
 **Règle à appliquer** (consignée dans `feedback_redaction_fiches_referentiel.md`) : pas d'acronyme non défini en circulation libre dans le texte. Soit définir au premier usage dans un `<span class="term-def">`, soit remplacer par la version française pleine. Cas limites légitimes : devises (EUR), normes nommées par leur préfixe ISO en parenthèse, acronymes vraiment passés en langage courant (CRM, SEO, ROI à la limite).
 
 **Découpage proposé** : passe par axe (Stratégique → Tactique → Programme → Opérationnel TI → Opérationnel Affaires), 1 commit par axe. Estimation : 3-4 sessions courtes selon la profondeur de redéfinition (un acronyme comme COSO ERM ou ADKAR demande une définition pédagogique courte mais juste, pas un simple développement du sigle).
+
+**Avancement par axe** *(maj 30/04/2026)* :
+
+| Axe | État | Commit | Note |
+|---|---|---|---|
+| Stratégique | ✅ clos | `ba690cb` | Audit corrigé : **1 phrase** à traiter sur `s9` champ `objectif` (`COSO ERM` + `ISO 31000` ajoutés en term-def, définitions reprises mot-à-mot de `s10` pour cohérence cross-fiches). Le reste de l'axe (`s6` ADKAR, `s9` NIST CSF + FAIR, `s10` complet) était déjà couvert. **Le diagnostic initial du backlog surévaluait la dette d'un facteur ~4 sur cet axe.** |
+| Tactique | 🔴 à faire | — | LPM (t6, t7), DORA (t2), ROI (t1) — à auditer avec la méthode corrigée. ROI à priori passe en langage courant, à confirmer. |
+| Programme | 🟡 à filtrer | — | CRM (p5) — probable faux positif (CRM listé comme « cas limite langage courant » dans la règle). Audit rapide à faire. |
+| Opérationnel TI | 🔴 à faire | — | Voir constat. |
+| Opérationnel Affaires | 🔴 à faire | — | Voir constat. Volume principal de la dette résiduelle. |
+
+**Méthode d'audit corrigée** *(actée 30/04/2026 sur axe Stratégique)*. Pour chaque acronyme, repérer la **première occurrence visible hors attribut `data-def="..."`** dans le corps de la fiche, puis vérifier si cette occurrence tombe à l'intérieur d'un `<span class="term-def">`. Le diagnostic initial comptait toutes les occurrences brutes sans cette distinction et donnait une fausse impression de volume. Le script Python utilisé est trivial (regex + check d'inclusion), à reprendre tel quel pour les axes suivants.
 
 **Ne pas confondre** avec la dette « ids techniques en clair » (p5, p6, p7, o1) qui a été éteinte le 27/04/2026 dans le commit `b4b327a` après la même remontée Lætitia. Cette sous-dette acronymes est ce qui reste.
 
