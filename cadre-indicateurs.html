@@ -4046,12 +4046,13 @@ CM.IndicateursMeta = (function() {
     'observabilite':    { label:'Observabilité du delivery',    teinte:'#00838f', fond:'#e0f4f6' },
     'objectifs':        { label:'Pilotage par les objectifs',   teinte:'#455a64', fond:'#eceff1' },
     'itsm':             { label:'IT Service Management',        teinte:'#ad1457', fond:'#fce4ec' },
+    'risque-securite':  { label:'Risque & Sécurité',             teinte:'#c62828', fond:'#ffebee' },
     'decision':         { label:'Aide à la décision',           teinte:'#827717', fond:'#f5f5e6' },
     'universel':        { label:'Universel',                    teinte:'#78909c', fond:'transparent' }
   };
   var ORDRE_FAMILLES = [
     'empirisme-agile', 'excellence-op', 'observabilite',
-    'objectifs', 'itsm', 'decision', 'universel'
+    'objectifs', 'itsm', 'risque-securite', 'decision', 'universel'
   ];
 
   /* Catalogue des cadres méthodologiques.
@@ -4059,6 +4060,8 @@ CM.IndicateursMeta = (function() {
      et le style visuel côté porte « Par mon cadre ». */
   var CADRES = {
     dora:      { label:'DORA / DevOps',            icone:'🚀', famille:'observabilite',   description:'Quatre métriques de référence du delivery\u00a0: fréquence, lead time, échec, MTTR.' },
+    cd:        { label:'Continuous Delivery',      icone:'🔁', famille:'observabilite',   description:'Continuous Delivery (Humble & Farley, 2010). Pipeline de livraison, intégration continue, qualité intégrée à la chaîne.' },
+    space:     { label:'SPACE',                    icone:'🛰️', famille:'observabilite',   description:'SPACE Framework (Forsgren, Storey, DeMichelle, 2021). Productivité ingénierie multidimensionnelle\u00a0: Satisfaction · Performance · Activity · Communication · Efficiency.' },
     lean:      { label:'Lean / Six Sigma',         icone:'♻️', famille:'excellence-op',   description:'Flux, variabilité, réduction du gaspillage. Lead time, throughput.' },
     okr:       { label:'OKR',                      icone:'🎯', famille:'objectifs',       description:'Objectives and Key Results. Ambitions trimestrielles mesurables.' },
     mbo:       { label:'MBO (Drucker)',            icone:'📐', famille:'objectifs',       description:'Management By Objectives. Alignement individuel / organisationnel.' },
@@ -4066,6 +4069,7 @@ CM.IndicateursMeta = (function() {
     kanban:    { label:'Kanban',                   icone:'🗂️', famille:'empirisme-agile', description:'Flux tiré, WIP, cycle time. Flux continu.' },
     safe:      { label:'SAFe',                     icone:'🏗️', famille:'empirisme-agile', description:'Scaled Agile Framework. Programme et portefeuille à l\u2019échelle.' },
     itil:      { label:'ITIL',                     icone:'🛠️', famille:'itsm',            description:'IT Service Management. Incidents, changements, problèmes, disponibilité.' },
+    securite:  { label:'Sécurité (NIST CSF / ISO 27035)', icone:'🔐', famille:'risque-securite', description:'NIST Cybersecurity Framework, ISO 27001/27035, OWASP, MITRE ATT&CK, FAIR. Détection, réponse, résilience face aux menaces.' },
     bsc:       { label:'Balanced Scorecard',       icone:'⚖️', famille:'objectifs',       description:'Finance, client, processus, apprentissage — pilotage équilibré.' },
     generique: { label:'Indicateur générique',     icone:'🧩', famille:'universel',       description:'Indicateurs non rattachés à un cadre spécifique. Bac à sable, équipe sans cadre installé.' }
   };
@@ -4080,7 +4084,6 @@ CM.IndicateursMeta = (function() {
     { id:'ebm',     label:'EBM',                          icone:'🔬', famille:'empirisme-agile', description:'Evidence-Based Management (Scrum.org). Pilotage empirique de la valeur stratégique.' },
     { id:'toc',     label:'TOC (Théorie des contraintes)', icone:'⛓️', famille:'excellence-op',   description:'Theory of Constraints (Goldratt). Pilotage par le goulot d\u2019étranglement.' },
     { id:'queues',  label:'Théorie des files d\'attente',  icone:'🧮', famille:'excellence-op',   description:'Modélisation des flux arrivée/service. Utilisation, variabilité.' },
-    { id:'space',   label:'SPACE',                        icone:'🛰️', famille:'observabilite',   description:'Satisfaction · Performance · Activity · Communication · Efficiency.' },
     { id:'flow',    label:'Flow Metrics',                 icone:'🌊', famille:'observabilite',   description:'Flow velocity, efficiency, time, load, distribution.' },
     { id:'hoshin',  label:'Hoshin Kanri',                 icone:'🧭', famille:'objectifs',       description:'Déploiement stratégique japonais. Catchball, X-matrix, alignement vertical.' },
     { id:'cobit',   label:'COBIT',                        icone:'📚', famille:'itsm',            description:'Governance of Enterprise IT. Gouvernance, alignement business / IT.' },
