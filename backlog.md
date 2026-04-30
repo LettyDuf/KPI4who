@@ -96,7 +96,7 @@ Règle appliquée : chaque fiche doit distinguer **ce qu'elle mesure** (output) 
 | 7 | `mbo` | 4 | ✅ clos | `0af6545` | **0 conservée — 4 retirées** (s4, t3, o9, af-c4). 3 fiches OKR (s4, t3, o9) double-taggées MBO par généalogie historique : aucun marqueur Drucker propre, anti-pattern rémunération variable explicité = **inverse doctrinal** de MBO. af-c4 (quotas commerciaux) cas Drucker classique mais sans marqueur lexical propre — ❌ par cohérence stricte du chantier. **Dette 100%.** Cadre orphelin → déplacé vers `CADRES_A_VENIR` (option 1 cohérente avec BSC). Description enrichie pour réintégration future. |
 | 8 | `bsc` | 3 | ✅ clos | `e4be33c` | **0 conservée — 3 retirées** (s1 CA, s3 EBITDA, s5 Part de marché) : aucun marqueur signature BSC (4 perspectives, strategy map, lead/lag, Kaplan/Norton). Tag posé par contiguïté « Stratégique → BSC par habitude » alors que la BSC s'oppose précisément à la mono-vision financière. **Dette 100%.** Cadre orphelin après retrait → déplacé vers `CADRES_A_VENIR` (constat collatéral n°5 adressé). |
 | 9 | `okr` | 3 | ✅ clos | — *(doc seule)* | **3 conservées, dette zéro** : s4, t3, o9 — toutes signature OKR (structure Objective + 2-4 KR mesurables, cadence trimestrielle/annuelle, co-construction, anti-pattern rémunération variable explicité). Cadre **propre** : ces 3 fiches sont nées OKR (tag posé en même temps que la fiche, pas par contiguïté). Aucun commit code. Voir constat collatéral n°4. |
-| 10 | `generique` | 54 | 🟢 audit-éclair en fin de chantier | — | Pas de doctrine à confronter — vérifier uniquement les redondances avec un cadre signature non légitime |
+| 10 | `generique` | 58→42 | ✅ clos | `7fc5460` | **Doctrine d'exclusivité actée** : `generique` jamais combiné avec un cadre signature (description CADRES{} mise à jour). **Pop1 (15 fiches multi-taggées)** : `generique` retiré (mécanique). **Pop2 (43 fiches en `generique` seul)** : 1 réintégration s9 → `securite` (adresse partiellement constat n°1). 42 fiches restent `generique` légitimement (cadres signature absents de la taxonomie : sales, marketing, RH, finance, change management, etc.). Voir constats n°9 (cadre `cx` manquant) et n°10 (5 pistes de cadres futurs). |
 
 **Constat collatéral n°2** *(remonté lors de l'audit cadre `itil` le 30/04/2026)* — **✅ ADRESSÉ le 30/04/2026** (commit `662682a`). Le cadre `securite` (label « Sécurité (NIST CSF / ISO 27035) ») a été ajouté à `CADRES_META`, dans la nouvelle famille `risque-securite`. 4 fiches retaggées : ti-s1 MTTD, ti-s2 MTTR Sécurité, ti-s3 Délai remédiation vulnérabilités, ti-s4 Couverture tests sécurité. Reste à statuer : la fiche `s9` (Indice de maturité cybersécurité) n'est pas mappée dans `CADRES_META` — relève du constat collatéral n°1 (52 fiches hors taxonomie), à reprendre dans un item dédié.
 
@@ -112,7 +112,41 @@ Règle appliquée : chaque fiche doit distinguer **ce qu'elle mesure** (output) 
 
 **Constat collatéral n°8** *(remonté lors de l'audit cadre `scrum` le 30/04/2026, à statuer hors 1.ter)*. Sur 137 fiches du référentiel, **une seule** porte un marqueur signature Scrum (ti-d2 Sprint Completion). Aucune fiche n'évoque le Sprint Goal qualitatif, la Definition of Done comme qualité d'Increment, le Product Goal, ni les rôles Scrum (Scrum Master, Product Owner, Developers). Le Scrum Guide est donc **sur-représenté en tag** (avant audit : 6 fiches taggées) mais **sous-représenté en fiches signature** (1 fiche). Pistes de fiches Scrum signature à créer : « Atteinte du Sprint Goal » (engagement qualitatif sur l'objectif, ≠ taux de complétion qui mesure les tâches), « Adhérence à la Definition of Done » (qualité d'Increment), « Time to Market d'un Increment ». À reprendre dans une session future de densification du référentiel.
 
-**Constat collatéral n°1** *(à statuer séparément, hors scope direct de l'audit légitimité)*. Le référentiel contient **137 fiches** mais seules **85 sont mappées** dans `CADRES_META`. **52 fiches sont donc hors taxonomie cadres**. Question à trancher dans un item dédié : faut-il les mapper systématiquement ? Faut-il poser `generique` par défaut sur celles qui n'ont aucun cadre signature ? Faut-il que la porte « Par mon cadre » signale explicitement les fiches non rattachées ? Possible explication de remontées « la porte ne montre pas la fiche X » futures.
+**Constat collatéral n°9** *(remonté lors de l'audit-éclair `generique` le 30/04/2026, à statuer hors 1.ter)*. **Cadre `cx` (Customer Experience) manquant dans la taxonomie.** Au moins 5 fiches relèvent du corpus Reichheld (NPS, *The Ultimate Question*) / Dixon (CES, *The Effortless Experience*) / Hayes (CSAT) : s2 (NPS stratégique), af-sc1 (CSAT), af-sc2 (NPS Service), af-sc3 (CES), af-r1 (eNPS — Reichheld a généralisé NPS aux employés). Création d'un cadre `cx` (label « Customer Experience (Reichheld / Dixon) ») à statuer — famille `objectifs` ou nouvelle famille `experience` ? Ces fiches restent `generique` en attendant.
+
+**Constat collatéral n°10** *(remonté lors de l'audit-éclair `generique` le 30/04/2026, à statuer hors 1.ter)*. **Cinq pistes de cadres signature manquants** dans la taxonomie, identifiées en parcourant les 43 fiches `generique` seul. Aucun n'est créé maintenant — décision produit hors 1.ter :
+- **`change-management`** (ADKAR Prosci / Kotter) — concernerait s6 (Capacité d'absorption du changement), potentiellement af-r4 (taux de complétion formations).
+- **`sales`** (Roberge / Rackham SPIN / Ross / Sirius Decisions) — concernerait af-c1 à af-c5, af-m3 (déjà identifiés au chantier 1 comme corpus Roberge).
+- **`pmi-evm`** (PMI PMBOK / EVM Earned Value) — concernerait p2 (Budget Variance), p3 (Risques critiques), p4 (Satisfaction parties prenantes). Note : p3 a déjà été retirée d'`itil` lors de l'audit ITIL avec mention « Risk Mgmt PMI/COSO ».
+- **`grc-compliance`** (Governance, Risk, Compliance — ISO 19600, COSO IC) — concernerait ti-s5 (Score de conformité réglementaire), af-f4 (Conformité réglementaire financière). Note : ti-s5 et af-f4 mentionnent ISO 27001/SOC2/PCI-DSS/RGPD — corpus distinct de `securite` (qui est centré détection/réponse).
+- **`hr-analytics`** (corpus RH analytique — pas de doctrine unifiée mais marqueurs : SHRM, AIHR) — concernerait s7 (Rotation volontaire), af-r2 (Time to Fill), af-r3 (Voluntary Turnover).
+
+**Synthèse globale du chantier 1.ter** *(clos le 30/04/2026)*
+
+10 cadres audités, **dette globale ≈ 56 %** (~80 corrections sur ~144 occurrences) :
+
+| Cadre | Dette | Avant | Après | Pattern |
+|---|---|---|---|---|
+| `okr` | 0 % | 3 | 3 | Cadre **propre** (fiches nées OKR) |
+| `itil` | 38 % | 16 | 10 | Confusion ITIL/CX |
+| `kanban` | 40 % | 5 | 3 | Tags portefeuille/programme abusifs |
+| `lean` | 52 % | 29 | 14 | Garde-fou transversal mal compris |
+| `safe` | 55 % | 11 | 5 | Contiguïté niveau Tactique |
+| `dora` | 69 % | 13 | 4 | Métriques DevOps non-keys |
+| `scrum` | **83 %** | 6 | 1 | Culture historique vs Scrum Guide minimaliste |
+| `bsc` | **100 %** | 3 | 0 → CADRES_A_VENIR | Cadre orphelin |
+| `mbo` | **100 %** | 4 | 0 → CADRES_A_VENIR | Cadre orphelin |
+| `generique` | — | 58 | 42 | Pop1 nettoyée + 1 retag s9 |
+
+**Extension de taxonomie** : 3 cadres ajoutés (`securite`, `cd`, `space`) + nouvelle famille `risque-securite`. 2 cadres déplacés vers `CADRES_A_VENIR` (`bsc`, `mbo`). **Doctrine d'exclusivité de `generique` actée** (description CADRES{} mise à jour).
+
+**Apprentissages méthodologiques majeurs** :
+1. Diagnostic « par parsing brut » sans tester l'inclusion dans un span term-def gonfle artificiellement la dette éditoriale (1.bis Stratégique : facteur ~4).
+2. Tagger un cadre par contiguïté de niveau (« Tactique → SAFe ») sans appui doctrinal produit du faux signal massif. Règle permanente : **pas de tag de cadre sans marqueur lexical OU métrique signature documentée du corpus officiel**.
+
+**Constats collatéraux ouverts à statuer** : n°1 (51 fiches restantes hors `CADRES_META`), n°4 (densification t3), n°6 (divergence VOCAB.cadres / CADRES{}), n°8 (pauvreté du corpus Scrum dans le référentiel), n°9 (cadre `cx`), n°10 (5 pistes cadres : change-mgmt, sales, pmi-evm, grc-compliance, hr-analytics).
+
+**Constat collatéral n°1** *(partiellement adressé le 30/04/2026, partiellement à statuer)*. Le référentiel contient **137 fiches** mais seules **85 sont mappées** dans `CADRES_META`. **52 fiches sont donc hors taxonomie cadres**. **✅ Adressé pour s9** (Indice de maturité cybersécurité) lors de l'audit-éclair generique : retag `generique` → `securite` (commit `7fc5460`), s9 reste dans META — la fiche cybersécurité signature est désormais correctement classée. **Reste à statuer** sur les 51 autres fiches non mappées : faut-il les mapper systématiquement ? Faut-il poser `generique` par défaut sur celles qui n'ont aucun cadre signature ? Faut-il que la porte « Par mon cadre » signale explicitement les fiches non rattachées ?
 
 
 ---
