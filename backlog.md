@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **30 avril 2026 — axe Stratégique de 1.bis clos** (1 phrase corrigée sur `s9`, term-def sur `COSO ERM` + `ISO 31000`, commit `ba690cb`). Méthode d'audit corrigée (vérification d'inclusion dans un span term-def) à reprendre pour les axes Tactique / Programme / Op TI / Op Affaires. Plus tôt : dette `tests-porte-niveau.html` éteinte (refonte hors-iframe via générateur Node, 9 suites au vert). Tag `mvp-dette-tests-porte-niveau-eteinte` sur `bc3042d`. Plus tôt dans la journée : chantier 9.F clos (libellé bouton « 🖨 Imprimer / PDF », tag `mvp-9f-libelle-pdf` sur `e8649e9`).
+Dernière mise à jour : **30 avril 2026 — chantier 1.ter ouvert** (audit légitimité tags cadres, 10 cadres × 85 fiches × 144 occurrences). Plus tôt : axe Stratégique de 1.bis clos (1 phrase corrigée sur `s9`, term-def sur `COSO ERM` + `ISO 31000`, commit `ba690cb`). Méthode d'audit corrigée (vérification d'inclusion dans un span term-def) à reprendre pour les axes Tactique / Programme / Op TI / Op Affaires. Plus tôt : dette `tests-porte-niveau.html` éteinte (refonte hors-iframe via générateur Node, 9 suites au vert). Tag `mvp-dette-tests-porte-niveau-eteinte` sur `bc3042d`. Plus tôt dans la journée : chantier 9.F clos (libellé bouton « 🖨 Imprimer / PDF », tag `mvp-9f-libelle-pdf` sur `e8649e9`).
 
 ---
 
@@ -9,11 +9,11 @@ Dernière mise à jour : **30 avril 2026 — axe Stratégique de 1.bis clos** (1
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événement majeur de la séance (1 chantier de tranche)** : **axe Stratégique de 1.bis clos**. Audit méthodique mené avec une méthode corrigée (vérifier la couverture par `term-def` au premier usage hors `data-def`, et pas seulement compter les occurrences brutes). Résultat : **1 phrase à corriger** sur la fiche `s9` champ `objectif` — ajout de term-def sur `COSO ERM` et `ISO 31000` (définitions reprises mot-à-mot de `s10` pour cohérence cross-fiches). 1 commit code (`ba690cb`). Constat de méthode : le diagnostic initial du backlog 1.bis surévaluait la dette d'un facteur ~4 sur cet axe — la même méthode d'audit corrigée doit être appliquée aux 4 axes restants.
-- **Apprentissage du jour** : un diagnostic « par parsing brut » qui n'isole pas les attributs HTML (`data-def="..."`) et qui ne distingue pas « occurrence couverte par term-def » de « occurrence en circulation libre » donne une dette gonflée. Toujours croiser les chiffres bruts avec un test d'inclusion (l'occurrence tombe-t-elle dans un span term-def ?) avant d'estimer l'effort.
+- **Événements majeurs de la séance (2)** : **(1) axe Stratégique de 1.bis clos** — 1 phrase corrigée sur `s9` (term-def `COSO ERM` + `ISO 31000`, commit `ba690cb`) ; le diagnostic initial surévaluait la dette d'un facteur ~4. Méthode d'audit corrigée actée. **(2) Chantier 1.ter ouvert** — audit légitimité des tags `cadres` sur tout le référentiel, après remontée de Lætitia : sur 11 fiches taggées `safe`, 4 légitimes, 3 ambiguës, 4 abusives. Périmètre : 10 cadres définis, 85 fiches mappées (sur 137), 144 occurrences. Méthode d'audit standardisée écrite, ordre d'attaque safe → lean → itil → dora → scrum → kanban → mbo → bsc → okr → generique. Audit méthodique mené avec une méthode corrigée (vérifier la couverture par `term-def` au premier usage hors `data-def`, et pas seulement compter les occurrences brutes). Résultat : **1 phrase à corriger** sur la fiche `s9` champ `objectif` — ajout de term-def sur `COSO ERM` et `ISO 31000` (définitions reprises mot-à-mot de `s10` pour cohérence cross-fiches). 1 commit code (`ba690cb`). Constat de méthode : le diagnostic initial du backlog 1.bis surévaluait la dette d'un facteur ~4 sur cet axe — la même méthode d'audit corrigée doit être appliquée aux 4 axes restants.
+- **Apprentissages du jour (2)** : **(1)** un diagnostic « par parsing brut » qui n'isole pas les attributs HTML (`data-def="..."`) et qui ne distingue pas « occurrence couverte par term-def » de « occurrence en circulation libre » donne une dette gonflée. Toujours croiser les chiffres bruts avec un test d'inclusion (l'occurrence tombe-t-elle dans un span term-def ?) avant d'estimer l'effort. **(2)** Tagger un cadre par contiguïté de niveau (« Tactique → SAFe par habitude ») sans appui doctrinal produit du faux signal massif (4 fiches sur 11 sur l'audit `safe`). Toute pose de tag de cadre doit s'appuyer sur un marqueur lexical du corpus ou une métrique signature documentée — sinon : pas de tag.
 - **Validation par Lætitia** : reprise mot-à-mot des définitions de `s10` validée — pas d'esquisse de variante courte sur `s9`.
 - **Workflow git sandbox** : pattern `mv .git/index.lock` toujours appliqué, plus déplacement du `HEAD.lock` orphelin (relicat des sessions précédentes). Warnings `unable to unlink` persistent sans bloquer.
-- **Prochaines actions ouvertes** : 1.bis axes restants — Tactique (LPM, DORA, ROI), Programme (CRM, probable faux positif), Op TI, Op Affaires (volume principal). Chantier 10 (gelé à `5655b03`) peut reprendre. Items 6.9, 18, 12-17 en sommeil.
+- **Prochaines actions ouvertes** : (1) **chantier 1.ter cadre `safe`** — décision de Lætitia attendue sur les 3 ambiguës (t2, t4, t5) avant corrections. (2) 1.bis axes restants — Tactique (LPM, DORA, ROI), Programme (CRM, probable faux positif), Op TI, Op Affaires. (3) Chantier 10 (gelé à `5655b03`) peut reprendre. (4) Items 6.9, 18, 12-17 en sommeil. (5) Constat collatéral 52 fiches hors taxonomie cadres à statuer.
 - **Tag posé** : aucun (modif éditoriale ponctuelle, pas de jalon MVP). Dernière référence taggée : `mvp-dette-tests-porte-niveau-eteinte` sur `bc3042d`.
 - **Blocages / questions ouvertes** : aucun. Fichiers `.todelete` toujours en attente côté ordi. Plusieurs `.git/*.lock.tmp*` accumulés (workflow sandbox), nettoyage à faire un jour côté ordi.
 
@@ -67,6 +67,39 @@ Règle appliquée : chaque fiche doit distinguer **ce qu'elle mesure** (output) 
 **Méthode d'audit corrigée** *(actée 30/04/2026 sur axe Stratégique)*. Pour chaque acronyme, repérer la **première occurrence visible hors attribut `data-def="..."`** dans le corps de la fiche, puis vérifier si cette occurrence tombe à l'intérieur d'un `<span class="term-def">`. Le diagnostic initial comptait toutes les occurrences brutes sans cette distinction et donnait une fausse impression de volume. Le script Python utilisé est trivial (regex + check d'inclusion), à reprendre tel quel pour les axes suivants.
 
 **Ne pas confondre** avec la dette « ids techniques en clair » (p5, p6, p7, o1) qui a été éteinte le 27/04/2026 dans le commit `b4b327a` après la même remontée Lætitia. Cette sous-dette acronymes est ce qui reste.
+
+### 1.ter Audit légitimité des tags `cadres` *(ouverte le 30/04/2026)*
+
+**Origine.** Lors de la séance du 30/04/2026, Lætitia a signalé que des fiches taggées `safe` ne semblaient pas relever du corpus SAFe. Audit factuel mené sur les 11 fiches `safe` : 4 légitimes (mention LPM ou PI Planning), 3 ambiguës (concept partagé avec Lean ou Predictability Measure non explicité), 4 abusives (corpus PMI/EVM/risk management générique, parfois contraires à la doctrine SAFe). **Diagnostic de la dérive** : tags posés par contiguïté de niveau (« niveau Tactique → SAFe par habitude ») plutôt que par appui doctrinal. Décision : auditer **tous** les tags de cadres avec une méthode standardisée.
+
+**Périmètre quantifié.** 10 cadres définis dans `CADRES_META`, 85 fiches mappées (sur 137 fiches au total), 144 occurrences de tags `cadres`.
+
+**Méthode d'audit standardisée** (à appliquer cadre par cadre) :
+
+1. Fixer 4 à 8 **marqueurs lexicaux signature** du corpus officiel.
+2. Fixer les **métriques signature** du corpus officiel.
+3. Pour chaque fiche taggée du cadre : croiser contenu × marqueurs × métriques signature.
+4. Classer en **✅ légitime** (marqueur ou métrique signature présent), **🟡 ambigu** (concept partagé avec un autre cadre ou implicite sans appui textuel), **❌ abusif** (rien dans le corpus, voire contraire à la doctrine).
+5. Présenter le tableau à Lætitia **avant tout commit**.
+6. 1 commit code (corrections appliquées) + 1 commit doc (clôture du cadre dans le chantier).
+
+**Avancement par cadre** *(maj 30/04/2026)* :
+
+| # | Cadre | Fiches | État | Commits | Note |
+|---|---|---|---|---|---|
+| 1 | `safe` | 11 | 🟡 audité, décision en cours | — | 4 ✅ (t6, t7, p1, p5) / 3 🟡 (t2, t4, t5) / 4 ❌ (t1, p2, p3, p4) |
+| 2 | `lean` | 29 | 🔴 à faire | — | Doctrine TPS / Six Sigma / Deming / Womack |
+| 3 | `itil` | 16 | 🔴 à faire | — | Doctrine ITIL v4 (incident / problem / change / service) |
+| 4 | `dora` | 13 | 🔴 à faire | — | Doctrine DORA (4 keys + reliability) |
+| 5 | `scrum` | 6 | 🔴 à faire | — | Doctrine Scrum Guide |
+| 6 | `kanban` | 5 | 🔴 à faire | — | Doctrine Anderson / Leopold |
+| 7 | `mbo` | 4 | 🔴 à faire | — | Doctrine Drucker |
+| 8 | `bsc` | 3 | 🔴 à faire | — | Doctrine Kaplan & Norton |
+| 9 | `okr` | 3 | 🔴 à faire | — | Doctrine Doerr / Grove |
+| 10 | `generique` | 54 | 🟢 audit-éclair en fin de chantier | — | Pas de doctrine à confronter — vérifier uniquement les redondances avec un cadre signature non légitime |
+
+**Constat collatéral** *(à statuer séparément, hors scope direct de l'audit légitimité)*. Le référentiel contient **137 fiches** mais seules **85 sont mappées** dans `CADRES_META`. **52 fiches sont donc hors taxonomie cadres**. Question à trancher dans un item dédié : faut-il les mapper systématiquement ? Faut-il poser `generique` par défaut sur celles qui n'ont aucun cadre signature ? Faut-il que la porte « Par mon cadre » signale explicitement les fiches non rattachées ? Possible explication de remontées « la porte ne montre pas la fiche X » futures.
+
 
 ---
 
