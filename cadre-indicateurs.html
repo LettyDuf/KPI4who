@@ -4070,7 +4070,6 @@ CM.IndicateursMeta = (function() {
     safe:      { label:'SAFe',                     icone:'🏗️', famille:'empirisme-agile', description:'Scaled Agile Framework. Programme et portefeuille à l\u2019échelle.' },
     itil:      { label:'ITIL',                     icone:'🛠️', famille:'itsm',            description:'IT Service Management. Incidents, changements, problèmes, disponibilité.' },
     securite:  { label:'Sécurité (NIST CSF / ISO 27035)', icone:'🔐', famille:'risque-securite', description:'NIST Cybersecurity Framework, ISO 27001/27035, OWASP, MITRE ATT&CK, FAIR. Détection, réponse, résilience face aux menaces.' },
-    bsc:       { label:'Balanced Scorecard',       icone:'⚖️', famille:'objectifs',       description:'Finance, client, processus, apprentissage — pilotage équilibré.' },
     generique: { label:'Indicateur générique',     icone:'🧩', famille:'universel',       description:'Indicateurs non rattachés à un cadre spécifique. Bac à sable, équipe sans cadre installé.' }
   };
 
@@ -4088,7 +4087,8 @@ CM.IndicateursMeta = (function() {
     { id:'hoshin',  label:'Hoshin Kanri',                 icone:'🧭', famille:'objectifs',       description:'Déploiement stratégique japonais. Catchball, X-matrix, alignement vertical.' },
     { id:'cobit',   label:'COBIT',                        icone:'📚', famille:'itsm',            description:'Governance of Enterprise IT. Gouvernance, alignement business / IT.' },
     { id:'cynefin', label:'Cynefin',                      icone:'🗺️', famille:'decision',        description:'Cadre de décision en contexte (Snowden)\u00a0: clair, compliqué, complexe, chaotique.' },
-    { id:'wardley', label:'Wardley Maps',                 icone:'🧭', famille:'decision',        description:'Cartographie stratégique orientée valeur × maturité. Anticipation de l\u2019évolution.' }
+    { id:'wardley', label:'Wardley Maps',                 icone:'🧭', famille:'decision',        description:'Cartographie stratégique orientée valeur × maturité. Anticipation de l\u2019évolution.' },
+    { id:'bsc',     label:'Balanced Scorecard',           icone:'⚖️',  famille:'objectifs',       description:'Kaplan & Norton (1996). Pilotage équilibré sur 4 perspectives\u00a0: financière, client, processus internes, apprentissage & croissance. Liens cause-effet, strategy map.' }
   ];
 
   /* ── Mapping id → { tags, cadres } ──
@@ -4096,11 +4096,11 @@ CM.IndicateursMeta = (function() {
      éclaire) et plusieurs cadres (frameworks qui le revendiquent). */
   var META = {
     /* Stratégique */
-    's1': { tags:['valeur'],                     cadres:['bsc','generique'] },
+    's1': { tags:['valeur'],                     cadres:['generique'] },
     's2': { tags:['valeur','qualite'],           cadres:['generique'] },
-    's3': { tags:['valeur'],                     cadres:['bsc','generique'] },
+    's3': { tags:['valeur'],                     cadres:['generique'] },
     's4': { tags:['alignement','valeur'],        cadres:['okr','mbo'] },
-    's5': { tags:['valeur','alignement'],        cadres:['bsc','generique'] },
+    's5': { tags:['valeur','alignement'],        cadres:['generique'] },
     's6': { tags:['humain','alignement'],        cadres:['generique'] },
     's7': { tags:['humain','risque'],            cadres:['generique'] },
     's8': { tags:['humain','alignement'],        cadres:['generique'] },
@@ -4536,7 +4536,7 @@ CM.RequeteMetriques = (function() {
                       'operations', 'service-client'],
     type:            ['IGO', 'ICP', 'ICC', 'ORC', 'DORA', 'FLUX', 'II'],
     cadres:          ['dora', 'lean', 'okr', 'mbo', 'scrum', 'kanban',
-                      'safe', 'itil', 'bsc', 'generique'],
+                      'safe', 'itil', 'generique'],
     tags:            ['valeur', 'qualite', 'flux', 'delais',
                       'humain', 'risque', 'alignement'],
     tagsThematiques: ['transversalité', 'prévisibilité', 'engagement',
