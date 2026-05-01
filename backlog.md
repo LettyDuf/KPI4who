@@ -15,7 +15,7 @@ Dernière mise à jour : **1er mai 2026 — trio post-1.ter clos** (constats n°
 - **Apprentissage du jour (1)** : avant de qualifier une zone d'« édition manuelle à corriger », vérifier si elle est balisée BEGIN/END — l'oubli du générateur peut faire passer un drift d'injection pour une dette éditoriale (cas du n°11 : 5 minutes de régénération suffisaient).
 - **Validations par Lætitia** : décision « investiguer le n°6 d'abord » (priorité de risque + continuité cognitive) · ordre orthodoxe doc→code respecté · variante équilibrée du n°12 (ni modeste ni exhaustive) · consignation des dérives hors scope (n°11 puis n°12) plutôt que de les avaler dans le commit principal · clôture du trio en une seule séance.
 - **Workflow git sandbox** : pattern `mv .git/index.lock` (+ `HEAD.lock`) toujours appliqué à chaque commit. Warnings `unable to unlink` persistent sans bloquer. ~10 nouveaux `.git/*.lock.tmp*` cette session.
-- **Prochaines actions ouvertes** : (1) **5 constats collatéraux restants du chantier 1.ter** — n°1 (51 fiches hors `CADRES_META`, le plus volumineux), n°4 (densification t3), n°8 (pauvreté corpus Scrum), n°9 (cadre `cx` manquant), n°10 (5 pistes : change-mgmt, sales, pmi-evm, grc-compliance, hr-analytics). (2) **1.bis axes restants** — Tactique (LPM, DORA, ROI), Programme (CRM probable faux positif), Op TI, Op Affaires. (3) Chantier 10 (gelé à `5655b03`) peut reprendre. (4) Items 6.9, 18, 12-17 en sommeil.
+- **Prochaines actions ouvertes** : (1) **5 constats collatéraux restants du chantier 1.ter** — n°1 (chiffrage rectifié : 42 fiches en `generique` seul, 0 hors META), n°4 (densification t3), n°8 (pauvreté corpus Scrum), n°9 (cadre `cx` manquant), n°10 (5 pistes : change-mgmt, sales, pmi-evm, grc-compliance, hr-analytics). (2) **1.bis axes restants** — Tactique (LPM, DORA, ROI), Programme (CRM probable faux positif), Op TI, Op Affaires. (3) Chantier 10 (gelé à `5655b03`) peut reprendre. (4) Items 6.9, 18, 12-17 en sommeil.
 - **Blocages / questions ouvertes** : aucun. Fichiers `.todelete` toujours en attente côté ordi : anciens (~25 `.git/*.lock.tmp*` de la session 30/04) + nouveaux (~10 cette session + `cadre-indicateurs.html.bak.todelete` produit par le test négatif du n°12).
 
 ## 0. Chantiers majeurs livrés → archivés
@@ -73,7 +73,7 @@ Règle appliquée : chaque fiche doit distinguer **ce qu'elle mesure** (output) 
 
 **Origine.** Lors de la séance du 30/04/2026, Lætitia a signalé que des fiches taggées `safe` ne semblaient pas relever du corpus SAFe. Audit factuel mené sur les 11 fiches `safe` : 4 légitimes (mention LPM ou PI Planning), 3 ambiguës (concept partagé avec Lean ou Predictability Measure non explicité), 4 abusives (corpus PMI/EVM/risk management générique, parfois contraires à la doctrine SAFe). **Diagnostic de la dérive** : tags posés par contiguïté de niveau (« niveau Tactique → SAFe par habitude ») plutôt que par appui doctrinal. Décision : auditer **tous** les tags de cadres avec une méthode standardisée.
 
-**Périmètre quantifié.** 10 cadres définis dans `CADRES_META`, 85 fiches mappées (sur 137 fiches au total), 144 occurrences de tags `cadres`.
+**Périmètre quantifié.** 10 cadres définis dans `CADRES_META`, 85 fiches mappées (sur 85 fiches au total — *chiffrage rectifié le 01/05/2026, voir constat n°1*), 144 occurrences de tags `cadres`.
 
 **Méthode d'audit standardisée** (à appliquer cadre par cadre) :
 
@@ -156,9 +156,13 @@ Règle appliquée : chaque fiche doit distinguer **ce qu'elle mesure** (output) 
 1. Diagnostic « par parsing brut » sans tester l'inclusion dans un span term-def gonfle artificiellement la dette éditoriale (1.bis Stratégique : facteur ~4).
 2. Tagger un cadre par contiguïté de niveau (« Tactique → SAFe ») sans appui doctrinal produit du faux signal massif. Règle permanente : **pas de tag de cadre sans marqueur lexical OU métrique signature documentée du corpus officiel**.
 
-**Constats collatéraux ouverts à statuer** : n°1 (51 fiches restantes hors `CADRES_META`), n°4 (densification t3), n°6 (divergence VOCAB.cadres / CADRES{}), n°8 (pauvreté du corpus Scrum dans le référentiel), n°9 (cadre `cx`), n°10 (5 pistes cadres : change-mgmt, sales, pmi-evm, grc-compliance, hr-analytics).
+**Constats collatéraux ouverts à statuer** : n°1 (chiffrage rectifié 01/05/2026 : 42 fiches en `generique` seul, 0 hors META), n°4 (densification t3), n°6 (divergence VOCAB.cadres / CADRES{}), n°8 (pauvreté du corpus Scrum dans le référentiel), n°9 (cadre `cx`), n°10 (5 pistes cadres : change-mgmt, sales, pmi-evm, grc-compliance, hr-analytics).
 
-**Constat collatéral n°1** *(partiellement adressé le 30/04/2026, partiellement à statuer)*. Le référentiel contient **137 fiches** mais seules **85 sont mappées** dans `CADRES_META`. **52 fiches sont donc hors taxonomie cadres**. **✅ Adressé pour s9** (Indice de maturité cybersécurité) lors de l'audit-éclair generique : retag `generique` → `securite` (commit `7fc5460`), s9 reste dans META — la fiche cybersécurité signature est désormais correctement classée. **Reste à statuer** sur les 51 autres fiches non mappées : faut-il les mapper systématiquement ? Faut-il poser `generique` par défaut sur celles qui n'ont aucun cadre signature ? Faut-il que la porte « Par mon cadre » signale explicitement les fiches non rattachées ?
+**Constat collatéral n°1** *(partiellement adressé le 30/04/2026, partiellement à statuer)*.
+
+**⚠️ Chiffrage rectifié le 01/05/2026.** Vérification Python sur `cadre-indicateurs.html` : le référentiel contient **85 fiches**, toutes mappées dans `META` — **0 fiche hors taxonomie**. Le chiffre « 137 fiches au total » utilisé en ouverture du chantier 1.ter était hérité d'une étape ancienne de planification, sans correspondance avec le référentiel actuel. La matière restante du n°1 n'est donc pas un audit de fiches non mappées (il n'y en a pas), mais une décision de politique éditoriale sur les **42 fiches en `generique` seul**, recoupant directement les constats n°9 et n°10.
+
+*Texte d'origine, conservé pour traçabilité* : « Le référentiel contient **137 fiches** mais seules **85 sont mappées** dans `CADRES_META`. **52 fiches sont donc hors taxonomie cadres**. **✅ Adressé pour s9** (Indice de maturité cybersécurité) lors de l'audit-éclair generique : retag `generique` → `securite` (commit `7fc5460`), s9 reste dans META — la fiche cybersécurité signature est désormais correctement classée. **Reste à statuer** sur les 51 autres fiches non mappées : faut-il les mapper systématiquement ? Faut-il poser `generique` par défaut sur celles qui n'ont aucun cadre signature ? Faut-il que la porte « Par mon cadre » signale explicitement les fiches non rattachées ? »
 
 
 ---
