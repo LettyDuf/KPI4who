@@ -4045,6 +4045,7 @@ CM.IndicateursMeta = (function() {
     'excellence-op':    { label:'Excellence opérationnelle',    teinte:'#6d4c41', fond:'#efe9e6' },
     'observabilite':    { label:'Observabilité du delivery',    teinte:'#00838f', fond:'#e0f4f6' },
     'objectifs':        { label:'Pilotage par les objectifs',   teinte:'#455a64', fond:'#eceff1' },
+    'experience':       { label:'Expérience client',             teinte:'#e65100', fond:'#fff3e0' },
     'itsm':             { label:'IT Service Management',        teinte:'#ad1457', fond:'#fce4ec' },
     'risque-securite':  { label:'Risque & Sécurité',             teinte:'#c62828', fond:'#ffebee' },
     'decision':         { label:'Aide à la décision',           teinte:'#827717', fond:'#f5f5e6' },
@@ -4052,7 +4053,7 @@ CM.IndicateursMeta = (function() {
   };
   var ORDRE_FAMILLES = [
     'empirisme-agile', 'excellence-op', 'observabilite',
-    'objectifs', 'itsm', 'risque-securite', 'decision', 'universel'
+    'objectifs', 'experience', 'itsm', 'risque-securite', 'decision', 'universel'
   ];
 
   /* Catalogue des cadres méthodologiques.
@@ -4067,6 +4068,7 @@ CM.IndicateursMeta = (function() {
     scrum:     { label:'Scrum',                    icone:'🏉', famille:'empirisme-agile', description:'Pilotage itératif avec cadence fixe. Vélocité, qualité de sprint.' },
     kanban:    { label:'Kanban',                   icone:'🗂️', famille:'empirisme-agile', description:'Flux tiré, WIP, cycle time. Flux continu.' },
     safe:      { label:'SAFe',                     icone:'🏗️', famille:'empirisme-agile', description:'Scaled Agile Framework. Programme et portefeuille à l\u2019échelle.' },
+    cx:        { label:'Customer Experience (Reichheld / Dixon)', icone:'💬', famille:'experience',     description:'Customer Experience Management. Reichheld (NPS, The Ultimate Question, 1996/2003 ; eNPS pour les collaborateurs), Dixon (CES, The Effortless Experience, 2013), Hayes (CSAT). Mesure de la fidélité, de l’effort perçu et de la satisfaction du client.' },
     itil:      { label:'ITIL',                     icone:'🛠️', famille:'itsm',            description:'IT Service Management. Incidents, changements, problèmes, disponibilité.' },
     securite:  { label:'Sécurité (NIST CSF / ISO 27035)', icone:'🔐', famille:'risque-securite', description:'NIST Cybersecurity Framework, ISO 27001/27035, OWASP, MITRE ATT&CK, FAIR. Détection, réponse, résilience face aux menaces.' },
     generique: { label:'Indicateur générique',     icone:'🧩', famille:'universel',       description:'Indicateurs non rattachés à un cadre signature. Bac à sable, équipe sans cadre installé. **Tag exclusif** : jamais combiné avec un autre cadre — un indicateur signature relève de son cadre, pas de generique.' }
@@ -4097,7 +4099,7 @@ CM.IndicateursMeta = (function() {
   var META = {
     /* Stratégique */
     's1': { tags:['valeur'],                     cadres:['generique'] },
-    's2': { tags:['valeur','qualite'],           cadres:['generique'] },
+    's2': { tags:['valeur','qualite'],           cadres:['cx']        },
     's3': { tags:['valeur'],                     cadres:['generique'] },
     's4': { tags:['alignement','valeur'],        cadres:['okr'] },
     's5': { tags:['valeur','alignement'],        cadres:['generique'] },
@@ -4192,7 +4194,7 @@ CM.IndicateursMeta = (function() {
     'af-f4': { tags:['risque'],                  cadres:['generique'] },
 
     /* Équipes — RH */
-    'af-r1': { tags:['humain'],                  cadres:['generique'] },
+    'af-r1': { tags:['humain'],                  cadres:['cx']        },
     'af-r2': { tags:['delais','flux'],           cadres:['generique'] },
     'af-r3': { tags:['humain','risque'],         cadres:['generique'] },
     'af-r4': { tags:['humain','qualite'],        cadres:['generique'] },
@@ -4204,11 +4206,11 @@ CM.IndicateursMeta = (function() {
     'af-op4': { tags:['flux','valeur'],          cadres:['lean'] },
 
     /* Équipes — Service Client */
-    'af-sc1': { tags:['qualite','humain'],       cadres:['generique'] },
-    'af-sc2': { tags:['qualite','humain'],       cadres:['generique'] },
-    'af-sc3': { tags:['qualite','humain'],       cadres:['generique'] },
+    'af-sc1': { tags:['qualite','humain'],       cadres:['cx']        },
+    'af-sc2': { tags:['qualite','humain'],       cadres:['cx']        },
+    'af-sc3': { tags:['qualite','humain'],       cadres:['cx']        },
     'af-sc4': { tags:['qualite','delais'],       cadres:['itil'] },
-    'af-sc5': { tags:['delais'],                 cadres:['itil'] }
+    'af-sc5': { tags:['delais'],                 cadres:['itil','cx'] }
   };
 
   /* ── API publique ── */
@@ -4537,7 +4539,7 @@ CM.RequeteMetriques = (function() {
     type:            ['IGO', 'ICP', 'ICC', 'ORC', 'DORA', 'FLUX', 'II'],
     cadres:          ['dora', 'cd', 'space', 'lean', 'okr',
                       'scrum', 'kanban', 'safe', 'itil',
-                      'securite', 'generique'],
+                      'securite', 'cx', 'generique'],
     tags:            ['valeur', 'qualite', 'flux', 'delais',
                       'humain', 'risque', 'alignement'],
     tagsThematiques: ['transversalité', 'prévisibilité', 'engagement',
