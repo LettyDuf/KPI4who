@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **1er mai 2026 — séance 2 : trois constats post-1.ter clos** (n°1 chiffrage, n°9 cadre `cx`, n°4 densification t3). 7 commits atomiques en plus des 8 du matin. Cadre `cx` (Customer Experience) ajouté à la taxonomie + nouvelle famille `experience`. Fiche t3 densifiée pédagogiquement (rédaction vulgarisée, l'outil étant aussi un support d'apprentissage). 2 constats collatéraux du chantier 1.ter restent ouverts (n°8, n°10).
+Dernière mise à jour : **2 mai 2026 — reprise du chantier 10 (refonte navigation)**. Ordre de cadrage validé et consigné dans `doc-contrats-navigation.md` § 8.1bis (commit `7c29031`). D1 (sort de `vue-questionnaire`) ouverte comme premier arbitrage de la session. 4 décisions structurantes restent à trancher (D1-D4) + 2 tactiques (D5-D6) + 2 chantiers éditoriaux interdépendants (refonte accueil, catalogue de questions).
 
 ---
 
@@ -9,14 +9,15 @@ Dernière mise à jour : **1er mai 2026 — séance 2 : trois constats post-1.te
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événement majeur de la séance 2 (01/05/2026 après-midi)** : trois constats collatéraux du chantier 1.ter clos en chaîne — n°1 (chiffrage 137→85 sans matière d'audit), n°9 (cadre `cx` Customer Experience livré), n°4 (densification pédagogique de la fiche t3). 7 commits atomiques. Référentiel passe à 12 cadres signature (cx ajouté), 9 familles (`experience` créée). Dernier SHA : `e769141`.
-- **Cadre `cx` livré (n°9)** : famille `experience` (label « Expérience client », teinte `#e65100`, position entre `objectifs` et `itsm`) + cadre `cx` adossé à un corpus officiel à 3 sources (Reichheld NPS/eNPS, Dixon CES, Hayes CSAT). Métriques signature : NPS, eNPS, CSAT, CES. 5 retags `generique` → `cx` + 1 multi-tag `itil + cx`. Tuile « Indicateur générique » de la porte « Par mon cadre » conservée telle quelle (décision A : déjà exposée via famille `universel`).
-- **Doctrine pédagogique posée (n°4)** : nouvelle fiche mémoire `feedback_redaction_pedagogique_fiches.md` actant que les fiches du référentiel **enseignent** leur concept (pas de jargon non glosé, conventions chiffrées expliquées dans leur sens). Démontré sur t3 : « cible posée volontairement plus haute » au lieu de « cible stretch », « 70 % de la cible affichée = succès » au lieu de « score 0,7 ». À appliquer aux densifications futures (n°8, fiches futures n°10).
-- **Validations par Lætitia** : reformulation du n°1 (audit fiche par fiche refusé comme re-travail, clôture sans matière retenue) · option A pour la tuile générique (rien à toucher) · famille `experience` plutôt que `objectifs` · option (A) pour t3 (3 champs densifiés y compris le risque dépassant le strict périmètre) · vulgarisation maximale dans la rédaction de t3.
-- **Sentinelles** : `verifier-coherence-vocabulaire.js` et `lancer-tests-requete-metriques.js` exécutées avant et après chaque commit code (constats n°9 et n°4). Toujours vertes. 9 vocabulaires alignés, 63/63 tests verts.
-- **Workflow git sandbox** : pattern `mv .git/index.lock` (+ `HEAD.lock`) appliqué à chaque commit. Warnings `unable to unlink` persistent sans bloquer. ~10 nouveaux `.git/*.lock.tmp*` cette séance s'ajoutent à ~15 du matin.
-- **Prochaines actions ouvertes** : (1) **2 constats collatéraux restants du chantier 1.ter** — n°8 (pauvreté corpus Scrum, création de fiches signature : Atteinte du Sprint Goal, Adhérence à la DoD, Time to Market d'un Increment) ; n°10 (5 pistes de cadres futurs : change-mgmt, sales, pmi-evm, grc-compliance, hr-analytics — chacun = un n°9-bis). [n°1, n°4, n°9 clos le 01/05/2026.] (2) **1.bis axes restants** — Tactique (LPM, DORA, ROI), Programme (CRM probable faux positif), Op TI, Op Affaires. (3) Chantier 10 (gelé à `5655b03`) peut reprendre. (4) Items 6.9, 18, 12-17 en sommeil.
-- **Blocages / questions ouvertes** : aucun. Fichiers `.todelete` toujours en attente côté ordi : anciens (~25 `.git/*.lock.tmp*` de la session 30/04, ~15 du matin 01/05) + nouveaux (~10 cette séance).
+- **Événement majeur de la séance (02/05/2026)** : **reprise du chantier 10 (refonte architecture de navigation)** après livraison du chantier 14 (hexagonal). Cadrage à frais : la baseline `5655b03` reste alignée avec le code (139 commits depuis le freeze, aucun n'a touché la nav). 8 invariants tranchés au 23/04 tiennent toujours. Ordre de cadrage validé : D1 pivot → D2+D4 ensemble → catalogue → D3 → exécution 10.1→10.5. Voir `doc-contrats-navigation.md` § 8.1bis (commit `7c29031`).
+- **D1 ouverte — pivot du chantier 10** : sort de `vue-questionnaire` actuel. Quatre hypothèses à départager — (a) absorbé comme question fine dans *Par ma question*, (b) absorbé par *Cascade* refondue (chantier 11), (c) supprimé, (d) gardé comme 4e lentille de *Par mes 4 axes*. Argumentaire en cours.
+- **Décisions encore ouvertes du chantier 10** : 4 structurantes (D1 sort `vue-questionnaire`, D2 exposition 4 lentilles, D3 exposition mode fin, D4 responsive) + 2 tactiques (D5 pyramide, D6 deep-linking additif) + 2 chantiers éditoriaux interdépendants (refonte accueil = chantier éditorial communication+UX-UI dédié ; catalogue de questions fines = panels d'experts nommés).
+- **Validations par Lætitia (02/05)** : ouverture du chantier 10 confirmée · ordre de cadrage proposé validé · D1 attaquée immédiatement.
+- **État de l'app (rappel)** : `#accueil` (pyramide) + `#accueil-portes` (4 tuiles) + 4 onglets enclos dans `#app` (TDB · Cascade · Choisir mes indicateurs · Maturité & Recommandations). Friction confirmée 26/04 (`72d9ba7`) : chemin laborieux porte → TDB en 3 clics.
+- **Sentinelles** : non relancées cette séance (cadrage documentaire, pas de code). À relancer avant tout commit code dans le chantier 10.
+- **Workflow git sandbox** : pattern `mv .git/index.lock` (+ `HEAD.lock`) toujours actif. Warnings `unable to unlink` persistent sans bloquer.
+- **Prochaines actions ouvertes** : (1) **D1 (sort de `vue-questionnaire`)** — argumentaire en cours, arbitrage attendu de Lætitia. (2) Chantier 10 reprise — étapes 2 à 5 selon § 8.1bis du doc compagnon. (3) **Constats restants du chantier 1.ter** — n°8 (corpus Scrum) et n°10 (5 cadres candidats). En sommeil tant que le chantier 10 mobilise. (4) **1.bis axes restants** — Tactique, Programme, Op TI, Op Affaires. En sommeil. (5) Items 6.9, 12-17, 18 en sommeil.
+- **Blocages / questions ouvertes** : aucun. Fichiers `.todelete` en attente côté ordi : anciens (~50 `.git/*.lock.tmp*` cumulés sessions 30/04 + 01/05).
 
 ## 0. Chantiers majeurs livrés → archivés
 
@@ -482,11 +483,11 @@ Implémentation : 1 commit code (`e8649e9`) — 3 lignes modifiées dans `_htmlP
 
 ---
 
-## 10. Refonte architecture de navigation — fusion portes + onglets *(⏸ GELÉ à `5655b03` — 23/04/2026 fin de journée)*
+## 10. Refonte architecture de navigation — fusion portes + onglets *(▶ REPRISE le 02/05/2026 — cadrage actif, D1 ouverte)*
 
 *Titre historique : « Bandeau de navigation persistant ». Requalifié le 22/04/2026 soir suite à la clarification structurante pendant le test 9.B.1 — le chantier dépasse le simple bandeau, il revoit la topologie de la navigation.*
 
-**Statut au 23/04/2026 fin de journée : gelé à `5655b03`.** Toutes les décisions sont conservées (voir détail ci-dessous), aucune n'est annulée. Reprise prévue après livraison du MVP hexagonal (chantier 14). La construction du mode *Par ma question* se fera alors comme nouveau consommateur de `CM.RequeteMetriques`, pas comme duplication du référentiel. Tag git `baseline-avant-hexagonal` posé sur `5655b03` — point de retour absolu en cas d'échec du chantier 14.
+**Statut au 23/04/2026 fin de journée : gelé à `5655b03`.** *Reprise actée le 02/05/2026 — cadrage à frais consigné dans `doc-contrats-navigation.md` § 8.1bis (commit `7c29031`). D1 (sort de `vue-questionnaire`) attaquée comme pivot.* Toutes les décisions sont conservées (voir détail ci-dessous), aucune n'est annulée. Reprise prévue après livraison du MVP hexagonal (chantier 14). La construction du mode *Par ma question* se fera alors comme nouveau consommateur de `CM.RequeteMetriques`, pas comme duplication du référentiel. Tag git `baseline-avant-hexagonal` posé sur `5655b03` — point de retour absolu en cas d'échec du chantier 14.
 
 **Origine.** Demande émise par Lætitia le 22/04/2026 au cours de la clarification de mission, **aiguisée le même jour en soirée** pendant le test visuel de 9.B.1 : l'outil se vit comme **deux territoires mal reliés** — d'un côté les portes (pyramide, niveau, problème, cadre) qui communiquent entre elles mais dont la seule sortie est un *Accueil* qui remet à zéro ; de l'autre l'app (les onglets : TDB, Choisir, Maturité) qui, une fois atteinte, est un enclos sans passerelle retour vers les portes. En prime, **des chemins jumeaux avec des dynamiques graphiques différentes** donnent l'impression de deux produits cousus ensemble — notamment *Choisir mes indicateurs* (onglet) et *Par mon problème* (porte) qui explorent le même référentiel avec des langages visuels différents.
 
