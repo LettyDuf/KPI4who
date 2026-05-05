@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **5 mai 2026 — étape B du chantier 19 consolidée en § 6 du doc-cadre-visuel**. Décision Lætitia : pas de pyramide en accueil (deux raisons combinées : cohérence visuelle + emphase indue sur l'axe hiérarchique). Ferme de fait D5 du chantier 10. Différenciation TI/Affaires préservée par mini-split au niveau Équipes (commit § 6 `54fac83`). Restent D3 (mode fin), D4 (responsive), D6 (deep-linking) + 2 chantiers éditoriaux interdépendants.
+Dernière mise à jour : **5 mai 2026 (séance soir) — chantier 20 ouvert : catalogue de questions fines**. Doctrine posée dans `doc-catalogue-questions-fines.md` ; mission, 3 invariants, format normalisé en 2 variantes, mécanisme de reformulation tranché (double réponse), posture éditoriale (DMAIC, voix directe, bilingue, *Recommandation* positive). 2 mockups-preview produits. Décisions ouvertes : palette (v3 contestée, à reprendre en séance dédiée), liste des termes-pièges, rédaction des 8-12 questions MVP.
 
 ---
 
@@ -9,17 +9,16 @@ Dernière mise à jour : **5 mai 2026 — étape B du chantier 19 consolidée en
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événement majeur de la séance (05/05/2026)** : **§ 6 du `doc-cadre-visuel.md` rédigé et commité** (commit `54fac83`). Étape B du chantier 19 consolidée en doctrine — 5 sous-sections (6.0 posture commune / 6.1 accueil / 6.2 fiche / 6.3 lentille / 6.4 ce que le § 6 ne dit pas). **Décision Lætitia tranchée le 05/05** : pas de pyramide en accueil. Deux raisons combinées : (a) cohérence visuelle (la pyramide dénote dans le style stabilisé du reste de l'outil) ; (b) emphase indue sur l'axe hiérarchique alors que d'autres axes de lecture sont ouverts. **Différenciation TI/Affaires préservée** par mini-split au niveau Équipes (puces turquoise/orange + icônes différenciantes). **Conséquence** : ferme de fait D5 du chantier 10.
-- **Posture retenue** *(rappel étape A, doctrine permanente)* : *« un outil artisan-sérieux-chaud, sobre par discipline, interactif par mission, situé par voix »*. § 6 du doc-cadre-visuel fait foi sur l'incarnation des 3 pages-types (accueil, fiche, lentille).
-- **Étapes du chantier 19** : ✅ A (posture globale) — close 04/05 ; ✅ B (incarnation 3 pages-types — mockups + § 6) — close 05/05 ; ⏳ C (retour au chantier 10 — D3, D4, D6).
-- **Décisions du chantier 10** : ✅ D1 tranchée 02/05 ; ✅ D2 tranchée 04/05 (V3) ; ✅ D5 fermée par ricochet 05/05 (pas de pyramide en accueil) ; ouvertes — D3 (mode fin), D4 (responsive, découplé de D2), D6 (deep-linking additif). Plus 2 chantiers éditoriaux interdépendants (refonte accueil, catalogue de questions fines).
-- **Règles d'écriture des fiches actées 04/05/2026** : double signal pour les anti-patterns dans le bloc vigilance — term-def violet + surlignage ambré combinés (mémoire `project_fiches_double_signal_anti_patterns`).
-- **Règle éditoriale actée 05/05/2026** : format des documents compagnons — listes à puces dès qu'elles servent la clarté ; harmonie esthétique jamais au détriment de la compréhension (mémoire `feedback_format_documents_compagnons`).
-- **État de l'app (rappel)** : `#accueil` (pyramide) + `#accueil-portes` (4 tuiles) + 4 onglets enclos dans `#app` (TDB · Cascade · Choisir mes indicateurs · Maturité & Recommandations). Friction confirmée 26/04 (`72d9ba7`) : chemin laborieux porte → TDB en 3 clics. Doctrine § 6.1 confirme : 4 cartes égales par niveau dans l'accueil refondu, mini-split TI/Affaires conservé.
-- **Sentinelles** : non relancées cette séance (rédaction documentaire seule, pas de code touché). À relancer avant tout commit code.
-- **Workflow git sandbox** : pattern `mv .git/index.lock` (+ `HEAD.lock`) toujours actif. Warnings `unable to unlink` persistent sans bloquer. 1 nouvelle paire de `.git/*.lock.tmp*` créée cette séance pour le commit `54fac83`.
-- **Prochaines actions ouvertes** : (1) **Étape C du chantier 19 / reprise chantier 10** — D3 (mode fin, après catalogue de questions), D4 (responsive seul), D6 (deep-linking). D5 fermée. (2) Chantier éditorial catalogue de questions fines (panels d'experts nommés) — préalable à D3. (3) Constats restants 1.ter (n°8, n°10) et 1.bis axes restants en sommeil. (4) Items 6.9, 12-17, 18 en sommeil.
-- **Blocages / questions ouvertes** : aucun. Fichiers `.todelete` en attente côté ordi : anciens (~50 `.git/*.lock.tmp*` cumulés sessions 30/04 + 01/05 + 04/05 + nouveaux du 05/05).
+- **Événement majeur de la séance (05/05/2026 soir)** : **chantier 20 ouvert — Catalogue de questions fines**. Doctrine consolidée dans `doc-catalogue-questions-fines.md` (nouveau doc compagnon). Mission posée (efficacité + qualité actionnable, 8-12 questions au MVP). 3 invariants actés. Format normalisé en 2 variantes (standard / à reformulation). Mécanisme de reformulation tranché : **double réponse** (pédagogie par juxtaposition — décision contre-intuitive, voir mémoire `feedback_pedagogie_par_juxtaposition`). Posture éditoriale : DMAIC (diagnostic, pas solution), voix directe et bienveillante, bilingue sur une ligne, *Recommandation* positive.
+- **Mockups produits cette séance** : `mockup-reformulation-catalogue.html` (3→2 traitements, décision double réponse), `mockup-format-fiche-question.html` v3 (format normalisé sur 2 variantes — couleurs contestées, à reprendre).
+- **Mémoires créées cette séance** : `feedback_format_documents_compagnons` · `feedback_pedagogie_par_juxtaposition` · `feedback_anglicismes_eviter_traduire` · `feedback_voix_directe_bienveillante`. Toutes pertinentes au-delà du chantier 20 (s'appliquent à tout l'outil).
+- **Étape précédente de la séance (matin)** : ✅ § 6 du `doc-cadre-visuel.md` rédigé (commit `54fac83`) — étape B du chantier 19 close. Décision : pas de pyramide en accueil (commit backlog `897b8c7`). D5 du chantier 10 fermée par ricochet.
+- **Décisions du chantier 10** : ✅ D1, D2 (V3), D5 fermées ; ⏳ D3 (mode fin), D4 (responsive), D6 (deep-linking).
+- **Décisions ouvertes du chantier 20** : 20.1 palette (à reprendre en séance dédiée — *priorité haute*) · 20.2 liste des termes-pièges · 20.3 volumétrie par panel · 20.4 responsive double réponse (couplé D4) · 20.5 rédaction des 8-12 questions MVP.
+- **Sentinelles** : non relancées cette séance (rédaction documentaire + mockups HTML autonomes, pas de code touché). À relancer avant tout commit code.
+- **Workflow git sandbox** : pattern `mv .git/index.lock` (+ `HEAD.lock`) toujours actif. Plusieurs paires de `.git/*.lock.tmp*` créées cette séance pour les commits de la matinée. À renouveler pour les commits de clôture.
+- **Prochaine action recommandée** : ouverture de la prochaine séance — choisir entre (a) séance dédiée à la palette du chantier 20 (clôture 20.1, préalable à la production des fiches), (b) attaque de la rédaction d'une première question candidate par panel, (c) dérouler en parallèle.
+- **Blocages / questions ouvertes** : aucun. Fichiers `.todelete` en attente côté ordi : nombreux `.git/*.lock.tmp*` cumulés.
 
 ## 0. Chantiers majeurs livrés → archivés
 
@@ -888,3 +887,39 @@ Sur les quatre lots, 33 liens ont été posés sur 25 champs éditoriaux de 18 f
 - **Piste B — Greffe architecturale** (🟡) : migrer `NIVEAU_VERS_POSITION` et `FIABILITE_VERS_NIVEAU` vers `CM.Config` (Règle 2). Session courte, ~45 min.
 - **Piste C — Scission `lean` en `lean` + `six-sigma`** (🟢) : chantier reporté lors de 6.7 ; demande une revue des `META.cadres` sur une trentaine de fiches.
 - **Piste E — Revue métier d'un axe non audité** (🟢). Fiches Qualité, Humain, Risque, Sécurité, Données, Produit jamais systématiquement passées au standard 2026-04.
+
+---
+
+## 20. Catalogue de questions fines — chantier éditorial *(▶ ACTIF depuis le 05/05/2026)*
+
+**Origine.** Mode *Par ma question* prévu dès la bifurcation du 23/04/2026 (`project_deux_modes_entree.md`). Catalogue à construire par panels d'experts nommés. Préalable à D3 du chantier 10 (exposition du mode fin).
+
+**Mission.** Servir le visiteur qui arrive avec un problème concret en tête, formulé dans la langue de son métier. Le catalogue propose 8 à 12 questions courantes (au MVP), formulées telles qu'elles se posent à voix haute, qui conduisent en 2 à 4 clics à 3 indicateurs candidats avec leur intention d'usage. Doctrine et format : `doc-catalogue-questions-fines.md`.
+
+**Décisions structurantes tranchées le 05/05/2026.**
+
+- **Aucun nommage de persona à l'entrée** — la question elle-même reconnaît qui parle, sans typage.
+- **Mécanisme de reformulation : double réponse** — pour les questions à terme-piège (vélocité, ROI, NPS, story points), juxtaposition de deux colonnes côte à côte avec mots-clés et indicateurs visibles. Décision contre-intuitive (j'avais arbitré pour la redirection douce) : la pédagogie par juxtaposition rend la décision plus rapide à prendre, pas plus longue (cf. mémoire `feedback_pedagogie_par_juxtaposition`).
+- **Format normalisé en 2 variantes** — *standard* (questionnaire court autonome de 2 questions de cadrage en mode diagnostic, pas solution) ou *à reformulation* (double réponse + raccourci vers porte préconfigurée).
+- **Posture éditoriale** — voix directe et bienveillante (libellés courts 3-6 mots), bilingue sur une ligne pour les indicateurs (*Délai bout à bout / Lead time*), bloc *Recommandation* positif (solution d'abord, anti-pattern ensuite), DMAIC (questions de cadrage en mode *Définir le problème*).
+- **Écoles convoquées** — explicitées en pied de chaque fiche, comme référence patrimoniale (jamais comme choix à faire).
+
+**Mockups produits le 05/05/2026.**
+
+- `mockup-reformulation-catalogue.html` — comparaison des 3 traitements (redirection douce / double réponse / miroir socratique) puis des 2 finalistes (a vs b). Décision : (b) double réponse retenue.
+- `mockup-format-fiche-question.html` — format normalisé en 2 variantes (standard + reformulation). v3 livrée avec voix resserrée, palette à 3 plans, bilingue sur une ligne, bloc *Recommandation* positif.
+
+**Décisions ouvertes** *(à reprendre dans les séances suivantes)*.
+
+| # | Décision | Statut |
+|---|---|---|
+| 20.1 | **Palette définitive du format-fiche-question** | ⏸ ouverte — v3 contestée par Lætitia (couleurs « affreuses », fade, vieillot) ; à reprendre en séance dédiée à la palette |
+| 20.2 | **Liste exhaustive des termes-pièges** | ⏸ 4 identifiés (vélocité, ROI, NPS, story points) ; à étoffer par les panels |
+| 20.3 | **Volumétrie finale par panel** | ⏸ fourchettes posées dans le doc compagnon ; à confirmer à la rédaction |
+| 20.4 | **Seuil de bascule responsive de la double réponse** | ⏸ couplée à D4 du chantier 10 |
+| 20.5 | **Rédaction des 8 à 12 questions MVP** | ⏸ point de départ posé (4 questions issues de Q2 dans `matiere-questionnaire-pour-catalogue.md`) ; séances suivantes panel par panel |
+
+**Articulations.** Préalable à D3 du chantier 10 (exposition du mode fin). Couplé à D4 (responsive de la double réponse). Articulé avec chantier 16 (discipline éditoriale — 8-12 questions max au MVP) et chantier 19 (posture visuelle — incarne les 8 axes).
+
+**Prochaine action recommandée.** Soit (a) clore les couleurs en séance dédiée (préalable à la production des fiches), soit (b) attaquer la rédaction d'une première question candidate par panel d'expert (méthode éprouvée), soit (c) dérouler en parallèle. Choix à arbitrer en ouverture de la prochaine séance.
+
