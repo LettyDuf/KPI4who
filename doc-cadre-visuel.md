@@ -12,7 +12,7 @@ Au point de cadrage du chantier 10 (étape D2 + D4 — exposition des 4 lentille
 
 **Ordre de production retenu** :
 1. **Étape A** — *posture stylistique globale* (ce document, sections 3 à 5).
-2. **Étape B** — *incarnation sur les pages-types* (section 6 ci-dessous, à compléter).
+2. **Étape B** — *incarnation sur les pages-types* (§ 6 ci-dessous, livrée le 05/05/2026).
 3. **Étape C** — *retour au chantier 10* (D2, D4) à la lumière du cadre.
 
 ---
@@ -115,15 +115,78 @@ Lecture de la formule. *Artisan* — la voix dit *« je cherche avec toi »* (po
 
 ---
 
-## 6. Incarnation sur les pages-types — étape B (à compléter)
+## 6. Incarnation sur les pages-types — étape B
 
-*Section réservée. Sera renseignée au cours de l'étape B (cf. § 1). Périmètre prévu : 3 pages-types principales — accueil, fiche d'indicateur, lentille interne de *Par mes 4 axes*. Les autres pages-types (tableau de bord, cascade stratégique, lexique, à propos) sont laissées au refactoring opportuniste sauf besoin terrain remonté.*
+*Cette section consigne les décisions d'incarnation prises lors de l'étape B (séances des 04 et 05/05/2026), à partir des trois mockups-preview produits côte à côte. Elle ne décrit pas exhaustivement les pages — elle nomme les **décisions structurantes** prises sur chacune, ancrées sur les axes de la § 3. Le détail visuel se lit dans les mockups référencés ; la doctrine se lit ici.*
+
+### 6.0 Posture commune aux 3 pages-types
+
+Avant d'entrer dans les pages, ce que les trois incarnations partagent — et qui constitue la grammaire visuelle de l'outil. Le détail varie selon le rôle de chaque page (orientation aérée pour l'accueil et la lentille, matière dense pour la fiche), mais la grammaire ne varie pas.
+
+- **Papier crème** comme fond commun. Chaleur portée par le fond, pas par les composants. Rupture nette avec le bleu nuit / glassmorphism / emojis de l'accueil hérité.
+- **Filet de niveau saturé en haut** comme couronnement de chaque page. Signature visible au premier coup d'œil, qui dit *« cet outil pense en niveaux »* sans avoir à le lire. Variantes : un seul filet pour les pages monoculaires (accueil, fiche), un filet 4-couleurs pour les pages plurielles (lentille).
+- **Icônes SVG line monochromes** partout. Différenciation des rôles, pas hiérarchie de tailles ; sobriété, pas pictogrammes mignons. Remplacent systématiquement les emojis hérités.
+- **Citations patrimoniales en pied de page**, voix située. Drucker à l'accueil, Goldratt en pied de fiche, citations Tufte / Bret Victor sur la lentille — la voix française et les références assumées de l'axe 8 incarnées sans bruit.
+- **Grille et typographie communes**, jamais renégociées d'une page à l'autre. C'est ce qui tient l'unité de l'outil malgré les variations de densité.
+
+### 6.1 Accueil
+
+*Référence : commit `958042d`, fichier `mockup-accueil-etape-B.html`. Variante retenue : **« v2 alt — sans pyramide »**. Décision pyramide tranchée par Lætitia le 05/05/2026.*
+
+L'accueil est une page d'orientation pure. Sa mission : permettre à un visiteur de comprendre en 10 secondes que cet outil pense en niveaux et de choisir lequel le concerne. Tout le reste (la pédagogie sur la cascade, l'invitation à manipuler, le patrimoine doctrinal) se déplie sur les pages suivantes.
+
+Décisions structurantes :
+
+- **Pas de pyramide en accueil.** Quatre cartes égales pour les quatre niveaux. Deux raisons combinées : **(a)** la pyramide dénotait dans le style avec le reste de l'outil — sa silhouette graphique manquait de cohérence avec la grammaire visuelle qui s'est stabilisée par ailleurs (papier crème, filet de niveau, icônes line, sobriété typographique) ; **(b)** la pyramide donnait une emphase visuelle exclusive à l'**axe hiérarchique** (équipe → entreprise) alors que l'outil a depuis ouvert d'autres axes de lecture tout aussi pertinents — *Par mon problème*, *Par mon cadre*, *Par mes 4 axes Mintzberg*, *Par ma maturité*. Les exposer tous comme égaux suppose que l'accueil n'en privilégie aucun visuellement. La différenciation entre cartes passe par l'icône et la palette de niveau, pas par la largeur ou la hauteur. Conséquence collatérale : ferme de fait la décision D5 du chantier 10 (« pyramide en sursis »).
+- **Différenciation TI / Affaires préservée au niveau Équipes.** Le retrait de la pyramide ne fait pas disparaître la signalétique que la pyramide portait : la distinction *Équipes TI* / *Équipes Affaires* est conservée dans la carte du niveau *équipe*, par un mini-split visible — puces de couleur (turquoise pour TI, orange pour Affaires) et icônes différenciantes (chevrons code pour TI, façade pour Affaires). Cohérent avec l'axe 6 *Singularité de la signature* — la dichotomie TI/Affaires est une signature de l'outil, elle change de support sans disparaître.
+- **Icônes SVG line monochromes par niveau** (boussole, balance, réseau, chevrons, façade). Différenciation par rôle, pas par hiérarchie. Pas d'emoji ni de pictogramme illustratif — incarnation directe des axes 1 *sobre* et 4 *sérieux pas mignon*.
+- **Filet de niveau saturé en haut, bords des cartes amincis.** La signature de niveau passe par le filet horizontal, pas par un encadrement vertical lourd. Bords amincis pour éviter l'effet *poster* — l'accueil reste un atterrissage, pas un manifeste.
+- **Papier crème en fond, chrome rehaussé.** Rupture assumée avec l'accueil hérité (bleu nuit / glassmorphism). La chaleur vient du fond crème ; le chrome (légèrement rehaussé par rapport à v1) tient la lisibilité sans faire industriel.
+- **Citation Drucker en pied de page.** Voix située, axe 8. Pose la mission de l'outil sans avoir à la formuler en titre — *« What gets measured gets managed »* fait office de mission silencieuse pour le visiteur qui descend.
+
+### 6.2 Fiche d'indicateur
+
+*Référence : commit `e821662`, fichier `mockup-fiche-etape-B.html`. Page-test : fiche t4* Efficacité de flux du portefeuille *(type FLUX, niveau tactique, fiabilité précaution, maturité avancé).*
+
+La fiche est une **page de matière** au sens de l'axe 3 *Dense ↔ Aéré*. Elle existe pour qu'un utilisateur arrive avec une question précise (*« qu'est-ce que je mesure réellement avec cet indicateur, à quelles conditions, et que dois-je éviter ? »*) et reparte avec la réponse. La densité n'est pas un défaut, c'est la mission.
+
+Le mockup-test sur la fiche t4 confirme que la fiche existante tient déjà la posture sur trois axes (1 sobre, 3 densité, 7 permanent) — la posture confirme plus qu'elle ne déplace. Les décisions ci-dessous sont donc des **déplacements ciblés**, pas une refonte.
+
+Décisions structurantes :
+
+- **Densité confirmée comme posture, pas corrigée.** Pas d'aération supplémentaire. La fiche d'indicateur est volontairement dense (Tufte) ; l'aération est tenue par la grille et la typographie, pas par l'espace blanc.
+- **Couronnement de niveau : filet 4px en haut de la fiche entière.** Cohérence avec la signature commune (§ 6.0). Le niveau de la fiche est lisible dès le couronnement, sans avoir à chercher la chip *niveau* dans la matière.
+- **Chip type harmonisé sur la couleur sémantique du type.** Pour la fiche FLUX, chip orange (token `--accent` du type). Conséquence : la chip de niveau (violet figé `#4c1d95`) et la chip de type ne sont plus de la même couleur — elles sont au contraire signifiantes l'une à côté de l'autre. Cohérence chromatique sémantique, pas décorative.
+- **SVG line à la place des emojis** dans tous les champs structurés (titre, exemples, fréquence, alt). Cohérent avec la signature commune. Anti-pattern évité : la fiche actuelle utilisait des emojis pour ponctuer ses sections, ce qui contredit l'axe 4 *sérieux pas mignon*.
+- **Bloc vigilance — double signal sur les anti-patterns.** Les noms d'anti-patterns reçoivent simultanément le `term-def` violet (signal sémantique : c'est un terme qu'on peut survoler) et un surlignage ambré (signal pragmatique : ne fais pas ça). Règle déjà actée le 04/05, ici élevée au statut de doctrine d'incarnation pour toutes les fiches futures.
+- **Citation Goldratt en pied de fiche.** Voix située, axe 8. La fiche d'indicateur portant souvent sur le flux, Goldratt vient en cohérence interne avec la matière de la page.
+
+### 6.3 Lentille *Par mes 4 axes*
+
+*Références : commit `31f7c1b`, fichier `mockup-lentille-etape-B.html` (3 variantes V1/V2/V3) ; décision D2 commit `64c8249` (V3 retenue).*
+
+La lentille est une page d'**orientation manipulable**. Sa mission : permettre à un utilisateur d'explorer le référentiel selon les quatre axes Mintzberg (et, à terme, selon les lentilles futures du § 4.4 — flux, communication, visibilité, intention) en cumulant des angles. Particularité : la lentille n'existe pas encore en code — pas de côte à côte avant/après. Les décisions sont donc structurantes au sens fort : elles fixent ce qu'on construira.
+
+Décisions structurantes :
+
+- **Variante V3 retenue : filtre chips cumulables avec résultat dynamique.** L'utilisateur active des chips correspondant aux axes qui le concernent ; le résultat (liste filtrée d'indicateurs) se met à jour en dessous au fur et à mesure. Manipulation directe, axe 5 *Interactif signifiant*. Inspiration Tufte / Bret Victor — chaque clic produit un retour immédiat et signifiant. Anti-pattern évité (V2) : le stepper séquentiel forçait un parcours imposé, friction à l'entrée incompatible avec la posture *« on regarde ensemble »* de l'axe 2.
+- **Argument structurant retenu pour V3 : extensibilité.** Un nouvel axe (les lentilles futures du § 4.4) coûte un chip supplémentaire en V3, contre une refonte de layout en V1 (grille 2×2) ou V2 (stepper). Décision prise au nom de l'axe 7 *Doctrine permanente, système évolutif*.
+- **Cohérence d'usage avec la porte *« Par mon problème »*.** Le pattern de chips cumulables est déjà en place sur cette porte — V3 le réutilise plutôt que d'inventer un mécanisme propre. Axe 6 *Standardisé sur les composants*.
+- **Filet 4-couleurs en haut signant la page-lentille.** Variante de la signature commune (§ 6.0). Le filet à 4 couleurs porte visuellement le fait que la lentille convoque les 4 axes Mintzberg simultanément.
+- **Icônes line monochromes par axe Mintzberg.** Une icône par chip d'axe, ligne, monochrome. Différenciation par forme, pas par couleur saturée — la couleur reste portée par le filet et par le système des niveaux.
+- **Couplage D2+D4 relâché.** Conséquence collatérale notable : le passage en V3 absorbe largement la pression responsive postulée pour D4 (les chips wrapent naturellement). D4 reste à arbitrer, mais sur ses propres mérites — plus comme préalable à D2.
+
+### 6.4 Ce que le § 6 ne dit pas
+
+Le périmètre de l'étape B couvre trois pages-types : accueil, fiche d'indicateur, lentille. Les **autres pages-types** (tableau de bord, cascade stratégique, lexique, à propos, et les portes *« Par mon problème »*, *« Par mon cadre »*, *« Par mon niveau »* hors lentille) sont laissées au **refactoring opportuniste**. Elles évolueront vers la posture incarnée ci-dessus au fil des chantiers qui les touchent, à la condition qu'aucun besoin terrain ne remonte une priorité plus pressante.
+
+Cette économie est cohérente avec l'axe 7 *Système évolutif* : la doctrine est posée, le système suit par refactoring progressif, pas par refonte big-bang. Si un chantier ultérieur révèle qu'une page-type non couverte ici résiste à l'incarnation, le retour ne se fera pas en révision du § 6 mais en ouverture d'un nouveau chantier d'étape B (par exemple : *étape B² — incarnation du tableau de bord*) avec mockup côte à côte et décisions structurantes propres.
 
 ---
 
 ## 7. Conventions de tenue du document
 
-- **Zone évolutive** : §§ 3 à 5 sont la doctrine — modifier seulement par un chantier explicite de révision de doctrine, jamais en passant. § 6 est en cours de constitution.
+- **Zone évolutive** : §§ 3 à 5 sont la doctrine — modifier seulement par un chantier explicite de révision de doctrine, jamais en passant. § 6 a été constituée le 05/05/2026 et fait foi sur l'incarnation des 3 pages-types couvertes.
 - **Journal du document** : toute modification de § 3 à § 5 doit être tracée dans le journal de fin de document avec la date, le motif et le commit de référence.
 - **Ce document fait foi** quand un autre document compagnon ou un commit produit une décision visuelle. En cas de contradiction, ce document tranche jusqu'à révision explicite.
 
@@ -132,3 +195,4 @@ Lecture de la formule. *Artisan* — la voix dit *« je cherche avec toi »* (po
 ## Journal du document
 
 - 04/05/2026 — création du document. Posture initiale établie sur 8 axes après consultation des 5 panels d'experts. Validation Lætitia : axes 1 à 8 validés tels que recommandés par les panels (aucun déplacement). Étape B (incarnation pages-types) à venir dans les séances suivantes.
+- 05/05/2026 — § 6 *Incarnation sur les pages-types* renseignée à partir des trois mockups-preview produits le 04/05 (`958042d` accueil v2, `e821662` fiche t4, `31f7c1b` lentille V3) et de la décision D2 (`64c8249`). Décision Lætitia du 05/05 : pas de pyramide en accueil — ferme de fait la décision D5 du chantier 10. Étape B close ; étape C (retour au chantier 10 — D3, D4, D6) ouverte.
