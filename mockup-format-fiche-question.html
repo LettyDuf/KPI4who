@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Mockup-preview — Format normalisé d'une fiche-question (v3)</title>
+<meta name="generator" content="mockup-preview pour décision UX, catalogue de questions fines">
+<style>
+  /*
+     Mockup-preview v3 — Format normalisé d'une fiche-question.
+
+     v2 → v3 (retours Lætitia 05/05) :
+       — Q1 reformulée en mode diagnostic (DMAIC Définir, pas Améliorer) :
+         « D'où vient le besoin ? » + options-symptômes.
+       — Q2 « Où agir ? » : court, sans verbe d'engagement.
+       — toutes formulations resserrées (voix directe + bienveillante,
+         cf. mémoire feedback_voix_directe_bienveillante).
+       — palette à 3 plans : fond crème (chaleur), sections blanches
+         (l'important ressort), accents indigo + filets de niveau.
+       — bilingue sur une ligne : « Délai bout à bout / Lead time ».
+       — bloc Recommandation (positif) au lieu de bloc Vigilance.
+  */
+  :root {
+    --creme: #f6f1e1;
+    --creme-fiche: #fbf6e8;
+    --encre: #1c2033;
+    --encre-doux: #4a4538;
+    --gris: #beb59a;
+    --gris-clair: #e2dac5;
+    --blanc: #ffffff;
+
+    /* Accents structurants — présents mais pas violents */
+    --indigo: #4c1d95;          /* boutons primaires, term-def */
+    --indigo-trace: rgba(76, 29, 149, 0.20);
+    --indigo-leger: rgba(76, 29, 149, 0.07);
+
+    /* Couleurs des niveaux — désaturées Doux */
+    --niv-equipe: #6fa89e;        /* turquoise désaturé */
+    --niv-equipe-leger: rgba(111, 168, 158, 0.10);
+    --niv-programme: #7d9670;     /* vert désaturé */
+    --niv-tactique: #c79373;      /* orange désaturé */
+    --niv-strategique: #5a4f7a;   /* violet désaturé */
+
+    /* Recommandation — ambre douce et accueillante */
+    --reco-fond: #f9efd6;
+    --reco-bord: #b58a45;
+    --reco-trame: rgba(181, 138, 69, 0.18);
+    --reco-titre: #6b4f1d;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1.5rem 3rem;
+    background: var(--creme);
+    color: var(--encre);
+    font-family: -apple-system, 'Segoe UI', system-ui, 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .titre-mockup { text-align: center; margin: 0 auto 1.5rem; max-width: 980px; }
+  .titre-mockup h1 { margin: 0 0 0.4rem; font-size: 1.45rem; color: var(--encre); font-weight: 700; }
+  .titre-mockup p { margin: 0; color: var(--encre-doux); font-style: italic; }
+  .titre-mockup .meta { margin-top: 0.8rem; font-size: 0.78rem; color: var(--gris); }
+
+  .bandeau-scene {
+    max-width: 880px; margin: 2.5rem auto 1.2rem;
+    text-align: center;
+    padding: 0.8rem 1rem;
+    border-top: 1px dashed var(--gris);
+    border-bottom: 1px dashed var(--gris);
+  }
+  .bandeau-scene .surtitre {
+    font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--gris); display: block; margin-bottom: 0.3rem;
+  }
+  .bandeau-scene h2 { margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--encre); }
+  .bandeau-scene p { margin: 0.3rem 0 0; font-size: 0.84rem; color: var(--encre-doux); font-style: italic; }
+
+  /* Carte fiche — fond crème un peu plus clair que le fond global */
+  .fiche {
+    max-width: 880px; margin: 0 auto;
+    background: var(--creme-fiche);
+    border: 1px solid var(--gris-clair);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  /* Filet de couronnement — couleur du niveau de la fiche (ici équipe) */
+  .fiche-haut { height: 4px; background: var(--niv-equipe); }
+  .fiche-corps { padding: 1.7rem 1.9rem 1.9rem; }
+
+  .fiche-question {
+    margin: 0 0 0.7rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--encre);
+    line-height: 1.3;
+    letter-spacing: -0.005em;
+  }
+
+  /* Bandeau meta — info utile (parcours), pas un choix à faire */
+  .fiche-meta {
+    margin-bottom: 1.7rem;
+    padding: 0.55rem 0.85rem;
+    background: var(--indigo-leger);
+    border-left: 3px solid var(--indigo);
+    border-radius: 0 4px 4px 0;
+    font-size: 0.84rem;
+    color: var(--encre);
+    display: flex; align-items: center; gap: 0.55rem;
+  }
+  .fiche-meta svg { color: var(--indigo); flex-shrink: 0; }
+  .fiche-meta strong { color: var(--encre); font-weight: 600; }
+
+  /* Sections internes */
+  .section { margin-bottom: 1.7rem; }
+  .section:last-child { margin-bottom: 0; }
+  .section-titre {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gris);
+    font-weight: 700;
+    margin: 0 0 0.7rem;
+  }
+
+  /* Questionnaire court — fond blanc pour ressortir */
+  .questionnaire {
+    background: var(--blanc);
+    border: 1px solid var(--gris-clair);
+    border-radius: 7px;
+    padding: 1.15rem 1.25rem;
+  }
+  .qcourte {
+    margin-bottom: 1.15rem;
+    padding-bottom: 1.05rem;
+    border-bottom: 1px dashed var(--gris-clair);
+  }
+  .qcourte:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
+  .qcourte-num {
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    background: var(--indigo); color: white;
+    width: 1.6rem; height: 1.6rem; border-radius: 50%;
+    font-size: 0.8rem; font-weight: 700;
+    margin-right: 0.55rem;
+    vertical-align: -3px;
+  }
+  .qcourte-label {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--encre);
+  }
+  .qcourte-options {
+    margin: 0.75rem 0 0 2.15rem;
+    display: flex; flex-direction: column; gap: 0.4rem;
+  }
+  .opt {
+    padding: 0.55rem 0.9rem;
+    background: var(--creme);
+    border: 1px solid var(--gris-clair);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: var(--encre);
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .opt:hover { border-color: var(--indigo); background: var(--blanc); }
+  .opt.selectionne {
+    background: var(--indigo-leger);
+    color: var(--encre);
+    border-color: var(--indigo);
+    border-left: 3px solid var(--indigo);
+    font-weight: 600;
+  }
+
+  /* Cards d'indicateurs — fond blanc + filet de niveau */
+  .indicateurs-grille {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.85rem;
+  }
+  @media (max-width: 720px) { .indicateurs-grille { grid-template-columns: 1fr; } }
+
+  .indicateur {
+    background: var(--blanc);
+    border: 1px solid var(--gris-clair);
+    border-top: 3px solid var(--niv-equipe);
+    border-radius: 7px;
+    padding: 0.95rem 1.05rem;
+    display: flex; flex-direction: column; gap: 0.45rem;
+  }
+  .indicateur-niveau {
+    font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--niv-equipe); font-weight: 700;
+  }
+  .indicateur-nom {
+    font-size: 1.02rem; font-weight: 700; color: var(--encre); margin: 0;
+  }
+  .indicateur-nom .traduction {
+    font-weight: 400; color: var(--gris);
+    font-size: 0.86rem; font-style: italic;
+  }
+  .indicateur-intention {
+    font-size: 0.83rem; color: var(--encre-doux); margin: 0;
+    line-height: 1.5;
+  }
+  .indicateur-lien {
+    margin-top: auto;
+    padding-top: 0.4rem;
+    font-size: 0.8rem; color: var(--indigo); font-weight: 600;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 0.3rem;
+  }
+
+  /* Bloc Recommandation (positif) — ambre adoucie */
+  .recommandation {
+    background: var(--reco-fond);
+    border: 1px solid var(--reco-bord);
+    border-radius: 7px;
+    padding: 1rem 1.15rem;
+  }
+  .recommandation-titre {
+    font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--reco-titre); font-weight: 700;
+    margin: 0 0 0.6rem;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .recommandation p { margin: 0; font-size: 0.9rem; color: var(--encre); line-height: 1.6; }
+  /* Double signal sur les anti-patterns */
+  .anti-pattern {
+    color: var(--indigo);
+    background: var(--reco-trame);
+    padding: 0 0.2em;
+    border-radius: 2px;
+    text-decoration: underline dotted var(--indigo) 1.5px;
+    text-underline-offset: 0.18em;
+    font-weight: 600;
+    cursor: help;
+  }
+
+  /* Pied de fiche — écoles convoquées, référence patrimoniale */
+  .ecoles-pied {
+    margin-top: 1.7rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--gris-clair);
+    font-size: 0.79rem;
+    color: var(--encre-doux);
+    line-height: 1.55;
+  }
+  .ecoles-pied strong {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gris);
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+  }
+  .ecoles-pied .liste {
+    font-style: italic;
+    color: var(--encre-doux);
+  }
+
+  /* Variante reformulation — double réponse, fond blanc, accents niveaux */
+  .double-reponse {
+    background: var(--blanc);
+    border: 1px solid var(--gris-clair);
+    border-radius: 7px;
+    padding: 1.05rem 1.15rem;
+  }
+  .double-reponse-intro {
+    font-size: 0.86rem;
+    color: var(--encre);
+    font-weight: 500;
+    margin: 0 0 0.85rem;
+  }
+  .colonnes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+  @media (max-width: 720px) { .colonnes { grid-template-columns: 1fr; } }
+  .col-rep {
+    background: var(--creme-fiche);
+    padding: 1rem 1.05rem;
+    border-radius: 6px;
+    border-top: 3px solid var(--gris);
+    display: flex; flex-direction: column; gap: 0.55rem;
+  }
+  .col-rep.gauche { border-top-color: var(--niv-tactique); }
+  .col-rep.droite { border-top-color: var(--niv-equipe); }
+  .col-rep-etiquette {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--gris); font-weight: 700;
+  }
+  .col-rep.gauche .col-rep-etiquette { color: var(--niv-tactique); }
+  .col-rep.droite .col-rep-etiquette { color: var(--niv-equipe); }
+  .col-rep-titre {
+    font-size: 1rem; font-weight: 700; color: var(--encre); margin: 0;
+  }
+  .col-rep-desc {
+    font-size: 0.83rem; color: var(--encre-doux); margin: 0; line-height: 1.55;
+  }
+  .col-rep-indicateurs {
+    font-size: 0.8rem; color: var(--encre);
+    background: var(--blanc);
+    padding: 0.55rem 0.7rem;
+    border-radius: 4px;
+    border-left: 2px solid var(--gris);
+  }
+  .col-rep-indicateurs strong {
+    display: block;
+    font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--gris); margin-bottom: 0.25rem; font-weight: 700;
+  }
+  .col-rep-bouton {
+    margin-top: auto;
+    padding: 0.5rem 0.95rem;
+    border: 1px solid var(--gris);
+    background: var(--blanc);
+    border-radius: 4px;
+    font-size: 0.83rem; font-weight: 600;
+    color: var(--encre);
+    cursor: pointer;
+    align-self: flex-start;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .col-rep-bouton:hover { border-color: var(--encre-doux); }
+  .col-rep.droite .col-rep-bouton {
+    background: var(--indigo); border-color: var(--indigo); color: white;
+  }
+  .col-rep.droite .col-rep-bouton:hover { background: #3d1376; border-color: #3d1376; }
+
+  /* Bandeau d'orientation */
+  .raccourci-porte {
+    margin-top: 1rem;
+    background: var(--indigo-leger);
+    border-left: 3px solid var(--indigo);
+    border-radius: 0 6px 6px 0;
+    padding: 0.85rem 1rem;
+    font-size: 0.85rem; color: var(--encre);
+    display: flex; align-items: flex-start; gap: 0.6rem;
+  }
+  .raccourci-porte svg { color: var(--indigo); flex-shrink: 0; margin-top: 2px; }
+  .raccourci-porte strong { color: var(--indigo); }
+
+  /* Note pédagogique en pied de scène */
+  .note-pedagogique {
+    max-width: 880px; margin: 1rem auto 0;
+    padding: 0.85rem 1.1rem;
+    background: var(--creme-fiche);
+    border-left: 3px solid var(--gris);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.82rem;
+    color: var(--encre-doux);
+    line-height: 1.55;
+  }
+  .note-pedagogique strong { color: var(--encre); }
+  .note-pedagogique ul { margin: 0.4rem 0 0; padding-left: 1.2rem; }
+  .note-pedagogique li { margin-bottom: 0.25rem; }
+
+  .pied-mockup {
+    max-width: 880px; margin: 3rem auto 0;
+    padding-top: 1.2rem; border-top: 1px solid var(--gris-clair);
+    text-align: center; font-style: italic;
+    color: var(--gris); font-size: 0.85rem;
+  }
+  .pied-mockup .citation { color: var(--encre-doux); margin-bottom: 0.3rem; }
+</style>
+</head>
+<body>
+
+  <div class="titre-mockup">
+    <h1>Format normalisé d'une fiche-question — v3</h1>
+    <p>Voix directe et bienveillante · palette à 3 plans · bloc Recommandation positif · bilingue sur une ligne.</p>
+    <div class="meta">2 variantes : <em>standard</em> · <em>à reformulation</em></div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- SCÈNE 1 — Fiche-question STANDARD                                -->
+  <!-- ============================================================== -->
+
+  <div class="bandeau-scene">
+    <span class="surtitre">Variante 1 — sans terme-piège</span>
+    <h2>Fiche-question standard, parcours en questionnaire court</h2>
+    <p>Le visiteur arrive avec une question concrète, répond à 2 questions de cadrage, repart avec 3 indicateurs candidats.</p>
+  </div>
+
+  <article class="fiche">
+    <div class="fiche-haut"></div>
+    <div class="fiche-corps">
+
+      <h3 class="fiche-question">Par où démarrer une démarche d'amélioration continue&nbsp;?</h3>
+
+      <div class="fiche-meta">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg>
+        <span>Deux questions courtes pour cibler vos indicateurs. <strong>~ 2&nbsp;minutes.</strong></span>
+      </div>
+
+      <div class="section">
+        <div class="section-titre">Cadrage</div>
+        <div class="questionnaire">
+          <div class="qcourte">
+            <span class="qcourte-num">1</span>
+            <span class="qcourte-label">D'où vient le besoin&nbsp;?</span>
+            <div class="qcourte-options">
+              <div class="opt selectionne">Des délais imprévisibles</div>
+              <div class="opt">Des défauts qui se répètent</div>
+              <div class="opt">Une charge qui dérape</div>
+              <div class="opt">Un manque de visibilité</div>
+            </div>
+          </div>
+          <div class="qcourte">
+            <span class="qcourte-num">2</span>
+            <span class="qcourte-label">Où agir&nbsp;?</span>
+            <div class="qcourte-options">
+              <div class="opt selectionne">Une équipe pilote</div>
+              <div class="opt">Un programme entier</div>
+              <div class="opt">Toute l'organisation</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-titre">Trois indicateurs</div>
+        <div class="indicateurs-grille">
+          <div class="indicateur">
+            <div class="indicateur-niveau">Équipe</div>
+            <h4 class="indicateur-nom">Délai bout à bout <span class="traduction">/ Lead time</span></h4>
+            <p class="indicateur-intention">Délai entre la demande et la mise à disposition. Repère le goulot, oriente la première amélioration.</p>
+            <a href="#" class="indicateur-lien">Voir la fiche →</a>
+          </div>
+          <div class="indicateur">
+            <div class="indicateur-niveau">Équipe</div>
+            <h4 class="indicateur-nom">Débit <span class="traduction">/ Throughput</span></h4>
+            <p class="indicateur-intention">Nombre d'éléments terminés par période. Diagnostique la capacité réelle, sans la confondre avec la vitesse perçue.</p>
+            <a href="#" class="indicateur-lien">Voir la fiche →</a>
+          </div>
+          <div class="indicateur">
+            <div class="indicateur-niveau">Équipe</div>
+            <h4 class="indicateur-nom">Taux de défauts</h4>
+            <p class="indicateur-intention">Part du travail à reprendre. Mesure ce que coûte de ne pas faire bien du premier coup.</p>
+            <a href="#" class="indicateur-lien">Voir la fiche →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="recommandation">
+          <div class="recommandation-titre">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+            Recommandation
+          </div>
+          <p>Pour bien faire, <strong>commencer par une équipe pilote</strong> — l'amélioration continue se construit pas à pas, jamais par <span class="anti-pattern">déploiement big-bang</span>. Et choisir un indicateur qui a un levier d'action en équipe, pas une <span class="anti-pattern">métrique-vitrine</span> qui rassure la direction sans pouvoir agir dessus.</p>
+        </div>
+      </div>
+
+      <div class="ecoles-pied">
+        <strong>Cette question s'appuie sur</strong>
+        <span class="liste"><em>Lean Six Sigma</em> · <em>Toyota Way (kaizen)</em> · <em>théorie des contraintes (Goldratt)</em></span>
+      </div>
+
+    </div>
+  </article>
+
+  <div class="note-pedagogique">
+    <strong>Ce que cette fiche montre.</strong> Quatre sections claires : la question, un bandeau bref qui cadre l'attente du visiteur (durée et nature du parcours), un questionnaire court orienté <em>diagnostic</em> (pas solution), trois indicateurs avec leur intention d'usage et le bilingue sur une ligne, un bloc <em>Recommandation</em> positif. Les écoles convoquées sont en pied, comme référence patrimoniale.
+    <ul>
+      <li>Hiérarchie typographique : question 1.6rem · sections en cards blanches qui ressortent du fond crème · cards d'indicateurs avec filet de niveau (turquoise = équipe).</li>
+      <li>Sortie unique : trois indicateurs, jamais plus.</li>
+      <li>La voix va à l'essentiel, sans rhétorique.</li>
+    </ul>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- SCÈNE 2 — Fiche-question À REFORMULATION                         -->
+  <!-- ============================================================== -->
+
+  <div class="bandeau-scene">
+    <span class="surtitre">Variante 2 — avec terme-piège</span>
+    <h2>Fiche-question à reformulation, raccourci vers porte préconfigurée</h2>
+    <p>La question contient un terme-piège (vélocité). Le visiteur arbitre par juxtaposition, puis est orienté vers la porte préconfigurée.</p>
+  </div>
+
+  <article class="fiche">
+    <div class="fiche-haut"></div>
+    <div class="fiche-corps">
+
+      <h3 class="fiche-question">Comment améliorer la vélocité de mon équipe&nbsp;?</h3>
+
+      <div class="fiche-meta">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        <span>Cette question a <strong>deux réponses voisines</strong>. Choisissez la vôtre, vous serez orienté·e vers la porte adaptée.</span>
+      </div>
+
+      <div class="section">
+        <div class="section-titre">Votre vrai sujet</div>
+        <div class="double-reponse">
+          <p class="double-reponse-intro">Vélocité ou prévisibilité&nbsp;? Choisissez ce qui parle de votre vrai problème.</p>
+          <div class="colonnes">
+            <div class="col-rep gauche">
+              <div class="col-rep-etiquette">Ce que vous demandez</div>
+              <h4 class="col-rep-titre">Vélocité au sens strict</h4>
+              <p class="col-rep-desc">Mesurer l'effort fourni sur une période. Repère interne d'équipe ; piégeux dès qu'on cherche à la pousser.</p>
+              <div class="col-rep-indicateurs">
+                <strong>Indicateurs</strong>
+                Points d'effort par sprint · écart-type sur 5 sprints · ratio engagé / livré
+              </div>
+              <button class="col-rep-bouton">Garder ma question</button>
+            </div>
+            <div class="col-rep droite">
+              <div class="col-rep-etiquette">Ce que vous cherchez peut-être</div>
+              <h4 class="col-rep-titre">Prévisibilité de l'équipe</h4>
+              <p class="col-rep-desc">Capacité à tenir vos engagements à temps. Plus actionnable, alignée avec vos parties prenantes.</p>
+              <div class="col-rep-indicateurs">
+                <strong>Indicateurs</strong>
+                Délai bout à bout / Lead time · débit / throughput · taux d'engagements tenus
+              </div>
+              <button class="col-rep-bouton">Basculer</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="raccourci-porte">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          <div>Vous serez orienté·e vers <strong>Par mon problème</strong>&nbsp;— <em>Délais &amp; prévisibilité</em> (basculer) ou <em>Engagement &amp; humain</em> (garder).</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="recommandation">
+          <div class="recommandation-titre">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+            Recommandation
+          </div>
+          <p>Garder la vélocité comme <strong>repère interne d'équipe</strong>, pas comme cible imposée par le management — la <span class="anti-pattern">vélocité-cible</span> transforme un repère en pression et favorise le <span class="anti-pattern">truquage des points d'effort</span>. La prévisibilité, elle, se gagne en stabilisant le flux, pas en gonflant la cible.</p>
+        </div>
+      </div>
+
+      <div class="ecoles-pied">
+        <strong>Cette question s'appuie sur</strong>
+        <span class="liste"><em>Scrum Guide</em> · <em>Kanban (niveaux de vol)</em> · <em>DORA — performance du delivery logiciel</em></span>
+      </div>
+
+    </div>
+  </article>
+
+  <div class="note-pedagogique">
+    <strong>Ce que cette fiche montre, en plus de la variante standard.</strong> Une section <em>Votre vrai sujet</em> remplace le questionnaire. Juxtaposition courte (mots-clés et indicateurs visibles, phrases franches) avec deux boutons d'arbitrage. Le bandeau d'orientation indique où le visiteur sera dirigé selon son choix.
+    <ul>
+      <li>Bouton primaire en indigo plein sur la colonne <em>Basculer</em> (l'option la plus probablement actionnable) ; bouton neutre sur <em>Garder</em>.</li>
+      <li>Filets de niveau différenciés sur les deux colonnes (tactique pour la gauche, équipe pour la droite) — visuel cohérent avec le système de niveaux.</li>
+      <li>Bloc <em>Recommandation</em> positif : la solution d'abord, le piège évité ensuite.</li>
+    </ul>
+  </div>
+
+  <div class="pied-mockup">
+    <div class="citation">« On gère ce que l'on mesure ; on mesure ce qui peut être agi. » — Drucker (paraphrase)</div>
+    Mockup-preview jetable · ne modifie pas <code>cadre-indicateurs.html</code>
+  </div>
+
+</body>
+</html>
