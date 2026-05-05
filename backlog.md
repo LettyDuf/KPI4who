@@ -9,15 +9,15 @@ Dernière mise à jour : **2 mai 2026 — reprise du chantier 10, D1 tranchée**
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événement majeur de la séance (02/05/2026)** : **reprise du chantier 10 (refonte architecture de navigation)** après livraison du chantier 14 (hexagonal), **D1 tranchée dans la foulée** (sort de `vue-questionnaire` : suppression en 10.3 + matière sauvegardée pour le catalogue). Cadrage à frais consigné dans `doc-contrats-navigation.md` § 8.1bis (commit `7c29031`). Ordre de cadrage validé : D1 pivot → D2+D4 ensemble → catalogue → D3 → exécution 10.1→10.5. Trois commits atomiques cette séance : `7c29031` (cadrage), `9a454aa` (dégel backlog), `ddd98d9` (D1).
-- **D1 tranchée (02/05/2026) — pivot du chantier 10** : sort de `vue-questionnaire` arbitré. Décision (c)+(a) : code supprimé en sous-étape 10.3, matière éditoriale sauvegardée dans `matiere-questionnaire-pour-catalogue.md` (94 lignes — 3 questions, 12 options, 4 questions fines plausibles dérivées de Q2 *décision à éclairer* pour le futur catalogue de *Par ma question*). Hypothèses (b) et (d) abandonnées. Voir commit `ddd98d9` et `doc-contrats-navigation.md` § 4.2 point 2.
-- **Décisions encore ouvertes du chantier 10** : 3 structurantes (D2 exposition 4 lentilles, D3 exposition mode fin, D4 responsive) + 2 tactiques (D5 pyramide, D6 deep-linking additif) + 2 chantiers éditoriaux interdépendants (refonte accueil = chantier éditorial communication+UX-UI dédié ; catalogue de questions fines = panels d'experts nommés). **D1 close** ce 02/05/2026.
-- **Validations par Lætitia (02/05)** : ouverture du chantier 10 confirmée · ordre de cadrage proposé validé · D1 attaquée immédiatement et tranchée (option (c)+(a) — recommandation Claude validée).
+- **Événement majeur de la séance (04/05/2026)** : **bifurcation sur ouverture du chantier 19 — Cadre visuel et UX**. Au point de cadrage du chantier 10 (D2+D4), question préalable apparue : *l'accueil hérite du style du site, donc on ne peut pas le dessiner sans avoir cadré le reste*. Lætitia a souhaité convoquer des panels d'experts. **Étape A close** : posture stylistique en 8 axes établie après consultation des 5 panels d'experts nommés (Architecture de l'information / UX globale / Pédagogie produit / Visual design / Design systems). Doc compagnon `doc-cadre-visuel.md` créé (commit `6e79f0c`). **Chantier 10 mis en attente** — D2+D4 reprendront en étape C du chantier 19.
+- **Posture retenue** : *« un outil artisan-sérieux-chaud, sobre par discipline, interactif par mission, situé par voix »*. 8 axes positionnés tels que recommandés par les panels (aucun déplacement de Lætitia). Doctrine permanente, système évolutif.
+- **Étapes du chantier 19** : ✅ A (posture globale) — closes ce 04/05/2026 ; 🟡 B (incarnation sur 3 pages-types : accueil, fiche d'indicateur, lentille interne *Par mes 4 axes*) à attaquer ; ⏳ C (retour au chantier 10 — D2, D4) après B.
+- **Décisions encore ouvertes du chantier 10** *(en attente du chantier 19)* : 3 structurantes (D2 exposition 4 lentilles, D3 exposition mode fin, D4 responsive) + 2 tactiques (D5 pyramide, D6 deep-linking additif) + 2 chantiers éditoriaux interdépendants (refonte accueil, catalogue de questions fines). D1 reste close.
 - **État de l'app (rappel)** : `#accueil` (pyramide) + `#accueil-portes` (4 tuiles) + 4 onglets enclos dans `#app` (TDB · Cascade · Choisir mes indicateurs · Maturité & Recommandations). Friction confirmée 26/04 (`72d9ba7`) : chemin laborieux porte → TDB en 3 clics.
-- **Sentinelles** : non relancées cette séance (cadrage documentaire, pas de code). À relancer avant tout commit code dans le chantier 10.
+- **Sentinelles** : non relancées cette séance (cadrage documentaire, pas de code). À relancer avant tout commit code.
 - **Workflow git sandbox** : pattern `mv .git/index.lock` (+ `HEAD.lock`) toujours actif. Warnings `unable to unlink` persistent sans bloquer.
-- **Prochaines actions ouvertes** : (1) **Étape 2 du cadrage — D2 + D4 ensemble** (exposition des 4 lentilles dans *Par mes 4 axes* + responsive de la nav à 8 entrées). Reprendre les previews lentilles A/B/C, les recadrer pour le libellé *Par mes 4 axes*, arbitrer en intégrant le responsive. (2) Étape 3 du cadrage — ouverture du **chantier éditorial catalogue de questions fines** (panels d'experts nommés). Peut courir en parallèle. (3) Étape 4 — D3 (exposition du mode fin). (4) Étape 5 — exécution 10.1 → 10.5. (5) **Constats restants du chantier 1.ter** (n°8, n°10) et **1.bis axes restants** en sommeil. (6) Items 6.9, 12-17, 18 en sommeil.
-- **Blocages / questions ouvertes** : aucun. Fichiers `.todelete` en attente côté ordi : anciens (~50 `.git/*.lock.tmp*` cumulés sessions 30/04 + 01/05).
+- **Prochaines actions ouvertes** : (1) **Étape B du chantier 19** — incarnation de la posture sur 3 pages-types principales (accueil, fiche d'indicateur, lentille interne *Par mes 4 axes*). (2) Étape C — retour à D2+D4 du chantier 10 à la lumière du cadre. (3) Chantier éditorial catalogue de questions fines (panels d'experts nommés) en sommeil tant que le cadre visuel n'est pas posé. (4) **Constats restants du chantier 1.ter** (n°8, n°10) et **1.bis axes restants** en sommeil. (5) Items 6.9, 12-17, 18 en sommeil.
+- **Blocages / questions ouvertes** : aucun. Fichiers `.todelete` en attente côté ordi : anciens (~50 `.git/*.lock.tmp*` cumulés sessions 30/04 + 01/05 + nouveaux du 04/05).
 
 ## 0. Chantiers majeurs livrés → archivés
 
@@ -483,11 +483,11 @@ Implémentation : 1 commit code (`e8649e9`) — 3 lignes modifiées dans `_htmlP
 
 ---
 
-## 10. Refonte architecture de navigation — fusion portes + onglets *(▶ REPRISE le 02/05/2026 — cadrage actif, D1 ouverte)*
+## 10. Refonte architecture de navigation — fusion portes + onglets *(⏸ EN ATTENTE depuis le 04/05/2026 — bloqué par chantier 19 cadre visuel)*
 
 *Titre historique : « Bandeau de navigation persistant ». Requalifié le 22/04/2026 soir suite à la clarification structurante pendant le test 9.B.1 — le chantier dépasse le simple bandeau, il revoit la topologie de la navigation.*
 
-**Statut au 23/04/2026 fin de journée : gelé à `5655b03`.** *Reprise actée le 02/05/2026 — cadrage à frais consigné dans `doc-contrats-navigation.md` § 8.1bis (commit `7c29031`). D1 (sort de `vue-questionnaire`) attaquée comme pivot.* Toutes les décisions sont conservées (voir détail ci-dessous), aucune n'est annulée. Reprise prévue après livraison du MVP hexagonal (chantier 14). La construction du mode *Par ma question* se fera alors comme nouveau consommateur de `CM.RequeteMetriques`, pas comme duplication du référentiel. Tag git `baseline-avant-hexagonal` posé sur `5655b03` — point de retour absolu en cas d'échec du chantier 14.
+**Statut au 04/05/2026 : en attente du chantier 19 — Cadre visuel et UX.** *Reprise du 02/05/2026 actée — D1 tranchée. Au point d'attaquer D2+D4, question préalable apparue : l'accueil hérite du style du site, on ne peut pas dessiner sans cadre. Bifurcation sur le chantier 19 (`doc-cadre-visuel.md`, commit `6e79f0c`). D2+D4 reprendront en étape C du chantier 19.* Toutes les décisions du chantier 10 sont conservées. D1 close. Tag git `baseline-avant-hexagonal` posé sur `5655b03` — point de retour absolu reste valide.
 
 **Origine.** Demande émise par Lætitia le 22/04/2026 au cours de la clarification de mission, **aiguisée le même jour en soirée** pendant le test visuel de 9.B.1 : l'outil se vit comme **deux territoires mal reliés** — d'un côté les portes (pyramide, niveau, problème, cadre) qui communiquent entre elles mais dont la seule sortie est un *Accueil* qui remet à zéro ; de l'autre l'app (les onglets : TDB, Choisir, Maturité) qui, une fois atteinte, est un enclos sans passerelle retour vers les portes. En prime, **des chemins jumeaux avec des dynamiques graphiques différentes** donnent l'impression de deux produits cousus ensemble — notamment *Choisir mes indicateurs* (onglet) et *Par mon problème* (porte) qui explorent le même référentiel avec des langages visuels différents.
 
@@ -786,11 +786,54 @@ Chaque option a des conséquences sur la mécanique du stepper (nombre d'étapes
 
 ---
 
+## 19. Cadre visuel et UX — Posture stylistique de référence *(▶ ACTIF depuis le 04/05/2026)*
+
+**Origine.** Au point de cadrage du chantier 10 (étape D2 + D4 — exposition des 4 lentilles dans *Par mes 4 axes* + responsive de la nav à 8 entrées), une question préalable est apparue : *l'accueil hérite du style du site, donc on ne peut pas le dessiner sans avoir cadré le reste*. La doctrine visuelle de l'outil restait diffuse — décisions ponctuelles cohérentes (token `--niv-1`, désaturé Doux pour Mintzberg, fond pill indigo, italique gris) mais sans ligne directrice qui dise *« voilà à quoi ressemble cet outil et pourquoi »*. Lætitia a souhaité convoquer des panels d'experts dans les domaines pertinents pour offrir la meilleure expérience utilisateur et le meilleur visuel pour cet outil.
+
+**Mission du chantier.** Poser une posture stylistique de référence à laquelle toutes les pages de l'outil obéissent. Doctrine permanente, système évolutif. Document compagnon : `doc-cadre-visuel.md`.
+
+**Méthode.** Consultation de **5 panels d'experts nommés** sur **8 axes de boussole**. Patron éprouvé sur les définitions de métriques (`project_regle_definitions_metriques.md`) — panels spécifiques au domaine, pas génériques.
+
+| # | Panel | Auteurs / écoles |
+|---|---|---|
+| 1 | Architecture de l'information | Morville & Rosenfeld, Abby Covert, Indi Young, Donna Spencer |
+| 2 | UX globale et moments-clés | Steve Krug, Jakob Nielsen, Kathy Sierra, Alan Cooper |
+| 3 | Pédagogie produit et explorables | Bret Victor, Richard Saul Wurman, Edward Tufte, Mike Caulfield |
+| 4 | Visual design et hiérarchie typographique | Vignelli, Rams, Müller-Brockmann, Spiekermann |
+| 5 | Design systems et scalabilité | Brad Frost, Nathan Curtis, Carbon/Material, Kholmatova |
+
+**Étapes.**
+
+- ✅ **Étape A — Posture stylistique globale.** Closes le 04/05/2026 (commit `6e79f0c`). 8 axes positionnés tels que recommandés par les panels (aucun déplacement de Lætitia). Posture en une formule : *« un outil artisan-sérieux-chaud, sobre par discipline, interactif par mission, situé par voix »*. Doc `doc-cadre-visuel.md` créé.
+- 🟡 **Étape B — Incarnation sur 3 pages-types.** À venir. Périmètre : accueil, fiche d'indicateur, lentille interne de *Par mes 4 axes*. Les autres pages-types (TDB, Cascade, Lexique, À propos) sont laissées au refactoring opportuniste sauf besoin terrain remonté.
+- ⏳ **Étape C — Retour au chantier 10 (D2, D4).** Reprise des arbitrages D2+D4 du chantier 10 à la lumière du cadre visuel posé en A et B.
+
+**Articulations.**
+
+- **Bloque temporairement le chantier 10** (D2+D4 attendent l'étape C).
+- **Sert de référence pour tous les chantiers visuels suivants** (refonte accueil, refonte fiches enrichies, accompagnement post-choix, etc.).
+- **En cas de contradiction** entre `doc-cadre-visuel.md` et un autre doc compagnon (`doc-contrats-navigation.md`, etc.), le cadre visuel tranche jusqu'à révision explicite (cf. § 7 du doc).
+
+**Posture retenue — résumé**.
+
+| # | Axe | Position |
+|---|---|---|
+| 1 | Sobre ↔ Expressif | Sobre — chaleur portée par la grille et la typographie |
+| 2 | Institutionnel ↔ Artisanal | Artisanal sous discipline institutionnelle |
+| 3 | Dense ↔ Aéré | Dualité contextuelle — orientation aérée, fiches denses |
+| 4 | Sérieux ↔ Ludique | Sérieux et chaud — chaleur par la voix textuelle |
+| 5 | Statique ↔ Interactif | Interactif signifiant — chaque clic produit un retour |
+| 6 | Standardisé ↔ Singulier | Standardisé sur les composants, singulier sur la signature |
+| 7 | Permanent ↔ Évolutif | Doctrine permanente, système évolutif |
+| 8 | Universel ↔ Situé | Situé modéré — voix française, grammaire visuelle universelle |
+
+---
+
 ## Prochaine action recommandée
 
-**Chantier 14 — refactor hexagonal — LIVRÉ le 26/04/2026 fin de séance.** Étapes (a), (b), (c.1), (c.2), (c.3), (c.4), (d) closes. **Tag final `mvp-chantier-14-livre` posé**. L'architecture du socle est désormais hexagonale : domaine isolé, chemins traducteurs orthodoxes, vues consommatrices. Détails : `doc-contrats-chantier-14.md` §3.4. Chantier **10 gelé à `5655b03`** : **peut reprendre**.
+**Chantier 19 — cadre visuel et UX — ÉTAPE A CLOSE le 04/05/2026 (commit `6e79f0c`).** Posture en 8 axes établie après consultation des 5 panels d'experts. Doc `doc-cadre-visuel.md` créé. **Chantier 10 mis en attente** — D2+D4 reprendront en étape C du chantier 19.
 
-**Prochaine action recommandée** : reprendre le **chantier 10 — refonte navigation** (8 onglets + 4 portes + machinerie mix, panels d'experts pour le catalogue de questions), ou **chantier 18** (zone aveugle catalogue rôles), ou **item 6.9** (matrice niveau × tags), au choix selon l'énergie. Tous trois étaient gelés derrière 14 ; aucun bloqué désormais. Voir aussi en sommeil : chantiers 9 (panier UI), 12, 13, 15, 16, 17.
+**Prochaine action recommandée** : enchaîner sur l'**étape B du chantier 19 — incarnation de la posture sur 3 pages-types** (accueil, fiche d'indicateur, lentille interne *Par mes 4 axes*). Une fois B livrée, étape C reprend D2+D4 du chantier 10. Alternatives possibles si l'énergie va ailleurs : **chantier 18** (zone aveugle catalogue rôles), ou **item 6.9** (matrice niveau × tags). Voir aussi en sommeil : chantiers 9 (panier UI), 12, 13, 15, 16, 17.
 
 **Discipline rappelée.** Tag `baseline-avant-hexagonal` = point de retour absolu. Mot-clé « rollback à l'étape X » entre nous si besoin. Aucun rollback appliqué sans confirmation explicite.
 
