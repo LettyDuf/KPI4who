@@ -60,19 +60,25 @@ Toutes les fiches du catalogue partagent la même structure. Deux variantes selo
 | Question (titre) | Libellé visiteur, en langage métier | 1 phrase, 1.6 rem, font-weight 700 |
 | Bandeau d'attente | Annonce ce qui attend le visiteur (durée + nature du parcours) | 1 phrase courte, fond indigo léger |
 | Section principale | Variable selon la variante (questionnaire court OU double réponse) | 2 à 4 clics |
-| Trois indicateurs candidats | Cards, niveau + nom bilingue + intention d'usage + lien vers fiche | 3 cards, jamais plus |
+| Trois indicateurs candidats | Cards, niveau + nom bilingue + intention d'usage + lien vers fiche | **3 cards, jamais plus** |
+| Lien sortant patrimonial | **Un seul** lien sortant sous le trio, vers une fiche cadre existante du référentiel (ex : *Voir tous les indicateurs canoniques de l'amélioration continue par école*) | 1 lien, jamais plus — facultatif si non pertinent |
 | Bloc *Recommandation* | Conseil positif d'abord, anti-patterns nommés en seconde lecture | 1 paragraphe |
+| Cross-link vers fiche-question liée | Lien vers une autre fiche-question du catalogue (ex : *Mes indicateurs reflètent-ils la réalité du terrain ?*) | 0 ou 1, italique discret |
 | Pied — *Cette question s'appuie sur* | Écoles convoquées, italique discret, séparateur pointillé | 2 à 4 écoles |
+
+**Règle stricte sur les 3 cards.** Jamais 4, jamais 2. La discipline *« proposer, pas étaler »* (chantier 16) tient ici par contrat. Le visiteur qui veut élargir passe par le **lien sortant patrimonial** (vers la fiche cadre), pas par une 4e card pliée. Ce lien est la seule porte d'extension acceptée au MVP.
+
+**Cards à fiche absente — option mixte.** Si une fiche métrique cible n'existe pas encore dans le référentiel, la card reste **active** sur son nom et son intention d'usage (le concept est nommé, le visiteur apprend), mais le lien *Voir la fiche* est désactivé avec le libellé honnête *« Fiche en cours de constitution »*. La dette est ainsi rendue visible sans frustrer le visiteur.
 
 ### 4.2 Variante standard — questionnaire court autonome
 
 Pour les questions sans terme-piège connu. Le visiteur arrive, répond à 2 questions de cadrage (orientées **diagnostic**, pas solution — voir § 6 *Posture DMAIC*), repart avec 3 indicateurs candidats.
 
-Exemple posé dans le mockup-preview : *« Par où démarrer une démarche d'amélioration continue ? »*
+Exemple rédigé éditorialement le 05/05/2026 (séance soir) : *« Par où démarrer une démarche d'amélioration continue ? »* — panel **Coach Lean** (Toyota Way, Lean Six Sigma, Théorie des contraintes, Kata coaching).
 
-- Question 1 — *« D'où vient le besoin ? »* (orientation symptôme : *Des délais imprévisibles · Des défauts qui se répètent · Une charge qui dérape · Un manque de visibilité*).
-- Question 2 — *« Où agir ? »* (orientation périmètre : *Une équipe pilote · Un programme entier · Toute l'organisation*).
-- Sortie : 3 indicateurs candidats correspondant au croisement diagnostic × périmètre.
+- Question 1 — *« D'où vient le besoin ? »* — orientation **symptôme**, 5 options : *Des délais imprévisibles · Des défauts qui se répètent · Une charge qui dérape · Un manque de visibilité · Une étape goulot connue*. Cette dernière option fait entrer Goldratt (TOC) sans pédagogie lourde.
+- Question 2 — *« Où agir ? »* — orientation **périmètre**, 3 options : *Une équipe pilote · Un programme entier · Toute l'organisation*.
+- Sortie : 3 indicateurs candidats. La conditionnalité du croisement Q1×Q2 obéit à la **doctrine du trio par niveau** détaillée en § 4.4.
 
 ### 4.3 Variante à reformulation — double réponse + raccourci vers porte
 
@@ -84,6 +90,19 @@ Exemple posé dans le mockup-preview : *« Comment améliorer la vélocité de m
   - Colonne gauche — *Ce que vous demandez* : le terme posé (vélocité), ses indicateurs propres, ses bons usages limités. Bouton *Garder ma question* (neutre).
   - Colonne droite — *Ce que vous cherchez peut-être* : le terme voisin (prévisibilité), ses indicateurs, son intérêt actionnable. Bouton *Basculer* (indigo plein, action probable).
 - Bandeau d'orientation : indique explicitement vers quelle porte préconfigurée le visiteur sera dirigé selon son choix. Pas de surprise.
+
+### 4.4 Doctrine du trio par niveau (variante standard)
+
+**Décision actée le 05/05/2026 (séance soir).** Pour la variante standard, la conditionnalité du croisement Q1×Q2 obéit à deux règles distinctes :
+
+- **Q1 (symptôme) → ordre des 3 cards.** Le trio reste le même, mais l'ordre s'adapte au symptôme dominant. Ex : *« étape goulot connue »* → Throughput remonte en card 1 (lecture TOC) ; *« défauts qui se répètent »* → First-pass yield remonte en card 1 (lecture LSS).
+- **Q2 (périmètre) → trio par niveau.** Le trio lui-même change selon l'échelle, parce que la nature de la question change avec le niveau. *« Par où démarrer ? »*, pour une équipe, c'est instrumenter un terrain ; pour une organisation, c'est aligner les humains et installer la confiance qui rend le signalement sûr. Ce n'est pas la même démarche — donc pas le même trio.
+
+**Pourquoi cette gradation.** Toyota Way pose deux piliers égaux — *Continuous Improvement* et *Respect for People*. Au niveau équipe, le pilier humain s'exprime par la routine quotidienne (PDCA, Kata) — il *est* la pratique, il ne se mesure pas par un indicateur séparé. Au niveau programme, l'humain devient *alignement des parties prenantes*. Au niveau stratégique, l'humain devient *changement et confiance* — la culture elle-même. Le trio doit refléter cette gradation, sinon le pilier humain est masqué.
+
+**Risque évité.** Un trio uniforme à tous niveaux (ex : Lead time / First-pass yield / Throughput partout) reflète la lecture *flux-DORA* du Lean et masque le pilier humain au stratégique — précisément le travers que dénoncent Liker, Womack, Rother dans la transmission contemporaine du TPS. La doctrine du trio par niveau corrige ce biais.
+
+**Mode opératoire éditorial.** Pour chaque fiche-question de variante standard, rédiger 3 trios distincts (équipe / programme / organisation), avec leurs intentions d'usage et leurs blocs *Recommandation* propres. Si certaines cards pointent vers des fiches métriques absentes du référentiel, appliquer l'option mixte (§ 4.1).
 
 ---
 
@@ -198,10 +217,14 @@ Discipline éditoriale du chantier 16 — *« proposer, pas étaler »*. Le marc
 | 2 | **Liste exhaustive des termes-pièges** | ⏸ ouverte — 4 termes identifiés (vélocité, ROI, NPS, story points) | À étoffer par les panels d'experts au fil de la rédaction |
 | 3 | **Volumétrie finale par panel** | ⏸ ouverte — fourchettes posées, à confirmer à la rédaction | À l'arrivée des questions candidates |
 | 4 | **Seuil de bascule responsive de la double réponse** | ⏸ couplée à D4 (chantier 10) | Quand D4 sera arbitrée |
-| 5 | **Rédaction des 8 à 12 questions MVP** | ⏸ ouverte — point de départ posé (4 questions de Q2) | Séances suivantes, panel par panel |
+| 5 | **Rédaction des 8 à 12 questions MVP** | ⏸ ouverte — point de départ posé (4 questions de Q2). 1 fiche rédigée éditorialement le 05/05/2026 (*Par où démarrer une démarche d'amélioration continue ?*, panel Coach Lean) — mise en mockup à venir | Séances suivantes, panel par panel |
+| 6 | **Trio alternatif (v2 du catalogue)** | ⏸ ouverte — décision MVP : un seul trio orthodoxe par croisement Q1×Q2. v2 envisage un *trio alternatif* étiqueté par sa posture (ex : angle KBI/comportement, angle TOC/contrainte) en complément. À tester sur 1-2 questions avant de généraliser | Après les premières fiches livrées, si le besoin se confirme |
+| 7 | **Fiche-question méta — *Mes indicateurs reflètent-ils la réalité du terrain ?*** | ⏸ ouverte — fiche-question candidate identifiée 05/05/2026. Sujet : effet pastèque, triangulation déclaratif/objectif/humain. Panel pressenti : Drucker (MBO honnête) + Toyota Way (Gemba, Andon) + Edmondson (psychological safety) + DORA (data-driven). Sortie pressentie : trio anti-pastèque (un déclaratif, un objectif, un humain anonyme) | Chantier 20, à intégrer dans le calendrier MVP |
+| 8 | **Mécanisme de cross-link entre fiches-questions** | ⏸ ouverte — principe acté 05/05/2026 : 0 ou 1 cross-link par fiche-question, sous le bloc Recommandation, italique discret. À matérialiser au moment où une seconde fiche-question liée est rédigée (ex : pastèque ↔ amélioration continue) | Quand 2 fiches-questions liées seront livrées |
 
 ---
 
 ## Journal du document
 
 - **05/05/2026** — création du document. Mission posée, 3 invariants actés, méthodologie panels confirmée, format normalisé arbitré sur 2 variantes, mécanisme de reformulation tranché (double réponse), posture éditoriale (DMAIC, voix directe, bilingue, *Recommandation* positive). Mockups produits dans la séance : `mockup-reformulation-catalogue.html`, `mockup-format-fiche-question.html`. Décisions ouvertes : palette, termes-pièges, volumétrie par panel, responsive D4, rédaction des 8-12 questions MVP.
+- **05/05/2026 (séance soir)** — première fiche-question rédigée éditorialement : *Par où démarrer une démarche d'amélioration continue ?* (panel Coach Lean). Quatre décisions structurantes ajoutées au format normalisé : (1) règle stricte des 3 cards confirmée + lien sortant patrimonial unique comme seule porte d'extension MVP ; (2) mécanisme cards à fiche absente en option mixte ; (3) **doctrine du trio par niveau** (§ 4.4) — la conditionnalité Q2 change le trio lui-même, pas seulement le niveau des fiches ; (4) cross-link entre fiches-questions (0 ou 1). Trois nouvelles décisions ouvertes ajoutées (#6 trio alternatif v2 ; #7 fiche-question méta véracité/pastèque ; #8 mécanisme cross-link). Dette de référentiel identifiée : 4 fiches métriques à créer (First-pass yield × équipe ; Lead time × programme ; COPQ × stratégique ; Écart de vérité × stratégique) — inscrites dans le backlog.
