@@ -2,11 +2,11 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<title>Mockup-preview — Format normalisé d'une fiche-question (v3)</title>
+<title>Mockup-preview — Format normalisé d'une fiche-question (v3.1)</title>
 <meta name="generator" content="mockup-preview pour décision UX, catalogue de questions fines">
 <style>
   /*
-     Mockup-preview v3 — Format normalisé d'une fiche-question.
+     Mockup-preview v3.1 — Format normalisé d'une fiche-question.
 
      v2 → v3 (retours Lætitia 05/05) :
        — Q1 reformulée en mode diagnostic (DMAIC Définir, pas Améliorer) :
@@ -18,6 +18,21 @@
          (l'important ressort), accents indigo + filets de niveau.
        — bilingue sur une ligne : « Délai bout à bout / Lead time ».
        — bloc Recommandation (positif) au lieu de bloc Vigilance.
+
+     v3 → v3.1 (séance soir 05/05) — rédaction éditoriale :
+       — Q1 enrichie d'une 5e option (« Une étape goulot connue »)
+         pour faire entrer Goldratt (TOC) dans le diagnostic.
+       — Trio orthodoxe acté : Lead time / First-pass yield / Throughput
+         (au lieu de Lead time / Throughput / Taux de défauts).
+       — Doctrine du trio par niveau matérialisée dans la note
+         pédagogique : la conditionnalité Q2 change le trio lui-même
+         selon l'échelle (équipe / programme / organisation), pas
+         seulement le niveau des fiches.
+       — Pied écoles : 4 écoles du panel Coach Lean (ajout Kata coaching).
+       — Lien sortant patrimonial unique sous le trio.
+       — Cross-link facultatif vers fiche-question liée.
+       — Palette inchangée — décision 20.1 (palette définitive)
+         toujours ouverte.
   */
   :root {
     --creme: #f6f1e1;
@@ -263,6 +278,42 @@
     color: var(--encre-doux);
   }
 
+  /* Lien sortant patrimonial — sous le trio, vers une fiche cadre du référentiel */
+  .lien-sortant {
+    margin-top: 0.9rem;
+    padding-top: 0.7rem;
+    border-top: 1px dotted var(--gris-clair);
+    font-size: 0.82rem;
+  }
+  .lien-sortant a {
+    color: var(--indigo);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .lien-sortant a:hover { text-decoration: underline; }
+  .lien-sortant .surtitre-lien {
+    display: block;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gris);
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+
+  /* Cross-link vers une fiche-question liée — sous le bloc Recommandation, italique discret */
+  .cross-link {
+    margin-top: 0.9rem;
+    font-size: 0.82rem;
+    font-style: italic;
+    color: var(--encre-doux);
+  }
+  .cross-link a {
+    color: var(--indigo);
+    text-decoration: none;
+  }
+  .cross-link a:hover { text-decoration: underline; }
+
   /* Variante reformulation — double réponse, fond blanc, accents niveaux */
   .double-reponse {
     background: var(--blanc);
@@ -373,7 +424,7 @@
 <body>
 
   <div class="titre-mockup">
-    <h1>Format normalisé d'une fiche-question — v3</h1>
+    <h1>Format normalisé d'une fiche-question — v3.1</h1>
     <p>Voix directe et bienveillante · palette à 3 plans · bloc Recommandation positif · bilingue sur une ligne.</p>
     <div class="meta">2 variantes : <em>standard</em> · <em>à reformulation</em></div>
   </div>
@@ -396,7 +447,7 @@
 
       <div class="fiche-meta">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg>
-        <span>Deux questions courtes pour cibler vos indicateurs. <strong>~ 2&nbsp;minutes.</strong></span>
+        <span>Deux questions courtes, <strong>deux minutes</strong>, vous repartez avec trois indicateurs candidats adaptés à votre contexte.</span>
       </div>
 
       <div class="section">
@@ -410,6 +461,7 @@
               <div class="opt">Des défauts qui se répètent</div>
               <div class="opt">Une charge qui dérape</div>
               <div class="opt">Un manque de visibilité</div>
+              <div class="opt">Une étape goulot connue</div>
             </div>
           </div>
           <div class="qcourte">
@@ -429,22 +481,26 @@
         <div class="indicateurs-grille">
           <div class="indicateur">
             <div class="indicateur-niveau">Équipe</div>
-            <h4 class="indicateur-nom">Délai bout à bout <span class="traduction">/ Lead time</span></h4>
-            <p class="indicateur-intention">Délai entre la demande et la mise à disposition. Repère le goulot, oriente la première amélioration.</p>
+            <h4 class="indicateur-nom">Délai de livraison des changements <span class="traduction">/ Lead time</span></h4>
+            <p class="indicateur-intention">Mesurer le temps écoulé entre le moment où le besoin est posé et le moment où la valeur est livrée. Met les attentes invisibles en lumière.</p>
             <a href="#" class="indicateur-lien">Voir la fiche →</a>
           </div>
           <div class="indicateur">
             <div class="indicateur-niveau">Équipe</div>
-            <h4 class="indicateur-nom">Débit <span class="traduction">/ Throughput</span></h4>
-            <p class="indicateur-intention">Nombre d'éléments terminés par période. Diagnostique la capacité réelle, sans la confondre avec la vitesse perçue.</p>
-            <a href="#" class="indicateur-lien">Voir la fiche →</a>
+            <h4 class="indicateur-nom">Premier passage conforme <span class="traduction">/ First-pass yield</span></h4>
+            <p class="indicateur-intention">Compter les livrables qui passent sans retouche. Révèle la qualité réelle, mieux qu'un taux de défauts global.</p>
+            <span class="indicateur-lien" style="opacity: 0.55; cursor: not-allowed;">Fiche en cours de constitution</span>
           </div>
           <div class="indicateur">
             <div class="indicateur-niveau">Équipe</div>
-            <h4 class="indicateur-nom">Taux de défauts</h4>
-            <p class="indicateur-intention">Part du travail à reprendre. Mesure ce que coûte de ne pas faire bien du premier coup.</p>
+            <h4 class="indicateur-nom">Débit d'équipe <span class="traduction">/ Throughput</span></h4>
+            <p class="indicateur-intention">Compter ce qui sort par période, à taille d'item comparable. Stabilise la prévisibilité plus sûrement qu'une vélocité.</p>
             <a href="#" class="indicateur-lien">Voir la fiche →</a>
           </div>
+        </div>
+        <div class="lien-sortant">
+          <span class="surtitre-lien">Aller plus loin</span>
+          <a href="#">Voir tous les indicateurs canoniques de l'amélioration continue par école →</a>
         </div>
       </div>
 
@@ -454,24 +510,32 @@
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
             Recommandation
           </div>
-          <p>Pour bien faire, <strong>commencer par une équipe pilote</strong> — l'amélioration continue se construit pas à pas, jamais par <span class="anti-pattern">déploiement big-bang</span>. Et choisir un indicateur qui a un levier d'action en équipe, pas une <span class="anti-pattern">métrique-vitrine</span> qui rassure la direction sans pouvoir agir dessus.</p>
+          <p>Pour bien faire, choisissez une équipe volontaire et démarrez par un seul indicateur du trio — celui qui colle au symptôme dominant. L'amélioration continue se construit par cycles courts d'observation et d'ajustement, jamais par <span class="anti-pattern">installation simultanée d'un tableau de bord complet</span>. Le piège classique consiste à <span class="anti-pattern">instrumenter trois indicateurs avant d'avoir compris le processus qu'on mesure</span>.</p>
+        </div>
+        <div class="cross-link">
+          Question liée — <a href="#">Mes indicateurs reflètent-ils la réalité du terrain&nbsp;?</a>
+          <span style="color: var(--gris); font-style: normal; font-size: 0.75rem;">(fiche-question à venir)</span>
         </div>
       </div>
 
       <div class="ecoles-pied">
         <strong>Cette question s'appuie sur</strong>
-        <span class="liste"><em>Lean Six Sigma</em> · <em>Toyota Way (kaizen)</em> · <em>théorie des contraintes (Goldratt)</em></span>
+        <span class="liste"><em>Toyota Way</em> (Liker, Imai) · <em>Lean Six Sigma</em> (Deming, Juran, Motorola) · <em>Théorie des contraintes</em> (Goldratt) · <em>Kata coaching</em> (Rother). Les écoles convergent sur l'observation directe et la progression à petits pas&nbsp;; elles divergent sur le point de départ — le terrain, la voix client, la contrainte, ou la condition cible.</span>
       </div>
 
     </div>
   </article>
 
   <div class="note-pedagogique">
-    <strong>Ce que cette fiche montre.</strong> Quatre sections claires : la question, un bandeau bref qui cadre l'attente du visiteur (durée et nature du parcours), un questionnaire court orienté <em>diagnostic</em> (pas solution), trois indicateurs avec leur intention d'usage et le bilingue sur une ligne, un bloc <em>Recommandation</em> positif. Les écoles convoquées sont en pied, comme référence patrimoniale.
+    <strong>Ce que cette fiche montre (v3.1).</strong> Le rendu illustré ici correspond au croisement Q1 = <em>« Des délais imprévisibles »</em> × Q2 = <em>« Une équipe pilote »</em>. La conditionnalité du croisement Q1×Q2 obéit à deux règles :
     <ul>
-      <li>Hiérarchie typographique : question 1.6rem · sections en cards blanches qui ressortent du fond crème · cards d'indicateurs avec filet de niveau (turquoise = équipe).</li>
-      <li>Sortie unique : trois indicateurs, jamais plus.</li>
-      <li>La voix va à l'essentiel, sans rhétorique.</li>
+      <li><strong>Q1 → ordre des cards.</strong> Le trio reste le même, mais l'ordre s'adapte au symptôme. Ex&nbsp;: <em>« étape goulot connue »</em> → Throughput remonte en card 1 (lecture TOC)&nbsp;; <em>« défauts qui se répètent »</em> → First-pass yield remonte en card 1 (lecture LSS).</li>
+      <li><strong>Q2 → trio par niveau.</strong> Le trio change selon l'échelle. <em>Équipe pilote</em> → trio orthodoxe Lean ci-dessus. <em>Programme entier</em> → Lead time programme + Premier passage + Satisfaction des parties prenantes (humain). <em>Toute l'organisation</em> → Capacité d'absorption du changement (ADKAR) + Confiance organisationnelle + Coût de la non-qualité (humain-humain-impact).</li>
+      <li><strong>Cards à fiche absente.</strong> <em>Premier passage conforme</em> est ici en option mixte — le concept est nommé et l'intention d'usage active, mais le lien <em>Voir la fiche</em> est désactivé tant que la fiche n'est pas créée dans le référentiel (libellé honnête « Fiche en cours de constitution »).</li>
+      <li><strong>Lien sortant patrimonial unique.</strong> Sous le trio, une seule porte d'extension MVP — vers la fiche cadre Lean qui liste tous les indicateurs canoniques par école.</li>
+      <li><strong>Cross-link.</strong> Sous le bloc <em>Recommandation</em>, italique discret, lien vers une fiche-question liée (ici la fiche-question méta sur l'effet pastèque, à rédiger).</li>
+      <li><strong>Pied écoles.</strong> 4 écoles du panel Coach Lean en référence patrimoniale, jamais comme choix.</li>
+      <li><strong>Palette.</strong> Inchangée depuis v3 — décision 20.1 toujours ouverte. La doctrine éditoriale tient sans elle&nbsp;; la couleur sera arbitrée séparément.</li>
     </ul>
   </div>
 
