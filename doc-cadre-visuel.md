@@ -178,15 +178,31 @@ Décisions structurantes :
 
 ### 6.4 Ce que le § 6 ne dit pas
 
-Le périmètre de l'étape B couvre trois pages-types : accueil, fiche d'indicateur, lentille. Les **autres pages-types** (tableau de bord, cascade stratégique, lexique, à propos, et les portes *« Par mon problème »*, *« Par mon cadre »*, *« Par mon niveau »* hors lentille) sont laissées au **refactoring opportuniste**. Elles évolueront vers la posture incarnée ci-dessus au fil des chantiers qui les touchent, à la condition qu'aucun besoin terrain ne remonte une priorité plus pressante.
+Le périmètre initial de l'étape B couvre trois pages-types : accueil, fiche d'indicateur, lentille. **Extension le 06/05/2026 — la fiche-question (mode *Par ma question*) rejoint l'étape B en § 6.5**, sur la même méthode (mockup-preview côte à côte, décisions structurantes ancrées sur les axes de la § 3). Les **autres pages-types** (tableau de bord, cascade stratégique, lexique, à propos, et les portes *« Par mon problème »*, *« Par mon cadre »*, *« Par mon niveau »* hors lentille) sont laissées au **refactoring opportuniste**. Elles évolueront vers la posture incarnée ci-dessus au fil des chantiers qui les touchent, à la condition qu'aucun besoin terrain ne remonte une priorité plus pressante.
 
 Cette économie est cohérente avec l'axe 7 *Système évolutif* : la doctrine est posée, le système suit par refactoring progressif, pas par refonte big-bang. Si un chantier ultérieur révèle qu'une page-type non couverte ici résiste à l'incarnation, le retour ne se fera pas en révision du § 6 mais en ouverture d'un nouveau chantier d'étape B (par exemple : *étape B² — incarnation du tableau de bord*) avec mockup côte à côte et décisions structurantes propres.
+
+### 6.5 Fiche-question (mode *Par ma question*)
+
+*Référence : décision 20.1 du chantier 20 close le 06/05/2026, fichier `mockup-palette-fiche-question-comparatif.html` (4 candidates côte à côte). Variante retenue : **B — vert profond éprouvé**. La fiche-question est rédigée éditorialement dans `mockup-format-fiche-question.html` (passage en v4 avec la palette B).*
+
+La fiche-question est une **page d'orientation manipulable** au sens du § 6.3 — sa mission : permettre à un visiteur arrivé avec une question concrète (formulée dans la langue de son métier) de repartir en deux minutes avec un trio de trois indicateurs candidats à son contexte. Le mécanisme conditionnel (Q1 réordonne les cards, Q2 change le trio par niveau, cf. doctrine du trio par niveau dans `doc-catalogue-questions-fines.md` § 4.4) en fait une page d'enseignement par la manipulation, pas d'orientation passive.
+
+Décisions structurantes :
+
+- **Accent secondaire propre aux fiches-questions — vert profond éprouvé `#1f5945`.** Registre forêt-bibliothèque, école anglaise, agriculture raisonnée. Sémantique : croissance organique, sagesse calme, justesse. Cet accent porte le bloc *Recommandation* (cartouche bord+titre+fond léger), les boutons primaires propres à la fiche-question, le lien sortant patrimonial unique sous le trio, et les anti-patterns en double signal (souligné + fond léger). Cohérent avec « artisan-sérieux-chaud » de la § 4.
+- **Division du travail chromatique.** L'indigo `#4c1d95` reste le **chrome universel de l'outil** (term-def, bandeau meta, boutons primaires globaux, navigation). Le vert profond `#1f5945` prend le rôle de **signature spécifique fiche-question**. Les deux cohabitent sur la même fiche sans télescopage — l'indigo est violet-bleu, le vert est froid-saturé, teintes opposées.
+- **Cuivre saturé écarté.** La candidate C (`#a14e1f`) a été écartée pour trois raisons convergentes — sémantique d'alerte qui contredit le bloc Recommandation positif ; conflit chromatique structurel avec le niveau tactique (orange désaturé `#c79373`) ; redondance avec le surlignage ambré déjà utilisé sur les anti-patterns des fiches d'indicateur (`project_fiches_double_signal_anti_patterns`).
+- **Bleu de Prusse `#1d3a5f` en réserve documentée.** Au cas où le chantier vie réelle révèle un conflit non anticipé entre le vert profond et le niveau programme (vert désaturé `#7d9670`). Si bascule, conserver les autres tokens — seul l'accent change.
+- **Filet de niveau saturé en haut conservé.** Cohérence avec la signature commune (§ 6.0). Le niveau du trio dominant (équipe / programme / tactique / stratégique) est lisible dès le couronnement.
+- **Crème en fond global, blanc franc dans la matière.** Page d'orientation aérée — la fiche elle-même est encadrée en blanc, le crème respire en marge. Rupture nette avec la dérive sépia que la v3 portait (palette ambre/brun/dorée écartée le 06/05 sur diagnostic « affreuse, fade, vieillot » ; cohérent avec § 5.2 qui écarte le glissement vintage).
+- **Pied écoles en référence patrimoniale, jamais comme choix.** Voix située, axe 8. Les écoles convoquées (par ex. *Toyota Way · Lean Six Sigma · TOC · Kata coaching* pour la première fiche-question rédigée) sont nommées en italique, pas typées comme filtres.
 
 ---
 
 ## 7. Conventions de tenue du document
 
-- **Zone évolutive** : §§ 3 à 5 sont la doctrine — modifier seulement par un chantier explicite de révision de doctrine, jamais en passant. § 6 a été constituée le 05/05/2026 et fait foi sur l'incarnation des 3 pages-types couvertes.
+- **Zone évolutive** : §§ 3 à 5 sont la doctrine — modifier seulement par un chantier explicite de révision de doctrine, jamais en passant. § 6 a été constituée le 05/05/2026 puis enrichie le 06/05/2026 (§ 6.5 fiche-question), et fait foi sur l'incarnation des 4 pages-types couvertes.
 - **Journal du document** : toute modification de § 3 à § 5 doit être tracée dans le journal de fin de document avec la date, le motif et le commit de référence.
 - **Ce document fait foi** quand un autre document compagnon ou un commit produit une décision visuelle. En cas de contradiction, ce document tranche jusqu'à révision explicite.
 
@@ -196,3 +212,4 @@ Cette économie est cohérente avec l'axe 7 *Système évolutif* : la doctrine e
 
 - 04/05/2026 — création du document. Posture initiale établie sur 8 axes après consultation des 5 panels d'experts. Validation Lætitia : axes 1 à 8 validés tels que recommandés par les panels (aucun déplacement). Étape B (incarnation pages-types) à venir dans les séances suivantes.
 - 05/05/2026 — § 6 *Incarnation sur les pages-types* renseignée à partir des trois mockups-preview produits le 04/05 (`958042d` accueil v2, `e821662` fiche t4, `31f7c1b` lentille V3) et de la décision D2 (`64c8249`). Décision Lætitia du 05/05 : pas de pyramide en accueil — ferme de fait la décision D5 du chantier 10. Étape B close ; étape C (retour au chantier 10 — D3, D4, D6) ouverte.
+- 06/05/2026 — § 6.5 *Fiche-question (mode Par ma question)* ajoutée à partir du mockup `mockup-palette-fiche-question-comparatif.html` (4 candidates côte à côte : Sobre niveau / Vert profond éprouvé / Cuivre brûlé / Bleu de Prusse). Décision Lætitia : palette B (vert profond `#1f5945`) retenue ; D (bleu de Prusse `#1d3a5f`) en réserve documentée. Décision 20.1 du chantier 20 close. Mise à jour cohérente du § 6.4 (3 → 4 pages-types) et du § 7.
