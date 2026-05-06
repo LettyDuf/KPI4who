@@ -1,7 +1,7 @@
 # Backlog — cadre-indicateurs.html
 
 Liste consultable des améliorations réfléchies mais non encore appliquées.
-Dernière mise à jour : **5 mai 2026 (séance soir, 2e tour) — première fiche-question rédigée éditorialement**. *« Par où démarrer une démarche d'amélioration continue ? »* (panel Coach Lean) entièrement rédigée : Q1 à 5 options, trio par niveau (3 trios distincts), 9 intentions d'usage, 3 variantes Recommandation, pied 4 écoles, lien sortant patrimonial, cross-link futur. 4 décisions structurantes inscrites en doctrine (`doc-catalogue-questions-fines.md` § 4.4 nouveau + § 4.1 enrichi). 3 décisions ouvertes ajoutées (20.6 trio alternatif v2 ; 20.7 fiche-question méta véracité/pastèque ; 20.8 cross-link). 4 fiches métriques manquantes inscrites en dette de référentiel.
+Dernière mise à jour : **6 mai 2026 (séance journée)** — décision 20.1 *Palette définitive du format-fiche-question* close. Arbitrage sur 4 candidates côte à côte (Sobre niveau / Vert profond éprouvé / Cuivre brûlé / Bleu de Prusse), zoom de cohabitation indigo+accent. Décision Lætitia : palette **B (vert profond `#1f5945`)** retenue ; **D (bleu de Prusse `#1d3a5f`)** en réserve documentée. Doctrine tracée dans `doc-cadre-visuel.md` § 6.5 et `doc-catalogue-questions-fines.md` § 4.5 ; mockup format-fiche-question passé en v4. 4 commits.
 
 ---
 
@@ -9,16 +9,16 @@ Dernière mise à jour : **5 mai 2026 (séance soir, 2e tour) — première fich
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événement majeur de la séance (05/05/2026 soir, 2e tour)** : **première fiche-question rédigée éditorialement** — *« Par où démarrer une démarche d'amélioration continue ? »* (panel Coach Lean : Toyota Way, LSS, TOC, Kata). Variante standard, Q1 à 5 options (ajout *« étape goulot connue »* pour TOC), Q2 à 3 options. **Doctrine du trio par niveau** actée (`doc-catalogue-questions-fines.md` § 4.4 nouveau) : Q1 change l'ordre des cards, Q2 change le trio lui-même selon l'échelle (équipe / programme / organisation). 9 intentions d'usage rédigées, 3 variantes du bloc *Recommandation* rédigées, pied 4 écoles, lien sortant patrimonial unique, cross-link futur.
-- **3 commits de la séance** : `925d927` (doc compagnon — doctrine trio par niveau, lien sortant patrimonial, option mixte cards à fiche absente, cross-link, 3 décisions ouvertes ajoutées) · `05131fd` (backlog ch.20 — décisions structurantes, 20.6/20.7/20.8, dette référentiel) · `fd2f66d` (mockup variante standard v3.1).
-- **3 mémoires créées cette séance** : `feedback_panel_lean_humain` (TPS deux piliers, vérifier l'humain dans le trio dès la 1re proposition) · `feedback_champ_fiabilite_non_agrege` (champ `fiabilite` = risque Goodhart précisément, ne pas afficher générique) · `project_doctrine_trio_par_niveau` (doctrine acquise, doc fait foi).
-- **Décisions ouvertes du chantier 20** : 20.1 palette (à reprendre en séance dédiée — *priorité haute*) · 20.2 termes-pièges · 20.3 volumétrie par panel · 20.4 responsive double réponse (couplé D4) · 20.5 rédaction MVP (1/8-12 fiche livrée éditorialement) · 20.6 trio alternatif v2 · 20.7 fiche-question méta véracité/pastèque (effet pastèque, triangulation) · 20.8 cross-link.
+- **Événement majeur de la séance (06/05/2026 journée)** : **décision 20.1 close** — palette définitive de la fiche-question arbitrée sur 4 candidates côte à côte (`mockup-palette-fiche-question-comparatif.html`). Lætitia retient **B (vert profond éprouvé `#1f5945`)** ; **D (bleu de Prusse `#1d3a5f`)** conservée en réserve documentée. Cuivre `#a14e1f` écarté pour 3 raisons convergentes (sémantique d'alerte, conflit niveau tactique, redondance avec surlignage anti-patterns). **Doctrine étendue** : `doc-cadre-visuel.md` § 6.5 *Fiche-question (mode Par ma question)* — 4e page-type incarnée, accent secondaire `#1f5945`, division du travail chromatique (indigo = chrome universel, vert profond = signature spécifique fiche-question).
+- **4 commits de la séance** : `72a7451` (cadre-visuel § 6.5 — incarnation fiche-question, journal du document mis à jour) · `f4f7dac` (catalogue § 4.5 — tokens actés, décision #1 close, journal mis à jour) · `26f5ccc` (mockup format-fiche-question v4 — palette B propagée, indigo conservé pour chrome) · `63b62f1` (mockup comparatif — trace d'arbitrage 4 candidates).
+- **Mémoire créée cette séance** : `project_palette_fiche_question_actee.md` — décision actée + réserve D documentée + division du travail chromatique en règle permanente.
+- **Décisions ouvertes restantes du chantier 20** : 20.2 termes-pièges · 20.3 volumétrie panels · 20.4 responsive double réponse (couplée D4) · 20.5 rédaction MVP (1/8-12 fiches livrées éditorialement) · 20.6 trio alternatif v2 · 20.7 fiche-question méta véracité/pastèque · 20.8 cross-link.
 - **Dette de référentiel ouverte** : 4 fiches métriques à créer (First-pass yield × équipe ; Lead time × programme ; COPQ × stratégique ; Écart de vérité × stratégique). Tableau dans la section 20 du backlog.
 - **Décisions du chantier 10** : ✅ D1, D2 (V3), D5 fermées ; ⏳ D3 (mode fin), D4 (responsive), D6 (deep-linking).
-- **Sentinelles** : non relancées cette séance (rédaction éditoriale + doctrine + mockup HTML, pas de code applicatif touché). À relancer avant tout commit code.
-- **Workflow git sandbox** : pattern `mv .git/index.lock` (+ `HEAD.lock`) toujours actif. Plusieurs paires de `.git/*.lock.tmp*` créées pour les 3 commits + clôture (`Z4`, `Z5`, `Z5b`, `Z6`, `Z6b`, `Z7` à venir).
-- **Prochaine action recommandée** : ouverture de la prochaine séance — choisir entre (a) **clôturer la palette 20.1** (préalable à la mise en mockup des fiches rédigées) ; (b) **rédiger une seconde fiche-question candidate** d'un autre panel pour valider la portabilité de la doctrine du trio par niveau (ex : *Comment arbitrer entre les initiatives qui se présentent ?*, panel Terrain des autres cadres) ; (c) **créer les 4 fiches métriques manquantes** du référentiel pour rendre la première fiche-question entièrement vivante ; (d) **rédiger la fiche-question méta véracité/pastèque** (20.7) en mobilisant la doctrine du trio anti-pastèque.
-- **Blocages / questions ouvertes** : aucun. Fichiers `.todelete` en attente côté ordi : nombreux `.git/*.lock.tmp*` cumulés (Z1 à Z6b).
+- **Sentinelles** : non relancées cette séance (rédaction doctrinale + mockup, pas de code applicatif touché). À relancer avant tout commit code.
+- **Workflow git sandbox** : pattern `mv .git/index.lock` (+ `HEAD.lock`) toujours actif. 8 paires de `.git/*.lock.tmp.A/B/C/D` créées pour les 4 commits + clôture (E à venir).
+- **Prochaine action recommandée** : choisir entre (a) **vérification finale palette B** — audit accessibilité AA + cohérence cross-portes (4 niveaux à tester, pas seulement équipe) ; (b) **rédiger une seconde fiche-question** d'un autre panel pour valider la portabilité de la doctrine du trio par niveau ; (c) **créer les 4 fiches métriques manquantes** ; (d) **rédiger la fiche-question méta véracité/pastèque (20.7)**.
+- **Blocages / questions ouvertes** : aucun. Fichiers `.todelete` et `.git/*.lock.tmp*` cumulés en attente côté ordi.
 
 ## 0. Chantiers majeurs livrés → archivés
 
@@ -920,7 +920,7 @@ Sur les quatre lots, 33 liens ont été posés sur 25 champs éditoriaux de 18 f
 
 | # | Décision | Statut |
 |---|---|---|
-| 20.1 | **Palette définitive du format-fiche-question** | ⏸ ouverte — v3 contestée par Lætitia (couleurs « affreuses », fade, vieillot) ; à reprendre en séance dédiée à la palette |
+| 20.1 | **Palette définitive du format-fiche-question** | ✅ close 06/05/2026 — palette **B (vert profond éprouvé `#1f5945`)** retenue ; **D (bleu de Prusse `#1d3a5f`)** en réserve documentée ; cuivre écarté. Commits `72a7451` (cadre-visuel § 6.5), `f4f7dac` (catalogue § 4.5), `26f5ccc` (mockup format v4), `63b62f1` (mockup comparatif — trace d'arbitrage) |
 | 20.2 | **Liste exhaustive des termes-pièges** | ⏸ 4 identifiés (vélocité, ROI, NPS, story points) ; à étoffer par les panels |
 | 20.3 | **Volumétrie finale par panel** | ⏸ fourchettes posées dans le doc compagnon ; à confirmer à la rédaction |
 | 20.4 | **Seuil de bascule responsive de la double réponse** | ⏸ couplée à D4 du chantier 10 |
