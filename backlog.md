@@ -896,13 +896,20 @@ Sur les quatre lots, 33 liens ont été posés sur 25 champs éditoriaux de 18 f
 
 **Mission.** Servir le visiteur qui arrive avec un problème concret en tête, formulé dans la langue de son métier. Le catalogue propose 8 à 12 questions courantes (au MVP), formulées telles qu'elles se posent à voix haute, qui conduisent en 2 à 4 clics à 3 indicateurs candidats avec leur intention d'usage. Doctrine et format : `doc-catalogue-questions-fines.md`.
 
-**Décisions structurantes tranchées le 05/05/2026.**
+**Décisions structurantes tranchées le 05/05/2026 (séance journée).**
 
 - **Aucun nommage de persona à l'entrée** — la question elle-même reconnaît qui parle, sans typage.
 - **Mécanisme de reformulation : double réponse** — pour les questions à terme-piège (vélocité, ROI, NPS, story points), juxtaposition de deux colonnes côte à côte avec mots-clés et indicateurs visibles. Décision contre-intuitive (j'avais arbitré pour la redirection douce) : la pédagogie par juxtaposition rend la décision plus rapide à prendre, pas plus longue (cf. mémoire `feedback_pedagogie_par_juxtaposition`).
 - **Format normalisé en 2 variantes** — *standard* (questionnaire court autonome de 2 questions de cadrage en mode diagnostic, pas solution) ou *à reformulation* (double réponse + raccourci vers porte préconfigurée).
 - **Posture éditoriale** — voix directe et bienveillante (libellés courts 3-6 mots), bilingue sur une ligne pour les indicateurs (*Délai bout à bout / Lead time*), bloc *Recommandation* positif (solution d'abord, anti-pattern ensuite), DMAIC (questions de cadrage en mode *Définir le problème*).
 - **Écoles convoquées** — explicitées en pied de chaque fiche, comme référence patrimoniale (jamais comme choix à faire).
+
+**Décisions structurantes tranchées le 05/05/2026 (séance soir — rédaction de la première fiche-question).**
+
+- **Règle stricte des 3 cards confirmée + lien sortant patrimonial unique** — jamais 4 cards. Le visiteur qui veut élargir passe par un lien sortant unique vers une fiche cadre du référentiel (ex : *Voir tous les indicateurs canoniques de l'amélioration continue par école*). Seule porte d'extension acceptée au MVP. Discipline *« proposer, pas étaler »* du chantier 16 ainsi tenue.
+- **Mécanisme cards à fiche absente — option mixte** — si une fiche métrique cible n'existe pas, la card reste active sur son nom et son intention d'usage (le concept est nommé), mais le lien *Voir la fiche* est désactivé avec le libellé honnête *« Fiche en cours de constitution »*. La dette est rendue visible sans frustrer le visiteur.
+- **Doctrine du trio par niveau** *(§ 4.4 du doc compagnon)* — la conditionnalité Q1 change l'**ordre** des cards (selon le symptôme), Q2 change le **trio lui-même** (selon l'échelle). Justification : le pilier *Respect for People* du TPS s'exprime différemment selon le niveau (routine kata en équipe, alignement parties prenantes en programme, confiance et culture en stratégique). Un trio uniforme à tous niveaux masque cette gradation et reflète la lecture *flux-DORA* réductrice.
+- **Cross-link entre fiches-questions** — 0 ou 1 lien italique discret sous le bloc *Recommandation*, vers une fiche-question liée. Sera activé quand une seconde fiche-question liée sera rédigée.
 
 **Mockups produits le 05/05/2026.**
 
@@ -917,9 +924,23 @@ Sur les quatre lots, 33 liens ont été posés sur 25 champs éditoriaux de 18 f
 | 20.2 | **Liste exhaustive des termes-pièges** | ⏸ 4 identifiés (vélocité, ROI, NPS, story points) ; à étoffer par les panels |
 | 20.3 | **Volumétrie finale par panel** | ⏸ fourchettes posées dans le doc compagnon ; à confirmer à la rédaction |
 | 20.4 | **Seuil de bascule responsive de la double réponse** | ⏸ couplée à D4 du chantier 10 |
-| 20.5 | **Rédaction des 8 à 12 questions MVP** | ⏸ point de départ posé (4 questions issues de Q2 dans `matiere-questionnaire-pour-catalogue.md`) ; séances suivantes panel par panel |
+| 20.5 | **Rédaction des 8 à 12 questions MVP** | ⏸ point de départ posé (4 questions issues de Q2 dans `matiere-questionnaire-pour-catalogue.md`). **1 fiche rédigée éditorialement le 05/05/2026 séance soir** : *Par où démarrer une démarche d'amélioration continue ?* (panel Coach Lean). Mise en mockup à venir |
+| 20.6 | **Trio alternatif (v2 du catalogue)** | ⏸ ouverte — décision MVP : un seul trio orthodoxe par croisement Q1×Q2. v2 envisage un *trio alternatif* étiqueté par sa posture (angle KBI/comportement, angle TOC/contrainte) en complément. À tester sur 1-2 questions avant de généraliser, après les premières fiches livrées |
+| 20.7 | **Fiche-question méta — *Mes indicateurs reflètent-ils la réalité du terrain ?*** | ⏸ ouverte — fiche-question candidate identifiée 05/05/2026 (séance soir). Sujet : effet pastèque, triangulation déclaratif/objectif/humain. Panel pressenti : Drucker (MBO honnête) + Toyota Way (Gemba, Andon) + Edmondson (psychological safety) + DORA (data-driven). Sortie pressentie : trio anti-pastèque (un déclaratif, un objectif, un humain anonyme). À intégrer dans le calendrier MVP |
+| 20.8 | **Mécanisme de cross-link entre fiches-questions** | ⏸ ouverte — principe acté 05/05/2026 (séance soir) : 0 ou 1 cross-link par fiche-question, sous le bloc *Recommandation*, italique discret. À matérialiser quand 2 fiches-questions liées seront livrées (ex : pastèque ↔ amélioration continue) |
+
+**Dette de référentiel identifiée le 05/05/2026 (séance soir).** Quatre fiches métriques manquantes pour servir le trio par niveau de la première fiche-question. Inscrites en dette à créer.
+
+| Fiche manquante | Niveau | Origine | Priorité |
+|---|---|---|---|
+| **First-pass yield / Premier passage conforme** × équipe | operationnel | *Par où démarrer une démarche d'amélioration continue ?* — trio équipe pilote | Haute (couverture du trio orthodoxe niveau équipe) |
+| **Lead time × programme** | programme | *Par où démarrer une démarche d'amélioration continue ?* — trio programme entier | Haute (substitution provisoire possible avec t2 *Délai de commercialisation* tactique) |
+| **Coût de la non-qualité — COPQ** × stratégique | strategique | *Par où démarrer une démarche d'amélioration continue ?* — trio toute l'organisation | Haute (capte la dimension impact économique du trio stratégique) |
+| **Écart de vérité (déclaratif vs objectif)** × stratégique | strategique | Fiche-question méta *Mes indicateurs reflètent-ils la réalité du terrain ?* (20.7) | Couplée à 20.7 — créer en même temps que la fiche-question méta |
+
+**Première fiche-question rédigée éditorialement le 05/05/2026 (séance soir).** *« Par où démarrer une démarche d'amélioration continue ? »* — panel Coach Lean (Toyota Way, Lean Six Sigma, Théorie des contraintes, Kata coaching). Variante standard. Q1 (5 options : *délais imprévisibles · défauts qui se répètent · charge qui dérape · manque de visibilité · étape goulot connue*) pilote l'ordre des cards. Q2 (3 options : *équipe pilote · programme entier · toute l'organisation*) pilote le trio par niveau. 9 intentions d'usage rédigées (3 trios × 3 cards). 3 variantes du bloc *Recommandation* rédigées. Pied écoles, bandeau d'attente, lien sortant patrimonial vers la fiche cadre Lean. **Mise en mockup à venir** — couleurs en attente de la clôture de 20.1.
 
 **Articulations.** Préalable à D3 du chantier 10 (exposition du mode fin). Couplé à D4 (responsive de la double réponse). Articulé avec chantier 16 (discipline éditoriale — 8-12 questions max au MVP) et chantier 19 (posture visuelle — incarne les 8 axes).
 
-**Prochaine action recommandée.** Soit (a) clore les couleurs en séance dédiée (préalable à la production des fiches), soit (b) attaquer la rédaction d'une première question candidate par panel d'expert (méthode éprouvée), soit (c) dérouler en parallèle. Choix à arbitrer en ouverture de la prochaine séance.
+**Prochaine action recommandée.** La première fiche-question est rédigée éditorialement (20.5 partiellement entamée). Trois pistes possibles pour la suite : (a) **clore la palette 20.1** en séance dédiée, préalable à la mise en mockup des fiches rédigées ; (b) **rédiger une seconde fiche-question candidate** d'un autre panel pour valider la portabilité de la doctrine du trio par niveau (ex : *Comment arbitrer entre les initiatives qui se présentent ?*, panel Terrain des autres cadres) ; (c) **créer les 4 fiches métriques manquantes** du référentiel pour rendre la première fiche-question entièrement vivante. Choix à arbitrer en ouverture de la prochaine séance.
 
