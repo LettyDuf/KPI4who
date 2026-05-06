@@ -35,18 +35,24 @@
          toujours ouverte.
   */
   :root {
+    /* Palette v4 — décision 20.1 close 06/05/2026 (cf. doc-cadre-visuel.md § 6.5) */
     --creme: #f6f1e1;
     --creme-fiche: #fbf6e8;
     --encre: #1c2033;
-    --encre-doux: #4a4538;
-    --gris: #beb59a;
-    --gris-clair: #e2dac5;
+    --encre-doux: #3a3f55;        /* bleu-gris foncé, plus contrasté que l'ancien brun-foncé */
+    --gris: #8b8268;              /* gris plus neutre, moins jaune */
+    --gris-clair: #d0cdb8;
     --blanc: #ffffff;
 
-    /* Accents structurants — présents mais pas violents */
-    --indigo: #4c1d95;          /* boutons primaires, term-def */
+    /* Indigo — chrome universel de l'outil (term-def, bandeau meta, navigation) */
+    --indigo: #4c1d95;
     --indigo-trace: rgba(76, 29, 149, 0.20);
-    --indigo-leger: rgba(76, 29, 149, 0.07);
+    --indigo-leger: rgba(76, 29, 149, 0.08);
+
+    /* Vert profond éprouvé — signature spécifique fiche-question (palette B) */
+    --accent: #1f5945;
+    --accent-leger: rgba(31, 89, 69, 0.10);
+    --accent-trame: rgba(31, 89, 69, 0.20);
 
     /* Couleurs des niveaux — désaturées Doux */
     --niv-equipe: #6fa89e;        /* turquoise désaturé */
@@ -55,11 +61,11 @@
     --niv-tactique: #c79373;      /* orange désaturé */
     --niv-strategique: #5a4f7a;   /* violet désaturé */
 
-    /* Recommandation — ambre douce et accueillante */
-    --reco-fond: #f9efd6;
-    --reco-bord: #b58a45;
-    --reco-trame: rgba(181, 138, 69, 0.18);
-    --reco-titre: #6b4f1d;
+    /* Recommandation — vert profond éprouvé, ton calme et positif */
+    --reco-fond: rgba(31, 89, 69, 0.05);
+    --reco-bord: #1f5945;
+    --reco-trame: rgba(31, 89, 69, 0.20);
+    --reco-titre: #1f5945;
   }
   * { box-sizing: border-box; }
   body {
@@ -155,7 +161,7 @@
   .qcourte-num {
     display: inline-flex;
     align-items: center; justify-content: center;
-    background: var(--indigo); color: white;
+    background: var(--accent); color: white;
     width: 1.6rem; height: 1.6rem; border-radius: 50%;
     font-size: 0.8rem; font-weight: 700;
     margin-right: 0.55rem;
@@ -181,12 +187,12 @@
     text-align: left;
     transition: border-color 0.15s, background 0.15s;
   }
-  .opt:hover { border-color: var(--indigo); background: var(--blanc); }
+  .opt:hover { border-color: var(--accent); background: var(--blanc); }
   .opt.selectionne {
-    background: var(--indigo-leger);
+    background: var(--accent-leger);
     color: var(--encre);
-    border-color: var(--indigo);
-    border-left: 3px solid var(--indigo);
+    border-color: var(--accent);
+    border-left: 3px solid var(--accent);
     font-weight: 600;
   }
 
@@ -224,7 +230,7 @@
   .indicateur-lien {
     margin-top: auto;
     padding-top: 0.4rem;
-    font-size: 0.8rem; color: var(--indigo); font-weight: 600;
+    font-size: 0.8rem; color: var(--accent); font-weight: 600;
     text-decoration: none;
     display: inline-flex; align-items: center; gap: 0.3rem;
   }
@@ -245,11 +251,11 @@
   .recommandation p { margin: 0; font-size: 0.9rem; color: var(--encre); line-height: 1.6; }
   /* Double signal sur les anti-patterns */
   .anti-pattern {
-    color: var(--indigo);
-    background: var(--reco-trame);
+    color: var(--accent);
+    background: var(--accent-trame);
     padding: 0 0.2em;
     border-radius: 2px;
-    text-decoration: underline dotted var(--indigo) 1.5px;
+    text-decoration: underline dotted var(--accent) 1.5px;
     text-underline-offset: 0.18em;
     font-weight: 600;
     cursor: help;
@@ -286,7 +292,7 @@
     font-size: 0.82rem;
   }
   .lien-sortant a {
-    color: var(--indigo);
+    color: var(--accent);
     text-decoration: none;
     font-weight: 600;
   }
@@ -309,7 +315,7 @@
     color: var(--encre-doux);
   }
   .cross-link a {
-    color: var(--indigo);
+    color: var(--accent);
     text-decoration: none;
   }
   .cross-link a:hover { text-decoration: underline; }
@@ -380,9 +386,9 @@
   }
   .col-rep-bouton:hover { border-color: var(--encre-doux); }
   .col-rep.droite .col-rep-bouton {
-    background: var(--indigo); border-color: var(--indigo); color: white;
+    background: var(--accent); border-color: var(--accent); color: white;
   }
-  .col-rep.droite .col-rep-bouton:hover { background: #3d1376; border-color: #3d1376; }
+  .col-rep.droite .col-rep-bouton:hover { background: #163d2f; border-color: #163d2f; }
 
   /* Bandeau d'orientation */
   .raccourci-porte {
@@ -424,9 +430,9 @@
 <body>
 
   <div class="titre-mockup">
-    <h1>Format normalisé d'une fiche-question — v3.1</h1>
-    <p>Voix directe et bienveillante · palette à 3 plans · bloc Recommandation positif · bilingue sur une ligne.</p>
-    <div class="meta">2 variantes : <em>standard</em> · <em>à reformulation</em></div>
+    <h1>Format normalisé d'une fiche-question — v4</h1>
+    <p>Voix directe et bienveillante · palette B (vert profond éprouvé) · bloc Recommandation positif · bilingue sur une ligne.</p>
+    <div class="meta">2 variantes : <em>standard</em> · <em>à reformulation</em> · décision 20.1 close 06/05/2026</div>
   </div>
 
   <!-- ============================================================== -->
@@ -535,7 +541,7 @@
       <li><strong>Lien sortant patrimonial unique.</strong> Sous le trio, une seule porte d'extension MVP — vers la fiche cadre Lean qui liste tous les indicateurs canoniques par école.</li>
       <li><strong>Cross-link.</strong> Sous le bloc <em>Recommandation</em>, italique discret, lien vers une fiche-question liée (ici la fiche-question méta sur l'effet pastèque, à rédiger).</li>
       <li><strong>Pied écoles.</strong> 4 écoles du panel Coach Lean en référence patrimoniale, jamais comme choix.</li>
-      <li><strong>Palette.</strong> Inchangée depuis v3 — décision 20.1 toujours ouverte. La doctrine éditoriale tient sans elle&nbsp;; la couleur sera arbitrée séparément.</li>
+      <li><strong>Palette v4.</strong> Décision 20.1 close le 06/05/2026 : palette <strong>B (vert profond éprouvé `#1f5945`)</strong> retenue après arbitrage sur 4 candidates côte à côte (Sobre niveau / Vert profond éprouvé / Cuivre brûlé / Bleu de Prusse — cf. <code>mockup-palette-fiche-question-comparatif.html</code>). Division du travail chromatique : indigo = chrome universel ; vert profond = signature spécifique fiche-question. Bleu de Prusse en réserve documentée.</li>
     </ul>
   </div>
 
