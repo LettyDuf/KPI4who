@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Mini-preview — surlignage anti-pattern dans le bloc Recommandation</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, 'Segoe UI', system-ui, 'Helvetica Neue', sans-serif;
+    color: #1c2033;
+    background: #f6f1e1;
+    line-height: 1.55;
+  }
+  body { padding: 2rem 1.4rem 4rem; font-size: 13.5px; }
+
+  .titre-mockup { max-width: 1300px; margin: 0 auto 1rem; text-align: center; }
+  .titre-mockup h1 { margin: 0 0 0.3rem; font-size: 1.3rem; font-weight: 700; }
+  .titre-mockup p  { margin: 0 0 0.5rem; font-style: italic; color: #4a4538; }
+
+  .brief {
+    max-width: 1300px; margin: 1rem auto 2rem;
+    background: #fbf7e6;
+    border-left: 3px solid #4c1d95;
+    border-radius: 0 6px 6px 0;
+    padding: 0.85rem 1.1rem;
+    font-size: 0.86rem;
+  }
+  .brief strong { color: #1c2033; }
+
+  .grille {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+  }
+  @media (max-width: 1000px) { .grille { grid-template-columns: 1fr; } }
+
+  .candidat {
+    background: white;
+    border: 1px solid #d8d2bb;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .candidat .tete {
+    padding: 0.85rem 1rem 0.7rem;
+    border-bottom: 1px solid #ece6cf;
+  }
+  .candidat .lettre {
+    font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    color: #8b8268;
+  }
+  .candidat h3 { margin: 0.15rem 0 0.2rem; font-size: 0.96rem; }
+  .candidat .accroche {
+    margin: 0;
+    font-size: 0.78rem; color: #4a4538;
+    font-style: italic;
+  }
+
+  .candidat .scene {
+    padding: 1rem 1.05rem;
+    background: #f6f1e1;  /* papier crème — comme dans la fiche */
+  }
+
+  /* Bloc Recommandation — base commune */
+  .reco {
+    background: rgba(31, 89, 69, 0.05);
+    border: 1px solid #1f5945;
+    border-radius: 5px;
+    padding: 0.7rem 0.85rem;
+  }
+  .reco-titre {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: #1f5945; font-weight: 700;
+    margin: 0 0 0.4rem;
+    display: flex; align-items: center; gap: 0.35rem;
+  }
+  .reco-titre svg { color: #1f5945; }
+  .reco p {
+    margin: 0;
+    font-size: 0.82rem; color: #1c2033;
+    line-height: 1.55;
+  }
+
+  /* ===== Variant A — v4.1 actuelle (vert saturé) ===== */
+  .candidat.A .anti-pattern {
+    color: #1f5945;
+    background: rgba(31, 89, 69, 0.20);
+    padding: 0 0.2em;
+    border-radius: 2px;
+    text-decoration: underline dotted #1f5945 1.5px;
+    text-underline-offset: 0.18em;
+    font-weight: 600;
+    cursor: help;
+  }
+
+  /* ===== Variant B — vert atténué ===== */
+  .candidat.B .anti-pattern {
+    color: #1f5945;
+    background: rgba(31, 89, 69, 0.10);
+    padding: 0 0.2em;
+    border-radius: 2px;
+    text-decoration: underline dotted #1f5945 1.5px;
+    text-underline-offset: 0.18em;
+    font-weight: 600;
+    cursor: help;
+  }
+
+  /* ===== Variant C — doctrinale (term-def indigo + surlignage ambré) ===== */
+  .candidat.C .anti-pattern {
+    color: #4c1d95;
+    background: rgba(181, 138, 69, 0.22);
+    padding: 0 0.2em;
+    border-radius: 2px;
+    text-decoration: underline dotted #4c1d95 1.5px;
+    text-underline-offset: 0.18em;
+    font-weight: 600;
+    cursor: help;
+  }
+
+  .lecture {
+    padding: 0.75rem 1rem 0.95rem;
+    background: #fdfaee;
+    border-top: 1px solid #ece6cf;
+    font-size: 0.78rem;
+    color: #1c2033;
+    line-height: 1.55;
+  }
+  .lecture h4 {
+    margin: 0 0 0.25rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #8b8268;
+    font-weight: 700;
+  }
+  .lecture p { margin: 0 0 0.4rem; }
+  .lecture p:last-child { margin: 0; }
+
+  .verdict {
+    display: inline-block;
+    margin-top: 0.4rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+  .verdict.actuelle { background: #f0e9d0; color: #4a4538; }
+  .verdict.attenuee { background: #e7eee9; color: #2c5945; }
+  .verdict.doctrinale { background: #f1e7d3; color: #6b4f1d; }
+
+  .pied {
+    max-width: 1300px; margin: 2rem auto 0;
+    padding-top: 0.9rem; border-top: 1px solid #d8d2bb;
+    text-align: center; font-style: italic;
+    color: #8b8268; font-size: 0.8rem;
+  }
+</style>
+</head>
+<body>
+
+  <div class="titre-mockup">
+    <h1>Surlignage anti-pattern dans le bloc Recommandation — 3 versions</h1>
+    <p>Texte identique · seul le double signal sur les anti-patterns varie</p>
+  </div>
+
+  <div class="brief">
+    <strong>Ce que tu regardes</strong> — le bloc <em>Recommandation</em> de la fiche-question, encadré en vert profond, sur fond papier crème comme en prod. Les deux anti-patterns soulignés à l'intérieur (<em>installation simultanée d'un tableau de bord complet</em> et <em>instrumenter trois indicateurs avant d'avoir compris le processus</em>) reçoivent un traitement différent dans chaque version. Le reste — bord vert, titre vert, fond vert très pâle — est strictement identique.
+  </div>
+
+  <div class="grille">
+
+    <!-- Variant A — actuelle v4.1 -->
+    <div class="candidat A">
+      <div class="tete">
+        <div class="lettre">Version A · actuelle (v4.1)</div>
+        <h3>Vert saturé</h3>
+        <p class="accroche">Anti-patterns en vert + fond vert 20% — la situation que tu trouves trop forte.</p>
+      </div>
+      <div class="scene">
+        <div class="reco">
+          <div class="reco-titre">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+            Recommandation
+          </div>
+          <p>Pour bien faire, choisissez une équipe volontaire et démarrez par un seul indicateur du trio — celui qui colle au symptôme dominant. L'amélioration continue se construit par cycles courts d'observation et d'ajustement, jamais par <span class="anti-pattern">installation simultanée d'un tableau de bord complet</span>. Le piège classique consiste à <span class="anti-pattern">instrumenter trois indicateurs avant d'avoir compris le processus qu'on mesure</span>.</p>
+        </div>
+      </div>
+      <div class="lecture">
+        <h4>Lecture</h4>
+        <p>Tout le bloc est vert : bord, titre, fond pâle, surlignages, soulignements. Les anti-patterns ne ressortent plus comme signal localisé d'alerte — ils sont <em>noyés</em> dans la couleur dominante du bloc. Le visiteur lit « tout est en vert positif » alors que ces zones devraient lui dire « attention, à éviter ».</p>
+        <span class="verdict actuelle">Effet de monochromie · signal d'alerte dilué</span>
+      </div>
+    </div>
+
+    <!-- Variant B — vert atténué -->
+    <div class="candidat B">
+      <div class="tete">
+        <div class="lettre">Version B · atténuée</div>
+        <h3>Vert atténué</h3>
+        <p class="accroche">Surlignage abaissé de 20 % à 10 %, reste de la palette inchangé.</p>
+      </div>
+      <div class="scene">
+        <div class="reco">
+          <div class="reco-titre">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+            Recommandation
+          </div>
+          <p>Pour bien faire, choisissez une équipe volontaire et démarrez par un seul indicateur du trio — celui qui colle au symptôme dominant. L'amélioration continue se construit par cycles courts d'observation et d'ajustement, jamais par <span class="anti-pattern">installation simultanée d'un tableau de bord complet</span>. Le piège classique consiste à <span class="anti-pattern">instrumenter trois indicateurs avant d'avoir compris le processus qu'on mesure</span>.</p>
+        </div>
+      </div>
+      <div class="lecture">
+        <h4>Lecture</h4>
+        <p>Le surlignage est plus discret, mais le problème de fond demeure : tout est dans la même teinte. L'anti-pattern reste un signal faible <em>à l'intérieur</em> d'un bloc déjà vert. On atténue la gêne visuelle sans répondre à la question sémantique — pourquoi un signal d'alerte serait-il dans la même couleur que le bloc qui dit <em>« voici le bon chemin »</em> ?</p>
+        <span class="verdict attenuee">Gêne atténuée · sémantique non résolue</span>
+      </div>
+    </div>
+
+    <!-- Variant C — doctrinale -->
+    <div class="candidat C">
+      <div class="tete">
+        <div class="lettre">Version C · doctrinale</div>
+        <h3>Indigo + ambré localisé</h3>
+        <p class="accroche">Term-def indigo (chrome) + surlignage ambré (alerte sémantique localisée). Cohérent fiches d'indicateur.</p>
+      </div>
+      <div class="scene">
+        <div class="reco">
+          <div class="reco-titre">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+            Recommandation
+          </div>
+          <p>Pour bien faire, choisissez une équipe volontaire et démarrez par un seul indicateur du trio — celui qui colle au symptôme dominant. L'amélioration continue se construit par cycles courts d'observation et d'ajustement, jamais par <span class="anti-pattern">installation simultanée d'un tableau de bord complet</span>. Le piège classique consiste à <span class="anti-pattern">instrumenter trois indicateurs avant d'avoir compris le processus qu'on mesure</span>.</p>
+        </div>
+      </div>
+      <div class="lecture">
+        <h4>Lecture</h4>
+        <p>Trois couleurs en rôles distincts. Vert profond porte le bloc <em>Recommandation</em> (« voici le bon chemin »). Indigo signale que les mots soulignés sont des <em>term-def</em> (survol pour la définition — chrome universel de l'outil). Ambre localisé alerte sémantiquement (« à éviter »). Pas de retour à la palette sépia v3 — l'ambre est strictement localisé sur les anti-patterns, pas sur le bord, le fond ou le titre.</p>
+        <span class="verdict doctrinale">Triple sémantique distincte · cohérent fiches d'indicateur</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="pied">
+    Mini-preview pour arbitrage post-décision 20.1 · ne modifie pas <code>cadre-indicateurs.html</code>
+  </div>
+
+</body>
+</html>
