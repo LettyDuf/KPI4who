@@ -106,6 +106,31 @@ Exemple posé dans le mockup-preview : *« Comment améliorer la vélocité de m
 
 ---
 
+### 4.5 Palette de la fiche-question *(décision 20.1 close 06/05/2026)*
+
+La palette des fiches-questions a été arbitrée le 06/05/2026 sur **4 candidates côte à côte** (mockup `mockup-palette-fiche-question-comparatif.html`) : Sobre niveau (A), Vert profond éprouvé (B), Cuivre brûlé (C), Bleu de Prusse (D). Décision de Lætitia : **B retenue**, **D conservée en réserve documentée**.
+
+**Tokens actés** :
+
+- `--accent-fiche-q : #1f5945` *(vert profond éprouvé — registre forêt-bibliothèque)* — porte les boutons primaires de la fiche-question, le bord et le titre du bloc *Recommandation*, le lien sortant patrimonial unique, le numéro de question rond, le surlignage des anti-patterns en double signal.
+- `--accent-fiche-q-leger : rgba(31, 89, 69, 0.10)` — fond léger des options sélectionnées dans le questionnaire court.
+- `--accent-fiche-q-trame : rgba(31, 89, 69, 0.20)` — fond du surlignage anti-pattern.
+- `--reco-fond : rgba(31, 89, 69, 0.05)` — fond très pâle du bloc *Recommandation*.
+- `--reco-bord : #1f5945` — bord du bloc *Recommandation*.
+- `--reco-titre : #1f5945` — titre *Recommandation*.
+
+**Invariants préservés** : papier crème `#f6f1e1` en fond global, blanc franc `#ffffff` dans la matière (questionnaire, cards, recommandation), filet de niveau saturé en haut de fiche (turquoise `#6fa89e` pour équipe, vert `#7d9670` pour programme, orange `#c79373` pour tactique, violet `#5a4f7a` pour stratégique — tokens `--niv-*` partagés avec tout l'outil), indigo chrome `#4c1d95` pour le bandeau meta et les éléments de chrome global.
+
+**Division du travail chromatique** *(point doctrinal)* — l'**indigo `#4c1d95`** reste le **chrome universel de l'outil** (term-def, bandeaux meta, boutons primaires globaux, navigation principale). Le **vert profond `#1f5945`** prend le rôle de **signature spécifique fiche-question**. Cohabitation propre : indigo violet-bleu vs vert froid-saturé, teintes opposées, aucun télescopage.
+
+**Réserve documentée — palette D, bleu de Prusse `#1d3a5f`**. Si le chantier vie réelle (rédaction des 8-12 fiches-questions MVP, exposition en mode fin) révèle un conflit non anticipé entre le vert profond et le niveau programme (vert désaturé `#7d9670`), bascule prévue vers les tokens D — seul l'accent change, les autres tokens restent. Le mockup comparatif fait foi sur les arbitrages.
+
+**Cuivre brûlé `#a14e1f` écarté** — trois raisons convergentes : (1) sémantique d'alerte qui contredit le bloc *Recommandation* positif ; (2) conflit chromatique structurel avec le niveau tactique (orange désaturé `#c79373`) ; (3) redondance avec le surlignage ambré déjà utilisé sur les anti-patterns des fiches d'indicateur (`project_fiches_double_signal_anti_patterns`).
+
+**Trace doctrinale** : `doc-cadre-visuel.md` § 6.5 *Fiche-question (mode Par ma question)* — qui fait foi en cas de contradiction.
+
+---
+
 ## 5. Mécanisme de reformulation
 
 **Décision actée le 05/05/2026 : double réponse retenue** (et non redirection douce ni miroir socratique).
@@ -213,7 +238,7 @@ Discipline éditoriale du chantier 16 — *« proposer, pas étaler »*. Le marc
 
 | # | Décision | Statut | Pour quand |
 |---|---|---|---|
-| 1 | **Palette définitive du format-fiche-question** | ⏸ ouverte — tranche v3 du mockup contestée par Lætitia (couleurs « affreuses », fade, vieillot) | À reprendre en séance dédiée à la palette, possiblement avec d'autres questions de finition visuelle |
+| 1 | **Palette définitive du format-fiche-question** | ✅ close 06/05/2026 — palette **B (vert profond éprouvé `#1f5945`)** retenue, palette **D (bleu de Prusse `#1d3a5f`)** en réserve documentée. Cuivre écarté. Cf. § 4.5 ci-dessus + `doc-cadre-visuel.md` § 6.5 | — |
 | 2 | **Liste exhaustive des termes-pièges** | ⏸ ouverte — 4 termes identifiés (vélocité, ROI, NPS, story points) | À étoffer par les panels d'experts au fil de la rédaction |
 | 3 | **Volumétrie finale par panel** | ⏸ ouverte — fourchettes posées, à confirmer à la rédaction | À l'arrivée des questions candidates |
 | 4 | **Seuil de bascule responsive de la double réponse** | ⏸ couplée à D4 (chantier 10) | Quand D4 sera arbitrée |
@@ -227,4 +252,5 @@ Discipline éditoriale du chantier 16 — *« proposer, pas étaler »*. Le marc
 ## Journal du document
 
 - **05/05/2026** — création du document. Mission posée, 3 invariants actés, méthodologie panels confirmée, format normalisé arbitré sur 2 variantes, mécanisme de reformulation tranché (double réponse), posture éditoriale (DMAIC, voix directe, bilingue, *Recommandation* positive). Mockups produits dans la séance : `mockup-reformulation-catalogue.html`, `mockup-format-fiche-question.html`. Décisions ouvertes : palette, termes-pièges, volumétrie par panel, responsive D4, rédaction des 8-12 questions MVP.
+- **06/05/2026** — décision 20.1 *Palette définitive du format-fiche-question* close. Arbitrage sur 4 candidates côte à côte (`mockup-palette-fiche-question-comparatif.html` — Sobre niveau / Vert profond éprouvé / Cuivre brûlé / Bleu de Prusse) avec zoom de cohabitation indigo+accent. Décision Lætitia : palette B (vert profond `#1f5945`) retenue ; palette D (bleu de Prusse `#1d3a5f`) en réserve documentée. § 4.5 *Palette de la fiche-question* ajouté ; doctrine tracée dans `doc-cadre-visuel.md` § 6.5. Mémoire : `project_palette_fiche_question_actee.md`.
 - **05/05/2026 (séance soir)** — première fiche-question rédigée éditorialement : *Par où démarrer une démarche d'amélioration continue ?* (panel Coach Lean). Quatre décisions structurantes ajoutées au format normalisé : (1) règle stricte des 3 cards confirmée + lien sortant patrimonial unique comme seule porte d'extension MVP ; (2) mécanisme cards à fiche absente en option mixte ; (3) **doctrine du trio par niveau** (§ 4.4) — la conditionnalité Q2 change le trio lui-même, pas seulement le niveau des fiches ; (4) cross-link entre fiches-questions (0 ou 1). Trois nouvelles décisions ouvertes ajoutées (#6 trio alternatif v2 ; #7 fiche-question méta véracité/pastèque ; #8 mécanisme cross-link). Dette de référentiel identifiée : 4 fiches métriques à créer (First-pass yield × équipe ; Lead time × programme ; COPQ × stratégique ; Écart de vérité × stratégique) — inscrites dans le backlog.
