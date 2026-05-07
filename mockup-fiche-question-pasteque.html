@@ -87,10 +87,13 @@
   .bandeau-scene h2 { margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--encre); }
   .bandeau-scene p { margin: 0.3rem 0 0; font-size: 0.84rem; color: var(--encre-doux); font-style: italic; }
 
+  /* Carte fiche — blanc franc (matière), le crème respire en marge.
+     Doctrine § 6.5 du doc-cadre-visuel : « Crème en fond global, blanc franc dans la matière ».
+     Correction propagée le 07/05/2026 (commit format-fiche-question 17d62f3 du 06/05). */
   .fiche {
     max-width: 880px;
     margin: 0 auto;
-    background: var(--creme-fiche);
+    background: var(--blanc);
     border: 1px solid var(--gris-clair);
     border-radius: 9px;
     overflow: hidden;
@@ -475,6 +478,7 @@
       <li><strong>Lien sortant patrimonial.</strong> Sous le trio, une seule porte d'extension MVP — vers la fiche cadre <em>triangulation déclaratif&nbsp;/ objectif&nbsp;/ humain</em> (en cours de constitution).</li>
       <li><strong>Cross-link activé.</strong> Sous le bloc <em>Recommandation</em>, italique discret, lien vers la fiche-question d'amélioration continue. Réciproque à activer dans le mockup correspondant (l'instance actuelle de <code>mockup-format-fiche-question.html</code> annonce déjà ce cross-link comme « fiche-question à venir » — il devient effectif dès que la réciproque sera posée).</li>
       <li><strong>Pied écoles.</strong> Quatre écoles convoquées en référence patrimoniale, jamais comme choix à faire. La sélection couvre l'arc Drucker (cadre stratégique) → Toyota Way (gemba opérationnel) → Edmondson (psychologie organisationnelle) → DORA-SPACE (mesure logicielle moderne) — quatre traditions distinctes qui convergent sur la triangulation comme principe, divergent sur quel axe est premier.</li>
+      <li><strong>Fond blanc franc — rétrofit 07/05/2026.</strong> La v1 de cette fiche avait conservé un fond crème par propagation d'un bug du mockup format antérieur au commit <code>17d62f3</code> (06/05). Doctrine § 6.5 du <code>doc-cadre-visuel.md</code> appliquée en rétrofit : <em>« Crème en fond global, blanc franc dans la matière. »</em> Le mockup pilotage hebdo souffrait du même défaut, corrigé en parallèle.</li>
       <li><strong>Palette D bleu de Prusse.</strong> Cohérente avec la décision 20.1 close le 06/05/2026 (cf. <code>doc-cadre-visuel.md</code> § 6.5 et <code>doc-catalogue-questions-fines.md</code> § 4.5). Filet de niveau au sommet de la fiche en violet désaturé (niveau stratégique, cohérent avec Q2 = «&nbsp;Toute l'organisation&nbsp;»).</li>
     </ul>
   </div>
