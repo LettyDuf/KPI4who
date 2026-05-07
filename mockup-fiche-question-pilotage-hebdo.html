@@ -12,11 +12,18 @@
      La nouvelle formulation expose le terme-piège « occupation » et légitime la
      double-réponse occupation ↔ flux.
 
-     Trois corrections simultanées :
+     Trois corrections simultanées (v1 → v2) :
        — reformulation de la question pour exposer le piège (retour 3 Lætitia) ;
        — suppression des boutons internes des colonnes (retour 2) — bandeau suffit ;
        — bascule du fond fiche en blanc franc (retour 1) — propagation tardive
          de la doctrine § 6.5, oubliée dans la création des deux mockups suivants.
+
+     Évolution v2 → v3 (07/05/2026) — sur retour Lætitia : « pourquoi ce bandeau
+     d'orientation alors qu'il suffirait de cliquer sur le rectangle ? ».
+     La colonne est l'unité d'action ; le bandeau était redondant (même travers
+     que les boutons supprimés en v2). Suppression du bandeau, colonnes cliquables
+     (cursor pointer + hover discret), libellé de destination en pied de chaque
+     colonne. Doctrine § 4.3 du doc-catalogue actualisée en cohérence.
 
      Variante § 4.3 (à reformulation, double réponse).
      Première matérialisation autonome de cette doctrine hors mockup format.
@@ -156,13 +163,20 @@
     gap: 0.8rem;
   }
   @media (max-width: 720px) { .colonnes { grid-template-columns: 1fr; } }
+  /* .col-rep — colonne entière cliquable (v3, 07/05/2026).
+     Le bandeau d'orientation séparé a été supprimé : la colonne EST l'unité d'action.
+     Le libellé de destination (.col-rep-destination) en pied indique où le clic mène. */
   .col-rep {
     background: var(--blanc);
     padding: 1rem 1.05rem;
     border-radius: 6px;
     border-top: 3px solid var(--gris);
     display: flex; flex-direction: column; gap: 0.55rem;
+    cursor: pointer;
+    transition: border-top-width 0.15s, transform 0.15s;
   }
+  .col-rep:hover { border-top-width: 5px; }
+  .col-rep:hover .col-rep-destination { color: var(--accent); }
   .col-rep.gauche { border-top-color: var(--niv-tactique); }
   .col-rep.droite { border-top-color: var(--niv-equipe); }
   .col-rep-etiquette {
@@ -189,6 +203,21 @@
     font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em;
     color: var(--gris); margin-bottom: 0.25rem; font-weight: 700;
   }
+  /* Libellé de destination en pied de colonne — remplace le bandeau d'orientation
+     supprimé en v3. Discret au repos (gris), passe en accent au hover de la colonne. */
+  .col-rep-destination {
+    margin-top: auto;
+    padding-top: 0.55rem;
+    border-top: 1px dotted var(--gris-clair);
+    font-size: 0.78rem; font-weight: 600;
+    color: var(--gris);
+    transition: color 0.15s;
+  }
+  .col-rep-destination em {
+    font-style: normal; font-weight: 700;
+  }
+  /* Bloc .raccourci-porte supprimé en v3 — redondant avec colonnes cliquables.
+     Doctrine § 4.3 du doc-catalogue actualisée le 07/05/2026.
   .raccourci-porte {
     margin-top: 1rem;
     background: var(--indigo-leger);
@@ -200,6 +229,7 @@
   }
   .raccourci-porte svg { color: var(--indigo); flex-shrink: 0; margin-top: 2px; }
   .raccourci-porte strong { color: var(--indigo); }
+  */
 
   .recommandation {
     background: var(--reco-fond);
@@ -320,6 +350,7 @@
                 <strong>Indicateurs</strong>
                 Capacité utilisée · vélocité par sprint · points engagés vs consommés · # tickets fermés · taux de remplissage
               </div>
+              <div class="col-rep-destination">→ <em>Engagement &amp; humain</em></div>
             </div>
             <div class="col-rep droite">
               <div class="col-rep-etiquette">Ce que vous cherchez peut-être</div>
@@ -329,14 +360,11 @@
                 <strong>Indicateurs</strong>
                 Débit / Throughput · Délai bout à bout / Lead time · taux d'engagements tenus · WIP · Change failure rate
               </div>
+              <div class="col-rep-destination">→ <em>Flux &amp; goulots</em></div>
             </div>
           </div>
         </div>
 
-        <div class="raccourci-porte">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-          <div>Vous serez orienté·e vers <strong>Par mon problème</strong>&nbsp;— <em>Flux &amp; goulots</em> (basculer) ou <em>Engagement &amp; humain</em> (garder).</div>
-        </div>
       </div>
 
       <div class="section">
@@ -361,12 +389,13 @@
   </article>
 
   <div class="note-pedagogique">
-    <strong>Ce que cette fiche montre (v2), en plus de la variante standard.</strong> Une section <em>Votre vrai sujet</em> remplace le questionnaire à 2 questions de cadrage. Juxtaposition courte (mots-clés et indicateurs visibles, phrases franches) ; le bandeau d'orientation sous le bloc indique où le visiteur sera dirigé.
+    <strong>Ce que cette fiche montre (v3), en plus de la variante standard.</strong> Une section <em>Votre vrai sujet</em> remplace le questionnaire à 2 questions de cadrage. Juxtaposition courte (mots-clés et indicateurs visibles, phrases franches). Chaque colonne est cliquable comme un tout : le libellé de destination en pied indique où le clic mène.
 
     <ul>
       <li><strong>Reformulation actée le 07/05/2026.</strong> La question initiale (<em>« Quoi mettre dans mon pilotage hebdomadaire ? »</em>) était ouverte et neutre — incompatible avec la doctrine § 4.3 qui demande un terme-piège dans la formulation pour légitimer la double-réponse. La reformulation expose explicitement le piège : <em>occupation</em> nomme la posture qui mesure l'entrée plutôt que la sortie.</li>
       <li><strong>Boutons internes retirés (v1 → v2).</strong> Les <em>Garder ma question</em> / <em>Basculer</em> de la v1 doublonnaient le bandeau d'orientation. Le bandeau seul porte la décision ; pas de redondance UI.</li>
       <li><strong>Fond blanc franc (v1 → v2).</strong> Doctrine § 6.5 du <code>doc-cadre-visuel.md</code> appliquée : <em>« Crème en fond global, blanc franc dans la matière. »</em> La v1 avait conservé un fond crème par propagation d'un bug du mockup format antérieur au commit <code>17d62f3</code> (06/05/2026). Le mockup pastèque (commit <code>f5fb2df</code>) souffrait du même défaut, corrigé en parallèle.</li>
+      <li><strong>Bandeau d'orientation supprimé, colonnes cliquables (v2 → v3).</strong> Le bandeau séparé sous le bloc <em>Votre vrai sujet</em> (« Vous serez orienté·e vers… ») doublonnait l'action de la colonne — même travers que les boutons supprimés en v2. La colonne est l'unité d'action : <code>cursor: pointer</code> sur <code>.col-rep</code>, hover discret (épaississement de la border-top), libellé de destination en pied de chaque colonne (gris au repos, accent au hover). Doctrine § 4.3 du <code>doc-catalogue-questions-fines.md</code> actualisée en parallèle pour acter ce pattern.</li>
       <li><strong>Filets de niveau différenciés</strong> sur les deux colonnes (tactique pour la gauche — registre direction/RH ; équipe pour la droite — registre quotidien d'équipe). Cohérent avec le système de niveaux de l'application.</li>
       <li><strong>Bloc <em>Recommandation</em> positif</strong> : la solution d'abord (pilotage par ce qui sort), les deux pièges classiques ensuite, avec la <em>loi de Little</em> nommée comme pivot pédagogique pour articuler les deux dérives.</li>
       <li><strong>Cross-link activé vers la fiche pastèque.</strong> Le reporting d'occupation est une forme de déclaratif détaché de l'observable — le pont est éclairant. Réciproque optionnelle, à activer au moment d'une refonte de la fiche pastèque (qui vise déjà la fiche d'amélioration continue, son cross-link existant).</li>
