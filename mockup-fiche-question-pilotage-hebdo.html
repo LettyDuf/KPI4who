@@ -2,11 +2,21 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<title>Mockup-preview — Fiche-question « Quoi mettre dans mon pilotage hebdomadaire ? » (v1)</title>
+<title>Mockup-preview — Fiche-question « Comment mesurer l'occupation hebdomadaire de mon équipe ? » (v2)</title>
 <meta name="generator" content="mockup-preview pour rédaction éditoriale, catalogue de questions fines — chantier 20.5 / 3e fiche-question MVP">
 <style>
   /*
-     Mockup-preview v1 — Fiche-question « Quoi mettre dans mon pilotage hebdomadaire ? ».
+     Mockup-preview v2 — Fiche-question « Comment mesurer l'occupation hebdomadaire de mon équipe ? ».
+     Reformulation actée le 07/05/2026 — la question initiale était ouverte et neutre,
+     sans terme-piège dans la formulation, donc incompatible avec la doctrine § 4.3.
+     La nouvelle formulation expose le terme-piège « occupation » et légitime la
+     double-réponse occupation ↔ flux.
+
+     Trois corrections simultanées :
+       — reformulation de la question pour exposer le piège (retour 3 Lætitia) ;
+       — suppression des boutons internes des colonnes (retour 2) — bandeau suffit ;
+       — bascule du fond fiche en blanc franc (retour 1) — propagation tardive
+         de la doctrine § 6.5, oubliée dans la création des deux mockups suivants.
 
      Variante § 4.3 (à reformulation, double réponse).
      Première matérialisation autonome de cette doctrine hors mockup format.
@@ -80,10 +90,13 @@
   .bandeau-scene h2 { margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--encre); }
   .bandeau-scene p { margin: 0.3rem 0 0; font-size: 0.84rem; color: var(--encre-doux); font-style: italic; }
 
+  /* Carte fiche — blanc franc (matière), le crème respire en marge.
+     Doctrine § 6.5 du doc-cadre-visuel : « Crème en fond global, blanc franc dans la matière ».
+     Correction propagée le 07/05/2026 (commit format-fiche-question 17d62f3 du 06/05). */
   .fiche {
     max-width: 880px;
     margin: 0 auto;
-    background: var(--creme-fiche);
+    background: var(--blanc);
     border: 1px solid var(--gris-clair);
     border-radius: 9px;
     overflow: hidden;
@@ -176,24 +189,6 @@
     font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em;
     color: var(--gris); margin-bottom: 0.25rem; font-weight: 700;
   }
-  .col-rep-bouton {
-    margin-top: auto;
-    padding: 0.5rem 0.95rem;
-    border: 1px solid var(--gris);
-    background: var(--blanc);
-    border-radius: 4px;
-    font-size: 0.83rem; font-weight: 600;
-    color: var(--encre);
-    cursor: pointer;
-    align-self: flex-start;
-    transition: background 0.15s, border-color 0.15s;
-  }
-  .col-rep-bouton:hover { border-color: var(--encre-doux); }
-  .col-rep.droite .col-rep-bouton {
-    background: var(--accent); border-color: var(--accent); color: white;
-  }
-  .col-rep.droite .col-rep-bouton:hover { background: #142a45; border-color: #142a45; }
-
   .raccourci-porte {
     margin-top: 1rem;
     background: var(--indigo-leger);
@@ -290,22 +285,22 @@
 <body>
 
   <div class="titre-mockup">
-    <h1>Fiche-question — « Quoi mettre dans mon pilotage hebdomadaire&nbsp;? »</h1>
+    <h1>Fiche-question — « Comment mesurer l'occupation hebdomadaire de mon équipe&nbsp;? »</h1>
     <p>Variante à reformulation · double réponse · couple <em>Reporting d'occupation</em> ↔ <em>Pilotage par le flux</em> · panel Coach Agile (Scrum Guide / Kanban niveaux de vol / DORA-SPACE).</p>
-    <div class="meta">Mockup-preview v1 — chantier 20.5 (3<sup>e</sup> fiche-question MVP) — 07/05/2026</div>
+    <div class="meta">Mockup-preview v2 — chantier 20.5 (3<sup>e</sup> fiche-question MVP) — 07/05/2026</div>
   </div>
 
   <div class="bandeau-scene">
     <span class="surtitre">Variante 2 — fiche à reformulation · panel Coach Agile</span>
-    <h2>Le visiteur arbitre par juxtaposition entre deux postures de pilotage hebdomadaire</h2>
-    <p>Reporting d'occupation (compter ce qui entre) ou pilotage par le flux (compter ce qui sort). Le bouton primaire à droite oriente vers la posture la plus actionnable au quotidien d'équipe.</p>
+    <h2>Le visiteur arbitre par juxtaposition entre deux mesures hebdomadaires</h2>
+    <p>Reporting d'occupation (compter ce qui entre) ou pilotage par le flux (compter ce qui sort). Le bandeau d'orientation place la colonne <em>droite</em> en posture par défaut au quotidien d'équipe.</p>
   </div>
 
   <article class="fiche">
     <div class="fiche-haut"></div>
     <div class="fiche-corps">
 
-      <h3 class="fiche-question">Quoi mettre dans mon pilotage hebdomadaire&nbsp;?</h3>
+      <h3 class="fiche-question">Comment mesurer l'occupation hebdomadaire de mon équipe&nbsp;?</h3>
 
       <div class="fiche-meta">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
@@ -325,7 +320,6 @@
                 <strong>Indicateurs</strong>
                 Capacité utilisée · vélocité par sprint · points engagés vs consommés · # tickets fermés · taux de remplissage
               </div>
-              <button class="col-rep-bouton">Garder ma question</button>
             </div>
             <div class="col-rep droite">
               <div class="col-rep-etiquette">Ce que vous cherchez peut-être</div>
@@ -335,7 +329,6 @@
                 <strong>Indicateurs</strong>
                 Débit / Throughput · Délai bout à bout / Lead time · taux d'engagements tenus · WIP · Change failure rate
               </div>
-              <button class="col-rep-bouton">Basculer</button>
             </div>
           </div>
         </div>
@@ -352,7 +345,7 @@
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
             Recommandation
           </div>
-          <p>Pour bien faire, structurer le pilotage hebdomadaire autour de ce qui <strong>sort</strong> de l'équipe — débit, délai bout à bout, prévisibilité — plutôt que de ce qui entre. Le pilotage par le flux change la conversation : la salle parle de la valeur livrée et des blocages observés, pas du remplissage et du restant à faire. Le piège classique consiste à transformer le rituel hebdomadaire en <span class="anti-pattern">rapport d'occupation des heures</span>, ou à <span class="anti-pattern">augmenter le WIP pour donner l'impression d'avancer</span> — la <span class="anti-pattern">loi de Little</span> garantit que ces deux dérives allongent mécaniquement le lead time et masquent les vrais blocages.</p>
+          <p>Pour bien faire, mesurer la semaine par ce qui <strong>sort</strong> de l'équipe — débit, délai bout à bout, prévisibilité — plutôt que par ce qui entre. Le pilotage par le flux change la conversation hebdomadaire : la salle parle de la valeur livrée et des blocages observés, pas du remplissage et du restant à faire. Le piège classique consiste à confondre <span class="anti-pattern">mesure d'occupation</span> et <em>pilotage</em>, ou à <span class="anti-pattern">augmenter le WIP pour donner l'impression d'avancer</span> — la <span class="anti-pattern">loi de Little</span> garantit que ces deux dérives allongent mécaniquement le lead time et masquent les vrais blocages.</p>
         </div>
         <div class="cross-link">
           Question liée — <a href="#question=pasteque">Mes indicateurs reflètent-ils la réalité du terrain&nbsp;?</a>
@@ -368,10 +361,12 @@
   </article>
 
   <div class="note-pedagogique">
-    <strong>Ce que cette fiche montre, en plus de la variante standard.</strong> Une section <em>Votre vrai sujet</em> remplace le questionnaire à 2 questions de cadrage. Juxtaposition courte (mots-clés et indicateurs visibles, phrases franches) avec deux boutons d'arbitrage. Le bandeau d'orientation indique où le visiteur sera dirigé selon son choix.
+    <strong>Ce que cette fiche montre (v2), en plus de la variante standard.</strong> Une section <em>Votre vrai sujet</em> remplace le questionnaire à 2 questions de cadrage. Juxtaposition courte (mots-clés et indicateurs visibles, phrases franches) ; le bandeau d'orientation sous le bloc indique où le visiteur sera dirigé.
 
     <ul>
-      <li><strong>Bouton primaire en indigo plein</strong> sur la colonne <em>Basculer</em> (l'option la plus probablement actionnable au quotidien d'équipe) ; bouton neutre sur <em>Garder</em> (l'option n'est pas dénoncée ; reporting d'occupation reste un usage légitime, mais pas pour piloter).</li>
+      <li><strong>Reformulation actée le 07/05/2026.</strong> La question initiale (<em>« Quoi mettre dans mon pilotage hebdomadaire ? »</em>) était ouverte et neutre — incompatible avec la doctrine § 4.3 qui demande un terme-piège dans la formulation pour légitimer la double-réponse. La reformulation expose explicitement le piège : <em>occupation</em> nomme la posture qui mesure l'entrée plutôt que la sortie.</li>
+      <li><strong>Boutons internes retirés (v1 → v2).</strong> Les <em>Garder ma question</em> / <em>Basculer</em> de la v1 doublonnaient le bandeau d'orientation. Le bandeau seul porte la décision ; pas de redondance UI.</li>
+      <li><strong>Fond blanc franc (v1 → v2).</strong> Doctrine § 6.5 du <code>doc-cadre-visuel.md</code> appliquée : <em>« Crème en fond global, blanc franc dans la matière. »</em> La v1 avait conservé un fond crème par propagation d'un bug du mockup format antérieur au commit <code>17d62f3</code> (06/05/2026). Le mockup pastèque (commit <code>f5fb2df</code>) souffrait du même défaut, corrigé en parallèle.</li>
       <li><strong>Filets de niveau différenciés</strong> sur les deux colonnes (tactique pour la gauche — registre direction/RH ; équipe pour la droite — registre quotidien d'équipe). Cohérent avec le système de niveaux de l'application.</li>
       <li><strong>Bloc <em>Recommandation</em> positif</strong> : la solution d'abord (pilotage par ce qui sort), les deux pièges classiques ensuite, avec la <em>loi de Little</em> nommée comme pivot pédagogique pour articuler les deux dérives.</li>
       <li><strong>Cross-link activé vers la fiche pastèque.</strong> Le reporting d'occupation est une forme de déclaratif détaché de l'observable — le pont est éclairant. Réciproque optionnelle, à activer au moment d'une refonte de la fiche pastèque (qui vise déjà la fiche d'amélioration continue, son cross-link existant).</li>
