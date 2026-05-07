@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Mockup-preview — Fiche-question méta « Mes indicateurs reflètent-ils la réalité du terrain ? » (v1)</title>
+<meta name="generator" content="mockup-preview pour rédaction éditoriale, catalogue de questions fines — chantier 20.7">
+<style>
+  /*
+     Mockup-preview v1 — Fiche-question méta « pastèque ».
+
+     Patron particulier (acté avec Lætitia 07/05/2026) :
+       — variante standard, MAIS mécanique inverse de la première fiche-question :
+         les 3 cards restent toujours les MÊMES axes invariants
+         (Déclaratif / Objectif / Humain anonyme).
+         C'est le contenu de chaque card qui varie selon le niveau (Q2),
+         pas le trio lui-même.
+       — Q1 (signal d'alerte) → change l'ORDRE des cards.
+       — Q2 (niveau) → change le CONTENU de chaque card (l'indicateur cible
+         varie selon l'échelle).
+       — Pédagogiquement, la triangulation est invariante, son outillage
+         varie selon l'échelle. Cohérent avec Drucker / Toyota Way / Edmondson.
+
+     Croisement illustré dans cette v1 :
+       Q1 = « Tout est vert dans les rapports, pourtant ça craque »
+       Q2 = « Toute l'organisation »
+       → Card 1 (Humain anonyme) en tête, contenu organisation.
+
+     Palette : D bleu de Prusse (cf. doc-cadre-visuel.md § 6.5).
+     Cross-link activé vers la fiche-question d'amélioration continue
+     (réciproque à activer dans le mockup correspondant).
+  */
+  :root {
+    --creme: #f6f1e1;
+    --creme-fiche: #fbf6e8;
+    --encre: #1c2033;
+    --encre-doux: #3a3f55;
+    --gris: #8b8268;
+    --gris-clair: #d0cdb8;
+    --blanc: #ffffff;
+
+    --indigo: #4c1d95;
+    --indigo-trace: rgba(76, 29, 149, 0.20);
+    --indigo-leger: rgba(76, 29, 149, 0.08);
+
+    --accent: #1d3a5f;
+    --accent-leger: rgba(29, 58, 95, 0.10);
+    --accent-trame: rgba(29, 58, 95, 0.10);
+
+    --niv-equipe: #6fa89e;
+    --niv-equipe-leger: rgba(111, 168, 158, 0.10);
+    --niv-programme: #7d9670;
+    --niv-tactique: #c79373;
+    --niv-strategique: #5a4f7a;
+    --niv-strategique-leger: rgba(90, 79, 122, 0.10);
+
+    --reco-fond: rgba(29, 58, 95, 0.05);
+    --reco-bord: #1d3a5f;
+    --reco-trame: rgba(29, 58, 95, 0.20);
+    --reco-titre: #1d3a5f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1.5rem 3rem;
+    background: var(--creme);
+    color: var(--encre);
+    font-family: -apple-system, 'Segoe UI', system-ui, 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .titre-mockup { text-align: center; margin: 0 auto 1.5rem; max-width: 980px; }
+  .titre-mockup h1 { margin: 0 0 0.4rem; font-size: 1.45rem; color: var(--encre); font-weight: 700; }
+  .titre-mockup p { margin: 0; color: var(--encre-doux); font-style: italic; }
+  .titre-mockup .meta { margin-top: 0.8rem; font-size: 0.78rem; color: var(--gris); }
+
+  .bandeau-scene {
+    max-width: 880px; margin: 2.5rem auto 1.2rem;
+    text-align: center;
+    padding: 0.8rem 1rem;
+    border-top: 1px dashed var(--gris);
+    border-bottom: 1px dashed var(--gris);
+  }
+  .bandeau-scene .surtitre {
+    font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--gris); display: block; margin-bottom: 0.3rem;
+  }
+  .bandeau-scene h2 { margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--encre); }
+  .bandeau-scene p { margin: 0.3rem 0 0; font-size: 0.84rem; color: var(--encre-doux); font-style: italic; }
+
+  .fiche {
+    max-width: 880px;
+    margin: 0 auto;
+    background: var(--creme-fiche);
+    border: 1px solid var(--gris-clair);
+    border-radius: 9px;
+    overflow: hidden;
+  }
+  .fiche-haut { height: 4px; background: var(--niv-strategique); }
+  .fiche-corps { padding: 1.7rem 1.9rem 1.9rem; }
+
+  .fiche-question {
+    margin: 0 0 0.7rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--encre);
+    line-height: 1.3;
+    letter-spacing: -0.005em;
+  }
+
+  .fiche-meta {
+    margin-bottom: 1.7rem;
+    padding: 0.55rem 0.85rem;
+    background: var(--indigo-leger);
+    border-left: 3px solid var(--indigo);
+    border-radius: 0 4px 4px 0;
+    font-size: 0.84rem;
+    color: var(--encre);
+    display: flex; align-items: center; gap: 0.55rem;
+  }
+  .fiche-meta svg { color: var(--indigo); flex-shrink: 0; }
+  .fiche-meta strong { color: var(--encre); font-weight: 600; }
+
+  .section { margin-bottom: 1.7rem; }
+  .section:last-child { margin-bottom: 0; }
+  .section-titre {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gris);
+    font-weight: 700;
+    margin: 0 0 0.7rem;
+  }
+
+  .questionnaire {
+    background: var(--blanc);
+    border: 1px solid var(--gris-clair);
+    border-radius: 7px;
+    padding: 1.15rem 1.25rem;
+  }
+  .qcourte {
+    margin-bottom: 1.15rem;
+    padding-bottom: 1.05rem;
+    border-bottom: 1px dashed var(--gris-clair);
+  }
+  .qcourte:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: 0; }
+  .qcourte-num {
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    background: var(--accent); color: white;
+    width: 1.6rem; height: 1.6rem; border-radius: 50%;
+    font-size: 0.8rem; font-weight: 700;
+    margin-right: 0.55rem;
+    vertical-align: -3px;
+  }
+  .qcourte-label {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--encre);
+  }
+  .qcourte-options {
+    margin: 0.75rem 0 0 2.15rem;
+    display: flex; flex-direction: column; gap: 0.4rem;
+  }
+  .opt {
+    padding: 0.55rem 0.9rem;
+    background: var(--creme);
+    border: 1px solid var(--gris-clair);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: var(--encre);
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .opt:hover { border-color: var(--accent); background: var(--blanc); }
+  .opt.selectionne {
+    background: var(--accent-leger);
+    color: var(--encre);
+    border-color: var(--accent);
+    border-left: 3px solid var(--accent);
+    font-weight: 600;
+  }
+
+  .indicateurs-grille {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.85rem;
+  }
+  @media (max-width: 720px) { .indicateurs-grille { grid-template-columns: 1fr; } }
+
+  .indicateur {
+    background: var(--blanc);
+    border: 1px solid var(--gris-clair);
+    border-top: 3px solid var(--niv-strategique);
+    border-radius: 7px;
+    padding: 0.95rem 1.05rem;
+    display: flex; flex-direction: column; gap: 0.45rem;
+  }
+  .indicateur-axe {
+    font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--accent); font-weight: 700;
+  }
+  .indicateur-niveau {
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--niv-strategique); font-weight: 700;
+  }
+  .indicateur-nom {
+    font-size: 1.02rem; font-weight: 700; color: var(--encre); margin: 0;
+  }
+  .indicateur-nom .traduction {
+    font-weight: 400; color: var(--gris);
+    font-size: 0.86rem; font-style: italic;
+  }
+  .indicateur-intention {
+    font-size: 0.83rem; color: var(--encre-doux); margin: 0;
+    line-height: 1.5;
+  }
+  .indicateur-lien {
+    margin-top: auto;
+    padding-top: 0.4rem;
+    font-size: 0.8rem; color: var(--accent); font-weight: 600;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 0.3rem;
+  }
+  .indicateur-lien-absent {
+    margin-top: auto;
+    padding-top: 0.4rem;
+    font-size: 0.78rem; color: var(--gris); font-style: italic;
+  }
+  .indicateur.tete {
+    border-top-width: 5px;
+  }
+  .indicateur-rang {
+    align-self: flex-start;
+    font-size: 0.68rem; color: var(--gris); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+  }
+
+  .recommandation {
+    background: var(--reco-fond);
+    border: 1px solid var(--reco-bord);
+    border-radius: 7px;
+    padding: 1rem 1.15rem;
+  }
+  .recommandation-titre {
+    font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--reco-titre); font-weight: 700;
+    margin: 0 0 0.6rem;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .recommandation p { margin: 0; font-size: 0.9rem; color: var(--encre); line-height: 1.6; }
+  .anti-pattern {
+    color: var(--accent);
+    background: var(--accent-trame);
+    padding: 0 0.2em;
+    border-radius: 2px;
+    text-decoration: underline dotted var(--accent) 1.5px;
+    text-underline-offset: 0.18em;
+    font-weight: 600;
+    cursor: help;
+  }
+
+  .ecoles-pied {
+    margin-top: 1.7rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--gris-clair);
+    font-size: 0.79rem;
+    color: var(--encre-doux);
+    line-height: 1.55;
+  }
+  .ecoles-pied strong {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gris);
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+  }
+  .ecoles-pied .liste {
+    font-style: italic;
+    color: var(--encre-doux);
+  }
+
+  .lien-sortant {
+    margin-top: 0.9rem;
+    padding-top: 0.7rem;
+    border-top: 1px dotted var(--gris-clair);
+    font-size: 0.82rem;
+  }
+  .lien-sortant a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .lien-sortant a:hover { text-decoration: underline; }
+  .lien-sortant .surtitre-lien {
+    display: block;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gris);
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+  .lien-sortant .mention-absent {
+    color: var(--gris); font-style: italic; font-size: 0.78rem; font-weight: 400;
+    margin-left: 0.4rem;
+  }
+
+  .cross-link {
+    margin-top: 0.9rem;
+    font-size: 0.82rem;
+    font-style: italic;
+    color: var(--encre-doux);
+  }
+  .cross-link a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .cross-link a:hover { text-decoration: underline; }
+
+  .note-pedagogique {
+    max-width: 880px; margin: 1rem auto 0;
+    padding: 0.85rem 1.1rem;
+    background: var(--creme-fiche);
+    border-left: 3px solid var(--gris);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.82rem;
+    color: var(--encre-doux);
+    line-height: 1.55;
+  }
+  .note-pedagogique strong { color: var(--encre); }
+  .note-pedagogique ul { margin: 0.4rem 0 0; padding-left: 1.2rem; }
+  .note-pedagogique li { margin-bottom: 0.35rem; }
+  .note-pedagogique table {
+    width: 100%; border-collapse: collapse; margin: 0.7rem 0 0; font-size: 0.78rem;
+  }
+  .note-pedagogique th, .note-pedagogique td {
+    text-align: left; padding: 0.45rem 0.55rem; vertical-align: top;
+    border-bottom: 1px dotted var(--gris-clair);
+  }
+  .note-pedagogique th {
+    color: var(--gris); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.7rem;
+  }
+  .note-pedagogique td.axe-cell { font-weight: 600; color: var(--encre); }
+  .note-pedagogique .absent { color: var(--gris); font-style: italic; }
+
+  .pied-mockup {
+    max-width: 880px; margin: 3rem auto 0;
+    padding-top: 1.2rem; border-top: 1px solid var(--gris-clair);
+    text-align: center; font-style: italic;
+    color: var(--gris); font-size: 0.85rem;
+  }
+  .pied-mockup .citation { color: var(--encre-doux); margin-bottom: 0.3rem; }
+</style>
+</head>
+<body>
+
+  <div class="titre-mockup">
+    <h1>Fiche-question méta — « Mes indicateurs reflètent-ils la réalité du terrain&nbsp;? »</h1>
+    <p>Variante standard · trio à 3 axes invariants (Déclaratif / Objectif / Humain anonyme) · palette D bleu de Prusse · panel Drucker / Toyota Way / Edmondson / DORA-SPACE.</p>
+    <div class="meta">Mockup-preview v1 — chantier 20.7 — 07/05/2026</div>
+  </div>
+
+  <div class="bandeau-scene">
+    <span class="surtitre">Variante 1 — fiche méta · effet pastèque</span>
+    <h2>Croisement illustré : « Tout est vert dans les rapports, pourtant ça craque » × « Toute l'organisation »</h2>
+    <p>L'axe <em>Humain anonyme</em> remonte en card de tête (le signal d'alerte appelle d'abord le ressenti protégé), les contenus pointent vers les indicateurs niveau organisation.</p>
+  </div>
+
+  <article class="fiche">
+    <div class="fiche-haut"></div>
+    <div class="fiche-corps">
+
+      <h3 class="fiche-question">Mes indicateurs reflètent-ils la réalité du terrain&nbsp;?</h3>
+
+      <div class="fiche-meta">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg>
+        <span>Deux questions courtes, <strong>deux minutes</strong>, vous repartez avec trois indicateurs candidats pour trianguler ce que vos chiffres ne disent peut-être pas.</span>
+      </div>
+
+      <div class="section">
+        <div class="section-titre">Cadrage</div>
+        <div class="questionnaire">
+          <div class="qcourte">
+            <span class="qcourte-num">1</span>
+            <span class="qcourte-label">Quel signal vous a alerté&nbsp;?</span>
+            <div class="qcourte-options">
+              <div class="opt selectionne">Tout est vert dans les rapports, pourtant ça craque</div>
+              <div class="opt">Les chiffres ne disent pas la même chose que le terrain</div>
+              <div class="opt">Les équipes ne croient plus aux annonces</div>
+              <div class="opt">Les surprises arrivent toujours en fin de cycle</div>
+            </div>
+          </div>
+          <div class="qcourte">
+            <span class="qcourte-num">2</span>
+            <span class="qcourte-label">Où trianguler&nbsp;?</span>
+            <div class="qcourte-options">
+              <div class="opt">Une équipe pilote</div>
+              <div class="opt">Un programme entier</div>
+              <div class="opt selectionne">Toute l'organisation</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-titre">Trois axes pour trianguler</div>
+        <div class="indicateurs-grille">
+
+          <div class="indicateur tete">
+            <span class="indicateur-rang">Card 1 — par où commencer</span>
+            <div class="indicateur-axe">Axe humain anonyme</div>
+            <div class="indicateur-niveau">Stratégique</div>
+            <h4 class="indicateur-nom">Écart de vérité stratégique <span class="traduction">/ Strategic Truth Gap</span></h4>
+            <p class="indicateur-intention">Audit semestriel comparant la stratégie déclarée (priorités annoncées) aux ressources réellement allouées (budget, agenda, talents) et à la perception anonyme des équipes. Miroir lucide pour le board, jamais arme contre une fonction.</p>
+            <a href="#fiche=s12" class="indicateur-lien">Voir la fiche →</a>
+          </div>
+
+          <div class="indicateur">
+            <div class="indicateur-axe">Axe déclaratif</div>
+            <div class="indicateur-niveau">Stratégique</div>
+            <h4 class="indicateur-nom">Objectifs stratégiques annuels <span class="traduction">/ OKR</span></h4>
+            <p class="indicateur-intention">Mesurer la part des Key Results déclarés qui décrivent un résultat utilisateur observable, plutôt qu'une activité interne. Un OKR qui dit « lancer » au lieu de « faire adopter par X&nbsp;% » est une déclaration sans miroir.</p>
+            <a href="#fiche=s4" class="indicateur-lien">Voir la fiche →</a>
+          </div>
+
+          <div class="indicateur">
+            <div class="indicateur-axe">Axe objectif</div>
+            <div class="indicateur-niveau">Stratégique</div>
+            <h4 class="indicateur-nom">Coût de la non-qualité <span class="traduction">/ COPQ</span></h4>
+            <p class="indicateur-intention">Chiffrer ce que coûte chaque année le travail refait, les défauts livrés, les rappels client, la dette technique remboursée. La voix la plus tangible de l'écart entre ce qu'on dit livrer et ce qu'on livre vraiment.</p>
+            <a href="#fiche=s11" class="indicateur-lien">Voir la fiche →</a>
+          </div>
+
+        </div>
+        <div class="lien-sortant">
+          <span class="surtitre-lien">Aller plus loin</span>
+          <a href="#">Voir tous les indicateurs canoniques de la triangulation déclaratif&nbsp;/ objectif&nbsp;/ humain →</a>
+          <span class="mention-absent">(fiche cadre en cours de constitution)</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="recommandation">
+          <div class="recommandation-titre">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+            Recommandation — niveau organisation
+          </div>
+          <p>Pour bien faire, cadencer un audit semestriel qui rapproche les trois axes au comité de direction, et le traiter comme un <strong>miroir</strong> pour le board, jamais comme un <strong>bilan</strong> pour les équipes. La triangulation au stratégique réussit quand elle change la conversation du comité, pas quand elle produit un score. Le piège classique consiste à <span class="anti-pattern">publier l'audit en interne sans accompagnement</span>, ou à <span class="anti-pattern">réécrire la stratégie déclarée pour qu'elle ressemble à l'exécution observée</span> — l'écart tombe à zéro mais l'organisation perd toute capacité de pilotage.</p>
+        </div>
+        <div class="cross-link">
+          Question liée — <a href="#question=amelioration-continue">Par où démarrer une démarche d'amélioration continue&nbsp;?</a>
+        </div>
+      </div>
+
+      <div class="ecoles-pied">
+        <strong>Cette question s'appuie sur</strong>
+        <span class="liste"><em>Drucker — management par objectifs</em> (le corollaire pervers de <em>what's measured improves</em>&nbsp;: ce qui n'est pas mesuré dérive sans qu'on le voie) · <em>Toyota Way — Genchi Genbutsu et Andon</em> (Liker, Imai — aller voir sur place et signaler sans peur) · <em>Edmondson — sécurité psychologique</em> (l'humain dit la vérité quand il est protégé) · <em>DORA / SPACE</em> (la performance se triangule entre satisfaction perçue, mesures objectives et signaux humains, jamais sur une seule dimension). Les écoles convergent sur l'idée qu'aucune dimension de mesure n'est suffisante seule&nbsp;; elles divergent sur quelle dimension est <em>première</em> — le vécu, l'observable, ou la déclaration.</span>
+      </div>
+
+    </div>
+  </article>
+
+  <div class="note-pedagogique">
+    <strong>Ce que cette fiche montre (v1).</strong> Le rendu illustré ici correspond au croisement Q1 = <em>« Tout est vert dans les rapports, pourtant ça craque »</em> × Q2 = <em>« Toute l'organisation »</em>. La mécanique est différente de la première fiche-question (« Par où démarrer une démarche d'amélioration continue&nbsp;? ») :
+
+    <ul>
+      <li><strong>3 axes invariants, jamais 3 trios différents.</strong> Les trois cards sont toujours les mêmes axes — <em>Déclaratif</em>, <em>Objectif</em>, <em>Humain anonyme</em>. C'est la définition même de la triangulation : trois angles distincts sur la même réalité, jamais un seul. Ce qui varie, c'est l'<strong>ordre</strong> des cards (selon Q1) et le <strong>contenu</strong> de chaque card (selon Q2).</li>
+      <li><strong>Q1 → ordre des cards.</strong> <em>« Tout est vert ça craque »</em> → axe Humain anonyme en card 1 (chercher le ressenti d'abord). <em>« Les chiffres ne disent pas la même chose que le terrain »</em> ou <em>« les surprises en fin de cycle »</em> → axe Objectif en card 1 (rebrancher le réel observable). <em>« Les équipes ne croient plus aux annonces »</em> → axe Déclaratif en card 1 (auditer ce qui est dit avant tout).</li>
+      <li><strong>Q2 → contenu de chaque card.</strong> Les trois indicateurs candidats varient avec l'échelle. Voir la matrice complète des 9 cards possibles ci-dessous.</li>
+      <li><strong>Cards à fiche absente.</strong> Deux cases sur neuf pointent vers une fiche en cours de constitution — les deux axes <em>Déclaratif</em> aux niveaux équipe et programme. Cette absence est <strong>pédagogiquement éloquente</strong>&nbsp;: le référentiel n'a pas encore d'instrument frontal pour l'auto-déclaration locale, qui est pourtant le terrain où la pastèque pousse. La dette est rendue visible, le concept est nommé, le visiteur apprend.</li>
+      <li><strong>Lien sortant patrimonial.</strong> Sous le trio, une seule porte d'extension MVP — vers la fiche cadre <em>triangulation déclaratif&nbsp;/ objectif&nbsp;/ humain</em> (en cours de constitution).</li>
+      <li><strong>Cross-link activé.</strong> Sous le bloc <em>Recommandation</em>, italique discret, lien vers la fiche-question d'amélioration continue. Réciproque à activer dans le mockup correspondant (l'instance actuelle de <code>mockup-format-fiche-question.html</code> annonce déjà ce cross-link comme « fiche-question à venir » — il devient effectif dès que la réciproque sera posée).</li>
+      <li><strong>Pied écoles.</strong> Quatre écoles convoquées en référence patrimoniale, jamais comme choix à faire. La sélection couvre l'arc Drucker (cadre stratégique) → Toyota Way (gemba opérationnel) → Edmondson (psychologie organisationnelle) → DORA-SPACE (mesure logicielle moderne) — quatre traditions distinctes qui convergent sur la triangulation comme principe, divergent sur quel axe est premier.</li>
+      <li><strong>Palette D bleu de Prusse.</strong> Cohérente avec la décision 20.1 close le 06/05/2026 (cf. <code>doc-cadre-visuel.md</code> § 6.5 et <code>doc-catalogue-questions-fines.md</code> § 4.5). Filet de niveau au sommet de la fiche en violet désaturé (niveau stratégique, cohérent avec Q2 = «&nbsp;Toute l'organisation&nbsp;»).</li>
+    </ul>
+  </div>
+
+  <div class="note-pedagogique" style="margin-top: 1.2rem;">
+    <strong>Matrice complète des 9 cards possibles (3 axes × 3 niveaux).</strong> Chaque cellule donne le nom de l'indicateur, son intention d'usage et la fiche cible (existante ou en cours de constitution).
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 17%;">Axe</th>
+          <th style="width: 27%;">Une équipe pilote</th>
+          <th style="width: 28%;">Un programme entier</th>
+          <th style="width: 28%;">Toute l'organisation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="axe-cell">Déclaratif<br><span style="font-weight: 400; font-size: 0.72rem; color: var(--gris);">ce qu'on dit</span></td>
+          <td>
+            <strong>«&nbsp;Done&nbsp;» auto-déclaré en sprint review</strong>
+            <div style="margin-top: 0.25rem;">Compter, à chaque revue, l'écart entre ce que l'équipe annonce comme « fait » et ce qui passe le critère d'acceptation 7&nbsp;jours plus tard. Révèle la pression cachée à clôturer pour clôturer.</div>
+            <div class="absent" style="margin-top: 0.3rem;">fiche en cours de constitution</div>
+          </td>
+          <td>
+            <strong>RAG status programme déclaré par le PM</strong>
+            <div style="margin-top: 0.25rem;">Capter la fréquence des passages directs Vert → Rouge sans phase Orange. Une couleur qui saute saute parce qu'un signal a été retenu trop longtemps.</div>
+            <div class="absent" style="margin-top: 0.3rem;">fiche en cours de constitution</div>
+          </td>
+          <td>
+            <strong>Objectifs stratégiques annuels (OKR)</strong>
+            <div style="margin-top: 0.25rem;">Mesurer la part des Key Results déclarés qui décrivent un résultat utilisateur observable, plutôt qu'une activité interne. Un OKR qui dit «&nbsp;lancer&nbsp;» au lieu de «&nbsp;faire adopter par X&nbsp;%&nbsp;» est une déclaration sans miroir.</div>
+            <div style="margin-top: 0.3rem; color: var(--accent); font-weight: 600;">→ s4</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="axe-cell">Objectif<br><span style="font-weight: 400; font-size: 0.72rem; color: var(--gris);">ce qu'on observe</span></td>
+          <td>
+            <strong>Premier passage conforme (First-pass yield)</strong>
+            <div style="margin-top: 0.25rem;">Compter la part des livrables qui passent sans aller-retour. Indicateur frontal de qualité réelle, indifférent à ce qui a été coché « fait ».</div>
+            <div style="margin-top: 0.3rem; color: var(--accent); font-weight: 600;">→ lss-1</div>
+          </td>
+          <td>
+            <strong>Délai bout-en-bout du programme (Lead time)</strong>
+            <div style="margin-top: 0.25rem;">Mesurer le temps observable entre la commande et la mise en main des utilisateurs. Insensible aux jalons internes intermédiaires.</div>
+            <div style="margin-top: 0.3rem; color: var(--accent); font-weight: 600;">→ p9</div>
+          </td>
+          <td>
+            <strong>Coût de la non-qualité (COPQ)</strong>
+            <div style="margin-top: 0.25rem;">Chiffrer ce que coûte chaque année le travail refait, les défauts livrés, les rappels client, la dette technique remboursée. La voix la plus tangible de l'écart entre ce qu'on dit livrer et ce qu'on livre vraiment.</div>
+            <div style="margin-top: 0.3rem; color: var(--accent); font-weight: 600;">→ s11</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="axe-cell">Humain anonyme<br><span style="font-weight: 400; font-size: 0.72rem; color: var(--gris);">ce qu'on vit</span></td>
+          <td>
+            <strong>Indice de bien-être de l'équipe (Team Health Check)</strong>
+            <div style="margin-top: 0.25rem;">Sondage anonyme rapide sur engagement, charge, sécurité psychologique. À ne JAMAIS utiliser pour évaluer individuellement — il s'effondre dès qu'il devient instrument de jugement.</div>
+            <div style="margin-top: 0.3rem; color: var(--accent); font-weight: 600;">→ x4</div>
+          </td>
+          <td>
+            <strong>Satisfaction des parties prenantes anonyme</strong>
+            <div style="margin-top: 0.25rem;">Sondage anonymisé après chaque livraison majeure auprès des commanditaires et utilisateurs clés. Les biais d'expression baissent quand l'identité est protégée.</div>
+            <div style="margin-top: 0.3rem; color: var(--accent); font-weight: 600;">→ p4</div>
+          </td>
+          <td>
+            <strong>Écart de vérité stratégique (Strategic Truth Gap)</strong>
+            <div style="margin-top: 0.25rem;">Audit semestriel comparant la stratégie déclarée aux ressources réellement allouées et à la perception anonyme des équipes. Miroir lucide pour le board, jamais arme contre une fonction.</div>
+            <div style="margin-top: 0.3rem; color: var(--accent); font-weight: 600;">→ s12</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note-pedagogique" style="margin-top: 1.2rem;">
+    <strong>Trois recommandations possibles selon Q2 (ici l'organisation est affichée).</strong>
+
+    <ul>
+      <li><strong>Niveau équipe.</strong> Pour bien faire, choisir un seul des trois axes pour démarrer — celui qui colle au signal d'alerte que vous percevez — et le tenir pendant 3&nbsp;cycles avant d'en ajouter un autre. La triangulation se construit par couches successives, jamais en installant les trois capteurs le même mois. Le piège classique consiste à <em>brancher les trois axes simultanément sans nommer le rituel qui en parle</em>, ou à <em>utiliser le sondage de bien-être pour coacher individuellement</em> — l'humain anonyme s'effondre dès qu'il sert à juger une personne.</li>
+      <li><strong>Niveau programme.</strong> Pour bien faire, ouvrir un cycle d'audit trimestriel qui confronte les trois axes en une seule lecture, sans jamais croiser les sources d'identification. La triangulation est <em>un système de regards</em>, pas un système de surveillance ; le commanditaire qui parle anonymement ne doit jamais pouvoir être ré-identifié à partir des autres signaux. Le piège classique consiste à <em>publier les écarts comme palmarès des programmes</em>, ou à <em>demander aux PM d'expliquer publiquement leur RAG</em> — la déclaration honnête se ferme sous la pression du commentaire.</li>
+      <li><strong>Niveau organisation</strong> (affiché ci-dessus). Pour bien faire, cadencer un audit semestriel qui rapproche les trois axes au comité de direction, traité comme un <em>miroir</em> pour le board, jamais comme un <em>bilan</em> pour les équipes. La triangulation au stratégique réussit quand elle change la conversation du comité, pas quand elle produit un score. Le piège classique consiste à <em>publier l'audit en interne sans accompagnement</em>, ou à <em>réécrire la stratégie déclarée pour qu'elle ressemble à l'exécution observée</em> — l'écart tombe à zéro mais l'organisation perd toute capacité de pilotage.</li>
+    </ul>
+  </div>
+
+  <div class="pied-mockup">
+    <div class="citation">«&nbsp;Vert dehors, rouge dedans : un système d'indicateurs qui ne triangule pas est une pastèque qui s'ignore.&nbsp;»</div>
+    Mockup-preview jetable · ne modifie pas <code>cadre-indicateurs.html</code> · chantier 20.7
+  </div>
+
+</body>
+</html>
