@@ -49,10 +49,10 @@
     --indigo-trace: rgba(76, 29, 149, 0.20);
     --indigo-leger: rgba(76, 29, 149, 0.08);
 
-    /* Vert profond éprouvé — signature spécifique fiche-question (palette B) */
-    --accent: #1f5945;
-    --accent-leger: rgba(31, 89, 69, 0.10);
-    --accent-trame: rgba(31, 89, 69, 0.10);  /* atténué le 06/05/2026 — éviter la monochromie excessive */
+    /* Bleu de Prusse — signature spécifique fiche-question (palette D, bascule 06/05/2026 après audit visuel cross-niveaux : B vert profond confondait avec niv-équipe ET niv-programme, D ne confond qu'avec niv-stratégique) */
+    --accent: #1d3a5f;
+    --accent-leger: rgba(29, 58, 95, 0.10);
+    --accent-trame: rgba(29, 58, 95, 0.10);  /* atténué le 06/05/2026 — éviter la monochromie excessive */
 
     /* Couleurs des niveaux — désaturées Doux */
     --niv-equipe: #6fa89e;        /* turquoise désaturé */
@@ -61,11 +61,11 @@
     --niv-tactique: #c79373;      /* orange désaturé */
     --niv-strategique: #5a4f7a;   /* violet désaturé */
 
-    /* Recommandation — vert profond éprouvé, ton calme et positif */
-    --reco-fond: rgba(31, 89, 69, 0.05);
-    --reco-bord: #1f5945;
-    --reco-trame: rgba(31, 89, 69, 0.20);
-    --reco-titre: #1f5945;
+    /* Recommandation — bleu de Prusse, ton calme et institutionnel */
+    --reco-fond: rgba(29, 58, 95, 0.05);
+    --reco-bord: #1d3a5f;
+    --reco-trame: rgba(29, 58, 95, 0.20);
+    --reco-titre: #1d3a5f;
   }
   * { box-sizing: border-box; }
   body {
@@ -388,7 +388,7 @@
   .col-rep.droite .col-rep-bouton {
     background: var(--accent); border-color: var(--accent); color: white;
   }
-  .col-rep.droite .col-rep-bouton:hover { background: #163d2f; border-color: #163d2f; }
+  .col-rep.droite .col-rep-bouton:hover { background: #142a45; border-color: #142a45; }
 
   /* Bandeau d'orientation */
   .raccourci-porte {
@@ -541,7 +541,7 @@
       <li><strong>Lien sortant patrimonial unique.</strong> Sous le trio, une seule porte d'extension MVP — vers la fiche cadre Lean qui liste tous les indicateurs canoniques par école.</li>
       <li><strong>Cross-link.</strong> Sous le bloc <em>Recommandation</em>, italique discret, lien vers une fiche-question liée (ici la fiche-question méta sur l'effet pastèque, à rédiger).</li>
       <li><strong>Pied écoles.</strong> 4 écoles du panel Coach Lean en référence patrimoniale, jamais comme choix.</li>
-      <li><strong>Palette v4.</strong> Décision 20.1 close le 06/05/2026 : palette <strong>B (vert profond éprouvé `#1f5945`)</strong> retenue après arbitrage sur 4 candidates côte à côte (Sobre niveau / Vert profond éprouvé / Cuivre brûlé / Bleu de Prusse — cf. <code>mockup-palette-fiche-question-comparatif.html</code>). Division du travail chromatique : indigo = chrome universel ; vert profond = signature spécifique fiche-question. Bleu de Prusse en réserve documentée.</li>
+      <li><strong>Palette v4.2.</strong> Décision 20.1 close le 06/05/2026 en deux temps : (i) palette <strong>B vert profond éprouvé `#1f5945`</strong> initialement retenue après arbitrage sur 4 candidates côte à côte (cf. <code>mockup-palette-fiche-question-comparatif.html</code>) ; (ii) bascule sur <strong>D bleu de Prusse `#1d3a5f`</strong> le même jour après audit visuel cross-niveaux (cf. <code>mockup-palette-fiche-question-niveaux.html</code>) — B confondait perceptivement avec deux niveaux (équipe + programme, deux teintes vertes), D ne confond qu'avec un seul (stratégique). Division du travail chromatique inchangée : indigo `#4c1d95` = chrome universel ; bleu de Prusse `#1d3a5f` = signature spécifique fiche-question. B en réserve documentée comme alternative chaude écartée pour confusion à deux niveaux.</li>
     </ul>
   </div>
 
