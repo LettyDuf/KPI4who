@@ -4173,6 +4173,9 @@ CM.IndicateursMeta = (function() {
     'x4': { tags:['humain'],                     cadres:['generique'] },
     'x5': { tags:['flux','valeur'],              cadres:['generique'] },
 
+    /* Équipes — Lean Six Sigma orthodoxe (qualité statistique de processus) */
+    'lss-1': { tags:['qualite','flux'],          cadres:['lean'] },
+
     /* Équipes — Commercial */
     'af-c1': { tags:['valeur'],                  cadres:['generique'] },
     'af-c2': { tags:['delais','flux'],           cadres:['generique'] },
@@ -6145,6 +6148,25 @@ CM.Referentiel.ajouter([
     risque:'Une équipe peut livrer 30 fonctionnalités inutiles et sembler très performante. Remplacer par des indicateurs d\'impact.',
     alt:'Débit · Indicateurs d\'impact (KII) · Résultats cles (ORC)',
     roles:['chef-équipe','portefeuille'], prioritaire:false, fiabilite:'risque', maturite_min:'debutant'
+  }
+]);
+</script>
+
+
+<!-- ══ DATA : Équipes — Lean Six Sigma orthodoxe (lss-1 et suivants) ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'lss-1', niveau:'operationnel', type:'ICC', icone:'✅',
+    nom:'Premier passage conforme (First-Pass Yield)',
+    definition:'Pourcentage d\'unités, livrables ou tickets qui passent une étape technique <strong>sans nécessiter aucune retouche</strong> (correction, reprise, bug fix, repasse). Indicateur statistique de qualité de processus, hérité de la <span class="term-def" data-def="Tradition Six Sigma : approche statistique de la qualité issue de Motorola dans les années 1980, formalisée par Mikel Harry et adoptée par GE sous Jack Welch. Vise la réduction de la variabilité jusqu\'à 3,4 défauts par million d\'opportunités (niveau 6σ).">tradition Six Sigma</span> et appliqué partout où un livrable peut être « bon du premier coup » ou non. À distinguer soigneusement du <a href="#fiche=p6">taux d\'acceptation au premier passage</a> qui se mesure côté programme sur des livraisons majeures et capte un outcome relationnel commanditaire, et de l\'<a href="#fiche=o3">indicateur DORA de taux d\'échec des changements</a> qui ne compte que les déploiements en production.',
+    objectif:'Mesurer la qualité <em>intrinsèque</em> du processus — combien d\'unités sortent bonnes du premier coup, sans la surcouche du contrôle final. Un FPY élevé indique que la conception, les standards et la prévention fonctionnent en amont. Un FPY bas indique que le processus s\'appuie trop sur la détection en aval (revue, contrôle, test final) — symptôme classique d\'un processus encore au stade <em>Detect</em> plutôt que <em>Prevent</em> dans la maturité Lean Six Sigma.',
+    frequence:'Hebdomadaire — revue à la rétrospective',
+    exemple_ent:'Sur une semaine, 80 tickets sortis : 56 ont été acceptés sans retouche en revue de code, 24 ont nécessité au moins une correction. FPY = 70 %. Lecture honnête : un livrable sur trois nécessite au moins une boucle de retouche — la prévention amont (clarté de la définition de fini, standards de revue partagée, exemples concrets) est probablement insuffisante. Levier prioritaire : améliorer la phase amont, pas durcir la revue (qui augmenterait le rejet sans réduire le coût).',
+    exemple_eq:'Pour une équipe produit développant du logiciel, FPY se calcule sur l\'étape « revue de code » : nombre de pull-requests fusionnées sans modification demandée / nombre total de pull-requests soumises. Pour une équipe support, FPY se calcule sur les tickets résolus à la première intervention sans réouverture. Le calcul est <strong>local à l\'étape</strong> mesurée — il n\'y a pas de « FPY d\'équipe », il y a un FPY par étape critique.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Définition de \'passe au premier coup\' négociée à la baisse pour gonfler la mesure. Effet Goodhart classique : on relâche les standards de revue plutôt que d\'améliorer la prévention amont.">relâchement des critères d\'acceptation</span>, comptage uniquement des étapes faciles en omettant les étapes complexes, usage <strong>descendant et accusatoire</strong> (« pourquoi votre FPY est bas ? »), agrégation en « note globale d\'équipe » qui dissout l\'analyse par étape. <span class="term-def" data-def="Principe de Goodhart : dès qu\'une mesure devient un objectif, elle cesse d\'être une bonne mesure. Cibler un FPY de 100 % pousse à éviter les sujets risqués plutôt qu\'à mieux les préparer.">Effet Goodhart</span> garanti si l\'on cible un FPY de 100 % : on n\'apprend plus, on évite. À lire avec le <a href="#fiche=o5">cycle time</a> pour vérifier qu\'un FPY haut n\'est pas obtenu au prix d\'un cycle long de pré-validation excessive.',
+    alt:'Si l\'objectif est de mesurer la <strong>conformité contractuelle</strong> d\'une livraison majeure côté commanditaire, ce n\'est pas le bon indicateur — préférer le <a href="#fiche=p6">taux d\'acceptation au premier passage</a> (niveau programme). Si l\'objectif est de mesurer la <strong>stabilité en production</strong> après déploiement, préférer le <a href="#fiche=o3">taux d\'échec des changements (DORA)</a>.',
+    roles:['chef-équipe','membre-équipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant'
   }
 ]);
 </script>
