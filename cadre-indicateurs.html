@@ -7351,8 +7351,8 @@ CM.Stepper = (function() {
       if (vue) vue.hidden = true;
       _reinitialiser();
       var mode = (CM.Preferences && CM.Preferences.lire)
-        ? CM.Preferences.lire('accueil', 'pyramide')
-        : 'pyramide';
+        ? CM.Preferences.lire('accueil', 'portes')
+        : 'portes';
       if (CM.App && CM.App.afficherAccueil) CM.App.afficherAccueil(mode);
     }
 
@@ -9071,7 +9071,7 @@ CM.App = (function() {
   function retourAccueil() {
     contexte = null;
     réponses = {};
-    var mode = CM.Preferences.lire('accueil', 'pyramide');
+    var mode = CM.Preferences.lire('accueil', 'portes');
     _montrerAccueil(mode);
     document.getElementById('app').classList.remove('actif');
     /* Réinitialiser l'onglet actif sur la vue d'entrée par défaut.
@@ -9919,7 +9919,7 @@ CM.App = (function() {
 
   /* ─── Initialisation ─── */
   function init() {
-    var mode = CM.Preferences.lire('accueil', 'pyramide');
+    var mode = CM.Preferences.lire('accueil', 'portes');
     _montrerAccueil(mode);
     document.getElementById('app').classList.remove('actif');
     document.addEventListener('keydown', function(e) {
