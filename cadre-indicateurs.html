@@ -2899,6 +2899,42 @@
     .accueil-unifie .cartouche.deplie {
       border-color: var(--niv-1);
       box-shadow: 0 1px 6px rgba(26, 35, 126, 0.08);
+      /* 23.d-1 : quand la cartouche est dépliée, son bord inférieur s'efface
+         pour s'attacher visuellement au panneau qui suit. */
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      border-bottom-color: transparent;
+    }
+
+    /* Panneau dépliable d'une cartouche (strates 3 et 6 du § 6.1).
+       En 23.d-1 : la mécanique de toggle est branchée. Le contenu interne
+       est posé dans des sous-chantiers ultérieurs : 23.d-3 pour la cartouche
+       question (index inline des fiches-questions), 23.e pour la cartouche
+       compteur (liste filtrée 2 colonnes). Le panneau de la cartouche
+       compteur réutilise l'élément .liste-fiches existant. */
+    .accueil-unifie .panneau-cartouche {
+      background: #ffffff;
+      border: 1px solid var(--niv-1);
+      border-top: none;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      padding: 1.1rem 1.15rem 1.25rem;
+      /* Compense le gap:1rem du conteneur flex pour que le panneau s'attache
+         visuellement à la cartouche dépliée. */
+      margin-top: -1rem;
+      animation: accueil-unifie-fade-in 0.18s ease-out;
+    }
+    /* La liste-fiches sert de panneau pour la cartouche compteur — on lui
+       applique le même contour attaché quand elle est révélée. */
+    .accueil-unifie .liste-fiches {
+      background: #ffffff;
+      border: 1px solid var(--niv-1);
+      border-top: none;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      padding: 1.1rem 1.15rem 1.25rem;
+      margin-top: -1rem;
+      animation: accueil-unifie-fade-in 0.18s ease-out;
     }
     .accueil-unifie .cartouche-libelle {
       display: flex;
@@ -3396,13 +3432,16 @@
     </div>
 
     <!-- Cartouche compagnon « Par ma question » — repliée par défaut -->
-    <button class="cartouche" type="button" data-cartouche="question" aria-expanded="false">
+    <button class="cartouche" type="button" data-cartouche="question" aria-expanded="false" aria-controls="panneau-cartouche-question">
       <span class="cartouche-libelle">
         <span><strong>6</strong> <span class="total">questions terrain</span></span>
         <span class="sous-titre">Une question concr&egrave;te, une fiche qui &eacute;claire.</span>
       </span>
       <span class="cartouche-chevron"><span class="libelle-action">Voir</span> &#x25BE;</span>
     </button>
+
+    <!-- Panneau dépliable de la cartouche question — peuplé en 23.d-3 (index inline des fiches-questions) -->
+    <div id="panneau-cartouche-question" class="panneau-cartouche" data-cartouche-panneau="question" role="region" aria-label="Index des questions terrain" hidden></div>
 
     <div class="marqueur-bloc">&mdash; ou &mdash;</div>
 
@@ -3418,7 +3457,7 @@
     <div class="selecteur" hidden data-axe="" role="region" aria-label="S&eacute;lecteur de valeurs"></div>
 
     <!-- Cartouche compteur — repliée par défaut, compteur en dur en 23.b -->
-    <button class="cartouche" type="button" data-cartouche="compteur" aria-expanded="false">
+    <button class="cartouche" type="button" data-cartouche="compteur" aria-expanded="false" aria-controls="panneau-cartouche-compteur">
       <span class="cartouche-libelle">
         <span><strong>75</strong> <span class="total">sur 75 indicateurs</span></span>
         <span class="axes-actifs">Aucune lentille active &mdash; l'index complet attend.</span>
@@ -3426,8 +3465,8 @@
       <span class="cartouche-chevron"><span class="libelle-action">Voir</span> &#x25BE;</span>
     </button>
 
-    <!-- Liste filtrée 2 colonnes — peuplée au chantier 23.e -->
-    <div class="liste-fiches" hidden role="region" aria-label="Liste filtr&eacute;e des indicateurs"></div>
+    <!-- Liste filtrée 2 colonnes — peuplée au chantier 23.e ; sert de panneau dépliable de la cartouche compteur (23.d-1) -->
+    <div id="panneau-cartouche-compteur" class="liste-fiches" hidden role="region" aria-label="Liste filtr&eacute;e des indicateurs" data-cartouche-panneau="compteur"></div>
 
     <!-- Pied minimaliste — lien pédagogique conservé -->
     <div class="accueil-unifie-pied">
@@ -5881,6 +5920,49 @@ CM.AccueilUnifie = (function() {
     }
   }
 
+  /* ═══ Synchronisation DOM des cartouches (23.d-1) ═══
+
+     Reflète l'état persisté etat.cartouches[id] sur l'apparence du bouton
+     et du panneau associé : aria-expanded, classe .deplie, libellé d'action
+     « Voir » ↔ « Masquer », chevron ▾ ↔ ▴, panneau hidden true/false.
+
+     Le panneau associé est repéré par data-cartouche-panneau="<id>" :
+     - panneau de la cartouche question : <div class="panneau-cartouche">
+       (peuplé en 23.d-3 par l'index inline des fiches-questions) ;
+     - panneau de la cartouche compteur : <div class="liste-fiches">
+       (peuplée en 23.e par la liste filtrée 2 colonnes).
+
+     Le rafraîchissement est idempotent : on peut l'appeler au montage
+     (restauration depuis localStorage) ou sur événement (toggle utilisateur). */
+
+  function _rafraichirCartouche(racine, id) {
+    var bouton  = racine.querySelector('.cartouche[data-cartouche="' + id + '"]');
+    var panneau = racine.querySelector('[data-cartouche-panneau="' + id + '"]');
+    if (!bouton || !panneau) return;
+
+    var ouvert = (etat.cartouches[id] === 'ouvert');
+
+    bouton.classList.toggle('deplie', ouvert);
+    bouton.setAttribute('aria-expanded', ouvert ? 'true' : 'false');
+    panneau.hidden = !ouvert;
+
+    /* Met à jour le libellé d'action (Voir / Masquer) et le chevron (▾ / ▴).
+       On reconstruit le contenu du <span class="cartouche-chevron"> pour
+       garder une seule source de vérité — le nœud texte du chevron étant
+       distinct du span libelle-action. */
+    var chevron = bouton.querySelector('.cartouche-chevron');
+    if (chevron) {
+      chevron.innerHTML =
+        '<span class="libelle-action">' + (ouvert ? 'Masquer' : 'Voir') + '</span> ' +
+        (ouvert ? '\u25B4' : '\u25BE');
+    }
+  }
+
+  function _rafraichirToutesCartouches(racine) {
+    _rafraichirCartouche(racine, 'question');
+    _rafraichirCartouche(racine, 'compteur');
+  }
+
   function _ouvrirPanneau(racine, axe) {
     var panneau = racine.querySelector('.selecteur');
     var chipCible = racine.querySelector('.chip[data-axe="' + axe + '"]');
@@ -5906,6 +5988,24 @@ CM.AccueilUnifie = (function() {
       if (axeActif && valeurClic) {
         e.preventDefault();
         _toggleValeur(racine, axeActif, valeurClic);
+      }
+      return;
+    }
+
+    /* Clic sur une cartouche dépliable (question / compteur) : toggle ouvert/fermé.
+       Doit précéder le test sur les chips et le fallback de fermeture, sinon
+       le clic serait absorbé par le fallback "clic ailleurs" qui referme le
+       panneau du sélecteur. */
+    var cartoucheBtn = e.target.closest('.cartouche[data-cartouche]');
+    if (cartoucheBtn && racine.contains(cartoucheBtn)) {
+      var idCart = cartoucheBtn.dataset.cartouche;
+      /* Si un sélecteur de chip est ouvert, on le referme : changement de
+         contexte UX, l'utilisateur passe à un autre bloc. */
+      _fermerPanneau(racine);
+      if (etat.cartouches[idCart] === 'ouvert') {
+        fermerCartouche(idCart);
+      } else {
+        ouvrirCartouche(idCart);
       }
       return;
     }
@@ -5953,9 +6053,16 @@ CM.AccueilUnifie = (function() {
       _rafraichirToutesChips(racine);
     });
 
-    /* Restaure l'état des chips au montage (après _restaurer dans ouvrir()). */
+    /* S'abonne aux changements de cartouches pour synchroniser l'apparence
+       (libellé d'action, chevron, classe .deplie, panneau hidden). */
+    surChangementCartouche(function() {
+      _rafraichirToutesCartouches(racine);
+    });
+
+    /* Restaure l'état des chips et des cartouches au montage. */
     _restaurer();
     _rafraichirToutesChips(racine);
+    _rafraichirToutesCartouches(racine);
   }
 
   function init() {
