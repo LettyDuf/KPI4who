@@ -994,3 +994,31 @@ Sur les quatre lots, 33 liens ont été posés sur 25 champs éditoriaux de 18 f
 
 **Prochaine action recommandée.** Aucune dans l'immédiat — le chantier reste en backlog tant que la priorité va aux remédiations de la voie hybride et au catalogue de questions fines (chantier 20).
 
+
+## 22. Harmonisation au tutoiement de l'ensemble de l'outil *(📋 ouverte le 08/05/2026)*
+
+**Origine.** Le 08/05/2026, Lætitia signale que la navigation et les textes de l'outil interpellent l'utilisateur de manières incohérentes : tutoiement par endroits, vouvoiement à d'autres, formulations impersonnelles ailleurs. Décision : **harmoniser sur le tutoiement** pour incarner la posture d'un *outil d'apprentissage* — proximité avec l'utilisateur, ton de coach, posture de compagnon plutôt que de service institutionnel.
+
+**Doctrine.** Le tutoiement est cohérent avec la posture *artisanal sous discipline institutionnelle* du cadre visuel § 5.2 (la voix qui cherche, qui invite à la manipulation directe, à la Tufte/Bret Victor). Le vouvoiement crée une distance institutionnelle qui contredit cette posture.
+
+**Périmètre.**
+- **Textes éditoriaux** : intros de portes (« Choisissez la cartouche... » → « Choisis... »), questionnaires, encarts pédagogiques, messages d'état (« Votre tableau de bord... » → « Ton tableau de bord... » — déjà fait sur le bandeau vide ce soir).
+- **Boutons et libellés** : les actions formulées à l'impératif vouvoyé (« Réinitialisez ») passent au tutoiement (« Réinitialise »). Les libellés courts (« Réinitialiser », « Imprimer ») ne sont pas concernés (forme infinitive neutre).
+- **Hover, alt, aria-label** : tous les attributs textuels qui s'adressent à l'utilisateur.
+- **Modale À propos, lexique futur, écrans d'erreur** : tous concernés.
+
+**Hors périmètre.**
+- **Citations patrimoniales** (Drucker, Goldratt, Vacanti, Tufte) — voix d'auteur préservée telle quelle.
+- **Définitions** (`term-def`) — voix encyclopédique impersonnelle préservée.
+- **Métadonnées techniques** (commentaires de code, doctrine de doc) — sans interpellation utilisateur.
+
+**Méthode.**
+- Audit grep sur les pronoms `vous`, `votre`, `vos` dans `cadre-indicateurs.html` et les mockups `mockup-*.html`.
+- Audit grep sur les verbes à la 2e personne du pluriel impératif (`-ez`) qui ciblent l'utilisateur.
+- Refonte par grappes thématiques (porte par porte, modale par modale) — pas un seul commit massif.
+- Vérification cas par cas : certains textes peuvent être reformulés en impersonnel quand le tutoiement crée une lourdeur (« il suffit de cliquer sur... »).
+
+**Articulations.** Articulé avec chantier 19 (cadre visuel — la voix située de l'axe 8 § 5.8). À conduire de manière progressive, opportunistement sur chaque page touchée par d'autres chantiers (boy scout). Pas de dépendance bloquante en amont.
+
+**Première amorce.** Tableau de bord vide + message d'impression vide (commit 4b40682 du 08/05/2026) — exemple de ce qui doit suivre dans toutes les autres zones.
+
