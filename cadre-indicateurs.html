@@ -3063,6 +3063,19 @@
       gap: 0.1rem;
       line-height: 1.3;
     }
+    /* Emoji du référentiel (NIVEAUX, PROBLEMES, CADRES, MATURITE) — devant
+       le libellé. Cohérent avec leur usage sur les cards et fiches. */
+    .accueil-unifie .selecteur-options label .icone {
+      display: inline-block;
+      font-size: 1rem;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-right: 0.05rem;
+    }
+    .accueil-unifie .selecteur-options label .corps .titre .icone {
+      font-size: 0.95rem;
+      vertical-align: -0.05em;
+    }
     .accueil-unifie .selecteur-options label .corps .titre {
       font-weight: 500;
       color: var(--texte-sur-surface);
@@ -5678,32 +5691,33 @@ CM.AccueilUnifie = (function() {
   }
 
   function _valeursPourAxe(axe) {
-    /* Retourne un tableau [{ id, label, sous? }] pour l'axe demandé. */
+    /* Retourne un tableau [{ id, label, icone?, sous? }] pour l'axe demandé.
+       Les emojis viennent des sources de vérité internes (CM.Config,
+       CM.IndicateursMeta) — cf. arbitrage Lætitia 08/05/2026 (mockup-emojis-
+       selecteurs.html, commit 9ea406c). Cohérence avec le reste de l'outil
+       qui affiche déjà ces emojis sur les cards, fiches et porte par mon
+       problème. La migration vers SVG line monochromes (doctrine § 6.0)
+       fera l'objet d'un chantier séparé à l'échelle de l'outil entier. */
     if (axe === 'niveau') {
       var niveaux = (CM.DiagnosticProbleme && CM.DiagnosticProbleme.niveauxTous)
         ? CM.DiagnosticProbleme.niveauxTous() : [];
       return niveaux.map(function(n) {
-        return { id: n.id, label: n.label, sous: n.sous };
+        return { id: n.id, label: n.label, sous: n.sous, icone: n.icone };
       });
     }
     if (axe === 'probleme') {
       var problemes = (CM.DiagnosticProbleme && CM.DiagnosticProbleme.tousLesProblemes)
         ? CM.DiagnosticProbleme.tousLesProblemes() : [];
       /* Variante B retenue (consigne Lætitia 08/05/2026) — présentation
-         synthétique sans sous-titre, alignée sur Cadre et Maturité. Le
-         libellé seul (« Délais & prévisibilité », « Flux & goulots »…)
-         doit suffire à orienter l'utilisateur. */
+         synthétique sans sous-titre, alignée sur Cadre et Maturité. */
       return problemes.map(function(p) {
-        return { id: p.id, label: p.label };
+        return { id: p.id, label: p.label, icone: p.icone };
       });
     }
     if (axe === 'cadre') {
       var cadres = (CM.IndicateursMeta && CM.IndicateursMeta.tousLesCadres)
         ? CM.IndicateursMeta.tousLesCadres() : [];
-      /* Variante B retenue : libellés raccourcis, pas de sous-titre.
-         Les libellés trop longs des cadres CX et Sécurité sont court-circuités
-         pour rester lisibles dans la chip — cohérent avec l'arbitrage du
-         mockup-selecteurs-libelles.html (8a144c0). */
+      /* Variante B retenue : libellés raccourcis, pas de sous-titre. */
       var LIBELLES_COURTS = {
         cx:       'Expérience client',
         securite: 'Sécurité'
@@ -5711,13 +5725,21 @@ CM.AccueilUnifie = (function() {
       return cadres.map(function(c) {
         return {
           id:    c.id,
-          label: LIBELLES_COURTS[c.id] || c.label
-          /* sous: volontairement absent (variante B) */
+          label: LIBELLES_COURTS[c.id] || c.label,
+          icone: c.icone
         };
       });
     }
     if (axe === 'maturite') {
-      return MATURITES.slice();
+      /* Emojis de CM.Config.MATURITE (🌱 pousse, 🌿 feuille, 🌳 arbre).
+         On garde nos libellés courts (Débutant / Intermédiaire / Avancé)
+         plutôt que ceux du référentiel (« Équipe débutante »…) qui
+         supposent un contexte d'équipe. */
+      var maturiteData = (CM.Config && CM.Config.MATURITE) ? CM.Config.MATURITE : {};
+      return MATURITES.map(function(m) {
+        var info = maturiteData[m.id] || {};
+        return { id: m.id, label: m.label, icone: info.icone || '' };
+      });
     }
     return [];
   }
@@ -5750,6 +5772,9 @@ CM.AccueilUnifie = (function() {
       var coche = _estValeurSelectionnee(axe, v.id) ? ' coche' : '';
       var label = '<label class="' + ('option' + coche).trim() + '" data-valeur="' + _echappe(v.id) + '">' +
                     '<span class="marker"></span>';
+      var iconeHTML = v.icone
+        ? '<span class="icone" aria-hidden="true">' + v.icone + '</span> '
+        : '';
       if (v.sous) {
         /* Variante α — corps en colonne avec titre + sous-titre.
            Le sous-titre vient des sources de vérité internes (CM.Config,
@@ -5758,12 +5783,12 @@ CM.AccueilUnifie = (function() {
            pour préserver l'enrichissement éditorial. Les autres champs
            (label, id) restent échappés par hygiène. */
         label += '<span class="corps">' +
-                   '<span class="titre">' + _echappe(v.label) + '</span>' +
+                   '<span class="titre">' + iconeHTML + _echappe(v.label) + '</span>' +
                    '<span class="sous">' + (v.sous || '') + '</span>' +
                  '</span>';
       } else {
-        /* Variante B — libellé seul. */
-        label += ' ' + _echappe(v.label);
+        /* Variante B — libellé seul (avec emoji optionnel devant). */
+        label += ' ' + iconeHTML + _echappe(v.label);
       }
       label += '</label>';
       html += label;
