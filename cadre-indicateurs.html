@@ -9422,6 +9422,9 @@ CM.VuePorteQuestion = (function() {
     }
     var vue = document.getElementById('vue-par-question');
     if (vue) vue.hidden = false;
+    if (CM.App && CM.App.marquerEntreeBandeau) {
+      CM.App.marquerEntreeBandeau('question');
+    }
     try { window.scrollTo({ top: 0, behavior: 'instant' }); }
     catch (e) { window.scrollTo(0, 0); }
   }
@@ -9479,6 +9482,7 @@ CM.App = (function() {
     var afficherPortes = (mode === 'portes');
     pyramide.hidden = afficherPortes;
     portes.hidden   = !afficherPortes;
+    marquerEntreeBandeau('accueil');
   }
 
   /* Masque toutes les vues de premier rang (les 6 entrées du bandeau qui
@@ -9508,6 +9512,26 @@ CM.App = (function() {
      de CM.App. Toute nouvelle écriture doit utiliser le nom élargi. */
   function _cacherAccueils() {
     _masquerToutesVuesPremierRang();
+  }
+
+  /* Synchronise l'état actif du bandeau du haut avec la vue effectivement
+     ouverte. Posée 08/05/2026 — bug remontté par Lætitia : on était sur
+     Cascade mais Mon tableau de bord apparaissait actif dans le bandeau.
+     Cause : l'état .actif est posé en dur dans le HTML de chaque vue, et
+     la bascule entre vues ne synchronisait rien.
+     Convention : idEntree correspond à l'attribut data-entree (cf. HTML).
+     Valeurs connues : 'accueil', 'tableau-bord', '4-axes', 'question',
+     'cascade', 'maturite', 'lexique', 'apropos'. */
+  function marquerEntreeBandeau(idEntree) {
+    var entrees = document.querySelectorAll('.bandeau-portes-nav a.entree');
+    for (var i = 0; i < entrees.length; i++) {
+      var e = entrees[i];
+      if (e.getAttribute('data-entree') === idEntree) {
+        e.classList.add('actif');
+      } else {
+        e.classList.remove('actif');
+      }
+    }
   }
 
   /* ─── Navigation ─── */
@@ -9595,6 +9619,7 @@ CM.App = (function() {
       badge.style.background = '';
     }
     _rendreTableauDeBord();
+    marquerEntreeBandeau('tableau-bord');
     try { window.scrollTo({ top: 0, behavior: 'instant' }); }
     catch (e) { window.scrollTo(0, 0); }
   }
@@ -9620,6 +9645,7 @@ CM.App = (function() {
     if (idOnglet === 'cascade')        _rendreCascade();
     else if (idOnglet === 'maturite')  _rendreMaturite();
     else if (idOnglet === 'tableau-bord') _rendreTableauDeBord();
+    marquerEntreeBandeau(idOnglet);
     try { window.scrollTo({ top: 0, behavior: 'instant' }); }
     catch (e) { window.scrollTo(0, 0); }
   }
@@ -10702,6 +10728,7 @@ CM.App = (function() {
     afficherAccueil:      afficherAccueil,
     ouvrirTableauBord:    ouvrirTableauBord,
     ouvrirVueDuBandeau:   ouvrirVueDuBandeau,
+    marquerEntreeBandeau: marquerEntreeBandeau,
     demanderRetourAccueil: demanderRetourAccueil,
     retirerDuPanier:        retirerDuPanier,     /* 9.B.1 — consommé par onclick inline */
     reinitialiserPanier:    reinitialiserPanier, /* 9.B.3 — bouton ↻ Réinitialiser */
