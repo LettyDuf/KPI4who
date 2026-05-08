@@ -2940,7 +2940,12 @@
       animation: accueil-unifie-fade-in 0.18s ease-out;
     }
     /* La liste-fiches sert de panneau pour la cartouche compteur — on lui
-       applique le même contour attaché quand elle est révélée. */
+       applique le même contour attaché quand elle est révélée, et la mise
+       en grille 2 colonnes (strate 7 du § 6.1).
+       Bloc fusionné en 23.e-fix4 : le bloc grille séparé écrasait
+       `margin-top:-1rem` par `margin-top:0.4rem` via cascade CSS, ce qui
+       laissait apparaître le fond bleu nuit entre la cartouche dépliée et
+       le panneau (« ligne bleue ») — friction remontée par Lætitia. */
     .accueil-unifie .liste-fiches {
       background: #ffffff;
       border: 1px solid var(--niv-1);
@@ -2950,6 +2955,9 @@
       padding: 1.1rem 1.15rem 1.25rem;
       margin-top: -1rem;
       animation: accueil-unifie-fade-in 0.18s ease-out;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.9rem;
     }
 
     /* Index inline des fiches-questions dans le panneau de la cartouche
@@ -3206,14 +3214,6 @@
     .accueil-unifie .selecteur-options label.coche .marker {
       background: var(--niv-1);
       border-color: var(--niv-1);
-    }
-
-    /* Liste filtrée 2 colonnes (strate 7 du § 6.1) — peuplée en 23.e */
-    .accueil-unifie .liste-fiches {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.9rem;
-      margin-top: 0.4rem;
     }
 
     /* État vide de la liste filtrée — combinaison d'axes sans correspondance.
