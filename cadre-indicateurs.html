@@ -5747,10 +5747,15 @@ CM.AccueilUnifie = (function() {
       var label = '<label class="' + ('option' + coche).trim() + '" data-valeur="' + _echappe(v.id) + '">' +
                     '<span class="marker"></span>';
       if (v.sous) {
-        /* Variante α — corps en colonne avec titre + sous-titre. */
+        /* Variante α — corps en colonne avec titre + sous-titre.
+           Le sous-titre vient des sources de vérité internes (CM.Config,
+           CM.IndicateursMeta) et peut contenir du HTML de confiance
+           (par exemple <abbr title="...">WIP</abbr>). On le passe brut
+           pour préserver l'enrichissement éditorial. Les autres champs
+           (label, id) restent échappés par hygiène. */
         label += '<span class="corps">' +
                    '<span class="titre">' + _echappe(v.label) + '</span>' +
-                   '<span class="sous">' + _echappe(v.sous) + '</span>' +
+                   '<span class="sous">' + (v.sous || '') + '</span>' +
                  '</span>';
       } else {
         /* Variante B — libellé seul. */
