@@ -525,7 +525,21 @@
     .legende { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.9rem 1.1rem; background: var(--fond-2); border-radius: var(--rayon); box-shadow: var(--ombre); margin-bottom: 1.25rem; }
     .legende-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--texte-2); }
     .legende-badge { font-size: 0.62rem; font-weight: 800; padding: 0.14rem 0.45rem; border-radius: 6px; color: white; }
-    .noeud-cascade { border-radius: var(--rayon); overflow: hidden; box-shadow: var(--ombre); transition: var(--trans); }
+    .noeud-cascade {
+      border-radius: var(--rayon);
+      overflow: hidden;
+      /* Hybride : bordure 1px blanc translucide pour détacher le bandeau du fond bleu nuit.
+         Neutre : reste invisible sur fond clair grâce à l'ombre déjà présente.
+         Posé 08/05/2026 sur retour Lætitia : le bandeau de niveau --niv-1 (#1a237e) se
+         confondait avec le fond bleu nuit (gradient #0d1b4f → #1a237e → #283593). */
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.18), var(--ombre);
+      transition: var(--trans);
+    }
+    /* En thème neutre, la bordure translucide blanche est invisible sur fond clair.
+       On la requalifie en bord doux gris très clair. */
+    :root[data-theme="neutre"] .noeud-cascade {
+      box-shadow: 0 0 0 1px var(--bordure), var(--ombre);
+    }
     .noeud-en-tete { display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1.4rem; color: white; }
     .noeud-icone { font-size: 1.5rem; }
     .noeud-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.8; }
@@ -1279,10 +1293,10 @@
     }
     #vue-porte-probleme .porte-intro h1 {
       font-size: var(--fs-h2); font-weight: 800;
-      color: var(--texte); margin-bottom: 0.4rem; line-height: 1.25;
+      color: var(--texte-sur-page); margin-bottom: 0.4rem; line-height: 1.25;
     }
     #vue-porte-probleme .porte-intro p {
-      font-size: 0.92rem; color: var(--texte-2);
+      font-size: 0.92rem; color: var(--texte-2-sur-page);
       max-width: 780px; line-height: 1.55;
     }
 
@@ -1475,10 +1489,10 @@
     }
     #vue-porte-cadre .porte-intro h1 {
       font-size: var(--fs-h2); font-weight: 800;
-      color: var(--texte); margin-bottom: 0.4rem; line-height: 1.25;
+      color: var(--texte-sur-page); margin-bottom: 0.4rem; line-height: 1.25;
     }
     #vue-porte-cadre .porte-intro p {
-      font-size: 0.92rem; color: var(--texte-2);
+      font-size: 0.92rem; color: var(--texte-2-sur-page);
       max-width: 780px; line-height: 1.55;
     }
 
@@ -1809,10 +1823,10 @@
     }
     #vue-porte-niveau .porte-intro h1 {
       font-size: var(--fs-h2); font-weight: 800;
-      color: var(--texte); margin-bottom: 0.4rem; line-height: 1.25;
+      color: var(--texte-sur-page); margin-bottom: 0.4rem; line-height: 1.25;
     }
     #vue-porte-niveau .porte-intro p {
-      font-size: 0.92rem; color: var(--texte-2);
+      font-size: 0.92rem; color: var(--texte-2-sur-page);
       max-width: 780px; line-height: 1.55;
     }
 
