@@ -2695,7 +2695,10 @@
       gap: 0.5rem;
     }
     #vue-par-question .liste-questions a {
-      display: block;
+      /* 08/05/2026 — passage en flex pour aligner l'icône à gauche du texte. */
+      display: flex;
+      align-items: center;
+      gap: 0.95rem;
       padding: 0.95rem 1.1rem;
       /* Boutons-questions en gris-bleu clair (08/05/2026) — nuance
          d'imbrication par rapport au cadre blanc qui les contient.
@@ -2707,6 +2710,17 @@
       text-decoration: none;
       color: inherit;
       transition: var(--trans);
+    }
+    #vue-par-question .liste-questions svg.q-icone {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      color: var(--niv-1);
+      stroke-width: 1.5;
+    }
+    #vue-par-question .liste-questions-textes {
+      flex: 1;
+      min-width: 0;
     }
     #vue-par-question .liste-questions a:hover,
     #vue-par-question .liste-questions a:focus-visible {
@@ -3227,12 +3241,71 @@
          dans l'ordre où elles ont été livrées — pas par ordre de priorité.</p>
     </div>
     <ol class="liste-questions" role="list">
-      <li><a href="mockup-fiche-question-pasteque.html"><span class="liste-questions-titre">Mes indicateurs reflètent-ils la réalité du terrain&nbsp;?</span><span class="liste-questions-panel">Drucker méta &mdash; pastèque</span></a></li>
-      <li><a href="mockup-fiche-question-pilotage-hebdo.html"><span class="liste-questions-titre">Quoi mettre dans mon pilotage hebdomadaire&nbsp;?</span><span class="liste-questions-panel">Coach Agile</span></a></li>
-      <li><a href="mockup-fiche-question-amelioration-continue.html"><span class="liste-questions-titre">Par où démarrer une démarche d'amélioration continue&nbsp;?</span><span class="liste-questions-panel">Coach Lean</span></a></li>
-      <li><a href="mockup-fiche-question-resistance-transformation.html"><span class="liste-questions-titre">Pourquoi ma transformation résiste&nbsp;?</span><span class="liste-questions-panel">Gestion du changement</span></a></li>
-      <li><a href="mockup-fiche-question-cascade-objectifs.html"><span class="liste-questions-titre">Comment cascader des objectifs jusqu'au terrain&nbsp;?</span><span class="liste-questions-panel">Drucker MBO</span></a></li>
-      <li><a href="mockup-format-fiche-question.html"><span class="liste-questions-titre">Scène 1 &mdash; Dans le mockup-format</span><span class="liste-questions-panel">Coach Lean &mdash; miroir didactique</span></a></li>
+      <li><a href="mockup-fiche-question-pasteque.html">
+        <svg class="q-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+        <span class="liste-questions-textes">
+          <span class="liste-questions-titre">Mes indicateurs reflètent-ils la réalité du terrain&nbsp;?</span>
+          <span class="liste-questions-panel">Drucker méta &mdash; pastèque</span>
+        </span>
+      </a></li>
+      <li><a href="mockup-fiche-question-pilotage-hebdo.html">
+        <svg class="q-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="18" rx="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <span class="liste-questions-textes">
+          <span class="liste-questions-titre">Quoi mettre dans mon pilotage hebdomadaire&nbsp;?</span>
+          <span class="liste-questions-panel">Coach Agile</span>
+        </span>
+      </a></li>
+      <li><a href="mockup-fiche-question-amelioration-continue.html">
+        <svg class="q-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="23 4 23 10 17 10"/>
+          <polyline points="1 20 1 14 7 14"/>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/>
+          <path d="M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        <span class="liste-questions-textes">
+          <span class="liste-questions-titre">Par où démarrer une démarche d'amélioration continue&nbsp;?</span>
+          <span class="liste-questions-panel">Coach Lean</span>
+        </span>
+      </a></li>
+      <li><a href="mockup-fiche-question-resistance-transformation.html">
+        <svg class="q-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <span class="liste-questions-textes">
+          <span class="liste-questions-titre">Pourquoi ma transformation résiste&nbsp;?</span>
+          <span class="liste-questions-panel">Gestion du changement</span>
+        </span>
+      </a></li>
+      <li><a href="mockup-fiche-question-cascade-objectifs.html">
+        <svg class="q-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="7 6 12 11 17 6"/>
+          <polyline points="7 13 12 18 17 13"/>
+        </svg>
+        <span class="liste-questions-textes">
+          <span class="liste-questions-titre">Comment cascader des objectifs jusqu'au terrain&nbsp;?</span>
+          <span class="liste-questions-panel">Drucker MBO</span>
+        </span>
+      </a></li>
+      <li><a href="mockup-format-fiche-question.html">
+        <svg class="q-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+        <span class="liste-questions-textes">
+          <span class="liste-questions-titre">Scène 1 &mdash; Dans le mockup-format</span>
+          <span class="liste-questions-panel">Coach Lean &mdash; miroir didactique</span>
+        </span>
+      </a></li>
     </ol>
   </main>
 </div><!-- /vue-par-question -->
@@ -9354,7 +9427,7 @@ CM.PanierImpression = (function() {
      (et puisse fermer l'aperçu sans gaspillage). */
   function _htmlVide() {
     return '<div class="imp-vide-msg">'
-      +   '<strong>Votre tableau de bord est vide.</strong>'
+      +   '<strong>Ton tableau de bord est vide.</strong>'
       +   'Il n\'y a rien à imprimer pour l\'instant.'
       + '</div>';
   }
@@ -10099,11 +10172,11 @@ CM.App = (function() {
     return ''
       + '<div class="panier-tdb-vide-invite">'
         + '<span class="panier-tdb-vide-icone" aria-hidden="true">🎯</span>'
-        + '<div class="panier-tdb-vide-titre">Votre tableau de bord est vide.</div>'
+        + '<div class="panier-tdb-vide-titre">Ton tableau de bord est vide.</div>'
         + '<p class="panier-tdb-vide-texte">'
-          + 'Cet onglet est le miroir de votre scorecard — les métriques '
-          + '<em>en place</em> et celles que vous envisagez. Parcourez '
-          + 'les indicateurs pour commencer à remplir votre tableau de bord.'
+          + 'Cet onglet est le miroir de ta scorecard — les métriques '
+          + '<em>en place</em> et celles que tu envisages. Parcours '
+          + 'les indicateurs pour commencer à remplir ton tableau de bord.'
         + '</p>'
         + '<button type="button" class="panier-tdb-vide-cta" '
           + 'onclick="CM.App.changerVue(\'questionnaire\', this)">'
