@@ -174,20 +174,24 @@ Décisions structurantes :
 - **Bloc vigilance — double signal sur les anti-patterns.** Les noms d'anti-patterns reçoivent simultanément le `term-def` violet (signal sémantique : c'est un terme qu'on peut survoler) et un surlignage ambré (signal pragmatique : ne fais pas ça). Règle déjà actée le 04/05, ici élevée au statut de doctrine d'incarnation pour toutes les fiches futures.
 - **Citation Goldratt en pied de fiche.** Voix située, axe 8. La fiche d'indicateur portant souvent sur le flux, Goldratt vient en cohérence interne avec la matière de la page.
 
-### 6.3 Lentille *Par mes 4 axes*
+### 6.3 Lentille *Par mes 4 axes* — absorbée dans l'accueil unifié
 
-*Références : commit `31f7c1b`, fichier `mockup-lentille-etape-B.html` (3 variantes V1/V2/V3) ; décision D2 commit `64c8249` (V3 retenue).*
+*Statut au 08/05/2026 : section sans objet comme page séparée. La lentille V3 *« filtre chips cumulables avec résultat dynamique »* tranchée le 04/05/2026 (D2, commit `31f7c1b`, fichier `mockup-lentille-etape-B.html`) survit comme **mécanique de l'accueil unifié** — c'est elle qui porte les 4 chips Problème · Cadre · Niveau · Maturité du § 6.1. La page séparée *Par mes 4 axes* disparaît, l'onglet du même nom sort du bandeau du haut (cf. `doc-contrats-navigation.md` § 4.1).*
 
-La lentille est une page d'**orientation manipulable**. Sa mission : permettre à un utilisateur d'explorer le référentiel selon les quatre axes Mintzberg (et, à terme, selon les lentilles futures du § 4.4 — flux, communication, visibilité, intention) en cumulant des angles. Particularité : la lentille n'existe pas encore en code — pas de côte à côte avant/après. Les décisions sont donc structurantes au sens fort : elles fixent ce qu'on construira.
+**Ce qui survit de la décision D2 — chantier 23.a — décrit en § 6.1.**
 
-Décisions structurantes :
+- **Variante V3 retenue : filtre chips cumulables avec résultat dynamique.** L'argument structurant *« extensibilité — un nouvel axe coûte un chip de plus »* tient toujours. Le ramener depuis la lentille vers l'accueil unifié ne le déplace pas — au contraire, l'accueil-outil multiplie les bénéfices d'une mécanique de filtrage extensible.
+- **Cohérence d'usage avec la porte *« Par mon problème »*.** Le pattern de chips cumulables vivait déjà sur cette porte. Avec la fusion porte → chip, le pattern devient natif à l'outil. Axe 6 *Standardisé sur les composants* poussé jusqu'à son terme.
+- **Filet 4-couleurs en haut.** Conservé sur l'accueil unifié — la page convoque les 4 niveaux simultanément avant tout filtrage.
+- **Manipulation directe, axe 5 *Interactif signifiant*.** Chaque clic produit un retour. Inspiration Tufte / Bret Victor maintenue.
 
-- **Variante V3 retenue : filtre chips cumulables avec résultat dynamique.** L'utilisateur active des chips correspondant aux axes qui le concernent ; le résultat (liste filtrée d'indicateurs) se met à jour en dessous au fur et à mesure. Manipulation directe, axe 5 *Interactif signifiant*. Inspiration Tufte / Bret Victor — chaque clic produit un retour immédiat et signifiant. Anti-pattern évité (V2) : le stepper séquentiel forçait un parcours imposé, friction à l'entrée incompatible avec la posture *« on regarde ensemble »* de l'axe 2.
-- **Argument structurant retenu pour V3 : extensibilité.** Un nouvel axe (les lentilles futures du § 4.4) coûte un chip supplémentaire en V3, contre une refonte de layout en V1 (grille 2×2) ou V2 (stepper). Décision prise au nom de l'axe 7 *Doctrine permanente, système évolutif*.
-- **Cohérence d'usage avec la porte *« Par mon problème »*.** Le pattern de chips cumulables est déjà en place sur cette porte — V3 le réutilise plutôt que d'inventer un mécanisme propre. Axe 6 *Standardisé sur les composants*.
-- **Filet 4-couleurs en haut signant la page-lentille.** Variante de la signature commune (§ 6.0). Le filet à 4 couleurs porte visuellement le fait que la lentille convoque les 4 axes Mintzberg simultanément.
-- **Icônes line monochromes par axe Mintzberg.** Une icône par chip d'axe, ligne, monochrome. Différenciation par forme, pas par couleur saturée — la couleur reste portée par le filet et par le système des niveaux.
-- **Couplage D2+D4 relâché.** Conséquence collatérale notable : le passage en V3 absorbe largement la pression responsive postulée pour D4 (les chips wrapent naturellement). D4 reste à arbitrer, mais sur ses propres mérites — plus comme préalable à D2.
+**Ce qui meurt avec la lentille.**
+
+- Les **icônes line monochromes par axe Mintzberg** (une icône par chip d'axe) sortent du visible, puisque l'angle Mintzberg lui-même sort du visible (cf. § 6.1, *Mintzberg sort du visible*). L'attribut `axes: [...]` reste latent dans le code, statut à arbitrer en chantier séparé.
+- Le **filet 4-couleurs signant la lentille** rejoint le filet de l'accueil unifié — il devient la signature de l'accueil-outil, plus celle d'une page intermédiaire.
+
+**Pour la mémoire.** Cette section a tranché en mai 2026 le passage de la doctrine *V3 = page lentille séparée* à la doctrine *V3 = mécanique de l'accueil*. Le mockup-preview du 04/05 (`31f7c1b`) reste consultable comme étape intermédiaire du raisonnement ; le mockup de référence devient celui du 08/05 nuit (`8589834`).
+
 
 ### 6.4 Ce que le § 6 ne dit pas
 
