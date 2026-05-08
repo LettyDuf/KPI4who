@@ -5384,6 +5384,231 @@ CM.RequeteMetriques = (function() {
 
 
 
+<!-- ══ MODULE : CM.AccueilUnifie — Orchestrateur de la page unifiée Choisir mes indicateurs ══
+     Source de vérité : doc-contrats-navigation.md § 6.6 (façade publique).
+     Doctrine : project_accueil_unifie_v7.md + doc-cadre-visuel.md § 6.1.
+
+     Architecture hexagonale :
+       · CM.AccueilUnifie est l'adaptateur d'entrée (UI) ;
+       · CM.RequeteMetriques reste le domaine (formulation du filtre) ;
+       · l'accueil consomme la formulation, ne réimplémente pas le filtrage.
+
+     Façade publique (portée équilibrée tranchée au chantier 23.a) :
+       · ouvrir()                              — affiche la page, restaure l'état
+       · ouvrirCartouche(id) / fermerCartouche(id)
+       · selectionnerChip(axe, valeur) / deselectionnerChip(axe, valeur)
+       · reinitialiserChips()                  — vide toutes les chips
+       · appliquerFiltre()                     — recalcule (branché traducteur en 23.e)
+       · surChangementFiltre(callback)         — pub/sub
+       · surChangementCartouche(callback)      — pub/sub
+       · etatChips() / etatCartouche(id)       — lecture seule
+
+     COMMIT 23.c-1 : squelette JS sans side-effect DOM. Les fonctions
+     mettent à jour l'état, persistent et émettent. La mécanique
+     d'accordéon (DOM) arrive en 23.c-2, le contenu des sélecteurs en
+     23.c-3, la sélection effective en 23.c-4, le branchement effectif
+     sur CM.RequeteMetriques.executer() en 23.e. -->
+<script>
+/* ══ CM.AccueilUnifie — BEGIN ══ */
+CM.AccueilUnifie = (function() {
+  'use strict';
+
+  var CLE_PREFS = 'accueil-unifie-etat';
+
+  /* État interne — forme conforme au § 6.6.
+     - cartouches.{question,compteur} : 'ouvert' | 'ferme'
+     - chips.probleme / chips.cadre   : Array<string> (multi-sélection)
+     - chips.niveau / chips.maturite  : string | null  (mono-sélection) */
+  var etat = _etatParDefaut();
+
+  /* Pub/sub — abonnés notifiés à chaque changement. */
+  var abonnesFiltre = [];
+  var abonnesCartouche = [];
+
+  function _etatParDefaut() {
+    return {
+      cartouches: { question: 'ferme', compteur: 'ferme' },
+      chips:      { probleme: [], cadre: [], niveau: null, maturite: null }
+    };
+  }
+
+  function _emettreFiltreChange() {
+    var payload = {
+      chips:  _copieEtatChips(),
+      total:  0,    /* renseigné par le branchement traducteur en 23.e */
+      fiches: []    /* idem */
+    };
+    for (var i = 0; i < abonnesFiltre.length; i++) {
+      try { abonnesFiltre[i](payload); } catch (e) { /* abonné défaillant : ignoré */ }
+    }
+  }
+
+  function _emettreCartoucheChange(id) {
+    var payload = { id: id, etat: etat.cartouches[id] };
+    for (var i = 0; i < abonnesCartouche.length; i++) {
+      try { abonnesCartouche[i](payload); } catch (e) { /* idem */ }
+    }
+  }
+
+  function _copieEtatChips() {
+    return {
+      probleme: etat.chips.probleme.slice(),
+      cadre:    etat.chips.cadre.slice(),
+      niveau:   etat.chips.niveau,
+      maturite: etat.chips.maturite
+    };
+  }
+
+  function _persister() {
+    if (CM.Preferences && CM.Preferences.ecrire) {
+      try { CM.Preferences.ecrire(CLE_PREFS, JSON.stringify(etat)); } catch (e) { /* silencieux */ }
+    }
+  }
+
+  function _restaurer() {
+    if (!CM.Preferences || !CM.Preferences.lire) return;
+    var brut = CM.Preferences.lire(CLE_PREFS, null);
+    if (!brut) return;
+    try {
+      var charge = JSON.parse(brut);
+      if (charge && charge.cartouches && charge.chips) {
+        /* Validation légère : on ne fait confiance qu'aux clés qu'on connaît. */
+        etat = {
+          cartouches: {
+            question: (charge.cartouches.question === 'ouvert') ? 'ouvert' : 'ferme',
+            compteur: (charge.cartouches.compteur === 'ouvert') ? 'ouvert' : 'ferme'
+          },
+          chips: {
+            probleme: Array.isArray(charge.chips.probleme) ? charge.chips.probleme.slice() : [],
+            cadre:    Array.isArray(charge.chips.cadre)    ? charge.chips.cadre.slice()    : [],
+            niveau:   (typeof charge.chips.niveau   === 'string') ? charge.chips.niveau   : null,
+            maturite: (typeof charge.chips.maturite === 'string') ? charge.chips.maturite : null
+          }
+        };
+      }
+    } catch (e) {
+      /* Restauration silencieuse : si la persistance est corrompue, on garde
+         l'état par défaut. La régression la plus visible est la perte de
+         filtres restaurés — pas un blocage. */
+    }
+  }
+
+  /* ═══ Façade publique ═══ */
+
+  function ouvrir() {
+    _restaurer();
+    /* Le rendu DOM (état des chips, cartouches, liste filtrée) sera câblé
+       sur les événements émis par les fonctions ci-dessous au commit 23.c-2.
+       Pour 23.c-1 : juste la restauration de l'état + émission. */
+    appliquerFiltre();
+    _emettreCartoucheChange('question');
+    _emettreCartoucheChange('compteur');
+  }
+
+  function ouvrirCartouche(id) {
+    if (id !== 'question' && id !== 'compteur') return;
+    if (etat.cartouches[id] === 'ouvert') return;
+    etat.cartouches[id] = 'ouvert';
+    _persister();
+    _emettreCartoucheChange(id);
+  }
+
+  function fermerCartouche(id) {
+    if (id !== 'question' && id !== 'compteur') return;
+    if (etat.cartouches[id] === 'ferme') return;
+    etat.cartouches[id] = 'ferme';
+    _persister();
+    _emettreCartoucheChange(id);
+  }
+
+  function selectionnerChip(axe, valeur) {
+    if (!etat.chips.hasOwnProperty(axe) || typeof valeur !== 'string') return;
+    if (axe === 'niveau' || axe === 'maturite') {
+      /* Mono-sélection : remplace la valeur précédente. */
+      etat.chips[axe] = valeur;
+    } else {
+      /* Multi-sélection : ajoute si pas déjà présent. */
+      if (etat.chips[axe].indexOf(valeur) === -1) {
+        etat.chips[axe].push(valeur);
+      } else {
+        return; /* déjà présent — pas d'émission */
+      }
+    }
+    _persister();
+    appliquerFiltre();
+  }
+
+  function deselectionnerChip(axe, valeur) {
+    if (!etat.chips.hasOwnProperty(axe)) return;
+    if (axe === 'niveau' || axe === 'maturite') {
+      if (etat.chips[axe] === null) return;
+      etat.chips[axe] = null;
+    } else {
+      if (typeof valeur !== 'string') return;
+      var idx = etat.chips[axe].indexOf(valeur);
+      if (idx === -1) return;
+      etat.chips[axe].splice(idx, 1);
+    }
+    _persister();
+    appliquerFiltre();
+  }
+
+  function reinitialiserChips() {
+    var dejaVide = etat.chips.probleme.length === 0 &&
+                   etat.chips.cadre.length === 0 &&
+                   etat.chips.niveau === null &&
+                   etat.chips.maturite === null;
+    if (dejaVide) return;
+    etat.chips = _etatParDefaut().chips;
+    _persister();
+    appliquerFiltre();
+  }
+
+  function appliquerFiltre() {
+    /* Branchement effectif sur CM.RequeteMetriques.executer() en chantier 23.e.
+       Pour 23.c-1 : émission seule du filtre courant, payload {total:0, fiches:[]}.
+       Cette indirection garantit que tout abonné sur surChangementFiltre
+       reçoit l'événement, indépendamment de l'état d'avancement du chantier. */
+    _emettreFiltreChange();
+  }
+
+  function surChangementFiltre(callback) {
+    if (typeof callback !== 'function') return;
+    abonnesFiltre.push(callback);
+  }
+
+  function surChangementCartouche(callback) {
+    if (typeof callback !== 'function') return;
+    abonnesCartouche.push(callback);
+  }
+
+  function etatChips() {
+    return _copieEtatChips();
+  }
+
+  function etatCartouche(id) {
+    if (id !== 'question' && id !== 'compteur') return null;
+    return etat.cartouches[id];
+  }
+
+  return {
+    ouvrir:                  ouvrir,
+    ouvrirCartouche:         ouvrirCartouche,
+    fermerCartouche:         fermerCartouche,
+    selectionnerChip:        selectionnerChip,
+    deselectionnerChip:      deselectionnerChip,
+    reinitialiserChips:      reinitialiserChips,
+    appliquerFiltre:         appliquerFiltre,
+    surChangementFiltre:     surChangementFiltre,
+    surChangementCartouche:  surChangementCartouche,
+    etatChips:               etatChips,
+    etatCartouche:           etatCartouche
+  };
+})();
+/* ══ CM.AccueilUnifie — END ══ */
+</script>
+
+
 <!-- ══ MODULE : CM.Roles — Inventaire des rôles par niveau (porte niveau) ══
      Source éditoriale : inventaire-roles-porte-niveau.md (53 fiches, 4 niveaux).
      La zone de données `CM._rolesData` est régénérée par tools/generer-roles.js ;
