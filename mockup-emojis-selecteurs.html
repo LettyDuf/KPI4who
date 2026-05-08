@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Mockup — Bug 7 emojis dans les sélecteurs</title>
+<style>
+  :root {
+    --niv-1:               #1a237e;
+    --niv-1-clair:         #e8eaf6;
+    --texte-sur-page:      #f5f6fa;
+    --texte-2-sur-page:    #c1c5d4;
+    --texte-sur-surface:   #1c2033;
+    --texte-2-sur-surface: #5b6378;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 1.5rem 2rem;
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(145deg, #0d1b4f 0%, #1a237e 55%, #283593 100%);
+    color: var(--texte-sur-page);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+  h1 { font-size: 1.4rem; font-weight: 700; color: white; margin: 0 0 0.5rem; }
+  .baseline { color: var(--texte-2-sur-page); font-style: italic; margin: 0 0 2rem; }
+  h2 { font-size: 1.05rem; font-weight: 700; margin: 1.2rem 0 0.6rem; color: white; border-bottom: 1px solid rgba(255,255,255,0.25); padding-bottom: 0.3rem; }
+  .grille { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 2rem; }
+  @media (max-width: 1100px) { .grille { grid-template-columns: 1fr; } }
+  .panneau { display: flex; flex-direction: column; gap: 0.6rem; }
+  .panneau-titre {
+    font-size: 0.92rem; font-weight: 700; color: white; margin-bottom: 0.2rem;
+    display: flex; flex-direction: column; gap: 0.15rem;
+  }
+  .panneau-titre em {
+    font-weight: 500; font-style: normal;
+    font-size: 0.75rem; color: var(--texte-2-sur-page);
+  }
+  .axes { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.4rem; justify-content: center; }
+  .chip {
+    background: white; color: var(--texte-sur-surface);
+    border: 1px solid rgba(255,255,255,0.45);
+    border-radius: 999px; padding: 0.42rem 0.95rem;
+    font-size: 0.85rem; font-weight: 500; cursor: default;
+  }
+  .chip.ouverte { box-shadow: 0 0 0 2px rgba(255,255,255,0.5); }
+
+  .selecteur {
+    background: white;
+    border: 1px solid var(--niv-1);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    box-shadow: 0 1px 6px rgba(26, 35, 126, 0.18);
+    color: var(--texte-sur-surface);
+  }
+  .selecteur-entete {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 0.6rem;
+  }
+  .selecteur-entete strong { font-size: 0.92rem; color: var(--texte-sur-surface); }
+  .selecteur-entete em {
+    font-style: normal; font-size: 0.72rem; color: var(--texte-2-sur-surface);
+    background: #eef1f6; padding: 0.1rem 0.45rem; border-radius: 4px;
+  }
+  .selecteur-options { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+  .selecteur-options label {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    padding: 0.35rem 0.65rem;
+    border: 1px solid #cbd0e0; border-radius: 6px;
+    font-size: 0.82rem; background: #f9fafc;
+    color: var(--texte-sur-surface);
+    cursor: default;
+  }
+  .selecteur-options label .marker {
+    display: inline-block; width: 12px; height: 12px;
+    border: 1.5px solid #94a3b8; flex-shrink: 0;
+  }
+  .selecteur.mono  .marker { border-radius: 50%; }
+  .selecteur.multi .marker { border-radius: 2px; }
+
+  /* Variante α — corps en colonne */
+  .selecteur-options label.alpha { align-items: flex-start; padding: 0.5rem 0.7rem; }
+  .selecteur-options label.alpha .marker { margin-top: 0.2rem; }
+  .selecteur-options label.alpha .corps {
+    display: flex; flex-direction: column; gap: 0.1rem; line-height: 1.3;
+  }
+  .selecteur-options label.alpha .corps .titre { font-weight: 500; }
+  .selecteur-options label.alpha .corps .sous {
+    font-size: 0.72rem; color: var(--texte-2-sur-surface); font-style: italic;
+  }
+
+  /* Emojis */
+  .icone {
+    display: inline-block;
+    font-size: 1rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .annot {
+    background: rgba(255,255,255,0.08);
+    border-left: 3px solid var(--texte-2-sur-page);
+    padding: 0.6rem 0.9rem; font-size: 0.82rem;
+    color: var(--texte-sur-page);
+    margin-top: 0.6rem; border-radius: 4px;
+  }
+  .annot strong { color: white; }
+
+  .resume {
+    background: rgba(255,255,255,0.08); border-radius: 10px;
+    padding: 1rem 1.2rem; margin-top: 2rem;
+    border: 1px solid rgba(255,255,255,0.18);
+  }
+  .resume h3 { font-size: 0.95rem; margin: 0 0 0.5rem; color: white; }
+  .resume p { color: var(--texte-2-sur-page); font-size: 0.85rem; line-height: 1.5; margin: 0.4rem 0; }
+  .resume strong { color: white; }
+</style>
+</head>
+<body>
+
+<h1>Mockup Bug 7 — emojis du référentiel dans les sélecteurs</h1>
+<p class="baseline">Quatre sélecteurs ouverts côte à côte avec leurs emojis respectifs (sources : NIVEAUX, PROBLEMES, CADRES de CM.Config). Maturité reste sans icône — le référentiel n'en a pas pour les 3 valeurs.</p>
+
+<h2>Niveau (variante α — emoji + label + sous-titre)</h2>
+<div class="grille">
+  <div class="panneau">
+    <div class="panneau-titre">
+      <strong>Niveau — emoji avant le titre</strong>
+      <em>L'emoji ouvre la boîte, le sous-titre suit le label.</em>
+    </div>
+    <div class="axes">
+      <span class="chip ouverte">Niveau</span>
+    </div>
+    <div class="selecteur mono">
+      <div class="selecteur-entete"><strong>Niveau</strong> <em>mono-sélection</em></div>
+      <div class="selecteur-options">
+        <label class="alpha"><span class="marker"></span><span class="corps"><span class="titre"><span class="icone">🏛️</span> Stratégique</span><span class="sous">Direction, horizon 1 à 3 ans</span></span></label>
+        <label class="alpha"><span class="marker"></span><span class="corps"><span class="titre"><span class="icone">📊</span> Tactique</span><span class="sous">Portefeuille, arbitrage 3 à 12 mois</span></span></label>
+        <label class="alpha"><span class="marker"></span><span class="corps"><span class="titre"><span class="icone">🗂️</span> Programme / Projet</span><span class="sous">Coordination, horizon 1 à 6 mois</span></span></label>
+        <label class="alpha"><span class="marker"></span><span class="corps"><span class="titre"><span class="icone">⚙️</span> Opérationnel</span><span class="sous">Équipes, livraison hebdomadaire</span></span></label>
+      </div>
+    </div>
+  </div>
+  <div class="panneau">
+    <div class="panneau-titre">
+      <strong>Niveau — sans emoji (témoin)</strong>
+      <em>État actuel.</em>
+    </div>
+    <div class="axes">
+      <span class="chip ouverte">Niveau</span>
+    </div>
+    <div class="selecteur mono">
+      <div class="selecteur-entete"><strong>Niveau</strong> <em>mono-sélection</em></div>
+      <div class="selecteur-options">
+        <label class="alpha"><span class="marker"></span><span class="corps"><span class="titre">Stratégique</span><span class="sous">Direction, horizon 1 à 3 ans</span></span></label>
+        <label class="alpha"><span class="marker"></span><span class="corps"><span class="titre">Tactique</span><span class="sous">Portefeuille, arbitrage 3 à 12 mois</span></span></label>
+        <label class="alpha"><span class="marker"></span><span class="corps"><span class="titre">Programme / Projet</span><span class="sous">Coordination, horizon 1 à 6 mois</span></span></label>
+        <label class="alpha"><span class="marker"></span><span class="corps"><span class="titre">Opérationnel</span><span class="sous">Équipes, livraison hebdomadaire</span></span></label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2>Problème (variante B compact — emoji + label sur une ligne)</h2>
+<div class="grille">
+  <div class="panneau">
+    <div class="panneau-titre">
+      <strong>Problème — emoji + label compact</strong>
+      <em>Sept valeurs, l'emoji aide à scanner visuellement.</em>
+    </div>
+    <div class="axes">
+      <span class="chip ouverte">Problème</span>
+    </div>
+    <div class="selecteur multi">
+      <div class="selecteur-entete"><strong>Problème</strong> <em>multi-sélection</em></div>
+      <div class="selecteur-options">
+        <label><span class="marker"></span><span class="icone">⏱️</span> Délais & prévisibilité</label>
+        <label><span class="marker"></span><span class="icone">🎯</span> Qualité & stabilité</label>
+        <label><span class="marker"></span><span class="icone">🌊</span> Flux & goulots</label>
+        <label><span class="marker"></span><span class="icone">💰</span> Valeur & rentabilité</label>
+        <label><span class="marker"></span><span class="icone">👥</span> Engagement & humain</label>
+        <label><span class="marker"></span><span class="icone">🧭</span> Alignement stratégique</label>
+        <label><span class="marker"></span><span class="icone">🛡️</span> Risque, sécurité & conformité</label>
+      </div>
+    </div>
+  </div>
+  <div class="panneau">
+    <div class="panneau-titre">
+      <strong>Problème — sans emoji (témoin)</strong>
+      <em>État actuel.</em>
+    </div>
+    <div class="axes">
+      <span class="chip ouverte">Problème</span>
+    </div>
+    <div class="selecteur multi">
+      <div class="selecteur-entete"><strong>Problème</strong> <em>multi-sélection</em></div>
+      <div class="selecteur-options">
+        <label><span class="marker"></span> Délais & prévisibilité</label>
+        <label><span class="marker"></span> Qualité & stabilité</label>
+        <label><span class="marker"></span> Flux & goulots</label>
+        <label><span class="marker"></span> Valeur & rentabilité</label>
+        <label><span class="marker"></span> Engagement & humain</label>
+        <label><span class="marker"></span> Alignement stratégique</label>
+        <label><span class="marker"></span> Risque, sécurité & conformité</label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2>Cadre (variante B compact — 12 valeurs avec emojis variés)</h2>
+<div class="grille">
+  <div class="panneau">
+    <div class="panneau-titre">
+      <strong>Cadre — emoji + label compact</strong>
+      <em>Le test le plus chargé : 12 valeurs, emojis très variés (🚀 ♻️ 🎯 🏗️…).</em>
+    </div>
+    <div class="axes">
+      <span class="chip ouverte">Cadre</span>
+    </div>
+    <div class="selecteur multi">
+      <div class="selecteur-entete"><strong>Cadre</strong> <em>multi-sélection</em></div>
+      <div class="selecteur-options">
+        <label><span class="marker"></span><span class="icone">🚀</span> DORA / DevOps</label>
+        <label><span class="marker"></span><span class="icone">🔁</span> Continuous Delivery</label>
+        <label><span class="marker"></span><span class="icone">🛰️</span> SPACE</label>
+        <label><span class="marker"></span><span class="icone">♻️</span> Lean / Six Sigma</label>
+        <label><span class="marker"></span><span class="icone">🎯</span> OKR</label>
+        <label><span class="marker"></span><span class="icone">🏉</span> Scrum</label>
+        <label><span class="marker"></span><span class="icone">🗂️</span> Kanban</label>
+        <label><span class="marker"></span><span class="icone">🏗️</span> SAFe</label>
+        <label><span class="marker"></span><span class="icone">💬</span> Expérience client</label>
+        <label><span class="marker"></span><span class="icone">🛠️</span> ITIL</label>
+        <label><span class="marker"></span><span class="icone">🔐</span> Sécurité</label>
+        <label><span class="marker"></span><span class="icone">🧩</span> Indicateur générique</label>
+      </div>
+    </div>
+  </div>
+  <div class="panneau">
+    <div class="panneau-titre">
+      <strong>Cadre — sans emoji (témoin)</strong>
+      <em>État actuel.</em>
+    </div>
+    <div class="axes">
+      <span class="chip ouverte">Cadre</span>
+    </div>
+    <div class="selecteur multi">
+      <div class="selecteur-entete"><strong>Cadre</strong> <em>multi-sélection</em></div>
+      <div class="selecteur-options">
+        <label><span class="marker"></span> DORA / DevOps</label>
+        <label><span class="marker"></span> Continuous Delivery</label>
+        <label><span class="marker"></span> SPACE</label>
+        <label><span class="marker"></span> Lean / Six Sigma</label>
+        <label><span class="marker"></span> OKR</label>
+        <label><span class="marker"></span> Scrum</label>
+        <label><span class="marker"></span> Kanban</label>
+        <label><span class="marker"></span> SAFe</label>
+        <label><span class="marker"></span> Expérience client</label>
+        <label><span class="marker"></span> ITIL</label>
+        <label><span class="marker"></span> Sécurité</label>
+        <label><span class="marker"></span> Indicateur générique</label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2>Maturité (pas d'emoji dans le référentiel)</h2>
+<div class="panneau" style="max-width: 600px;">
+  <div class="panneau-titre">
+    <strong>Maturité — telle quelle</strong>
+    <em>Le référentiel n'a pas d'emoji pour Débutant / Intermédiaire / Avancé. Statu quo.</em>
+  </div>
+  <div class="axes">
+    <span class="chip ouverte">Maturité</span>
+  </div>
+  <div class="selecteur mono">
+    <div class="selecteur-entete"><strong>Maturité</strong> <em>mono-sélection</em></div>
+    <div class="selecteur-options">
+      <label><span class="marker"></span> Débutant</label>
+      <label><span class="marker"></span> Intermédiaire</label>
+      <label><span class="marker"></span> Avancé</label>
+    </div>
+  </div>
+</div>
+
+<div class="resume">
+  <h3>Lecture rapide</h3>
+  <p><strong>Avec emojis</strong> — le scan visuel est plus rapide. Les emojis du référentiel sont en place depuis longtemps et l'utilisateur les retrouve sur les autres pages (cards, fiches, porte par mon problème). Cohérence interne.</p>
+  <p><strong>Sans emojis</strong> — plus sobre, plus aligné avec la doctrine § 6.0 du doc-cadre-visuel qui prescrit des SVG line monochromes. Mais l'outil entier utilise déjà ces emojis ailleurs — l'incohérence visuelle se déplace de l'accueil vs la doctrine vers l'accueil vs le reste de l'outil.</p>
+  <p><strong>Mon avis</strong> — option <strong>A : brancher les emojis maintenant</strong>, ouvrir un chantier 26 séparé pour la migration emojis → SVG line à l'échelle de l'outil entier.</p>
+</div>
+
+</body>
+</html>
