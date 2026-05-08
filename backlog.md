@@ -13,20 +13,18 @@ Précédent — **6 mai 2026 (séance journée — palette + dette de référent
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événements majeurs de la séance (08/05/2026 nuit, 20 commits)** : bascule de l'outil sur la **voie hybride** (fond bleu nuit pour la page, gris-bleu très clair pour la nav, blanc franc pour la matière) avec possibilité de bascule vers la **voie neutre clair** par `CM.Theme.appliquer('neutre')`. Crème écarté. Système de thèmes posé via 4 tokens indépendants (`--page-bg`, `--surface-nav`, `--texte-sur-page`, `--texte-2-sur-page`) + module `CM.Theme` (`appliquer / lire / basculer / init`). Persistance via `CM.Preferences` clé `'theme'`.
-- **Bugs A et B clos** : (B) masquage centralisé des vues de premier rang via `CM.App.masquerToutesVuesPremierRang()` ; (A) bandeau interne `<nav class="onglets">` retiré.
-- **Cascade et Maturité activées dans le bandeau du haut** via fonction générique `CM.App.ouvrirVueDuBandeau(idOnglet)`. Libellé « La maturité ? » conservé. Bug de bandeau actif désynchronisé corrigé (fonction `marquerEntreeBandeau` posée).
-- **Sémantique des filtres maturité** basculée de cumulative (`<=`) vers **propre au niveau** (`==`) — variante β actée. Évolution future en chips cumulables consignée en chantier 13.bis.
-- **Page Par ma question** : icônes SVG ajoutées (œil / calendrier / cycle / triangle / chevrons / livre), cadre blanc intermédiaire, boutons en gris-bleu. **Tableau de bord** : titre + boutons Imprimer/Réinitialiser passés en tokens thème. Tutoiement amorcé sur tableau de bord vide.
-- **Chantiers ouverts cette séance** : 21 (vue Lexique à créer, stub conservé) · 13.bis (filtres maturité en chips cumulables) · 22 (harmonisation tutoiement de l'ensemble — boy scout sur chaque page).
-- **20 commits sur la séance** : `3bdd2c7` Bug B · `b02de92` mockup-comparatif · `641e670` matière blanc franc · `3cb0027` 4e colonne hybride · `b71e7e5` retrait crème · `d030c03` système thèmes · `32ff60a` cadre blanc Par ma question · `4601c45` Cascade + Maturité bandeau · `f5223fe` chantier 21 Lexique · `4f15563` clôture intermédiaire · `a0c8c9b` lisibilité 3 portes + cascade · `63cf58b` suppression bandeau interne · `756489f` Maturité vide + bande blanche + libellé · `8ebfc43` bandeau actif sync · `10340f1` lisibilité tableau de bord · `36b0de6` sémantique β maturité · `4b40682` icônes par-question + amorce tutoiement · `481925d` chantier 22 backlog.
-- **Lætitia annonce qu'il reste des bugs à corriger** dans la prochaine séance — non précisés. Le test E2E continuera de remonter des frictions visuelles/fonctionnelles. Vague de remédiations attendue (cadres blancs intermédiaires à généraliser sur les autres vues, harmonisation tutoiement opportuniste, etc.).
-- **Doctrine `doc-cadre-visuel.md` § 6.0 et § 6.1** à amender à terme : la rupture en faveur du crème (posée le 05/05/2026) est révisée vers la voie hybride. Amendement reporté tant que le test terrain n'a pas tranché entre hybride et neutre.
+- **Événement majeur de la séance bis (08/05/2026 fin de nuit, 7 commits)** : **architecture finale de l'accueil actée** après 7 itérations de mockup-preview convergées. L'accueil 5 portes est remplacé par une **page unifiée *Choisir mes indicateurs*** : 2 cartouches repliables (Par ma question en haut, compteur en bas), 4 chips à combiner (Problème · Cadre · Niveau · Maturité), liste filtrée en grille 2 colonnes avec format de fiche-card riche identique au reste du site. **Mintzberg sort du visible.** Doctrine sauvegardée dans `project_accueil_unifie_v7.md`. Mockup de référence : `mockup-accueil-unifie-chips.html` v7 (`8589834`).
+- **Chantier 23 ouvert** dans le backlog (refonte radicale, 7 sous-chantiers ordonnés 23.a → 23.g, estimation 15-25h sur 4-6 séances). Constat collatéral n°1 sur le statut latent de l'attribut `axes:[...]` à arbitrer ultérieurement.
+- **Doctrines à amender ensuite** : `feedback_taxonomie_par_porte.md`, `project_contrat_coherence_portes.md`, `project_pyramide_en_sursis.md`, `project_porte_niveau_*.md`, `project_chantier_14_ouverture.md` — toutes deviennent partiellement caduques. L'orchestrateur stepper meurt, le traducteur orthodoxe reste.
+- **7 commits de mockup ce soir** : `2c56921` v1 mécanique chips · `626e00e` v2 cartouche cliquable · `3ec7826` v3 sans toggles + cartouche question · `8947260` v4 inversion + chip Angle · `7032aae` v5 sortie Angle + Mintzberg pastille · `e2079e3` v6 fiche-card riche · `8589834` v7 sans Mintzberg + grille 2 colonnes.
+- **Précédent — séance nuit (20 commits)** : bascule voie hybride (fond bleu nuit + matière blanc franc), bugs A et B clos, Cascade/Maturité activées au bandeau, sémantique β maturité, icônes Par ma question, tutoiement amorcé. Voir détail dans la version précédente de l'État courant (commit `9aa2ec6`).
+- **Chantiers ouverts cumulés** : 21 (vue Lexique) · 13.bis (chips cumulables maturité) · 22 (harmonisation tutoiement) · **23 (refonte radicale accueil — priorité haute)**.
+- **Doctrine `doc-cadre-visuel.md`** : § 6.0 / § 6.1 à amender vers la voie hybride (reporté) ; **ajout d'un § accueil unifié à venir au sous-chantier 23.a**.
 - **Dette de référentiel cumulée (inchangée)** : 8 fiches métriques + 3 fiches cadres à créer.
-- **Workflow git sandbox** : pattern `mv .git/index.lock` (+ `HEAD.lock`) toujours actif. Paires `.git/*.lock.tmp.A→Z + tmp10` accumulées en attente côté ordi.
-- **Mémoires actualisées cette séance** : aucune (les décisions sont consignées dans backlog et commits).
-- **Prochaine action recommandée** : reprendre sur les bugs résiduels que Lætitia annonce. Ouverture en mode express. Si elle pointe une page précise, attaquer ; sinon, candidate priorité = harmonisation tutoiement opportuniste (chantier 22) ou cadres blancs intermédiaires sur autres vues.
-- **Blocages / questions ouvertes** : aucun.
+- **Workflow git sandbox** : pattern `mv .git/index.lock` (+ `HEAD.lock`) toujours actif. Paires `.git/*.lock.tmp.A→Z` accumulées en attente côté ordi.
+- **Mémoires actualisées cette séance** : `project_accueil_unifie_v7.md` (nouvelle).
+- **Prochaine action recommandée** : ouvrir le sous-chantier **23.a — consigne en doctrine** dans `doc-cadre-visuel.md` et `doc-contrats-navigation.md` avant tout code. Le mockup v7 est la référence visuelle ; les contrats d'API se posent par écrit avant que les consommateurs (page unifiée) soient implémentés (cf. mémoire `project_document_compagnon_contrats.md`).
+- **Blocages / questions ouvertes** : aucun. L'architecture est figée, le travail est de l'exécution.
 
 
 ## 0. Chantiers majeurs livrés → archivés
@@ -1020,4 +1018,52 @@ Sur les quatre lots, 33 liens ont été posés sur 25 champs éditoriaux de 18 f
 **Articulations.** Articulé avec chantier 19 (cadre visuel — la voix située de l'axe 8 § 5.8). À conduire de manière progressive, opportunistement sur chaque page touchée par d'autres chantiers (boy scout). Pas de dépendance bloquante en amont.
 
 **Première amorce.** Tableau de bord vide + message d'impression vide (commit 4b40682 du 08/05/2026) — exemple de ce qui doit suivre dans toutes les autres zones.
+
+## 23. Refonte radicale de l'accueil — page unifiée *Choisir mes indicateurs* *(📋 ouverte le 08/05/2026 nuit)*
+
+**Origine.** Séance du 08/05/2026 nuit. Lætitia rouvre la question des « 4 axes » disparus du bandeau, puis pose ses irritants utilisateurs : effet tunnel des portes, redondance entre portes, aversion pour les chemins obscurs. Conclusion stratégique : *« je cherche à simplifier l'outil et ne pas générer des chemins cachés. La page d'accueil devient de plus en plus centrale. »* Sept itérations de mockup-preview convergent vers une **page unifiée *Choisir mes indicateurs* qui remplace l'accueil 5 portes** et absorbe la fonction des 3 vues détail (problème, cadre, niveau). Forme stable validée : v7 (commit `8589834`), mockup `mockup-accueil-unifie-chips.html`.
+
+**Doctrine actée** *(consignée dans la mémoire `project_accueil_unifie_v7.md`)*.
+
+- **L'accueil est l'outil.** Aucune nouvelle vue ne s'ouvre depuis l'accueil — tout se joue dans la même page.
+- **Architecture verticale** (de haut en bas) : bandeau (8 entrées, inchangé) ; en-tête centré *Page unifiée · Choisir mes indicateurs · Quatre lentilles à combiner* ; cartouche compagnon *5 questions terrain ▾* (en haut, parce que la matière courte reste visible quand l'autre se déploie) ; marqueur *« — ou — »* ; bloc des 4 chips *Problème · Cadre · Niveau · Maturité* ; cartouche compteur *N sur 75 indicateurs ▾* ; liste filtrée en grille 2 colonnes.
+- **Mécanique des chips** : accordéon en place, mono-sélection (Niveau, Maturité, marqueurs ronds) ou multi-sélection (Problème, Cadre, marqueurs carrés). À la sélection, la chip se referme en mode actif (`✓ Niveau · Programme`). Recliquer = rouvrir.
+- **Cartouches cliquables** : repliés à l'arrivée, compteur live, chevron `▾`/`▴`, libellé d'action *Voir / Masquer*. Pas de limite haute sur le nombre de chips actives.
+- **Format de fiche-card UNIQUE** identique sur l'accueil et sur le reste du site (`htmlCarte()` ligne 7412). Boutons panier ✓ / 💡 disponibles dès l'accueil — c'est ce qui rend l'accueil-outil opérationnel.
+- **Mintzberg sort du visible** (chip *Angle* écartée, pastilles écartées, légende écartée). Sa critique : recouvrement avec les chips, naming forcé, hors langage utilisateur. L'attribut `axes:[...]` reste latent dans le code — voir constat collatéral n°1.
+
+**Sous-chantiers** *(ordonnés, à exécuter dans cet ordre)*.
+
+| Étape | Mandat | État | Note |
+|---|---|---|---|
+| 23.a | Consigne en doctrine — `doc-cadre-visuel.md` § accueil unifié + `doc-contrats-navigation.md` § fin des 3 portes + suppression de la pyramide | 🔴 à faire | Avant tout code, fixer les contrats. |
+| 23.b | Page unifiée — structure HTML + en-tête + cartouche *Par ma question* + 4 chips + cartouche compteur, sans encore brancher la mécanique | 🔴 à faire | Squelette statique sur lequel les étapes suivantes se greffent. |
+| 23.c | Mécanique chips — accordéon en place, sélecteurs mono/multi par axe | 🔴 à faire | S'appuie sur le traducteur orthodoxe du chantier 14. |
+| 23.d | Cartouches cliquables — repliable/dépliable, compteur live | 🔴 à faire | État persisté via `CM.Preferences` ? À arbitrer. |
+| 23.e | Liste filtrée en grille 2 colonnes — réutilisation directe de `htmlCarte()` | 🔴 à faire | Format identique au reste du site, bordure colorée fiabilité, panier ✓/💡 actif. |
+| 23.f | Suppression du code orphelin — `vue-porte-probleme`, `vue-porte-cadre`, `vue-porte-niveau`, pyramide, orchestrateur stepper du chantier 14 | 🔴 à faire | Le **traducteur orthodoxe reste** (c'est lui qui formule le filtre). Doctrine `project_doctrine_traducteur_orthodoxe.md` préservée. |
+| 23.g | Tests E2E + sentinelles + scénario de non-régression | 🔴 à faire | Vérifier qu'aucun lien externe au projet ne pointait vers les vues supprimées. |
+
+**Estimation très grossière** : 15-25 h sur 4-6 séances.
+
+**Mockup de référence** : `mockup-accueil-unifie-chips.html` v7 (commit `8589834`). 3 panneaux côte à côte (initial / chip ouverte / 2 chips actives + liste filtrée 2 colonnes).
+
+**Constat collatéral n°1** *(remonté à la séance du 08/05/2026 nuit)*. L'attribut `axes: [...]` (Mintzberg : projet / stratégique / humaine / méthodologique) reste dans le code des 75 fiches mais n'est plus utilisé visuellement après cette refonte. Statut à arbitrer dans un chantier séparé : **(a)** retrait pur (nettoyage du référentiel) ; **(b)** conservation latente (au cas où une fonction future le réactiverait) ; **(c)** réintroduction sous une autre forme (page *Lecture Mintzberg* dédiée, accessible depuis le bandeau). Pas urgent — ne bloque pas le chantier 23. À ouvrir ultérieurement.
+
+**Décisions enchaînées** *(historique des 7 itérations de mockup pour traçabilité)*.
+
+- v1 (2c56921) — mécanique chips en 3 états (initial / Niveau ouverte / 2 actives).
+- v2 (626e00e) — cartouche compteur cliquable (replié par défaut, chevron ▾/▴, libellé d'action).
+- v3 (3ec7826) — suppression des toggles *Par une porte / En croisant les axes / + futur mode* (redondants), ajout du cartouche *Par ma question* sur l'accueil (anti-chemin obscur).
+- v4 (8947260) — inversion des blocs (cartouche question au-dessus des chips), ajout d'une 5e chip *Angle* (Mintzberg variante α).
+- v5 (7032aae) — sortie de la chip *Angle* après esprit critique, Mintzberg conservé en pastille sur fiche.
+- v6 (e2079e3) — fiche-card riche fidèle à `htmlCarte()` (bordure fiabilité, type, badge, pitch, fréquence, maturité, chip cadre, panier).
+- v7 (8589834) — retrait complet de Mintzberg + grille 2 colonnes pour la liste filtrée.
+
+**Doctrines amendées par cette refonte.**
+- `feedback_taxonomie_par_porte.md` — hérité du modèle 4 portes ; à amender pour acter que la taxonomie ne dépend plus de la porte mais de l'axe (chip).
+- `project_contrat_coherence_portes.md` — devient sans objet une fois les 3 portes supprimées.
+- `project_pyramide_en_sursis.md` — la pyramide disparaît effectivement.
+- `project_porte_niveau_*.md` (statut, rôles, doctrine éditoriale, arbitrages, rendu visuel) — la porte niveau disparaît, le chantier 7.2 conservé pour son investissement éditorial qui peut nourrir la chip *Niveau* ou la page *Cascade*.
+- `project_chantier_14_ouverture.md` — l'orchestrateur stepper meurt, le traducteur reste (cf. 23.f).
 
