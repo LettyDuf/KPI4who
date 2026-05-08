@@ -134,18 +134,24 @@
     --citation:     #6b5d3a;
   }
 
-  /* Colonne 2 — bleu nuit hérité (test demandé par Lætitia) */
+  /* Colonne 2 — bleu nuit hérité (test demandé par Lætitia 08/05/2026)
+     Doctrine du test : fond bleu nuit pour la page, MAIS cartes / bandeau /
+     chips / boutons restent en blanc franc avec leurs accents normaux —
+     comme le pattern de l'accueil hérité (cf. captures Lætitia). Le crème
+     du § 6.5 fiche-question (« crème en fond global, blanc franc dans la
+     matière ») est ici transposé : « bleu nuit en fond global, blanc franc
+     dans la matière ». Les overrides ciblés plus bas tiennent ce contrat. */
   .preview.bleu {
     --fond:         #0d1b4f;        /* bleu nuit, début du dégradé hérité */
-    --fond-2:       #1a237e;        /* indigo profond, milieu du dégradé */
-    --carte:        rgba(255,255,255,0.06);  /* glassmorphism léger */
-    --carte-bord:   rgba(255,255,255,0.18);
-    --texte:        #f5f6fa;
-    --texte-2:      #b0b5cd;
-    --bordure:      rgba(255,255,255,0.12);
-    --chip-fond:    rgba(255,255,255,0.08);
-    --chip-bord:    rgba(255,255,255,0.22);
-    --chip-actif-fond: rgba(199,210,254,0.18);
+    --fond-2:       #ffffff;        /* bandeau sur fond blanc franc */
+    --carte:        #ffffff;        /* cartes-portes blanches franches */
+    --carte-bord:   #e0e4eb;
+    --texte:        #f5f6fa;        /* texte SUR fond bleu (titre, baseline) */
+    --texte-2:      #c1c5d4;        /* secondaire sur fond bleu */
+    --bordure:      rgba(255,255,255,0.20);
+    --chip-fond:    #ffffff;        /* chips fond blanc */
+    --chip-bord:    #d8dceb;
+    --chip-actif-fond: #ede9fe;
     --citation:     #c1c5d4;
   }
 
@@ -163,6 +169,56 @@
     --chip-actif-fond: #e0e7ff;
     --citation:     #5b6378;
   }
+
+  /* ──────────────────────────────────────────────────────────────
+     Overrides ciblés pour la colonne bleu nuit
+     Le fond est bleu, mais les COMPOSANTS gardent le contrat « matière
+     en blanc franc » : bandeau, cartes, chips, bloc résultat, fiche-cards.
+     Le texte qui flotte SUR le fond bleu reste clair (titre, baseline,
+     citation pied) — cf. variables --texte, --texte-2 ci-dessus.
+     ────────────────────────────────────────────────────────────── */
+
+  /* Bandeau sur fond blanc franc — pattern de l'accueil hérité */
+  .preview.bleu .bandeau { background: #ffffff; border-bottom: 1px solid #e0e4eb; }
+  .preview.bleu .bandeau .entree { color: #5b6378; }
+  .preview.bleu .bandeau .entree.actif { background: #ede9fe; color: #4c1d95; }
+  .preview.bleu .bandeau .entree.stub  { color: #94a3b8; }
+
+  /* Cartes-portes : fond blanc + texte foncé à l'intérieur */
+  .preview.bleu .porte { background: #ffffff; border-color: #e0e4eb; }
+  .preview.bleu .porte h3 { color: #1c2033; }
+  .preview.bleu .porte p  { color: #5b6378; }
+  .preview.bleu .porte .badge { background: #e1f5fe; color: #01579b; }
+
+  /* Bascule des modes : pill habituel sur fond bleu */
+  .preview.bleu .mode-tab { background: #ffffff; color: #5b6378; border-color: #d8dceb; }
+  .preview.bleu .mode-tab.actif { background: #ede9fe; color: #4c1d95; border-color: transparent; }
+  .preview.bleu .mode-tab.futur { background: rgba(255,255,255,0.10); color: #c1c5d4; border-color: rgba(255,255,255,0.25); }
+
+  /* Chips en blanc franc — accents colorés normaux */
+  .preview.bleu .chip { background: #ffffff; color: #1c2033; border-color: #d8dceb; }
+  .preview.bleu .chip .check { color: #4c1d95; }
+  .preview.bleu .chip.actif { background: #ede9fe; border-color: transparent; }
+  .preview.bleu .chip[data-axe="probleme"].actif { color: #5b21b6; }
+  .preview.bleu .chip[data-axe="cadre"].actif    { color: var(--niv-1); }
+  .preview.bleu .chip[data-axe="niveau"].actif   { color: var(--niv-3); }
+  .preview.bleu .chip[data-axe="maturite"].actif { color: var(--niv-eq-af); }
+
+  /* Bloc résultat sur fond blanc franc */
+  .preview.bleu .resultat { background: #ffffff; border-color: #e0e4eb; }
+  .preview.bleu .resultat-entete strong { color: #1c2033; }
+  .preview.bleu .resultat-entete > span { color: #5b6378; }
+  .preview.bleu .resultat-entete .compteur { color: #4c1d95; }
+  .preview.bleu .fiche-card { background: #f9fafc; border-color: #e0e4eb; color: #1c2033; }
+  .preview.bleu .fiche-card .pts span { background: #4c1d95; opacity: 0.75; }
+  .preview.bleu .fiche-card.suite { color: #5b6378; }
+
+  /* Barre titre : indigo lisible avec un trait clair sur le bleu */
+  .preview.bleu .page-entete .barre { background: #ede9fe; }
+
+  /* Citation pied : sur fond bleu, gris clair (déjà via --citation) — bordure adoucie */
+  .preview.bleu .pied { border-top-color: rgba(255,255,255,0.18); }
+  .preview.bleu .axes-baseline { color: var(--texte-2); }
 
   /* ──────────────────────────────────────────────────────────────
      Composants — tous tirent leurs couleurs des variables de fond.
@@ -776,17 +832,18 @@
   <ul>
     <li><strong>Lisibilité du texte de matière</strong> — les paragraphes des cartes-portes, la baseline, les libellés des chips. Le crème est calibré pour une lecture longue ; le bleu nuit force des contrastes blancs/désaturés ; le neutre est intermédiaire.</li>
     <li><strong>Comportement des couleurs de niveau</strong> — les filets (indigo, bleu, teal, turquoise/orange) doivent rester distinguables sur les 3 fonds. Sur bleu nuit, les couleurs sombres (indigo, bleu, teal) tendent à se rapprocher du fond.</li>
-    <li><strong>Présence de l'indigo <code>#4c1d95</code></strong> (chrome universel — bandeau actif, term-def, primaires). Sur bleu nuit il est presque invisible — j'ai dû basculer la barre titre sur l'ambre. Si on choisit le bleu, audit chromatique complet à reconduire (calage des composants).</li>
-    <li><strong>Bleu de Prusse <code>#1d3a5f</code></strong> (signature fiche-question, § 6.5) — non visible ici, mais à tester sur fond bleu nuit : sa raison d'être (cohabiter avec l'indigo en distinction de teinte ET luminance) tient plus difficilement.</li>
+    <li><strong>Présence de l'indigo <code>#4c1d95</code></strong> (chrome universel — bandeau actif, term-def, primaires). Préservé ici via le pattern « matière en blanc franc » : le bandeau est sur fond blanc, l'indigo s'y voit normalement. À l'inverse, si tu mets l'indigo en plein sur le fond bleu nuit (sans surface blanche dessous), il disparaît.</li>
+    <li><strong>Bleu de Prusse <code>#1d3a5f</code></strong> (signature fiche-question, § 6.5) — non visible ici, mais à tester en contexte fiche-question : la fiche elle-même restera blanche dans la matière, donc le bleu de Prusse y vit normalement. Le fond bleu nuit n'agresse pas la fiche-question si la matière reste blanche.</li>
     <li><strong>Citation patrimoniale en pied</strong> — sa lisibilité indique la posture sobre/sérieux (axe 4 § 5.4).</li>
   </ul>
 
   <h2>Si tu retiens le bleu nuit, ce qu'il reste à faire</h2>
+  <p style="margin: 0.3rem 0 0.5rem;"><em>Avec le pattern « matière en blanc franc » la cascade s'allège — la plupart des composants restent calibrés sur leur surface blanche.</em></p>
   <ul>
-    <li>Amender <code>doc-cadre-visuel.md</code> § 6.0 et § 6.1 (rupture inversée).</li>
-    <li>Auditer la <strong>palette fiche-question</strong> (§ 6.5) — le bleu de Prusse <code>#1d3a5f</code> est trop proche du fond, à requalifier ou abandonner.</li>
-    <li>Auditer les <strong>couleurs de niveau</strong> — équipe <code>#6fa89e</code> et programme <code>#7d9670</code> calibrées sur fond clair, à retester sur bleu nuit.</li>
-    <li>Recoder le bandeau actif : la pill indigo clair (<code>--niv-1-clair</code>) ne fonctionne plus sur fond foncé.</li>
+    <li>Amender <code>doc-cadre-visuel.md</code> § 6.0 et § 6.1 (rupture inversée — le crème doctrinal devient le bleu nuit, mais le principe « chaleur portée par le fond, blanc franc dans la matière » reste).</li>
+    <li>Vérifier la <strong>citation patrimoniale en pied</strong> — actuellement directement sur le fond bleu, à valider sur tout l'outil. Lisibilité OK ici (gris clair sur bleu) mais nuance importante (axe 8 voix située).</li>
+    <li>Vérifier le <strong>filet 4-couleurs</strong> sur fond bleu — turquoise et teal foncé tendent à se rapprocher du fond, contraste à confirmer.</li>
+    <li>Recalibrer les <strong>liens de pied de page</strong> et autres textes qui flottent directement sur le fond (sans surface blanche dessous).</li>
   </ul>
 
   <h2>Si tu retiens le crème (statu quo) ou le neutre clair</h2>
