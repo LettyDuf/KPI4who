@@ -7776,9 +7776,15 @@ CM.Stepper = (function() {
     return { etape: 1, choix: choix };
   }
 
-  /* Cache les deux écrans d'accueil. Centralisé ici parce qu'identique
-     entre les deux portes existantes — était dupliqué dans le code legacy. */
+  /* Bug B 08/05/2026 : délègue au masquage central de CM.App pour cacher
+     toutes les vues de premier rang (pas seulement les 2 accueils), évitant
+     la superposition lors d'une ouverture depuis le bandeau. Fallback legacy
+     conservé au cas où CM.App ne soit pas encore initialisé. */
   function _cacherAccueils() {
+    if (CM.App && CM.App.masquerToutesVuesPremierRang) {
+      CM.App.masquerToutesVuesPremierRang();
+      return;
+    }
     var a = document.getElementById('accueil');
     var b = document.getElementById('accueil-portes');
     if (a) a.hidden = true;
@@ -9274,14 +9280,16 @@ CM.PanierImpression = (function() {
 CM.VuePorteQuestion = (function() {
   'use strict';
 
-  // Exemple : CM.VuePorteQuestion.ouvrir() → masque les accueils + affiche l'index
+  // Exemple : CM.VuePorteQuestion.ouvrir() → masque toutes les vues de premier
+  // rang (orchestrateur CM.App) puis rend visible l'index. Bug B 08/05/2026 :
+  // la délégation au masquage central remplace le masquage local des seuls
+  // accueils (qui laissait #app et les portes sœurs visibles en superposition).
   function ouvrir() {
-    var pyramide = document.getElementById('accueil');
-    var portes   = document.getElementById('accueil-portes');
-    var vue      = document.getElementById('vue-par-question');
-    if (pyramide) pyramide.hidden = true;
-    if (portes)   portes.hidden   = true;
-    if (vue)      vue.hidden      = false;
+    if (CM.App && CM.App.masquerToutesVuesPremierRang) {
+      CM.App.masquerToutesVuesPremierRang();
+    }
+    var vue = document.getElementById('vue-par-question');
+    if (vue) vue.hidden = false;
     try { window.scrollTo({ top: 0, behavior: 'instant' }); }
     catch (e) { window.scrollTo(0, 0); }
   }
@@ -9329,21 +9337,45 @@ CM.App = (function() {
   }
 
   function _montrerAccueil(mode) {
+    /* Doctrine de masquage centralisée (Bug B 08/05/2026) : on masque
+       d'abord toutes les vues de premier rang, puis on rend visible
+       l'accueil voulu. Évite la superposition quand on bascule depuis
+       n'importe quelle vue (porte, app, vue-par-question). */
+    _masquerToutesVuesPremierRang();
     var pyramide = document.getElementById('accueil');
     var portes   = document.getElementById('accueil-portes');
-    var vueQ     = document.getElementById('vue-par-question');
     var afficherPortes = (mode === 'portes');
     pyramide.hidden = afficherPortes;
     portes.hidden   = !afficherPortes;
-    if (vueQ) vueQ.hidden = true;
-    /* Le bandeau est intégré aux vues (un par vue) : si on bascule sur la
-       pyramide, aucune vue à bandeau n'est visible donc le bandeau du
-       coin se masque avec son hôte (#accueil-portes ou #vue-par-question). */
   }
 
+  /* Masque toutes les vues de premier rang (les 6 entrées du bandeau qui
+     hébergent leur propre vue + l'app contextuelle). Centralisé ici parce
+     que CM.App est l'orchestrateur unique de la navigation depuis le bandeau.
+     Les modules consommateurs (VuePorteQuestion, stepper générique des 3
+     portes 4-axes, ouvrirTableauBord) appellent cette fonction avant de
+     rendre leur propre vue visible. */
+  function _masquerToutesVuesPremierRang() {
+    var ids = [
+      'accueil',
+      'accueil-portes',
+      'vue-par-question',
+      'vue-porte-probleme',
+      'vue-porte-cadre',
+      'vue-porte-niveau'
+    ];
+    for (var i = 0; i < ids.length; i++) {
+      var el = document.getElementById(ids[i]);
+      if (el) el.hidden = true;
+    }
+    var app = document.getElementById('app');
+    if (app) app.classList.remove('actif');
+  }
+
+  /* Alias historique : préservé pour ne pas casser les call-sites internes
+     de CM.App. Toute nouvelle écriture doit utiliser le nom élargi. */
   function _cacherAccueils() {
-    document.getElementById('accueil').hidden = true;
-    document.getElementById('accueil-portes').hidden = true;
+    _masquerToutesVuesPremierRang();
   }
 
   /* ─── Navigation ─── */
@@ -10525,6 +10557,7 @@ CM.App = (function() {
     voieLente_mettreAJourNote:  voieLente_mettreAJourNote,  /* 9.D — bouton « Mettre à jour » */
     voieLente_retirer:          voieLente_retirer,          /* 9.D — lien « Retirer du tableau de bord » */
     voieLente_compteur:         voieLente_compteur,         /* 9.D — compteur live du textarea */
+    masquerToutesVuesPremierRang: _masquerToutesVuesPremierRang, /* Bug B 08/05/2026 — orchestrateur du bandeau */
     init:                 init
   };
 })();
