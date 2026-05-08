@@ -2,25 +2,28 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Mockup-preview — accueil unifié, chips + cartouche cliquable (4 états)</title>
+<title>Mockup-preview v3 — accueil unifié, sans toggles, 2 cartouches</title>
 <style>
   /* ──────────────────────────────────────────────────────────────
-     Mockup-preview v2 — accueil unifié *Choisir mes indicateurs*
-     4 panneaux 2x2, contenu identique, 4 états d'interaction.
+     Mockup-preview v3 — accueil unifié *Choisir mes indicateurs*
+     3 panneaux côte à côte. Architecture finale, à valider.
 
-     v1 → v2 (08/05/2026, décision Lætitia) :
-       — pas de limite sur le nombre de chips actives ;
-       — le cartouche compteur devient un BOUTON repliable/dépliable :
-           replié (par défaut) : « N sur 75 ▾ » — liste cachée ;
-           déplié              : « N sur 75 ▴ » — liste affichée.
-       — l'utilisateur pilote son seuil de bruit : il filtre via les chips
-         tant qu'il a trop de fiches, puis ouvre quand le total lui convient.
-       — état initial = liste repliée (pas de mur de 75 fiches à l'arrivée).
+     v2 → v3 (08/05/2026) :
+       — suppression des toggles « Par une porte » / « En croisant les axes »
+         / « + futur mode » : redondants avec la sémantique mono/multi déjà
+         portée par chaque chip ; absence de gouvernance réelle ;
+       — sous-titre reformulé : « Quatre lentilles à combiner. »
+       — AJOUT d'un second cartouche « Par ma question » sur l'accueil,
+         pour ne pas reléguer les fiches-questions au bandeau du haut
+         (chemin obscur). Mêmes règles que le cartouche compteur :
+         repliable / dépliable, chevron ▾/▴, libellé d'action Voir/Masquer.
+       — Hiérarchie : Bloc 1 = filtrer le référentiel (chips + cartouche) ;
+         Bloc 2 = lire une question terrain (cartouche compagnon).
+         Sémantiques distinctes, cohérence visuelle complète.
 
-     A — initial                : 0 chip, cartouche replié 75/75 ▾, liste cachée
-     B — chip Niveau ouverte    : sélecteur déroulé, cartouche toujours replié
-     C — 2 chips actives, replié : 9/75 ▾, liste cachée — l'utilisateur juge
-     D — 2 chips actives, déplié : 9/75 ▴, liste révélée — il sait pourquoi
+     A — état initial            : 0 chip, deux cartouches repliés
+     B — cartouche compteur déplié : chips actives + liste indicateurs filtrée
+     C — cartouche question déplié : 5 fiches-questions terrain visibles
      ────────────────────────────────────────────────────────────── */
 
   :root {
@@ -56,17 +59,12 @@
 
   .meta { padding: 1.5rem 2rem 1rem; }
   .meta h1 { margin: 0 0 0.4rem; font-size: 1.4rem; font-weight: 700; }
-  .meta p {
-    margin: 0;
-    font-size: 0.92rem;
-    color: #c1c5d4;
-    max-width: 100ch;
-  }
+  .meta p { margin: 0; font-size: 0.92rem; color: #c1c5d4; max-width: 100ch; }
   .meta p strong { color: #f5f6fa; }
 
   .grille {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
     padding: 0 1rem 2rem;
   }
@@ -89,7 +87,7 @@
     border-top: none;
     border-radius: 0 0 10px 10px;
     padding: 1.1rem 1rem 1.4rem;
-    min-height: 600px;
+    min-height: 700px;
   }
 
   .bandeau {
@@ -129,22 +127,6 @@
     font-style: italic;
   }
 
-  .postures {
-    display: flex; justify-content: center; gap: 0.4rem;
-    margin: 1rem 0 1.1rem; flex-wrap: wrap;
-  }
-  .posture {
-    padding: 0.4rem 0.85rem;
-    border-radius: 99px;
-    background: var(--fond-2);
-    color: #5b6378;
-    border: 1px solid var(--chip-bord);
-    font-size: 0.78rem;
-    font-weight: 500;
-  }
-  .posture.actif { background: var(--chip-actif); color: var(--indigo); border-color: transparent; font-weight: 600; }
-  .posture.futur { background: rgba(238,241,246,0.30); color: rgba(255,255,255,0.50); border-color: rgba(255,255,255,0.20); font-weight: 400; }
-
   .axes {
     display: flex; flex-wrap: wrap; gap: 0.4rem;
     justify-content: center; margin-bottom: 0.9rem;
@@ -169,62 +151,8 @@
   .chip[data-axe="maturite"].actif { color: var(--niv-eq-af); }
   .chip .valeur { font-weight: 600; margin-left: 0.1rem; }
   .chip .valeur::before { content: "·"; margin: 0 0.3rem; color: #94a3b8; }
-  .chip.ouverte { box-shadow: 0 0 0 2px rgba(76,29,149,0.30); border-color: var(--indigo); }
 
-  .selecteur {
-    background: #ffffff;
-    border: 1px solid var(--carte-bord);
-    border-radius: 12px;
-    padding: 0.85rem 1rem;
-    margin: 0 0 0.9rem;
-    color: #1c2033;
-  }
-  .selecteur-entete {
-    display: flex; justify-content: space-between; align-items: baseline;
-    margin-bottom: 0.55rem;
-  }
-  .selecteur-entete strong { font-size: 0.9rem; color: #1c2033; }
-  .selecteur-entete em {
-    font-style: normal;
-    font-size: 0.72rem;
-    color: #5b6378;
-    background: #f1f5f9;
-    padding: 0.1rem 0.45rem;
-    border-radius: 4px;
-  }
-  .selecteur-options { display: flex; flex-wrap: wrap; gap: 0.45rem; }
-  .selecteur-options label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.32rem 0.6rem;
-    border: 1px solid #d8dceb;
-    border-radius: 6px;
-    font-size: 0.78rem;
-    background: #f9fafc;
-    color: #1c2033;
-    cursor: default;
-  }
-  .selecteur-options label.coche {
-    border-color: var(--indigo);
-    background: var(--indigo-clair);
-    color: var(--indigo);
-    font-weight: 600;
-  }
-  .selecteur-options label .marker {
-    display: inline-block;
-    width: 12px; height: 12px;
-    border: 1.5px solid #94a3b8;
-    flex-shrink: 0;
-  }
-  .selecteur.mono .marker { border-radius: 50%; }
-  .selecteur.multi .marker { border-radius: 2px; }
-  .selecteur-options label.coche .marker {
-    background: var(--indigo);
-    border-color: var(--indigo);
-  }
-
-  /* ─── Cartouche compteur, devenu bouton ─── */
+  /* ─── Cartouche bouton (commun aux deux blocs) ─── */
   .cartouche {
     display: flex;
     justify-content: space-between;
@@ -241,7 +169,11 @@
     transition: background 0.15s ease;
   }
   .cartouche:hover { background: #f9fafc; }
-  .cartouche.deplie { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent; }
+  .cartouche.deplie {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-color: transparent;
+  }
   .cartouche-libelle {
     display: flex; flex-direction: column; gap: 0.15rem;
   }
@@ -250,15 +182,9 @@
     color: var(--indigo);
     font-weight: 700;
   }
-  .cartouche-libelle .total {
-    color: #5b6378;
-    font-size: 0.95rem;
-    font-weight: 500;
-  }
-  .cartouche-libelle .axes-actifs {
-    font-size: 0.74rem;
-    color: #5b6378;
-  }
+  .cartouche-libelle .total { color: #5b6378; font-size: 0.95rem; font-weight: 500; }
+  .cartouche-libelle .axes-actifs { font-size: 0.74rem; color: #5b6378; }
+  .cartouche-libelle .sous-titre  { font-size: 0.74rem; color: #5b6378; }
   .cartouche-chevron {
     font-size: 0.95rem;
     color: var(--indigo);
@@ -267,20 +193,19 @@
     align-items: center;
     gap: 0.35rem;
   }
-  .cartouche-chevron .libelle-action {
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: #5b6378;
-  }
+  .cartouche-chevron .libelle-action { font-size: 0.78rem; font-weight: 500; color: #5b6378; }
 
-  /* ─── Bloc liste, attaché au cartouche quand déplié ─── */
+  /* ─── Liste révélée (commune aux deux blocs) ─── */
   .liste {
     background: #ffffff;
     border: 1px solid var(--carte-bord);
     border-top: 1px dashed var(--carte-bord);
     border-radius: 0 0 12px 12px;
     padding: 0.8rem 1rem 1rem;
+    margin-bottom: 0.9rem;
   }
+
+  /* Liste indicateurs (bloc 1) */
   .fiches-grille { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
   .fiche-card {
     background: #f9fafc;
@@ -295,12 +220,7 @@
     gap: 0.4rem;
   }
   .fiche-card .pts { display: inline-flex; gap: 2px; flex-shrink: 0; }
-  .fiche-card .pts span {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--indigo);
-    opacity: 0.65;
-  }
+  .fiche-card .pts span { width: 5px; height: 5px; border-radius: 50%; background: var(--indigo); opacity: 0.65; }
   .fiche-card.suite {
     color: #5b6378;
     font-style: italic;
@@ -308,6 +228,28 @@
     background: transparent;
     border: 1px dashed #d8dceb;
   }
+
+  /* Liste fiches-questions (bloc 2) */
+  .questions-liste { display: flex; flex-direction: column; gap: 0.45rem; }
+  .question-card {
+    background: #f9fafc;
+    border: 1px solid var(--carte-bord);
+    border-radius: 8px;
+    padding: 0.55rem 0.7rem;
+    font-size: 0.78rem;
+    color: #1c2033;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .question-card .icone {
+    width: 1.4rem; height: 1.4rem;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    color: var(--indigo);
+    font-size: 1rem;
+  }
+  .question-card .titre { font-weight: 500; }
 
   .pied {
     margin-top: 1.2rem;
@@ -317,6 +259,16 @@
     font-size: 0.72rem;
     color: var(--texte-2);
     font-style: italic;
+  }
+
+  /* Marqueur visuel inter-blocs */
+  .marqueur-bloc {
+    text-align: center;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--texte-2);
+    margin: 0.7rem 0 0.4rem;
   }
 
   .col-annot {
@@ -332,15 +284,15 @@
 <body>
 
   <div class="meta">
-    <h1>Mockup-preview v2 — accueil unifié, chips + cartouche cliquable</h1>
-    <p>Quatre états d'interaction sur la <strong>même page</strong>. <strong>Pas de limite</strong> sur le nombre de chips actives. Le <strong>cartouche compteur est un bouton</strong> qui replie / déplie la liste : l'utilisateur filtre tant qu'il a trop de fiches, puis ouvre quand le total lui convient. État initial = liste repliée (pas de mur de 75 fiches à l'arrivée). Voie hybride retenue.</p>
+    <h1>Mockup-preview v3 — accueil unifié, deux cartouches, sans toggles</h1>
+    <p>Suppression des toggles (sémantique déjà portée par chaque chip). Sous-titre reformulé. Ajout d'un <strong>second cartouche compagnon « Par ma question »</strong> pour rendre les fiches-questions terrain accessibles dès l'accueil — pas reléguées au bandeau du haut. Deux cartouches au même patron : repliés à l'arrivée, chevron ▾/▴, libellé d'action <em>Voir / Masquer</em>. <strong>Bloc 1</strong> = filtrer le référentiel ; <strong>Bloc 2</strong> = lire une question terrain. Sémantiques distinctes, cohérence visuelle complète.</p>
   </div>
 
   <div class="grille">
 
-    <!-- ───── A — initial, cartouche replié ───── -->
+    <!-- ───── A — initial : tout replié ───── -->
     <div>
-      <div class="col-entete"><strong>A — État initial</strong><em>0 chip · cartouche replié 75/75 ▾ · liste cachée</em></div>
+      <div class="col-entete"><strong>A — État initial</strong><em>0 chip · deux cartouches repliés · page calme</em></div>
       <div class="preview">
         <nav class="bandeau">
           <span class="entree actif">Accueil</span>
@@ -355,13 +307,9 @@
           <div class="surtitre">Page unifiée</div>
           <h2>Choisir mes indicateurs</h2>
           <div class="barre"></div>
-          <p class="baseline">Quatre lentilles, deux postures pour les manipuler.<br>Entre par une porte, ou croise les axes.</p>
+          <p class="baseline">Quatre lentilles à combiner.</p>
         </div>
-        <div class="postures">
-          <span class="posture">Par une porte</span>
-          <span class="posture actif">En croisant les axes</span>
-          <span class="posture futur">+ futur mode</span>
-        </div>
+
         <div class="axes">
           <span class="chip" data-axe="probleme">Problème</span>
           <span class="chip" data-axe="cadre">Cadre</span>
@@ -375,68 +323,25 @@
           </span>
           <span class="cartouche-chevron"><span class="libelle-action">Voir</span> ▾</span>
         </button>
-        <div class="pied">L'arrivée est calme. Aucun mur, aucun tunnel.</div>
-      </div>
-      <p class="col-annot"><strong>Lecture.</strong> L'utilisateur arrive : 4 chips disponibles, cartouche en pied avec son chiffre. Pas de liste qui s'étale. Il sait <strong>combien</strong> il a, il décide quand il veut <strong>voir</strong>.</p>
-    </div>
 
-    <!-- ───── B — chip Niveau ouverte ───── -->
-    <div>
-      <div class="col-entete"><strong>B — Chip <em>Niveau</em> ouverte</strong><em>Mono-sélection · sélecteur déroulé en place · cartouche toujours replié</em></div>
-      <div class="preview">
-        <nav class="bandeau">
-          <span class="entree actif">Accueil</span>
-          <span class="entree">Mon tableau de bord</span>
-          <span class="entree">Par ma question</span>
-          <span class="entree">Cascade</span>
-          <span class="entree">La maturité&nbsp;?</span>
-          <span class="entree stub">Lexique</span>
-          <span class="entree">À propos</span>
-        </nav>
-        <div class="page-entete">
-          <div class="surtitre">Page unifiée</div>
-          <h2>Choisir mes indicateurs</h2>
-          <div class="barre"></div>
-          <p class="baseline">Quatre lentilles, deux postures pour les manipuler.<br>Entre par une porte, ou croise les axes.</p>
-        </div>
-        <div class="postures">
-          <span class="posture">Par une porte</span>
-          <span class="posture actif">En croisant les axes</span>
-          <span class="posture futur">+ futur mode</span>
-        </div>
-        <div class="axes">
-          <span class="chip" data-axe="probleme">Problème</span>
-          <span class="chip" data-axe="cadre">Cadre</span>
-          <span class="chip ouverte" data-axe="niveau">Niveau</span>
-          <span class="chip" data-axe="maturite">Maturité</span>
-        </div>
-        <div class="selecteur mono">
-          <div class="selecteur-entete">
-            <strong>Mon niveau de pilotage</strong>
-            <em>Un seul choix</em>
-          </div>
-          <div class="selecteur-options">
-            <label><span class="marker"></span>Équipe</label>
-            <label><span class="marker"></span>Programme</label>
-            <label><span class="marker"></span>Portefeuille</label>
-            <label><span class="marker"></span>Stratégique</label>
-          </div>
-        </div>
+        <div class="marqueur-bloc">— ou —</div>
+
         <button class="cartouche" type="button" aria-expanded="false">
           <span class="cartouche-libelle">
-            <span><strong>75</strong> <span class="total">sur 75 indicateurs</span></span>
-            <span class="axes-actifs">Aucun axe actif (rien n'est encore coché).</span>
+            <span><strong>5</strong> <span class="total">questions terrain</span></span>
+            <span class="sous-titre">Une question concrète, une fiche qui éclaire.</span>
           </span>
           <span class="cartouche-chevron"><span class="libelle-action">Voir</span> ▾</span>
         </button>
-        <div class="pied">Le sélecteur est sous la chip. Le cartouche reste à sa place.</div>
+
+        <div class="pied">L'accueil est l'outil. Aucun mur, aucun tunnel, aucun chemin obscur.</div>
       </div>
-      <p class="col-annot"><strong>Lecture.</strong> Cliquer la chip <em>Niveau</em> la cercle d'indigo et déroule un panneau juste en-dessous. Marqueurs <strong>ronds</strong> = mono-sélection. Le cartouche est inchangé tant que l'utilisateur n'a pas validé une valeur.</p>
+      <p class="col-annot"><strong>Lecture.</strong> Page d'arrivée : 4 chips disponibles, deux cartouches sous elles. L'utilisateur voit ses deux portes claires — <em>filtrer les indicateurs</em> ou <em>lire une question terrain</em>. Aucune liste ne s'étale tant qu'il n'a pas demandé à voir.</p>
     </div>
 
-    <!-- ───── C — 2 chips actives, cartouche replié ───── -->
+    <!-- ───── B — cartouche compteur déplié ───── -->
     <div>
-      <div class="col-entete"><strong>C — 2 chips actives, cartouche replié</strong><em>Niveau:Programme + Cadre:Scrum,DORA · 9/75 ▾ · liste toujours cachée</em></div>
+      <div class="col-entete"><strong>B — Cartouche compteur déplié</strong><em>Niveau:Programme + Cadre:Scrum,DORA · 9/75 ▴ · liste indicateurs</em></div>
       <div class="preview">
         <nav class="bandeau">
           <span class="entree actif">Accueil</span>
@@ -451,55 +356,9 @@
           <div class="surtitre">Page unifiée</div>
           <h2>Choisir mes indicateurs</h2>
           <div class="barre"></div>
-          <p class="baseline">Quatre lentilles, deux postures pour les manipuler.<br>Entre par une porte, ou croise les axes.</p>
+          <p class="baseline">Quatre lentilles à combiner.</p>
         </div>
-        <div class="postures">
-          <span class="posture">Par une porte</span>
-          <span class="posture actif">En croisant les axes</span>
-          <span class="posture futur">+ futur mode</span>
-        </div>
-        <div class="axes">
-          <span class="chip" data-axe="probleme">Problème</span>
-          <span class="chip actif" data-axe="cadre"><span class="check">&check;</span> Cadre <span class="valeur">Scrum, DORA</span></span>
-          <span class="chip actif" data-axe="niveau"><span class="check">&check;</span> Niveau <span class="valeur">Programme</span></span>
-          <span class="chip" data-axe="maturite">Maturité</span>
-        </div>
-        <button class="cartouche" type="button" aria-expanded="false">
-          <span class="cartouche-libelle">
-            <span><strong>9</strong> <span class="total">sur 75 indicateurs</span></span>
-            <span class="axes-actifs">2 axes actifs — Niveau, Cadre.</span>
-          </span>
-          <span class="cartouche-chevron"><span class="libelle-action">Voir</span> ▾</span>
-        </button>
-        <div class="pied">L'utilisateur juge : 9 fiches, c'est tolérable ? Il décide.</div>
-      </div>
-      <p class="col-annot"><strong>Lecture.</strong> L'utilisateur a filtré, le compteur lui dit qu'il reste <strong>9 sur 75</strong>. Il peut s'arrêter là ou ajouter d'autres chips pour resserrer encore. La liste reste cachée tant qu'il n'a pas envie de voir.</p>
-    </div>
 
-    <!-- ───── D — 2 chips actives, cartouche déplié ───── -->
-    <div>
-      <div class="col-entete"><strong>D — 2 chips actives, cartouche déplié</strong><em>Niveau:Programme + Cadre:Scrum,DORA · 9/75 ▴ · liste révélée</em></div>
-      <div class="preview">
-        <nav class="bandeau">
-          <span class="entree actif">Accueil</span>
-          <span class="entree">Mon tableau de bord</span>
-          <span class="entree">Par ma question</span>
-          <span class="entree">Cascade</span>
-          <span class="entree">La maturité&nbsp;?</span>
-          <span class="entree stub">Lexique</span>
-          <span class="entree">À propos</span>
-        </nav>
-        <div class="page-entete">
-          <div class="surtitre">Page unifiée</div>
-          <h2>Choisir mes indicateurs</h2>
-          <div class="barre"></div>
-          <p class="baseline">Quatre lentilles, deux postures pour les manipuler.<br>Entre par une porte, ou croise les axes.</p>
-        </div>
-        <div class="postures">
-          <span class="posture">Par une porte</span>
-          <span class="posture actif">En croisant les axes</span>
-          <span class="posture futur">+ futur mode</span>
-        </div>
         <div class="axes">
           <span class="chip" data-axe="probleme">Problème</span>
           <span class="chip actif" data-axe="cadre"><span class="check">&check;</span> Cadre <span class="valeur">Scrum, DORA</span></span>
@@ -524,9 +383,93 @@
             <div class="fiche-card suite">+ 3 autres fiches</div>
           </div>
         </div>
-        <div class="pied">Recliquer le cartouche replie de nouveau.</div>
+
+        <div class="marqueur-bloc">— ou —</div>
+
+        <button class="cartouche" type="button" aria-expanded="false">
+          <span class="cartouche-libelle">
+            <span><strong>5</strong> <span class="total">questions terrain</span></span>
+            <span class="sous-titre">Une question concrète, une fiche qui éclaire.</span>
+          </span>
+          <span class="cartouche-chevron"><span class="libelle-action">Voir</span> ▾</span>
+        </button>
+
+        <div class="pied">L'utilisateur a filtré, il a ouvert la liste. L'autre porte reste là, repliée.</div>
       </div>
-      <p class="col-annot"><strong>Lecture.</strong> Cartouche déplié, liste révélée juste en dessous. Le bouton change de libellé (<em>Voir → Masquer</em>) et le chevron s'inverse (<em>▾ → ▴</em>). L'utilisateur garde la main : il peut replier à tout moment, ajouter ou retirer des chips, le cartouche se met à jour live.</p>
+      <p class="col-annot"><strong>Lecture.</strong> 2 chips actives, cartouche compteur déplié, liste des 9 indicateurs filtrés. Le second cartouche reste accessible et replié — il n'a pas disparu, il attend simplement. L'utilisateur peut ouvrir l'un sans fermer l'autre.</p>
+    </div>
+
+    <!-- ───── C — cartouche question déplié ───── -->
+    <div>
+      <div class="col-entete"><strong>C — Cartouche question déplié</strong><em>5 fiches-questions terrain visibles · cartouche compteur intact</em></div>
+      <div class="preview">
+        <nav class="bandeau">
+          <span class="entree actif">Accueil</span>
+          <span class="entree">Mon tableau de bord</span>
+          <span class="entree">Par ma question</span>
+          <span class="entree">Cascade</span>
+          <span class="entree">La maturité&nbsp;?</span>
+          <span class="entree stub">Lexique</span>
+          <span class="entree">À propos</span>
+        </nav>
+        <div class="page-entete">
+          <div class="surtitre">Page unifiée</div>
+          <h2>Choisir mes indicateurs</h2>
+          <div class="barre"></div>
+          <p class="baseline">Quatre lentilles à combiner.</p>
+        </div>
+
+        <div class="axes">
+          <span class="chip" data-axe="probleme">Problème</span>
+          <span class="chip" data-axe="cadre">Cadre</span>
+          <span class="chip" data-axe="niveau">Niveau</span>
+          <span class="chip" data-axe="maturite">Maturité</span>
+        </div>
+        <button class="cartouche" type="button" aria-expanded="false">
+          <span class="cartouche-libelle">
+            <span><strong>75</strong> <span class="total">sur 75 indicateurs</span></span>
+            <span class="axes-actifs">Aucun axe actif — l'index complet attend.</span>
+          </span>
+          <span class="cartouche-chevron"><span class="libelle-action">Voir</span> ▾</span>
+        </button>
+
+        <div class="marqueur-bloc">— ou —</div>
+
+        <button class="cartouche deplie" type="button" aria-expanded="true">
+          <span class="cartouche-libelle">
+            <span><strong>5</strong> <span class="total">questions terrain</span></span>
+            <span class="sous-titre">Une question concrète, une fiche qui éclaire.</span>
+          </span>
+          <span class="cartouche-chevron"><span class="libelle-action">Masquer</span> ▴</span>
+        </button>
+        <div class="liste">
+          <div class="questions-liste">
+            <div class="question-card">
+              <span class="icone">&#128064;</span>
+              <span class="titre">Mes indicateurs reflètent-ils la réalité du terrain&nbsp;?</span>
+            </div>
+            <div class="question-card">
+              <span class="icone">&#128197;</span>
+              <span class="titre">Quoi mettre dans mon pilotage hebdomadaire&nbsp;?</span>
+            </div>
+            <div class="question-card">
+              <span class="icone">&#128260;</span>
+              <span class="titre">Par où démarrer une démarche d'amélioration continue&nbsp;?</span>
+            </div>
+            <div class="question-card">
+              <span class="icone">&#9888;</span>
+              <span class="titre">Pourquoi ma transformation résiste&nbsp;?</span>
+            </div>
+            <div class="question-card">
+              <span class="icone">&#128218;</span>
+              <span class="titre">Comment cascader des objectifs jusqu'au terrain&nbsp;?</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pied">L'autre porte reste là, repliée. L'utilisateur peut basculer à tout moment.</div>
+      </div>
+      <p class="col-annot"><strong>Lecture.</strong> L'utilisateur a ouvert la seconde porte. Les 5 fiches-questions s'affichent en liste verticale avec leurs icônes (héritées de la vue <em>Par ma question</em>). Cliquer une carte ouvre la fiche correspondante. Le cartouche du référentiel reste accessible et replié.</p>
     </div>
 
   </div>
