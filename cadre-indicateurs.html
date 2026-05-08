@@ -72,11 +72,35 @@
       --lh-tight:   1.2;
       --lh-normal:  1.5;
       --lh-relaxed: 1.55;
+
+      /* ─── Tokens de thème — système ouvert hybride ↔ neutre clair (08/05/2026)
+         Posé suite à la décision de Lætitia 08/05/2026 : tester la voie hybride
+         (fond bleu nuit pour la page, gris-bleu très clair pour la nav, blanc
+         franc pour la matière) sur l'ensemble du site, avec possibilité de
+         bascule vers la voie neutre clair pour comparaison. Ces tokens sont
+         INDÉPENDANTS de --fond et --fond-2 (qui restent calibrés pour les
+         composants internes — chips, boutons, panneaux — et n'ont pas vocation
+         à changer avec le thème).
+         Bascule via CM.Theme.appliquer('hybride'|'neutre'). Persistance via
+         CM.Preferences (clé 'theme'). ─── */
+      --page-bg:           linear-gradient(145deg, #0d1b4f 0%, #1a237e 55%, #283593 100%);
+      --surface-nav:       #eef1f6;
+      --texte-sur-page:    #f5f6fa;
+      --texte-2-sur-page:  #c1c5d4;
+    }
+
+    /* Surcharge — voie neutre clair (gris-bleu très clair partout, blanc franc
+       pour la nav). Posture froide-claire, alternative à l'hybride. */
+    :root[data-theme="neutre"] {
+      --page-bg:           #f5f6fa;
+      --surface-nav:       #ffffff;
+      --texte-sur-page:    #1a1a2e;
+      --texte-2-sur-page:  #607d8b;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, 'Segoe UI', system-ui, 'Helvetica Neue', sans-serif;
-      background: var(--fond);
+      background: var(--page-bg);
       color: var(--texte);
       min-height: 100vh;
       font-size: 15px;
@@ -99,7 +123,7 @@
       align-items: center;
       justify-content: center;
       padding: 2.5rem 1.5rem;
-      background: linear-gradient(145deg, #0d1b4f 0%, #1a237e 55%, #283593 100%);
+      background: var(--page-bg);
       position: relative;
     }
     .accueil-intro {
@@ -1050,7 +1074,7 @@
       align-items: center;
       justify-content: flex-start;
       padding: 4rem 1.5rem 3rem;
-      background: linear-gradient(145deg, #0d1b4f 0%, #1a237e 55%, #283593 100%);
+      background: var(--page-bg);
       color: white;
       position: relative;
     }
@@ -1222,7 +1246,7 @@
     ══════════════════════════════════════════════ */
     #vue-porte-probleme {
       min-height: 100vh;
-      background: var(--fond);
+      background: var(--page-bg);
       display: flex;
       flex-direction: column;
     }
@@ -1423,7 +1447,7 @@
     ══════════════════════════════════════════════ */
     #vue-porte-cadre {
       min-height: 100vh;
-      background: var(--fond);
+      background: var(--page-bg);
       display: flex;
       flex-direction: column;
     }
@@ -1757,7 +1781,7 @@
     ══════════════════════════════════════════════ */
     #vue-porte-niveau {
       min-height: 100vh;
-      background: var(--fond);
+      background: var(--page-bg);
       display: flex;
       flex-direction: column;
     }
@@ -2592,7 +2616,7 @@
     }
     /* ─── Vue "Par ma question" — porte 5, index minimaliste ─── */
     #vue-par-question {
-      background: var(--fond);
+      background: var(--page-bg);
       display: flex;
       flex-direction: column;
     }
@@ -2672,7 +2696,7 @@
        Position fixed, masqué par défaut, contrôlé par JS. ─── */
     .bandeau-portes {
       position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-      background: white;
+      background: var(--surface-nav);
       border-bottom: 1px solid var(--bordure);
       padding: 0.55rem 1.5rem;
       display: flex; align-items: center; gap: 0.8rem;
@@ -5663,6 +5687,77 @@ CM.Preferences = (function() {
     ecrire: ecrire
   };
 })();
+</script>
+
+
+<!-- ══ MODULE : CM.Theme — bascule hybride ↔ neutre clair ══
+     Posé le 08/05/2026 suite à la décision de Lætitia de tester la voie
+     hybride (fond bleu nuit / nav gris-bleu / matière blanc franc) avec
+     possibilité de bascule vers la voie neutre clair. Le module est
+     volontairement minimaliste : il pose ou retire l'attribut data-theme
+     sur <html>, le reste du basculement est porté par les variables CSS
+     déclarées dans :root et :root[data-theme="neutre"].
+
+     Bascule en console pour tester :
+       CM.Theme.appliquer('neutre')   → bascule sur la voie neutre clair
+       CM.Theme.appliquer('hybride')  → revient à la voie hybride (défaut)
+       CM.Theme.basculer()            → permute entre les deux
+       CM.Theme.lire()                → renvoie le thème courant
+
+     Persistance : la préférence est écrite dans localStorage via
+     CM.Preferences (clé 'theme'). Recharger la page conserve le choix.
+     ══ -->
+<script>
+CM.Theme = (function() {
+  'use strict';
+
+  var THEMES = ['hybride', 'neutre'];
+  var DEFAUT = 'hybride';
+
+  // Exemple : CM.Theme.appliquer('neutre') → pose data-theme="neutre" sur <html>
+  // et persiste. appliquer('hybride') retire l'attribut (hybride = défaut implicite).
+  function appliquer(theme) {
+    if (THEMES.indexOf(theme) === -1) theme = DEFAUT;
+    if (theme === DEFAUT) {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+    if (CM.Preferences && CM.Preferences.ecrire) {
+      CM.Preferences.ecrire('theme', theme);
+    }
+    return theme;
+  }
+
+  function lire() {
+    if (CM.Preferences && CM.Preferences.lire) {
+      var stocke = CM.Preferences.lire('theme', DEFAUT);
+      return THEMES.indexOf(stocke) !== -1 ? stocke : DEFAUT;
+    }
+    return DEFAUT;
+  }
+
+  // Exemple : CM.Theme.basculer() → permute hybride ↔ neutre
+  function basculer() {
+    return appliquer(lire() === 'hybride' ? 'neutre' : 'hybride');
+  }
+
+  function init() {
+    appliquer(lire());
+  }
+
+  return {
+    appliquer: appliquer,
+    lire:      lire,
+    basculer:  basculer,
+    init:      init
+  };
+})();
+
+/* Init immédiat — applique le thème stocké dès le chargement du module pour
+   limiter le flash visuel quand la préférence est 'neutre' (l'attribut
+   data-theme est posé avant que le contenu de la page ne soit rendu). */
+CM.Theme.init();
 </script>
 
 
