@@ -10402,8 +10402,14 @@ CM.App = (function() {
     var ordMat = { debutant: 0, intermediaire: 1, avance: 2 };
     var mat = maturiteActive;
 
-    var fiables    = inds.filter(function(i) { return (i.fiabilite || 'fiable') === 'fiable'     && ordMat[i.maturite_min || 'debutant'] <= ordMat[mat]; });
-    var precaution = inds.filter(function(i) { return (i.fiabilite || 'fiable') === 'precaution' && ordMat[i.maturite_min || 'debutant'] <= ordMat[mat]; });
+    /* Sémantique β actée 08/05/2026 — propre au niveau (au lieu de cumulative
+       qui était l'historique <=). Le bouton de maturité actif filtre les
+       indicateurs dont le maturite_min est EXACTEMENT le niveau choisi.
+       Évolution future possible : sélection multiple des onglets (chips
+       cumulables) pour reconstituer la sémantique cumulative à la demande,
+       cf. backlog chantier 13. */
+    var fiables    = inds.filter(function(i) { return (i.fiabilite || 'fiable') === 'fiable'     && (i.maturite_min || 'debutant') === mat; });
+    var precaution = inds.filter(function(i) { return (i.fiabilite || 'fiable') === 'precaution' && (i.maturite_min || 'debutant') === mat; });
     var risques    = inds.filter(function(i) { return (i.fiabilite || 'fiable') === 'risque'; });
     var prochainNiv = inds.filter(function(i) { return ordMat[i.maturite_min || 'debutant'] > ordMat[mat] && (i.fiabilite || 'fiable') !== 'risque'; });
 

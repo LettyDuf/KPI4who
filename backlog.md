@@ -582,6 +582,16 @@ Accueil · Mon tableau de bord · Choisir mes indicateurs · Cascade stratégiqu
 
 **Priorité : 🟢 basse en phase de cadrage.** Gros chantier à décomposer en tranches (cadrage mission → squelette diagnostic → intégration à l'onglet *La maturité ?*). À reporter après stabilisation du chantier 10 et livraison du chantier 12.
 
+### 13.bis Sémantique des filtres maturité — vers le cumulatif par sélection multiple *(📋 ouverte le 08/05/2026)*
+
+**Origine.** Le 08/05/2026, sur retour Lætitia, la sémantique des filtres maturité du `_rendreMaturite()` est basculée de **cumulative** (`<=`) à **propre au niveau** (`==`) — variante β (cf. arbitrage à 3 voies α / β / γ proposé en chat). Le filtre actif affiche désormais les indicateurs dont `maturite_min` est exactement le niveau sélectionné. Lætitia consigne explicitement l'éventualité de revenir au cumulatif **à la demande de l'utilisateur**, en transformant les boutons-onglets *Équipe débutante / intermédiaire / avancée* en **chips cumulables** (sélection multiple) — pattern V3 du chantier 19 déjà éprouvé sur la lentille *Par mes 4 axes*.
+
+**Sémantique cible (à terme).** Les 3 chips Débutant ⊕ Intermédiaire ⊕ Avancé deviennent cumulables ; l'utilisateur active 1, 2 ou 3 chips. Le résultat affiche les indicateurs dont `maturite_min` appartient à l'ensemble des chips actives. Cumulatif explicitement opt-in, plutôt qu'imposé par défaut. Cohérent avec la doctrine d'extensibilité du § 4.4 du cadre visuel (chips wrapent naturellement, posture interactive directe).
+
+**Articulations.** Articulé avec chantier 19 (cadre visuel — pattern V3 chips) et chantier 13 (outil de diagnostic). Pas de pré-requis bloquant.
+
+**Priorité : 🟢 basse.** À ouvrir quand un besoin terrain remontera explicitement le manque de cumulatif (par ex. *« je veux voir TOUT ce qu'une équipe avancée peut suivre, pas seulement ce qui est propre à l'avancé »*). Tant qu'aucun signal terrain ne pointe le manque, β tient.
+
 ---
 
 ## 14. Refactor hexagonal du socle MVP 4 portes *(⏳ ACTIF depuis le 23/04/2026)*
