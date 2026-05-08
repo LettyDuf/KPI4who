@@ -963,3 +963,21 @@ Sur les quatre lots, 33 liens ont été posés sur 25 champs éditoriaux de 18 f
 
 **Prochaine action recommandée.** La première fiche-question est rédigée éditorialement (20.5 partiellement entamée). Trois pistes possibles pour la suite : (a) **clore la palette 20.1** en séance dédiée, préalable à la mise en mockup des fiches rédigées ; (b) **rédiger une seconde fiche-question candidate** d'un autre panel pour valider la portabilité de la doctrine du trio par niveau (ex : *Comment arbitrer entre les initiatives qui se présentent ?*, panel Terrain des autres cadres) ; (c) **créer les 4 fiches métriques manquantes** du référentiel pour rendre la première fiche-question entièrement vivante. Choix à arbitrer en ouverture de la prochaine séance.
 
+
+## 21. Vue *Lexique* — chantier à ouvrir *(📋 ouverte le 08/05/2026)*
+
+**Origine.** Le 08/05/2026, lors de l'activation des stubs *Cascade stratégique* et *Maturité* dans le bandeau du haut, Lætitia demande la même chose pour *Lexique*. Constat code : aucune `vue-lexique` ni `_rendreLexique()` n'existe — c'est un stub orphelin partout (6 occurrences dans les bandeaux). Décision Lætitia : option (A) — laisser le stub jusqu'à un chantier dédié, plutôt qu'improviser une vue minimaliste.
+
+**Pourquoi un chantier dédié.** Un lexique digne de ce nom mérite plus qu'une liste alphabétique improvisée :
+- **Source des termes** : extraire automatiquement les `<span class="term-def">` du fichier ? composer un référentiel séparé ? les deux ?
+- **Définitions** : les définitions actuelles vivent en attribut `data-def` des term-def ; sont-elles toutes rédigées avec la même rigueur ? un audit éditorial préalable s'impose.
+- **Recherche** : champ de recherche en tête, ancres de retour vers les fiches du référentiel qui mentionnent le terme.
+- **Doctrine visuelle** : posture du § 6 du cadre visuel à incarner sur cette page-type non encore couverte (« étape B³ — incarnation du lexique »).
+- **Connexion à la voie hybride** : la page sera-t-elle pure matière en blanc franc, ou aura-t-elle un cadre blanc intermédiaire comme la vue *Par ma question* ?
+
+**Stub conservé en attendant.** L'entrée *Lexique* du bandeau reste en stub (opacité 0.45, cursor default, click sans effet) — non joignable.
+
+**Articulations.** Articulé avec chantier 19 (cadre visuel — étape B³ à ouvrir), chantier 1.bis (audit acronymes), et la doctrine `feedback_audit_acronymes_methode`. Pas de dépendance bloquante en amont, peut s'ouvrir dès qu'une séance s'y prête.
+
+**Prochaine action recommandée.** Aucune dans l'immédiat — le chantier reste en backlog tant que la priorité va aux remédiations de la voie hybride et au catalogue de questions fines (chantier 20).
+
