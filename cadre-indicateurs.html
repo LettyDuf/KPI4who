@@ -2053,13 +2053,17 @@
     .panier-tdb-titre {
       font-size: 1.2rem;
       font-weight: var(--fw-bold);
-      color: var(--texte-primaire);
+      /* Lisibilité sur fond bleu nuit (08/05/2026) — bascule sur le token
+         thème pour rester lisible en hybride (clair) et neutre (foncé). */
+      color: var(--texte-sur-page);
       letter-spacing: -0.1px;
     }
     .panier-tdb-reinit {
-      background: transparent;
+      /* Lisibilité sur fond bleu nuit (08/05/2026) — surface-nav (gris-bleu
+         très clair en hybride, blanc en neutre) + texte foncé sur la surface. */
+      background: var(--surface-nav);
       border: 1px solid var(--bordure);
-      color: var(--texte-2);
+      color: #1c2033;
       padding: 0.45rem 0.9rem;
       border-radius: 8px;
       font-size: 0.8rem;
@@ -2098,9 +2102,10 @@
        est une action constructive, contrairement à la réinitialisation
        qui est destructive. */
     .panier-tdb-imprimer {
-      background: transparent;
+      /* Lisibilité sur fond bleu nuit (08/05/2026) — surface-nav + texte foncé. */
+      background: var(--surface-nav);
       border: 1px solid var(--bordure);
-      color: var(--texte-2);
+      color: #1c2033;
       padding: 0.45rem 0.9rem;
       border-radius: 8px;
       font-size: 0.8rem;
@@ -9927,7 +9932,7 @@ CM.App = (function() {
       + '<div class="panier-tdb-header">'
         + '<div class="panier-tdb-titre">'
           + 'Mon tableau de bord '
-          + '<span style="font-weight:400;color:var(--texte-secondaire)">· ' + legende + '</span>'
+          + '<span style="font-weight:400;color:var(--texte-2-sur-page)">· ' + legende + '</span>'
         + '</div>'
         + '<div class="panier-tdb-actions">'
           /* Bouton « Imprimer » — chantier 9.E.4. window.print() déclenche
