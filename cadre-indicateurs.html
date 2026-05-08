@@ -5599,11 +5599,16 @@ CM.AccueilUnifie = (function() {
     };
   }
 
-  function _emettreFiltreChange() {
+  function _emettreFiltreChange(total, fiches) {
+    /* En 23.d-2, total et fiches sont fournis par appliquerFiltre via le
+       traducteur orthodoxe (CM.RequeteMetriques.executer). Avant 23.d-2,
+       les abonnés recevaient toujours {total:0, fiches:[]} — le contrat
+       d'API du payload reste identique pour les abonnés (forme du payload
+       inchangée), seule la véracité des champs change. */
     var payload = {
       chips:  _copieEtatChips(),
-      total:  0,    /* renseigné par le branchement traducteur en 23.e */
-      fiches: []    /* idem */
+      total:  (typeof total  === 'number') ? total  : 0,
+      fiches: Array.isArray(fiches)        ? fiches : []
     };
     for (var i = 0; i < abonnesFiltre.length; i++) {
       try { abonnesFiltre[i](payload); } catch (e) { /* abonné défaillant : ignoré */ }
@@ -5920,6 +5925,96 @@ CM.AccueilUnifie = (function() {
     }
   }
 
+  /* ═══ Branchement traducteur orthodoxe (23.d-2) ═══
+
+     Mapping état chips → filtre canonique de CM.RequeteMetriques.executer.
+     - chips.niveau (mono, string|null) → filtre.niveau (array de 1 élément)
+     - chips.maturite (mono, string|null) → filtre.maturiteMin (seuil ordinal)
+     - chips.probleme (multi, array) → filtre.tags (les ids problèmes sont
+       les mêmes que les ids tags du référentiel : flux, qualité, valeur, etc.)
+     - chips.cadre (multi, array) → filtre.cadres
+
+     Sémantique : AND inter-clauses, OR intra-clause (cf. § 10.3). */
+
+  /* Cache du total absolu — calculé au premier rafraîchissement, constant
+     sur la durée d'une session (le référentiel n'évolue pas en runtime). */
+  var _totalAbsolu = null;
+
+  function _construireFiltre() {
+    var filtre = {};
+    if (etat.chips.niveau) {
+      filtre.niveau = [etat.chips.niveau];
+    }
+    if (etat.chips.maturite) {
+      filtre.maturiteMin = etat.chips.maturite;
+    }
+    if (etat.chips.probleme.length > 0) {
+      filtre.tags = etat.chips.probleme.slice();
+    }
+    if (etat.chips.cadre.length > 0) {
+      filtre.cadres = etat.chips.cadre.slice();
+    }
+    return filtre;
+  }
+
+  function _libelleAxesActifs(nResultats) {
+    /* Composer la liste des axes actifs dans l'ordre éditorial des chips
+       (Problème, Cadre, Niveau, Maturité) — c'est l'ordre que l'utilisateur
+       voit à l'écran, pas l'ordre alphabétique. */
+    var actifs = [];
+    if (etat.chips.probleme.length > 0) actifs.push('Problème');
+    if (etat.chips.cadre.length > 0)    actifs.push('Cadre');
+    if (etat.chips.niveau)              actifs.push('Niveau');
+    if (etat.chips.maturite)            actifs.push('Maturité');
+
+    if (actifs.length === 0) {
+      return "Aucune lentille active — l'index complet attend.";
+    }
+    if (nResultats === 0) {
+      return "Aucun indicateur ne combine ces lentilles.";
+    }
+
+    /* Liste française naturelle : 'A', 'A et B', 'A, B et C'. */
+    var liste;
+    if (actifs.length === 1) {
+      liste = actifs[0];
+    } else if (actifs.length === 2) {
+      liste = actifs[0] + ' et ' + actifs[1];
+    } else {
+      liste = actifs.slice(0, -1).join(', ') + ' et ' + actifs[actifs.length - 1];
+    }
+    return "Lentilles actives — " + liste + ".";
+  }
+
+  function _rafraichirCompteur(racine, total) {
+    var bouton = racine.querySelector('.cartouche[data-cartouche="compteur"]');
+    if (!bouton) return;
+
+    /* Si total n'est pas fourni (rafraîchissement au montage avant tout
+       événement), on calcule à la demande. */
+    var nFiltre = (typeof total === 'number')
+      ? total
+      : (CM.RequeteMetriques && CM.RequeteMetriques.executer)
+        ? CM.RequeteMetriques.executer(_construireFiltre()).length
+        : 0;
+
+    if (_totalAbsolu === null && CM.RequeteMetriques && CM.RequeteMetriques.executer) {
+      _totalAbsolu = CM.RequeteMetriques.executer({}).length;
+    }
+    var totalAbs = _totalAbsolu || 0;
+
+    var strongEl = bouton.querySelector('.cartouche-libelle strong');
+    if (strongEl) strongEl.textContent = String(nFiltre);
+
+    var totalEl = bouton.querySelector('.cartouche-libelle .total');
+    if (totalEl) {
+      totalEl.textContent = 'sur ' + totalAbs + ' indicateur' + (totalAbs > 1 ? 's' : '');
+    }
+
+    var axesActifsEl = bouton.querySelector('.cartouche-libelle .axes-actifs');
+    if (axesActifsEl) axesActifsEl.textContent = _libelleAxesActifs(nFiltre);
+  }
+
   /* ═══ Synchronisation DOM des cartouches (23.d-1) ═══
 
      Reflète l'état persisté etat.cartouches[id] sur l'apparence du bouton
@@ -6048,9 +6143,11 @@ CM.AccueilUnifie = (function() {
 
     racine.addEventListener('click', _surClicAccueil);
 
-    /* S'abonne aux changements de filtre pour rafraîchir les chips fermées. */
-    surChangementFiltre(function() {
+    /* S'abonne aux changements de filtre pour rafraîchir les chips fermées
+       et le compteur live de la cartouche compteur. */
+    surChangementFiltre(function(payload) {
       _rafraichirToutesChips(racine);
+      _rafraichirCompteur(racine, payload && payload.total);
     });
 
     /* S'abonne aux changements de cartouches pour synchroniser l'apparence
@@ -6059,10 +6156,12 @@ CM.AccueilUnifie = (function() {
       _rafraichirToutesCartouches(racine);
     });
 
-    /* Restaure l'état des chips et des cartouches au montage. */
+    /* Restaure l'état des chips et des cartouches au montage,
+       puis recalcule le compteur live à partir de l'état restauré. */
     _restaurer();
     _rafraichirToutesChips(racine);
     _rafraichirToutesCartouches(racine);
+    _rafraichirCompteur(racine);
   }
 
   function init() {
@@ -6145,11 +6244,19 @@ CM.AccueilUnifie = (function() {
   }
 
   function appliquerFiltre() {
-    /* Branchement effectif sur CM.RequeteMetriques.executer() en chantier 23.e.
-       Pour 23.c-1 : émission seule du filtre courant, payload {total:0, fiches:[]}.
-       Cette indirection garantit que tout abonné sur surChangementFiltre
-       reçoit l'événement, indépendamment de l'état d'avancement du chantier. */
-    _emettreFiltreChange();
+    /* Branchement effectif sur CM.RequeteMetriques.executer() (23.d-2).
+       L'accueil est l'adaptateur d'entrée hexagonal : il construit un filtre
+       canonique conforme au § 10.3 du doc-contrats-chantier-14.md, délègue
+       au traducteur orthodoxe, et émet le résultat. Aucune logique de
+       filtrage côté accueil — doctrine *« un traducteur formule, il ne
+       post-filtre pas »* (cf. project_doctrine_traducteur_orthodoxe). */
+    var filtre = _construireFiltre();
+    var fiches = (CM.RequeteMetriques && CM.RequeteMetriques.executer)
+      ? CM.RequeteMetriques.executer(filtre)
+      : [];
+    var ids = [];
+    for (var i = 0; i < fiches.length; i++) ids.push(fiches[i].id);
+    _emettreFiltreChange(ids.length, ids);
   }
 
   function surChangementFiltre(callback) {
