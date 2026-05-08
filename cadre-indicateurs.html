@@ -2839,9 +2839,17 @@
          l'élément prendrait la largeur intrinsèque de son contenu le plus large
          (chips multi-actives, panneau dépliable, liste de questions), ce qui fait
          varier la largeur perçue à chaque déploiement. width:100% (borné par
-         max-width:740px) garantit que la mise en page reste stable. */
+         max-width:920px) garantit que la mise en page reste stable.
+
+         920px choisi à 23.e-fix1 (était 740px en 23.d-fix1) : friction remontée
+         par Lætitia au test interactif 23.e — à 740px les cartes 2-colonnes du
+         panneau de la cartouche compteur faisaient ~322px, ce qui tronquait
+         le titre du type (« DORA · PERFORMANCE D… »). À 920px, chaque carte
+         fait ~412px, le titre tient en entier, la définition garde 3 lignes.
+         Arbitrage entre 880px et 920px tranché côté preview HTML autonome
+         (mockup-23e-largeur.html) : option B « généreux » retenue. */
       width: 100%;
-      max-width: 740px;
+      max-width: 920px;
       margin: 0 auto;
       padding: 1.2rem 1.4rem 2.5rem;
       display: flex;
