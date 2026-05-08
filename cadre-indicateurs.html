@@ -2834,6 +2834,13 @@
       --chip-bord:           rgba(255, 255, 255, 0.45);
       --chip-actif:          var(--niv-1-clair);
 
+      /* Largeur stable quel que soit le contenu déplié.
+         #accueil-portes est flex column align-items:center : sans width:100%,
+         l'élément prendrait la largeur intrinsèque de son contenu le plus large
+         (chips multi-actives, panneau dépliable, liste de questions), ce qui fait
+         varier la largeur perçue à chaque déploiement. width:100% (borné par
+         max-width:740px) garantit que la mise en page reste stable. */
+      width: 100%;
       max-width: 740px;
       margin: 0 auto;
       padding: 1.2rem 1.4rem 2.5rem;
