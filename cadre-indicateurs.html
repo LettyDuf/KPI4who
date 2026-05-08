@@ -5707,6 +5707,13 @@ CM.AccueilUnifie = (function() {
     return [];
   }
 
+  function _estValeurSelectionnee(axe, id) {
+    if (axe === 'niveau' || axe === 'maturite') {
+      return etat.chips[axe] === id;
+    }
+    return etat.chips[axe].indexOf(id) !== -1;
+  }
+
   function _peupleSelecteur(panneau, axe) {
     var etiq = ETIQUETTE_AXE[axe];
     var valeurs = _valeursPourAxe(axe);
@@ -5725,7 +5732,8 @@ CM.AccueilUnifie = (function() {
     html += '<div class="selecteur-options">';
     for (var i = 0; i < valeurs.length; i++) {
       var v = valeurs[i];
-      var label = '<label data-valeur="' + _echappe(v.id) + '">' +
+      var coche = _estValeurSelectionnee(axe, v.id) ? ' coche' : '';
+      var label = '<label class="' + ('option' + coche).trim() + '" data-valeur="' + _echappe(v.id) + '">' +
                     '<span class="marker"></span>';
       if (v.sous) {
         /* Variante α — corps en colonne avec titre + sous-titre. */
@@ -5745,6 +5753,77 @@ CM.AccueilUnifie = (function() {
     panneau.innerHTML = html;
   }
 
+  /* ═══ Sélection effective (23.c-4) ═══
+
+     Délégation de clic sur les labels du sélecteur. Toggle de la valeur :
+     si déjà sélectionnée → deselectionnerChip ; sinon → selectionnerChip.
+     Mono-sélection (Niveau, Maturité) : referme le panneau aussitôt après
+     sélection (pas après désélection — on laisse le panneau pour permettre
+     à l'utilisateur de re-sélectionner).
+     Multi-sélection (Problème, Cadre) : panneau reste ouvert, l'utilisateur
+     ferme manuellement (clic ailleurs ou re-clic chip). */
+
+  function _toggleValeur(racine, axe, valeur) {
+    var dejaSelectionne = _estValeurSelectionnee(axe, valeur);
+    if (dejaSelectionne) {
+      deselectionnerChip(axe, valeur);
+    } else {
+      selectionnerChip(axe, valeur);
+    }
+    /* La chip fermée se met à jour via l'abonnement surChangementFiltre.
+       Le panneau ouvert (multi-sélection) doit re-rendre ses .coche. */
+    if ((axe === 'niveau' || axe === 'maturite') && !dejaSelectionne) {
+      /* Mono : sélection effective → on referme. */
+      _fermerPanneau(racine);
+    } else {
+      /* Multi ou désélection mono : rafraîchir le panneau. */
+      var panneau = racine.querySelector('.selecteur');
+      if (panneau && !panneau.hidden) {
+        _peupleSelecteur(panneau, axe);
+      }
+    }
+  }
+
+  function _libelleValeur(axe, id) {
+    var liste = _valeursPourAxe(axe);
+    for (var i = 0; i < liste.length; i++) {
+      if (liste[i].id === id) return liste[i].label;
+    }
+    return id;
+  }
+
+  function _libellesValeursActives(axe) {
+    var brut = etat.chips[axe];
+    if (axe === 'niveau' || axe === 'maturite') {
+      if (!brut) return [];
+      return [_libelleValeur(axe, brut)];
+    }
+    return brut.map(function(id) { return _libelleValeur(axe, id); });
+  }
+
+  function _rafraichirChip(racine, axe) {
+    var chip = racine.querySelector('.chip[data-axe="' + axe + '"]');
+    if (!chip) return;
+    var libelleAxe = chip.dataset.libelle || '';
+    var libellesActifs = _libellesValeursActives(axe);
+    if (libellesActifs.length === 0) {
+      chip.innerHTML = _echappe(libelleAxe);
+      chip.classList.remove('actif');
+    } else {
+      chip.innerHTML = '<span class="check">&check;</span> ' +
+                       _echappe(libelleAxe) +
+                       ' <span class="valeur">' + _echappe(libellesActifs.join(', ')) + '</span>';
+      chip.classList.add('actif');
+    }
+  }
+
+  function _rafraichirToutesChips(racine) {
+    var axes = ['probleme', 'cadre', 'niveau', 'maturite'];
+    for (var i = 0; i < axes.length; i++) {
+      _rafraichirChip(racine, axes[i]);
+    }
+  }
+
   function _ouvrirPanneau(racine, axe) {
     var panneau = racine.querySelector('.selecteur');
     var chipCible = racine.querySelector('.chip[data-axe="' + axe + '"]');
@@ -5760,19 +5839,35 @@ CM.AccueilUnifie = (function() {
 
   function _surClicAccueil(e) {
     var racine = e.currentTarget;
-    var chip = e.target.closest('.chip[data-axe]');
-    if (chip && racine.contains(chip)) {
-      var axe = chip.dataset.axe;
-      if (chip.classList.contains('ouverte')) {
-        _fermerPanneau(racine);
-      } else {
-        _ouvrirPanneau(racine, axe);
+
+    /* Clic sur un label[data-valeur] du sélecteur ouvert : toggle. */
+    var label = e.target.closest('.selecteur label[data-valeur]');
+    if (label) {
+      var panneauActif = racine.querySelector('.selecteur');
+      var axeActif = panneauActif ? panneauActif.dataset.axe : null;
+      var valeurClic = label.dataset.valeur;
+      if (axeActif && valeurClic) {
+        e.preventDefault();
+        _toggleValeur(racine, axeActif, valeurClic);
       }
       return;
     }
-    /* Clic à l'intérieur du panneau lui-même : ne pas fermer (laisse passer
-       aux <label> qui seront branchés en 23.c-4). */
+
+    /* Clic sur une chip : ouvre/ferme son panneau. */
+    var chip = e.target.closest('.chip[data-axe]');
+    if (chip && racine.contains(chip)) {
+      var axeChip = chip.dataset.axe;
+      if (chip.classList.contains('ouverte')) {
+        _fermerPanneau(racine);
+      } else {
+        _ouvrirPanneau(racine, axeChip);
+      }
+      return;
+    }
+
+    /* Clic à l'intérieur du panneau (mais pas sur un label) : ne pas fermer. */
     if (e.target.closest('.selecteur')) return;
+
     /* Clic ailleurs dans .accueil-unifie : fermer. */
     _fermerPanneau(racine);
   }
@@ -5783,7 +5878,27 @@ CM.AccueilUnifie = (function() {
     /* Idempotence : si déjà branché, ne pas re-attacher. */
     if (racine.dataset.cmAccueilUnifieBranche === '1') return;
     racine.dataset.cmAccueilUnifieBranche = '1';
+
+    /* Capture les libellés d'origine des chips pour pouvoir les restaurer
+       après désélection (la chip change d'innerHTML quand elle passe en
+       mode actif). Une seule passe au boot. */
+    var chipsInit = racine.querySelectorAll('.chip[data-axe]');
+    for (var i = 0; i < chipsInit.length; i++) {
+      if (!chipsInit[i].dataset.libelle) {
+        chipsInit[i].dataset.libelle = chipsInit[i].textContent.trim();
+      }
+    }
+
     racine.addEventListener('click', _surClicAccueil);
+
+    /* S'abonne aux changements de filtre pour rafraîchir les chips fermées. */
+    surChangementFiltre(function() {
+      _rafraichirToutesChips(racine);
+    });
+
+    /* Restaure l'état des chips au montage (après _restaurer dans ouvrir()). */
+    _restaurer();
+    _rafraichirToutesChips(racine);
   }
 
   function init() {
