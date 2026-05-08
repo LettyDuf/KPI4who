@@ -5825,14 +5825,26 @@ CM.AccueilUnifie = (function() {
     var chip = racine.querySelector('.chip[data-axe="' + axe + '"]');
     if (!chip) return;
     var libelleAxe = chip.dataset.libelle || '';
-    var libellesActifs = _libellesValeursActives(axe);
-    if (libellesActifs.length === 0) {
+    var brut = etat.chips[axe];
+    var contenuValeur = null;
+
+    if (axe === 'niveau' || axe === 'maturite') {
+      /* Mono-sélection : libellé de la valeur unique. */
+      if (brut) contenuValeur = _libelleValeur(axe, brut);
+    } else {
+      /* Multi-sélection (Problème, Cadre) — option A retenue par Lætitia
+         08/05/2026 : compteur seul, taille fixe quelle que soit le nombre
+         de valeurs sélectionnées. Évite l'instabilité de wrap horizontal. */
+      if (brut.length > 0) contenuValeur = '(' + brut.length + ')';
+    }
+
+    if (!contenuValeur) {
       chip.innerHTML = _echappe(libelleAxe);
       chip.classList.remove('actif');
     } else {
       chip.innerHTML = '<span class="check">&check;</span> ' +
                        _echappe(libelleAxe) +
-                       ' <span class="valeur">' + _echappe(libellesActifs.join(', ')) + '</span>';
+                       ' <span class="valeur">' + _echappe(contenuValeur) + '</span>';
       chip.classList.add('actif');
     }
   }
