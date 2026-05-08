@@ -2986,6 +2986,79 @@
       color: #94a3b8;
     }
 
+    /* Panneau-sélecteur — accordéon en place sous le bloc des chips (23.c-2) */
+    .accueil-unifie .selecteur {
+      background: white;
+      border: 1px solid var(--niv-1);
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+      box-shadow: 0 1px 6px rgba(26, 35, 126, 0.08);
+      color: var(--texte-1);
+      animation: accueil-unifie-fade-in 0.18s ease-out;
+    }
+    @keyframes accueil-unifie-fade-in {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .accueil-unifie .selecteur-entete {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.55rem;
+    }
+    .accueil-unifie .selecteur-entete strong {
+      font-size: 0.92rem;
+      color: var(--texte-1);
+    }
+    .accueil-unifie .selecteur-entete em {
+      font-style: normal;
+      font-size: 0.72rem;
+      color: var(--texte-2);
+      background: var(--chip-fond);
+      padding: 0.1rem 0.45rem;
+      border-radius: 4px;
+    }
+    .accueil-unifie .selecteur-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+    .accueil-unifie .selecteur-options label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.65rem;
+      border: 1px solid var(--chip-bord);
+      border-radius: 6px;
+      font-size: 0.82rem;
+      background: #f9fafc;
+      color: var(--texte-1);
+      cursor: pointer;
+      transition: var(--trans);
+    }
+    .accueil-unifie .selecteur-options label:hover {
+      border-color: var(--niv-1);
+    }
+    .accueil-unifie .selecteur-options label.coche {
+      border-color: var(--niv-1);
+      background: var(--niv-1-clair);
+      color: var(--niv-1);
+      font-weight: 600;
+    }
+    .accueil-unifie .selecteur-options label .marker {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 1.5px solid #94a3b8;
+      flex-shrink: 0;
+    }
+    .accueil-unifie .selecteur.mono  .marker { border-radius: 50%; }
+    .accueil-unifie .selecteur.multi .marker { border-radius: 2px; }
+    .accueil-unifie .selecteur-options label.coche .marker {
+      background: var(--niv-1);
+      border-color: var(--niv-1);
+    }
+
     /* Liste filtrée 2 colonnes (strate 7 du § 6.1) — peuplée en 23.e */
     .accueil-unifie .liste-fiches {
       display: grid;
@@ -3281,13 +3354,16 @@
 
     <div class="marqueur-bloc">&mdash; ou &mdash;</div>
 
-    <!-- 4 chips à combiner — inertes en 23.b, branchées en 23.c -->
+    <!-- 4 chips à combiner — branchement progressif (23.c-2 : accordéon, 23.c-3 : contenu, 23.c-4 : sélection) -->
     <div class="axes" role="group" aria-label="Quatre lentilles &agrave; combiner">
       <button type="button" class="chip" data-axe="probleme" aria-expanded="false">Probl&egrave;me</button>
       <button type="button" class="chip" data-axe="cadre" aria-expanded="false">Cadre</button>
       <button type="button" class="chip" data-axe="niveau" aria-expanded="false">Niveau</button>
       <button type="button" class="chip" data-axe="maturite" aria-expanded="false">Maturit&eacute;</button>
     </div>
+
+    <!-- Panneau-sélecteur — caché par défaut, peuplé par CM.AccueilUnifie au clic d'une chip -->
+    <div class="selecteur" hidden data-axe="" role="region" aria-label="S&eacute;lecteur de valeurs"></div>
 
     <!-- Cartouche compteur — repliée par défaut, compteur en dur en 23.b -->
     <button class="cartouche" type="button" data-cartouche="compteur" aria-expanded="false">
@@ -5493,6 +5569,83 @@ CM.AccueilUnifie = (function() {
     }
   }
 
+  /* ═══ Mécanique d'accordéon — DOM (23.c-2) ═══
+
+     Délégation de clic globale sur la racine .accueil-unifie. Un seul
+     panneau-sélecteur partagé entre les 4 chips ; au clic sur une chip,
+     toute autre chip ouverte se referme (un seul accordéon ouvert à la
+     fois). Le contenu du panneau est vide en 23.c-2 (peuplé en 23.c-3). */
+
+  function _estMonoSelection(axe) {
+    return axe === 'niveau' || axe === 'maturite';
+  }
+
+  function _fermerPanneau(racine) {
+    var panneau = racine.querySelector('.selecteur');
+    if (panneau) {
+      panneau.hidden = true;
+      panneau.dataset.axe = '';
+      panneau.classList.remove('mono', 'multi');
+      panneau.innerHTML = '';
+    }
+    var chipsOuvertes = racine.querySelectorAll('.chip.ouverte');
+    for (var i = 0; i < chipsOuvertes.length; i++) {
+      chipsOuvertes[i].classList.remove('ouverte');
+      chipsOuvertes[i].setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  function _ouvrirPanneau(racine, axe) {
+    var panneau = racine.querySelector('.selecteur');
+    var chipCible = racine.querySelector('.chip[data-axe="' + axe + '"]');
+    if (!panneau || !chipCible) return;
+    _fermerPanneau(racine);
+    chipCible.classList.add('ouverte');
+    chipCible.setAttribute('aria-expanded', 'true');
+    panneau.dataset.axe = axe;
+    panneau.classList.add(_estMonoSelection(axe) ? 'mono' : 'multi');
+    /* Le contenu est rempli par _peupleSelecteur() au chantier 23.c-3.
+       Pour 23.c-2 : panneau ouvert mais vide. */
+    panneau.innerHTML = '';
+    panneau.hidden = false;
+  }
+
+  function _surClicAccueil(e) {
+    var racine = e.currentTarget;
+    var chip = e.target.closest('.chip[data-axe]');
+    if (chip && racine.contains(chip)) {
+      var axe = chip.dataset.axe;
+      if (chip.classList.contains('ouverte')) {
+        _fermerPanneau(racine);
+      } else {
+        _ouvrirPanneau(racine, axe);
+      }
+      return;
+    }
+    /* Clic à l'intérieur du panneau lui-même : ne pas fermer (laisse passer
+       aux <label> qui seront branchés en 23.c-4). */
+    if (e.target.closest('.selecteur')) return;
+    /* Clic ailleurs dans .accueil-unifie : fermer. */
+    _fermerPanneau(racine);
+  }
+
+  function _brancherDOM() {
+    var racine = document.querySelector('.accueil-unifie');
+    if (!racine) return;
+    /* Idempotence : si déjà branché, ne pas re-attacher. */
+    if (racine.dataset.cmAccueilUnifieBranche === '1') return;
+    racine.dataset.cmAccueilUnifieBranche = '1';
+    racine.addEventListener('click', _surClicAccueil);
+  }
+
+  function init() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _brancherDOM);
+    } else {
+      _brancherDOM();
+    }
+  }
+
   /* ═══ Façade publique ═══ */
 
   function ouvrir() {
@@ -5602,7 +5755,8 @@ CM.AccueilUnifie = (function() {
     surChangementFiltre:     surChangementFiltre,
     surChangementCartouche:  surChangementCartouche,
     etatChips:               etatChips,
-    etatCartouche:           etatCartouche
+    etatCartouche:           etatCartouche,
+    init:                    init
   };
 })();
 /* ══ CM.AccueilUnifie — END ══ */
@@ -11257,6 +11411,7 @@ CM.App = (function() {
 
 <!-- ══ INIT ══ -->
 <script>
+CM.AccueilUnifie.init();
 CM.App.init();
 </script>
 
