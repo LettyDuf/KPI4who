@@ -2724,12 +2724,18 @@
     /* Compensation pour ne pas être sous le bandeau fixe */
     #accueil-portes:not([hidden]) ~ * #app,  /* fallback */
     #accueil-portes { padding-top: 4.2rem; }
-    #vue-par-question { padding-top: 3.2rem; }
+    #vue-par-question,
+    #vue-porte-probleme,
+    #vue-porte-cadre,
+    #vue-porte-niveau { padding-top: 3.2rem; }
     @media (max-width: 720px) {
       .bandeau-portes { padding: 0.4rem 1rem; gap: 0.5rem; }
       .bandeau-portes-nav a { padding: 0.3rem 0.65rem; font-size: 0.76rem; }
       #accueil-portes  { padding-top: 5.5rem; }
-      #vue-par-question { padding-top: 4.5rem; }
+      #vue-par-question,
+      #vue-porte-probleme,
+      #vue-porte-cadre,
+      #vue-porte-niveau { padding-top: 4.5rem; }
     }
 
   </style>
@@ -2945,19 +2951,19 @@
 ═══════════════════════════════════════════════════════ -->
 <div id="accueil-portes" hidden>
   <header id="bandeau-portes-accueil" class="bandeau-portes" role="banner">
-    <span class="bandeau-portes-logo">&#x2B21; Indicateurs</span>
-    <span class="bandeau-portes-spacer"></span>
-    <nav class="bandeau-portes-nav" role="navigation" aria-label="Navigation principale">
-      <a href="#accueil"        class="entree actif"  data-entree="accueil"      onclick="event.preventDefault();CM.App.afficherAccueil('portes');">Accueil</a>
-      <a href="#tableau-bord"   class="entree"                          data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord</a>
-      <a href="#"               class="entree stub"                     data-entree="4-axes"       onclick="event.preventDefault();" aria-disabled="true">Par mes 4 axes</a>
-      <a href="#par-ma-question" class="entree" data-entree="question"     onclick="event.preventDefault();CM.VuePorteQuestion.ouvrir();">Par ma question</a>
-      <a href="#"               class="entree stub"                     data-entree="cascade"      onclick="event.preventDefault();" aria-disabled="true">Cascade stratégique</a>
-      <a href="#"               class="entree stub"                     data-entree="maturite"     onclick="event.preventDefault();" aria-disabled="true">La maturité&nbsp;?</a>
-      <a href="#"               class="entree stub"                     data-entree="lexique"      onclick="event.preventDefault();" aria-disabled="true">Lexique</a>
-      <a href="#"               class="entree"                          data-entree="apropos"      onclick="event.preventDefault();CM.Apropos.ouvrir();">À propos</a>
-    </nav>
-  </header>
+  <span class="bandeau-portes-logo">&#x2B21; Indicateurs</span>
+  <span class="bandeau-portes-spacer"></span>
+  <nav class="bandeau-portes-nav" role="navigation" aria-label="Navigation principale">
+    <a href="#" class="entree actif" data-entree="accueil" onclick="event.preventDefault();CM.App.demanderRetourAccueil();">Accueil</a>
+    <a href="#" class="entree" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord</a>
+    <a href="#" class="entree stub" data-entree="4-axes" aria-disabled="true" onclick="event.preventDefault();">Par mes 4 axes</a>
+    <a href="#" class="entree" data-entree="question" onclick="event.preventDefault();CM.VuePorteQuestion.ouvrir();">Par ma question</a>
+    <a href="#" class="entree stub" data-entree="cascade" aria-disabled="true" onclick="event.preventDefault();">Cascade strat&eacute;gique</a>
+    <a href="#" class="entree stub" data-entree="maturite" aria-disabled="true" onclick="event.preventDefault();">La maturit&eacute;&nbsp;?</a>
+    <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
+    <a href="#" class="entree" data-entree="apropos" onclick="event.preventDefault();CM.Apropos.ouvrir();">&Agrave; propos</a>
+  </nav>
+</header>
 
   <div class="portes-intro">
     <h1>Par où veux-tu entrer&nbsp;?</h1>
@@ -3028,15 +3034,19 @@
      Contenu rendu dynamiquement par CM.VuePorteProbleme.
 ══════════════════════════════════════════════════════ -->
 <div id="vue-porte-probleme" hidden>
-  <header class="porte-en-tete" role="banner">
-    <button type="button" class="btn-changer"
-            onclick="CM.VuePorteProbleme.retourAccueil()"
-            aria-label="Retour à l'accueil">&larr; Accueil</button>
-    <span class="porte-en-tete-titre">🎯 Par mon problème</span>
-    <span class="porte-en-tete-spacer"></span>
-    <button type="button" class="apropos-btn"
-            onclick="CM.Apropos.ouvrir()"
-            aria-label="&Agrave; propos de cet outil">&Agrave; propos</button>
+  <header id="bandeau-portes-porte-probleme" class="bandeau-portes" role="banner">
+    <span class="bandeau-portes-logo">&#x2B21; Indicateurs</span>
+    <span class="bandeau-portes-spacer"></span>
+    <nav class="bandeau-portes-nav" role="navigation" aria-label="Navigation principale">
+      <a href="#" class="entree" data-entree="accueil" onclick="event.preventDefault();CM.App.demanderRetourAccueil();">Accueil</a>
+      <a href="#" class="entree" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord</a>
+      <a href="#" class="entree actif" data-entree="4-axes" onclick="event.preventDefault();">Par mes 4 axes</a>
+      <a href="#" class="entree" data-entree="question" onclick="event.preventDefault();CM.VuePorteQuestion.ouvrir();">Par ma question</a>
+      <a href="#" class="entree stub" data-entree="cascade" aria-disabled="true" onclick="event.preventDefault();">Cascade strat&eacute;gique</a>
+      <a href="#" class="entree stub" data-entree="maturite" aria-disabled="true" onclick="event.preventDefault();">La maturit&eacute;&nbsp;?</a>
+      <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
+      <a href="#" class="entree" data-entree="apropos" onclick="event.preventDefault();CM.Apropos.ouvrir();">&Agrave; propos</a>
+    </nav>
   </header>
   <main class="porte-contenu" role="main">
     <div class="porte-intro">
@@ -3058,15 +3068,19 @@
      toujours visibles. Contenu rendu dynamiquement par CM.VuePorteCadre.
 ══════════════════════════════════════════════════════ -->
 <div id="vue-porte-cadre" hidden>
-  <header class="porte-en-tete" role="banner">
-    <button type="button" class="btn-changer"
-            onclick="CM.VuePorteCadre.retourAccueil()"
-            aria-label="Retour à l'accueil">&larr; Accueil</button>
-    <span class="porte-en-tete-titre">📐 Par mon cadre</span>
-    <span class="porte-en-tete-spacer"></span>
-    <button type="button" class="apropos-btn"
-            onclick="CM.Apropos.ouvrir()"
-            aria-label="&Agrave; propos de cet outil">&Agrave; propos</button>
+  <header id="bandeau-portes-porte-cadre" class="bandeau-portes" role="banner">
+    <span class="bandeau-portes-logo">&#x2B21; Indicateurs</span>
+    <span class="bandeau-portes-spacer"></span>
+    <nav class="bandeau-portes-nav" role="navigation" aria-label="Navigation principale">
+      <a href="#" class="entree" data-entree="accueil" onclick="event.preventDefault();CM.App.demanderRetourAccueil();">Accueil</a>
+      <a href="#" class="entree" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord</a>
+      <a href="#" class="entree actif" data-entree="4-axes" onclick="event.preventDefault();">Par mes 4 axes</a>
+      <a href="#" class="entree" data-entree="question" onclick="event.preventDefault();CM.VuePorteQuestion.ouvrir();">Par ma question</a>
+      <a href="#" class="entree stub" data-entree="cascade" aria-disabled="true" onclick="event.preventDefault();">Cascade strat&eacute;gique</a>
+      <a href="#" class="entree stub" data-entree="maturite" aria-disabled="true" onclick="event.preventDefault();">La maturit&eacute;&nbsp;?</a>
+      <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
+      <a href="#" class="entree" data-entree="apropos" onclick="event.preventDefault();CM.Apropos.ouvrir();">&Agrave; propos</a>
+    </nav>
   </header>
   <main class="porte-contenu" role="main">
     <div class="porte-intro">
@@ -3093,15 +3107,19 @@
      choix séparé. Voir doc-contrats-stepper-roles.md section CM.VuePorteNiveau.
 ══════════════════════════════════════════════════════ -->
 <div id="vue-porte-niveau" hidden>
-  <header class="porte-en-tete" role="banner">
-    <button type="button" class="btn-changer"
-            onclick="CM.VuePorteNiveau.retourAccueil()"
-            aria-label="Retour à l'accueil">&larr; Accueil</button>
-    <span class="porte-en-tete-titre">&#x1F3DB;&#xFE0F; Par mon niveau</span>
-    <span class="porte-en-tete-spacer"></span>
-    <button type="button" class="apropos-btn"
-            onclick="CM.Apropos.ouvrir()"
-            aria-label="&Agrave; propos de cet outil">&Agrave; propos</button>
+  <header id="bandeau-portes-porte-niveau" class="bandeau-portes" role="banner">
+    <span class="bandeau-portes-logo">&#x2B21; Indicateurs</span>
+    <span class="bandeau-portes-spacer"></span>
+    <nav class="bandeau-portes-nav" role="navigation" aria-label="Navigation principale">
+      <a href="#" class="entree" data-entree="accueil" onclick="event.preventDefault();CM.App.demanderRetourAccueil();">Accueil</a>
+      <a href="#" class="entree" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord</a>
+      <a href="#" class="entree actif" data-entree="4-axes" onclick="event.preventDefault();">Par mes 4 axes</a>
+      <a href="#" class="entree" data-entree="question" onclick="event.preventDefault();CM.VuePorteQuestion.ouvrir();">Par ma question</a>
+      <a href="#" class="entree stub" data-entree="cascade" aria-disabled="true" onclick="event.preventDefault();">Cascade strat&eacute;gique</a>
+      <a href="#" class="entree stub" data-entree="maturite" aria-disabled="true" onclick="event.preventDefault();">La maturit&eacute;&nbsp;?</a>
+      <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
+      <a href="#" class="entree" data-entree="apropos" onclick="event.preventDefault();CM.Apropos.ouvrir();">&Agrave; propos</a>
+    </nav>
   </header>
   <main class="porte-contenu" role="main">
     <div class="porte-intro">
@@ -3126,19 +3144,19 @@
 ══════════════════════════════════════════════════════ -->
 <div id="vue-par-question" hidden>
   <header id="bandeau-portes-question" class="bandeau-portes" role="banner">
-    <span class="bandeau-portes-logo">&#x2B21; Indicateurs</span>
-    <span class="bandeau-portes-spacer"></span>
-    <nav class="bandeau-portes-nav" role="navigation" aria-label="Navigation principale">
-      <a href="#accueil"        class="entree"  data-entree="accueil"      onclick="event.preventDefault();CM.App.afficherAccueil('portes');">Accueil</a>
-      <a href="#tableau-bord"   class="entree"                          data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord</a>
-      <a href="#"               class="entree stub"                     data-entree="4-axes"       onclick="event.preventDefault();" aria-disabled="true">Par mes 4 axes</a>
-      <a href="#par-ma-question" class="entree actif" data-entree="question"     onclick="event.preventDefault();CM.VuePorteQuestion.ouvrir();">Par ma question</a>
-      <a href="#"               class="entree stub"                     data-entree="cascade"      onclick="event.preventDefault();" aria-disabled="true">Cascade stratégique</a>
-      <a href="#"               class="entree stub"                     data-entree="maturite"     onclick="event.preventDefault();" aria-disabled="true">La maturité&nbsp;?</a>
-      <a href="#"               class="entree stub"                     data-entree="lexique"      onclick="event.preventDefault();" aria-disabled="true">Lexique</a>
-      <a href="#"               class="entree"                          data-entree="apropos"      onclick="event.preventDefault();CM.Apropos.ouvrir();">À propos</a>
-    </nav>
-  </header>
+  <span class="bandeau-portes-logo">&#x2B21; Indicateurs</span>
+  <span class="bandeau-portes-spacer"></span>
+  <nav class="bandeau-portes-nav" role="navigation" aria-label="Navigation principale">
+    <a href="#" class="entree" data-entree="accueil" onclick="event.preventDefault();CM.App.demanderRetourAccueil();">Accueil</a>
+    <a href="#" class="entree" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord</a>
+    <a href="#" class="entree stub" data-entree="4-axes" aria-disabled="true" onclick="event.preventDefault();">Par mes 4 axes</a>
+    <a href="#" class="entree actif" data-entree="question" onclick="event.preventDefault();CM.VuePorteQuestion.ouvrir();">Par ma question</a>
+    <a href="#" class="entree stub" data-entree="cascade" aria-disabled="true" onclick="event.preventDefault();">Cascade strat&eacute;gique</a>
+    <a href="#" class="entree stub" data-entree="maturite" aria-disabled="true" onclick="event.preventDefault();">La maturit&eacute;&nbsp;?</a>
+    <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
+    <a href="#" class="entree" data-entree="apropos" onclick="event.preventDefault();CM.Apropos.ouvrir();">&Agrave; propos</a>
+  </nav>
+</header>
   <main class="porte-contenu" role="main">
     <div class="porte-intro">
       <h1>Six questions du terrain</h1>
@@ -9354,6 +9372,34 @@ CM.App = (function() {
     _basculerVue(id);
   }
 
+  /* Exemple : CM.App.demanderRetourAccueil() — dispatcher du clic « Accueil » du bandeau.
+     Détecte la vue active et appelle son retourAccueil() spécifique pour préserver
+     la sémantique de chaque module (reset stepper, fermeture vue, bascule accueil).
+     Fallback : afficherAccueil('portes') si aucune vue ouverte n'est reconnue. */
+  function demanderRetourAccueil() {
+    function ouverte(id) {
+      var el = document.getElementById(id);
+      return el && !el.hidden;
+    }
+    if (ouverte('vue-par-question') && CM.VuePorteQuestion && CM.VuePorteQuestion.retourAccueil) {
+      return CM.VuePorteQuestion.retourAccueil();
+    }
+    if (ouverte('vue-porte-probleme') && CM.VuePorteProbleme && CM.VuePorteProbleme.retourAccueil) {
+      return CM.VuePorteProbleme.retourAccueil();
+    }
+    if (ouverte('vue-porte-cadre') && CM.VuePorteCadre && CM.VuePorteCadre.retourAccueil) {
+      return CM.VuePorteCadre.retourAccueil();
+    }
+    if (ouverte('vue-porte-niveau') && CM.VuePorteNiveau && CM.VuePorteNiveau.retourAccueil) {
+      return CM.VuePorteNiveau.retourAccueil();
+    }
+    var app = document.getElementById('app');
+    if (app && app.classList.contains('actif')) {
+      return retourAccueil();
+    }
+    afficherAccueil('portes');
+  }
+
   /* Exemple : CM.App.ouvrirTableauBord() depuis le bandeau du haut (étape 1.bis MVP v1)
      Ouvre l'app sur l'onglet « Mon tableau de bord » SANS contexte. Le panier vide
      affiche son message « Votre tableau de bord est vide » (déjà géré dans
@@ -10452,6 +10498,7 @@ CM.App = (function() {
     basculerAccueil:      basculerAccueil,
     afficherAccueil:      afficherAccueil,
     ouvrirTableauBord:    ouvrirTableauBord,
+    demanderRetourAccueil: demanderRetourAccueil,
     retirerDuPanier:        retirerDuPanier,     /* 9.B.1 — consommé par onclick inline */
     reinitialiserPanier:    reinitialiserPanier, /* 9.B.3 — bouton ↻ Réinitialiser */
     basculerStatutPanier:   basculerStatutPanier, /* 9.C — voie rapide ic. panier sur les fiches */
