@@ -2814,6 +2814,219 @@
       #app.actif { padding-top: 4.5rem; }
     }
 
+    /* ══════════════════════════════════════════════════════
+       CSS de l'accueil unifié *Choisir mes indicateurs* — chantier 23.b-3
+       Référence visuelle : mockup-accueil-unifie-chips.html v7 (commit 8589834).
+       Doctrine : doc-cadre-visuel.md § 6.1 (architecture verticale en 7 strates).
+       Réutilise les variables --niv-* du :root du document. Les variables
+       propres aux chips (--chip-fond, --chip-bord, --chip-actif) sont
+       déclarées localement sur .accueil-unifie pour éviter toute fuite.
+    ══════════════════════════════════════════════════════ */
+    .accueil-unifie {
+      --chip-fond:    #eef1f6;
+      --chip-bord:    #cbd0e0;
+      --chip-actif:   var(--niv-1-clair);
+
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 1.2rem 1.4rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /* En-tête centré (strate 2 du § 6.1) */
+    .accueil-unifie .page-entete {
+      text-align: center;
+      margin-bottom: 0.6rem;
+    }
+    .accueil-unifie .page-entete .surtitre {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--texte-2);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+    .accueil-unifie .page-entete h2 {
+      margin: 0 0 0.35rem;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--niv-1);
+      letter-spacing: -0.01em;
+    }
+    .accueil-unifie .page-entete .barre {
+      width: 60px;
+      height: 3px;
+      background: var(--niv-1);
+      margin: 0.2rem auto 0.55rem;
+      border-radius: 2px;
+    }
+    .accueil-unifie .page-entete .baseline {
+      margin: 0;
+      font-size: 0.92rem;
+      color: var(--texte-2);
+      font-style: italic;
+    }
+
+    /* Cartouches cliquables (strates 3 et 6 du § 6.1) */
+    .accueil-unifie .cartouche {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 0.85rem 1.1rem;
+      background: white;
+      border: 1px solid var(--chip-bord);
+      border-radius: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: var(--trans);
+      text-align: left;
+    }
+    .accueil-unifie .cartouche:hover {
+      background: #f9fafc;
+      border-color: var(--niv-1);
+    }
+    .accueil-unifie .cartouche.deplie {
+      border-color: var(--niv-1);
+      box-shadow: 0 1px 6px rgba(26, 35, 126, 0.08);
+    }
+    .accueil-unifie .cartouche-libelle {
+      display: flex;
+      flex-direction: column;
+      gap: 0.18rem;
+    }
+    .accueil-unifie .cartouche-libelle strong {
+      font-size: 0.98rem;
+      color: var(--niv-1);
+      font-weight: 700;
+    }
+    .accueil-unifie .cartouche-libelle .total {
+      color: var(--texte-2);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    .accueil-unifie .cartouche-libelle .sous-titre,
+    .accueil-unifie .cartouche-libelle .axes-actifs {
+      font-size: 0.82rem;
+      color: var(--texte-2);
+      font-style: italic;
+    }
+    .accueil-unifie .cartouche-chevron {
+      font-size: 0.85rem;
+      color: var(--texte-2);
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.35rem;
+      flex-shrink: 0;
+    }
+    .accueil-unifie .cartouche-chevron .libelle-action {
+      font-weight: 600;
+    }
+
+    /* Marqueur typographique « — ou — » (strate 4 du § 6.1) */
+    .accueil-unifie .marqueur-bloc {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--texte-2);
+      font-style: italic;
+      margin: 0.2rem 0;
+      letter-spacing: 0.04em;
+    }
+
+    /* Bloc des 4 chips (strate 5 du § 6.1) */
+    .accueil-unifie .axes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      justify-content: center;
+    }
+    .accueil-unifie .chip {
+      background: var(--chip-fond);
+      color: var(--texte-1);
+      border: 1px solid var(--chip-bord);
+      border-radius: 999px;
+      padding: 0.45rem 1rem;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--trans);
+    }
+    .accueil-unifie .chip:hover {
+      background: white;
+      border-color: var(--niv-1);
+    }
+    .accueil-unifie .chip.actif {
+      background: var(--chip-actif);
+      border-color: transparent;
+      font-weight: 600;
+    }
+    .accueil-unifie .chip[data-axe="probleme"].actif { color: #5b21b6; }
+    .accueil-unifie .chip[data-axe="cadre"].actif    { color: var(--niv-1); }
+    .accueil-unifie .chip[data-axe="niveau"].actif   { color: var(--niv-3); }
+    .accueil-unifie .chip[data-axe="maturite"].actif { color: #0f766e; }
+    .accueil-unifie .chip.ouverte {
+      box-shadow: 0 0 0 2px rgba(26, 35, 126, 0.30);
+      border-color: var(--niv-1);
+    }
+    .accueil-unifie .chip .check {
+      color: var(--niv-1);
+      font-weight: 700;
+      margin-right: 0.15rem;
+    }
+    .accueil-unifie .chip .valeur {
+      font-weight: 600;
+      margin-left: 0.1rem;
+    }
+    .accueil-unifie .chip .valeur::before {
+      content: "·";
+      margin: 0 0.3rem;
+      color: #94a3b8;
+    }
+
+    /* Liste filtrée 2 colonnes (strate 7 du § 6.1) — peuplée en 23.e */
+    .accueil-unifie .liste-fiches {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.9rem;
+      margin-top: 0.4rem;
+    }
+
+    /* Pied minimaliste */
+    .accueil-unifie-pied {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--chip-bord);
+    }
+    .accueil-unifie-pied a {
+      color: var(--texte-2);
+      font-size: 0.85rem;
+      text-decoration: none;
+      border-bottom: 1px dotted var(--chip-bord);
+      padding-bottom: 1px;
+    }
+    .accueil-unifie-pied a:hover {
+      color: var(--niv-1);
+      border-color: var(--niv-1);
+    }
+
+    /* Responsive — bascule en 1 colonne sous 720px */
+    @media (max-width: 720px) {
+      .accueil-unifie {
+        padding: 1rem 0.9rem 2rem;
+      }
+      .accueil-unifie .liste-fiches {
+        grid-template-columns: 1fr;
+      }
+      .accueil-unifie .page-entete h2 {
+        font-size: 1.35rem;
+      }
+    }
+
+
   </style>
 </head>
 <body>
