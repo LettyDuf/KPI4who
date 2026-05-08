@@ -2645,7 +2645,14 @@
       padding: 2rem 1.75rem;
       max-width: 1040px;
       width: 100%;
-      margin: 0 auto;
+      /* Cadre blanc intermédiaire (08/05/2026) — le contenu de la vue
+         repose sur une surface blanche au-dessus du fond bleu nuit, pour
+         garantir la lisibilité du titre et du paragraphe d'intro. Pattern
+         « matière en blanc franc » de la voie hybride. */
+      margin: 1.75rem auto 2rem;
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.18);
     }
     #vue-par-question .porte-intro h1 {
       font-size: var(--fs-h2); font-weight: 800;
@@ -2665,8 +2672,12 @@
     #vue-par-question .liste-questions a {
       display: block;
       padding: 0.95rem 1.1rem;
-      background: var(--fond-2);
-      border: 1.5px solid var(--bordure);
+      /* Boutons-questions en gris-bleu clair (08/05/2026) — nuance
+         d'imbrication par rapport au cadre blanc qui les contient.
+         Cohérent avec la voie hybride : la nav/les filtres dans une
+         teinte adoucie, la matière de fiche reste en blanc plus tard. */
+      background: #eef1f6;
+      border: 1.5px solid #d8dceb;
       border-radius: 8px;
       text-decoration: none;
       color: inherit;
@@ -2675,7 +2686,7 @@
     #vue-par-question .liste-questions a:hover,
     #vue-par-question .liste-questions a:focus-visible {
       border-color: var(--niv-2);
-      background: var(--fond);
+      background: #e3e8f0;
       transform: translateX(2px);
     }
     #vue-par-question .liste-questions-titre {
