@@ -3045,6 +3045,34 @@
       color: var(--niv-1);
       font-weight: 600;
     }
+    /* Variante α — corps en colonne avec titre + sous-titre.
+       Active sur les axes Niveau et Problème (cf. doctrine 08/05/2026). */
+    .accueil-unifie .selecteur-options label .corps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+      line-height: 1.3;
+    }
+    .accueil-unifie .selecteur-options label .corps .titre {
+      font-weight: 500;
+    }
+    .accueil-unifie .selecteur-options label .corps .sous {
+      font-size: 0.72rem;
+      color: var(--texte-2);
+      font-style: italic;
+    }
+    .accueil-unifie .selecteur-options label.coche .corps .sous {
+      color: var(--niv-1);
+      opacity: 0.85;
+    }
+    /* Quand le label porte un .corps (variante α), aligner le marker en haut. */
+    .accueil-unifie .selecteur-options label:has(.corps) {
+      align-items: flex-start;
+      padding: 0.5rem 0.7rem;
+    }
+    .accueil-unifie .selecteur-options label:has(.corps) .marker {
+      margin-top: 0.2rem;
+    }
     .accueil-unifie .selecteur-options label .marker {
       display: inline-block;
       width: 12px;
@@ -5595,6 +5623,128 @@ CM.AccueilUnifie = (function() {
     }
   }
 
+  /* ═══ Contenu des sélecteurs (23.c-3) ═══
+
+     Doctrine d'affichage tranchée par Lætitia 08/05/2026 :
+     - Niveau   : variante α (compact + sous-titre empilé)  — 4 valeurs mono
+     - Problème : variante α (compact + sous-titre empilé)  — 7 valeurs multi
+     - Cadre    : variante B (compact sans sous-titres)     — 12 valeurs multi
+     - Maturité : variante B (compact sans sous-titres)     — 3 valeurs mono
+
+     Sources de vérité (DRY, pas de duplication) :
+     - Niveau   : CM.DiagnosticProbleme.niveauxTous()
+     - Problème : CM.DiagnosticProbleme.tousLesProblemes()
+     - Cadre    : CM.IndicateursMeta.tousLesCadres()
+     - Maturité : hardcode local (3 valeurs simples, pas de source ailleurs).
+
+     Mapping vocabulaire technique : les ids retournés sont alignés sur le
+     vocabulaire fermé de CM.RequeteMetriques.executer (cf. § 10.3 du
+     doc-contrats-chantier-14.md). Le branchement filtre vit en chantier 23.e. */
+
+  var MATURITES = [
+    { id: 'debutant',      label: 'D&eacute;butant' },
+    { id: 'intermediaire', label: 'Interm&eacute;diaire' },
+    { id: 'avance',        label: 'Avanc&eacute;' }
+  ];
+
+  /* Étiquette courte d'axe pour l'en-tête du sélecteur. */
+  var ETIQUETTE_AXE = {
+    probleme: { titre: 'Problème', mode: 'multi-sélection' },
+    cadre:    { titre: 'Cadre',         mode: 'multi-sélection' },
+    niveau:   { titre: 'Niveau',        mode: 'mono-sélection' },
+    maturite: { titre: 'Maturité', mode: 'mono-sélection' }
+  };
+
+  function _echappe(s) {
+    /* Échappe le minimum vital pour insérer un texte dans innerHTML. Les
+       sources de vérité (CM.Config, CM.IndicateursMeta) contiennent du
+       texte de confiance, mais on échappe par hygiène. */
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function _valeursPourAxe(axe) {
+    /* Retourne un tableau [{ id, label, sous? }] pour l'axe demandé. */
+    if (axe === 'niveau') {
+      var niveaux = (CM.DiagnosticProbleme && CM.DiagnosticProbleme.niveauxTous)
+        ? CM.DiagnosticProbleme.niveauxTous() : [];
+      return niveaux.map(function(n) {
+        return { id: n.id, label: n.label, sous: n.sous };
+      });
+    }
+    if (axe === 'probleme') {
+      var problemes = (CM.DiagnosticProbleme && CM.DiagnosticProbleme.tousLesProblemes)
+        ? CM.DiagnosticProbleme.tousLesProblemes() : [];
+      return problemes.map(function(p) {
+        return { id: p.id, label: p.label, sous: p.sous };
+      });
+    }
+    if (axe === 'cadre') {
+      var cadres = (CM.IndicateursMeta && CM.IndicateursMeta.tousLesCadres)
+        ? CM.IndicateursMeta.tousLesCadres() : [];
+      /* Variante B retenue : libellés raccourcis, pas de sous-titre.
+         Les libellés trop longs des cadres CX et Sécurité sont court-circuités
+         pour rester lisibles dans la chip — cohérent avec l'arbitrage du
+         mockup-selecteurs-libelles.html (8a144c0). */
+      var LIBELLES_COURTS = {
+        cx:       'Customer Experience',
+        securite: 'Sécurité'
+      };
+      return cadres.map(function(c) {
+        return {
+          id:    c.id,
+          label: LIBELLES_COURTS[c.id] || c.label
+          /* sous: volontairement absent (variante B) */
+        };
+      });
+    }
+    if (axe === 'maturite') {
+      return MATURITES.slice();
+    }
+    return [];
+  }
+
+  function _peupleSelecteur(panneau, axe) {
+    var etiq = ETIQUETTE_AXE[axe];
+    var valeurs = _valeursPourAxe(axe);
+    if (!etiq || valeurs.length === 0) {
+      panneau.innerHTML = '';
+      return;
+    }
+
+    /* En-tête : titre de l'axe + chip mode (mono / multi). */
+    var html = '<div class="selecteur-entete">' +
+                 '<strong>' + _echappe(etiq.titre) + '</strong>' +
+                 '<em>' + _echappe(etiq.mode) + '</em>' +
+               '</div>';
+
+    /* Options : variante α (avec sous-titre empilé) ou B (sans). */
+    html += '<div class="selecteur-options">';
+    for (var i = 0; i < valeurs.length; i++) {
+      var v = valeurs[i];
+      var label = '<label data-valeur="' + _echappe(v.id) + '">' +
+                    '<span class="marker"></span>';
+      if (v.sous) {
+        /* Variante α — corps en colonne avec titre + sous-titre. */
+        label += '<span class="corps">' +
+                   '<span class="titre">' + _echappe(v.label) + '</span>' +
+                   '<span class="sous">' + _echappe(v.sous) + '</span>' +
+                 '</span>';
+      } else {
+        /* Variante B — libellé seul. */
+        label += ' ' + _echappe(v.label);
+      }
+      label += '</label>';
+      html += label;
+    }
+    html += '</div>';
+
+    panneau.innerHTML = html;
+  }
+
   function _ouvrirPanneau(racine, axe) {
     var panneau = racine.querySelector('.selecteur');
     var chipCible = racine.querySelector('.chip[data-axe="' + axe + '"]');
@@ -5604,9 +5754,7 @@ CM.AccueilUnifie = (function() {
     chipCible.setAttribute('aria-expanded', 'true');
     panneau.dataset.axe = axe;
     panneau.classList.add(_estMonoSelection(axe) ? 'mono' : 'multi');
-    /* Le contenu est rempli par _peupleSelecteur() au chantier 23.c-3.
-       Pour 23.c-2 : panneau ouvert mais vide. */
-    panneau.innerHTML = '';
+    _peupleSelecteur(panneau, axe);
     panneau.hidden = false;
   }
 
@@ -7809,10 +7957,16 @@ CM.DiagnosticProbleme = (function() {
     });
   }
 
+  // Exemple : tousLesProblemes() → [{id:'delais',...}, {id:'qualite',...}, ...]
+  // Retourne TOUS les problèmes du vocabulaire fermé, sans filtre niveau.
+  // Utilisé par CM.AccueilUnifie pour peupler le sélecteur Problème en multi-sélection.
+  function tousLesProblemes() { return PROBLEMES.slice(); }
+
   return {
     niveauxTous:         niveauxTous,
     niveauInfo:          niveauInfo,
     problemesPourNiveau: problemesPourNiveau,
+    tousLesProblemes:    tousLesProblemes,
     problemeInfo:        problemeInfo,
     recommander:         recommander,
     aDeleguerPour:       aDeleguerPour
