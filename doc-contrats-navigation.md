@@ -192,6 +192,10 @@ Ces lentilles ne sont pas une liste exhaustive — le jeu reste ouvert. Elles so
 
 ### 6.1 Façades de portes — `CM.VuePorte{Probleme,Cadre,Niveau}`
 
+> **Statut chantier 23 — dépréciation programmée au sous-chantier 23.f.** Les trois façades `CM.VuePorteProbleme`, `CM.VuePorteCadre`, `CM.VuePorteNiveau` **disparaissent** au chantier 23.f, en même temps que les vues détail correspondantes. Le **traducteur orthodoxe** introduit au chantier 14 (cf. `project_doctrine_traducteur_orthodoxe.md`) **survit** : c'est lui qui formule le filtre dans la nouvelle mécanique des chips de l'accueil unifié. L'orchestrateur stepper du chantier 14 (`CM.Stepper`) **meurt aussi** — la mécanique d'étape rôle → problème → cadre n'a plus de pages où vivre. La doctrine documentée dans `doc-contrats-stepper-roles.md` devient archive.
+>
+> **Tableau ci-dessous = état pré-refonte**, conservé comme description de ce qui sera supprimé au 23.f. Tous les `onclick` du HTML pointant vers ces façades (`onclick="CM.VuePorteProbleme.setNiveau(...)"` etc.) sont **à supprimer**.
+
 Les trois portes exposent la même façade, livrée par le patron `CM.Stepper` (contrat documenté en détail dans `doc-contrats-stepper-roles.md`). Le chantier 10 n'entre pas dans ces façades — il en change seulement les **points d'invocation** (qui les appelle, depuis où).
 
 | Fonction | Signature | Comportement à préserver |
@@ -207,6 +211,13 @@ Les trois portes exposent la même façade, livrée par le patron `CM.Stepper` (
 
 ### 6.2 Façades `CM.App` — navigation
 
+> **Statut chantier 23 — amendement.** Le tableau ci-dessous date du chantier 10. Au chantier 23, les conséquences sont :
+> - `basculerAccueil(mode)` et `afficherAccueil(mode)` : **supprimées** au 23.f (déjà marquées comme supprimées par la refonte chantier 10, statut confirmé). Le code subsistant qui les invoque doit être nettoyé.
+> - `entrer(niveau, branche, domaine, elClic?)` : **supprimée** au 23.f. Plus de pyramide, plus de point d'invocation, fonction orpheline.
+> - `retourAccueil()` : **redéfinie**. Sémantique nouvelle = *« revenir à l'accueil unifié, réinitialiser les chips, replier les cartouches »*. Détail au § 6.6 *Contrats de l'accueil unifié* (commit suivant).
+> - `changerVue(id, btn)` : **stable**. Continue de basculer entre les onglets restants du bandeau (Mon tableau de bord, Cascade, La maturité ?, Lexique, À propos).
+> - `demanderRetourAccueil()` (livré chantier 10 lors du bandeau du haut) : **stable**. Détecte la vue active et délègue au `retourAccueil()` du module concerné. Continue de fonctionner avec le périmètre réduit.
+
 Les fonctions de navigation de `CM.App` sont le **cœur du chantier 10**. Certaines disparaissent, d'autres changent de sémantique, d'autres restent stables.
 
 | Fonction | Signature | Comportement à préserver | Point d'évolution |
@@ -218,6 +229,11 @@ Les fonctions de navigation de `CM.App` sont le **cœur du chantier 10**. Certai
 | `changerVue(id, btn)` | `id: string`, `btn: HTMLElement` | bascule entre les onglets de l'app | **stable dans sa signature**. Peut évoluer sur le comportement visuel (marquage de l'onglet actif) selon arbitrage preview. |
 
 ### 6.3 Hash URL
+
+> **Statut chantier 23 — amendement.** Au chantier 23 :
+> - `#fiche=<id>` : **invariant strict préservé**. Cf. § 7.1.
+> - `#pyramide`, `#portes` : **supprimés** au 23.f. Migration à appliquer dans le routeur : redirection silencieuse vers la nav unifiée si un ancien lien est ouvert (la fonction `CM.App.afficherAccueil` à supprimer porte cette logique).
+> - **Hash de filtres d'accueil** (`#niveau=programme&cadre=dora` etc.) : **reportés au chantier 24** (URLs partageables des filtres d'accueil). La portée *équilibrée* du contrat `CM.AccueilUnifie` (cf. § 6.6) prépare le terrain mais ne les implémente pas. Décision actée 08/05/2026 par esprit critique : tant qu'il n'y a pas d'usage de partage avéré, ne pas anticiper.
 
 | Hash | Comportement à préserver | Point d'évolution |
 |---|---|---|
