@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Mockup-comparatif — fond crème ↔ bleu nuit ↔ neutre clair</title>
+<title>Mockup-comparatif — fond bleu nuit ↔ neutre clair ↔ hybride</title>
 <style>
   /* ──────────────────────────────────────────────────────────────
      Mockup-comparatif — test du fond global de l'outil
@@ -74,17 +74,14 @@
     font-style: italic;
   }
 
-  /* ─── Grille des 4 colonnes ─── */
+  /* ─── Grille des 3 colonnes (crème retirée 08/05/2026) ─── */
   .grille {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.85rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
     padding: 0.5rem 1rem 2rem;
   }
-  @media (max-width: 1500px) {
-    .grille { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 800px) {
+  @media (max-width: 1100px) {
     .grille { grid-template-columns: 1fr; }
   }
 
@@ -122,21 +119,6 @@
      Chaque colonne fait sa propre déclaration sur .preview pour
      redéfinir uniquement le fond + les couleurs dérivées.
      ────────────────────────────────────────────────────────────── */
-
-  /* Colonne 1 — crème (doctrine actuelle, témoin) */
-  .preview.creme {
-    --fond:         #f3eee0;        /* papier crème (doctrine § 6.0) */
-    --fond-2:       #ebe8dc;        /* fond plus chaud */
-    --carte:        #ffffff;        /* fond des cartes (blanc franc) */
-    --carte-bord:   #e7e0c8;
-    --texte:        #2a2a26;
-    --texte-2:      #6b5d3a;
-    --bordure:      #ddd5be;
-    --chip-fond:    #ffffff;
-    --chip-bord:    #ddd5be;
-    --chip-actif-fond: #ede9fe;
-    --citation:     #6b5d3a;
-  }
 
   /* Colonne 2 — bleu nuit hérité (test demandé par Lætitia 08/05/2026)
      Doctrine du test : fond bleu nuit pour la page, MAIS cartes / bandeau /
@@ -256,7 +238,7 @@
   .preview.hybride .bandeau .entree.actif { background: #ddd6fe; color: #4c1d95; }
   .preview.hybride .bandeau .entree.stub  { color: #94a3b8; }
 
-  .preview.hybride .porte { background: #eef1f6; border-color: #cbd0e0; }
+  .preview.hybride .porte { background: #ffffff; border-color: #e0e4eb; }
   .preview.hybride .porte h3 { color: #1c2033; }
   .preview.hybride .porte p  { color: #5b6378; }
   .preview.hybride .porte .badge { background: #c7d2fe; color: #1e3a8a; }
@@ -273,11 +255,11 @@
   .preview.hybride .chip[data-axe="niveau"].actif   { color: var(--niv-3); }
   .preview.hybride .chip[data-axe="maturite"].actif { color: var(--niv-eq-af); }
 
-  .preview.hybride .resultat { background: #eef1f6; border-color: #cbd0e0; }
+  .preview.hybride .resultat { background: #ffffff; border-color: #e0e4eb; }
   .preview.hybride .resultat-entete strong { color: #1c2033; }
   .preview.hybride .resultat-entete > span { color: #5b6378; }
   .preview.hybride .resultat-entete .compteur { color: #4c1d95; }
-  .preview.hybride .fiche-card { background: #e3e8f0; border-color: #cbd0e0; color: #1c2033; }
+  .preview.hybride .fiche-card { background: #f5f7fb; border-color: #e0e4eb; color: #1c2033; }
   .preview.hybride .fiche-card .pts span { background: #4c1d95; opacity: 0.75; }
   .preview.hybride .fiche-card.suite { color: #5b6378; }
 
@@ -604,107 +586,12 @@
 <body>
 
 <header class="meta-bandeau">
-  <h1>Mockup-comparatif — fond crème ↔ bleu nuit ↔ neutre clair</h1>
+  <h1>Mockup-comparatif — fond bleu nuit ↔ neutre clair ↔ hybride</h1>
   <p>Trois colonnes côte à côte. Même page (« Choisir mes indicateurs » qui incarne la fusion portes + axes — scénario 1 acté le 08/05/2026). Seul le fond change. Pattern hérité de <code>mockup-lentille-etape-B.html</code> (V1/V2/V3) et <code>mockup-palette-fiche-question-comparatif.html</code> (4 palettes). Décide à l'œil — la doctrine § 6.0/§ 6.1 du cadre visuel sera amendée selon ce qui sortira.</p>
-  <div class="lien-ressources">Références : doctrine actuelle (crème) → § 6.0 et § 6.1 de doc-cadre-visuel.md, commit <code>958042d</code>.</div>
+  <div class="lien-ressources">Test acté le 08/05/2026 : Lætitia ne retient pas le crème (« je n'aime vraiment pas »). Doctrine § 6.0/§ 6.1 de doc-cadre-visuel.md (commit <code>958042d</code>) à amender en conséquence — la décision finale entre les 3 voies restantes alimente l'amendement.</div>
 </header>
 
 <div class="grille">
-
-  <!-- ─────────────────────────────────────────────────────────────
-       COLONNE 1 — crème (doctrine actuelle, témoin)
-       ───────────────────────────────────────────────────────────── -->
-  <section class="colonne">
-    <div class="col-entete">
-      <span class="badge badge-creme">Témoin · doctrine</span>
-      <div class="titre">Crème</div>
-      <div class="sous-titre">Papier <code>#f3eee0</code> · doctrine § 6.0/§ 6.1 (05/05/2026)</div>
-    </div>
-    <div class="preview creme">
-      <!-- Bandeau -->
-      <nav class="bandeau">
-        <a href="#" class="entree">Accueil</a>
-        <a href="#" class="entree">Mon tableau de bord</a>
-        <a href="#" class="entree actif">Choisir mes indicateurs</a>
-        <a href="#" class="entree">Par ma question</a>
-        <a href="#" class="entree stub">Cascade</a>
-        <a href="#" class="entree stub">Maturité</a>
-        <a href="#" class="entree stub">Lexique</a>
-        <a href="#" class="entree">À propos</a>
-      </nav>
-      <div class="filet-4"><i></i><i></i><i></i><i></i></div>
-
-      <header class="page-entete">
-        <div class="surtitre">Page unifiée</div>
-        <h1>Choisir mes indicateurs</h1>
-        <div class="barre"></div>
-        <p class="baseline">Quatre lentilles, deux postures pour les manipuler. Entre par une porte, ou croise les axes.</p>
-      </header>
-
-      <div class="modes-bascule">
-        <span class="mode-tab actif">Par une porte</span>
-        <span class="mode-tab">En croisant les axes</span>
-        <span class="mode-tab futur">+ futur mode</span>
-      </div>
-
-      <!-- Mode 1 : portes -->
-      <div class="portes">
-        <article class="porte" data-niv="strat">
-          <span class="filet"></span>
-          <span class="badge">Disponible</span>
-          <h3>Par mon niveau</h3>
-          <p>Je connais mon étage : direction, portefeuille, programme, équipe.</p>
-        </article>
-        <article class="porte" data-niv="port">
-          <span class="filet"></span>
-          <span class="badge">Disponible</span>
-          <h3>Par mon problème</h3>
-          <p>Je sais ce qui me préoccupe — flux, qualité, climat, conformité.</p>
-        </article>
-        <article class="porte" data-niv="prog">
-          <span class="filet"></span>
-          <span class="badge">Disponible</span>
-          <h3>Par mon cadre</h3>
-          <p>Lean, Agile, DORA, OKR — j'entre par l'école que je connais.</p>
-        </article>
-        <article class="porte" data-niv="eq">
-          <span class="filet"></span>
-          <span class="badge">Disponible</span>
-          <h3>Par ma maturité</h3>
-          <p>Je viens de démarrer, ou j'ai déjà des routines installées.</p>
-        </article>
-      </div>
-
-      <!-- Mode 2 : axes (replié — montré en aperçu pour donner l'idée) -->
-      <div class="axes">
-        <p class="axes-baseline">Aperçu du mode <em>en croisant les axes</em> — chips cumulables V3.</p>
-        <div class="chips">
-          <span class="chip actif" data-axe="probleme"><span class="check">✓</span>Problème</span>
-          <span class="chip" data-axe="cadre">Cadre</span>
-          <span class="chip actif" data-axe="niveau"><span class="check">✓</span>Niveau</span>
-          <span class="chip" data-axe="maturite">Maturité</span>
-        </div>
-        <div class="resultat">
-          <div class="resultat-entete">
-            <strong>Indicateurs qui portent au moins un de ces axes</strong>
-            <span><span class="compteur">14</span> sur 75 · 2 axes actifs</span>
-          </div>
-          <div class="resultat-grille">
-            <div class="fiche-card">Climat d'équipe (eNPS) <span class="pts"><span></span><span></span></span></div>
-            <div class="fiche-card">Sécurité psychologique <span class="pts"><span></span></span></div>
-            <div class="fiche-card">Cycle time scatterplot <span class="pts"><span></span></span></div>
-            <div class="fiche-card">Lead time DORA <span class="pts"><span></span></span></div>
-            <div class="fiche-card suite">+ 10 autres fiches</div>
-          </div>
-        </div>
-      </div>
-
-      <footer class="pied">
-        <div class="citation">« Une moyenne n'a jamais fait prendre une bonne décision à personne. »</div>
-        <div class="signature">Daniel Vacanti — <em>Actionable Agile Metrics</em></div>
-      </footer>
-    </div>
-  </section>
 
   <!-- ─────────────────────────────────────────────────────────────
        COLONNE 2 — bleu nuit (test demandé)
@@ -988,7 +875,7 @@
 <aside class="notes">
   <h2>À regarder dans ce mockup</h2>
   <ul>
-    <li><strong>Lisibilité du texte de matière</strong> — les paragraphes des cartes-portes, la baseline, les libellés des chips. Le crème est calibré pour une lecture longue ; le bleu nuit force des contrastes blancs/désaturés ; le neutre est intermédiaire.</li>
+    <li><strong>Lisibilité du texte de matière</strong> — les paragraphes des cartes-portes, la baseline, les libellés des chips. Le bleu nuit force des contrastes blancs/désaturés ; le neutre est posture froide-claire ; l'hybride combine les deux (matière blanche pour la lecture longue, bandeau/chips dans la teinte intermédiaire pour la respiration).</li>
     <li><strong>Comportement des couleurs de niveau</strong> — les filets (indigo, bleu, teal, turquoise/orange) doivent rester distinguables sur les 3 fonds. Sur bleu nuit, les couleurs sombres (indigo, bleu, teal) tendent à se rapprocher du fond.</li>
     <li><strong>Présence de l'indigo <code>#4c1d95</code></strong> (chrome universel — bandeau actif, term-def, primaires). Préservé ici via le pattern « matière en blanc franc » : le bandeau est sur fond blanc, l'indigo s'y voit normalement. À l'inverse, si tu mets l'indigo en plein sur le fond bleu nuit (sans surface blanche dessous), il disparaît.</li>
     <li><strong>Bleu de Prusse <code>#1d3a5f</code></strong> (signature fiche-question, § 6.5) — non visible ici, mais à tester en contexte fiche-question : la fiche elle-même restera blanche dans la matière, donc le bleu de Prusse y vit normalement. Le fond bleu nuit n'agresse pas la fiche-question si la matière reste blanche.</li>
@@ -1004,10 +891,16 @@
     <li>Recalibrer les <strong>liens de pied de page</strong> et autres textes qui flottent directement sur le fond (sans surface blanche dessous).</li>
   </ul>
 
-  <h2>Si tu retiens le crème (statu quo) ou le neutre clair</h2>
+  <h2>Si tu retiens le neutre clair</h2>
   <ul>
-    <li>Aucun audit chromatique cascade — les composants tiennent.</li>
-    <li>Pour le neutre clair : amendement léger de <code>doc-cadre-visuel.md</code> § 6.0 (le crème devient une teinte parmi des fonds chauds/froids possibles). La doctrine reste cohérente.</li>
+    <li>Amendement de <code>doc-cadre-visuel.md</code> § 6.0 et § 6.1 — le crème est remplacé par le gris-bleu très clair. Le principe « chaleur (ou ici fraîcheur) portée par le fond, blanc franc dans la matière » reste valide.</li>
+    <li>Aucun audit chromatique cascade — les composants tiennent (palette indigo, bleu de Prusse fiche-question, couleurs de niveau toutes calibrées sur surface claire).</li>
+  </ul>
+
+  <h2>Si tu retiens l'hybride</h2>
+  <ul>
+    <li>Amendement plus structurant de <code>doc-cadre-visuel.md</code> — le principe doctrinal devient bicolore : <em>fond bleu nuit pour la page, gris-bleu très clair pour le bandeau/chips/onglets, blanc franc pour les surfaces de matière (cartes-portes, bloc résultat, fiches d'indicateur, fiches-questions)</em>. Hiérarchie visuelle assumée : navigation/filtres dans une teinte secondaire, matière principale en blanc franc.</li>
+    <li>Pas d'audit chromatique cascade non plus — la matière reste sur surface blanche.</li>
   </ul>
 </aside>
 
