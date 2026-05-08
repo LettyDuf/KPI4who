@@ -3039,65 +3039,62 @@
   </nav>
 </header>
 
-  <div class="portes-intro">
-    <h1>Par où veux-tu entrer&nbsp;?</h1>
-    <p>Choisis la porte qui correspond à ta situation du moment. Toutes mènent au même référentiel&nbsp;— mais chaque porte le lit sous un angle différent.</p>
-    <span class="portes-baseline">Regarder peu, mais juste · 75 indicateurs · 5 entrées</span>
-  </div>
 
-  <div class="portes-grille" role="navigation" aria-label="Portes d'entrée">
+  <!-- ══════════════════════════════════════════════════════
+       Squelette accueil unifié *Choisir mes indicateurs* — chantier 23.b
+       Référence : mockup-accueil-unifie-chips.html v7 (commit 8589834).
+       Doctrine : project_accueil_unifie_v7.md + doc-cadre-visuel.md § 6.1
+       + doc-contrats-navigation.md § 6.6 (CM.AccueilUnifie).
+       Le contenu est INERTE jusqu'au chantier 23.c (mécanique chips),
+       23.d (cartouches cliquables), 23.e (liste filtrée).
+  ══════════════════════════════════════════════════════ -->
+  <div class="accueil-unifie">
 
-    <!-- Porte 1 — par mon niveau (la seule active dans ce squelette) -->
-    <button type="button" class="porte-carte" data-porte="niveau" onclick="CM.VuePorteNiveau.ouvrir();" aria-label="Entrer par mon niveau — disponible">
-      <span class="porte-statut">Disponible</span>
-      <span class="porte-icone" aria-hidden="true">🏛️</span>
-      <span class="porte-titre">Par mon niveau</span>
-      <span class="porte-soustitre">Je connais mon étage dans l'organisation&nbsp;: direction, portefeuille, programme ou équipe. Je veux voir ce qui se regarde à mon niveau.</span>
-      <span class="porte-exemple">« Je suis responsable d'un portefeuille d'initiatives, que dois-je piloter&nbsp;? »</span>
+    <div class="page-entete">
+      <div class="surtitre">Page unifi&eacute;e</div>
+      <h2>Choisir mes indicateurs</h2>
+      <div class="barre"></div>
+      <p class="baseline">Quatre lentilles &agrave; combiner.</p>
+    </div>
+
+    <!-- Cartouche compagnon « Par ma question » — repliée par défaut -->
+    <button class="cartouche" type="button" data-cartouche="question" aria-expanded="false">
+      <span class="cartouche-libelle">
+        <span><strong>5</strong> <span class="total">questions terrain</span></span>
+        <span class="sous-titre">Une question concr&egrave;te, une fiche qui &eacute;claire.</span>
+      </span>
+      <span class="cartouche-chevron"><span class="libelle-action">Voir</span> &#x25BE;</span>
     </button>
 
-    <!-- Porte 2 — par mon problème -->
-    <button type="button" class="porte-carte" data-porte="probleme" onclick="CM.VuePorteProbleme.ouvrir();" aria-label="Entrer par mon problème — disponible">
-      <span class="porte-statut">Disponible</span>
-      <span class="porte-icone" aria-hidden="true">🎯</span>
-      <span class="porte-titre">Par mon problème</span>
-      <span class="porte-soustitre">J'ai une douleur précise&nbsp;: délais qui dérivent, qualité qui régresse, flux bloqué, alignement perdu. Je veux les métriques qui éclairent ce problème.</span>
-      <span class="porte-exemple">« Mes livraisons sont systématiquement en retard&nbsp;— par où regarder&nbsp;? »</span>
+    <div class="marqueur-bloc">&mdash; ou &mdash;</div>
+
+    <!-- 4 chips à combiner — inertes en 23.b, branchées en 23.c -->
+    <div class="axes" role="group" aria-label="Quatre lentilles &agrave; combiner">
+      <button type="button" class="chip" data-axe="probleme" aria-expanded="false">Probl&egrave;me</button>
+      <button type="button" class="chip" data-axe="cadre" aria-expanded="false">Cadre</button>
+      <button type="button" class="chip" data-axe="niveau" aria-expanded="false">Niveau</button>
+      <button type="button" class="chip" data-axe="maturite" aria-expanded="false">Maturit&eacute;</button>
+    </div>
+
+    <!-- Cartouche compteur — repliée par défaut, compteur en dur en 23.b -->
+    <button class="cartouche" type="button" data-cartouche="compteur" aria-expanded="false">
+      <span class="cartouche-libelle">
+        <span><strong>75</strong> <span class="total">sur 75 indicateurs</span></span>
+        <span class="axes-actifs">Aucune lentille active &mdash; l'index complet attend.</span>
+      </span>
+      <span class="cartouche-chevron"><span class="libelle-action">Voir</span> &#x25BE;</span>
     </button>
 
-    <!-- Porte 3 — par mon cadre -->
-    <button type="button" class="porte-carte" data-porte="cadre" onclick="CM.VuePorteCadre.ouvrir();" aria-label="Entrer par mon cadre — disponible">
-      <span class="porte-statut">Disponible</span>
-      <span class="porte-icone" aria-hidden="true">📐</span>
-      <span class="porte-titre">Par mon cadre</span>
-      <span class="porte-soustitre">Mon équipe travaille avec un framework précis&nbsp;: DORA, Lean Six Sigma, OKR, Scrum, Kanban, SAFe, ITIL… Je veux les indicateurs que ce cadre revendique.</span>
-      <span class="porte-exemple">« Je démarre une transformation DORA&nbsp;— quels 4 indicateurs mettre en place&nbsp;? »</span>
-    </button>
+    <!-- Liste filtrée 2 colonnes — peuplée au chantier 23.e -->
+    <div class="liste-fiches" hidden role="region" aria-label="Liste filtr&eacute;e des indicateurs"></div>
 
-    <!-- Porte 4 — par ma maturité -->
-    <button type="button" class="porte-carte" data-porte="maturite" aria-disabled="true" aria-label="Entrer par ma maturité — bientôt disponible">
-      <span class="porte-statut bientot">Bientôt</span>
-      <span class="porte-icone" aria-hidden="true">🌱</span>
-      <span class="porte-titre">Par ma maturité</span>
-      <span class="porte-soustitre">Je sais où j'en suis dans ma progression&nbsp;: débutant, intermédiaire ou avancé. Je veux des indicateurs adaptés à mon niveau de maîtrise de la mesure.</span>
-      <span class="porte-exemple">« On démarre tout juste&nbsp;— quels indicateurs ne pas risquer encore&nbsp;? »</span>
-    </button>
+    <!-- Pied minimaliste — lien pédagogique conservé -->
+    <div class="accueil-unifie-pied">
+      <a href="#lire-fiche" data-action="ouvrir-aide">Comment lire une fiche indicateur&nbsp;?</a>
+    </div>
 
-    <!-- Porte 5 — par ma question -->
-    <button type="button" class="porte-carte" data-porte="question" onclick="CM.VuePorteQuestion.ouvrir();" aria-label="Entrer par ma question — disponible">
-      <span class="porte-statut">Disponible</span>
-      <span class="porte-icone" aria-hidden="true">&#x2753;</span>
-      <span class="porte-titre">Par ma question</span>
-      <span class="porte-soustitre">J'ai une question concrète du terrain&nbsp;: résistance au changement, pilotage hebdomadaire&hellip; Je veux la fiche-question qui éclaire ma situation.</span>
-      <span class="porte-exemple">« Pourquoi ma transformation résiste&nbsp;? »</span>
-    </button>
+  </div><!-- /accueil-unifie -->
 
-  </div>
-
-  <div class="portes-pied">
-    <a href="#lire-fiche" data-action="ouvrir-aide">Comment lire une fiche indicateur&nbsp;?</a>
-    <a href="#pyramide" onclick="event.preventDefault();CM.App.basculerAccueil('pyramide');" data-action="aller-pyramide">Voir la pyramide des niveaux &rarr;</a>
-  </div>
 </div><!-- /accueil-portes -->
 
 
