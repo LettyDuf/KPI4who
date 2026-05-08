@@ -420,10 +420,16 @@
     #app { display: none; min-height: 100vh; flex-direction: column; }
     #app.actif { display: flex; }
     .en-tete {
+      /* Cachée 08/05/2026 — depuis la suppression du bandeau interne .onglets
+         (commit 63cf58b), .en-tete ne contient plus que le badge-contexte qui
+         n'est plus nécessaire (le contexte est désormais porté par le filet
+         de niveau et les portes elles-mêmes). On garde le HTML pour
+         compatibilité avec _afficherApp() qui manipule badge.textContent. */
+      display: none;
       background: var(--fond-2);
       border-bottom: 1px solid var(--bordure);
       padding: 0 1.75rem;
-      display: flex; align-items: center; gap: 1.25rem;
+      align-items: center; gap: 1.25rem;
       height: 58px;
       position: sticky; top: 0; z-index: 100;
       box-shadow: 0 1px 4px rgba(0,0,0,0.06);
@@ -3010,7 +3016,7 @@
     <a href="#" class="entree stub" data-entree="4-axes" aria-disabled="true" onclick="event.preventDefault();">Par mes 4 axes</a>
     <a href="#" class="entree" data-entree="question" onclick="event.preventDefault();CM.VuePorteQuestion.ouvrir();">Par ma question</a>
     <a href="#" class="entree" data-entree="cascade" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('cascade');">Cascade strat&eacute;gique</a>
-    <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">Maturit&eacute;</a>
+    <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">La maturit&eacute;&nbsp;?</a>
     <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
     <a href="#" class="entree" data-entree="apropos" onclick="event.preventDefault();CM.Apropos.ouvrir();">&Agrave; propos</a>
   </nav>
@@ -3094,7 +3100,7 @@
       <a href="#" class="entree actif" data-entree="4-axes" onclick="event.preventDefault();">Par mes 4 axes</a>
       <a href="#" class="entree" data-entree="question" onclick="event.preventDefault();CM.VuePorteQuestion.ouvrir();">Par ma question</a>
       <a href="#" class="entree" data-entree="cascade" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('cascade');">Cascade strat&eacute;gique</a>
-      <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">Maturit&eacute;</a>
+      <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">La maturit&eacute;&nbsp;?</a>
       <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
       <a href="#" class="entree" data-entree="apropos" onclick="event.preventDefault();CM.Apropos.ouvrir();">&Agrave; propos</a>
     </nav>
@@ -3128,7 +3134,7 @@
       <a href="#" class="entree actif" data-entree="4-axes" onclick="event.preventDefault();">Par mes 4 axes</a>
       <a href="#" class="entree" data-entree="question" onclick="event.preventDefault();CM.VuePorteQuestion.ouvrir();">Par ma question</a>
       <a href="#" class="entree" data-entree="cascade" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('cascade');">Cascade strat&eacute;gique</a>
-      <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">Maturit&eacute;</a>
+      <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">La maturit&eacute;&nbsp;?</a>
       <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
       <a href="#" class="entree" data-entree="apropos" onclick="event.preventDefault();CM.Apropos.ouvrir();">&Agrave; propos</a>
     </nav>
@@ -3167,7 +3173,7 @@
       <a href="#" class="entree actif" data-entree="4-axes" onclick="event.preventDefault();">Par mes 4 axes</a>
       <a href="#" class="entree" data-entree="question" onclick="event.preventDefault();CM.VuePorteQuestion.ouvrir();">Par ma question</a>
       <a href="#" class="entree" data-entree="cascade" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('cascade');">Cascade strat&eacute;gique</a>
-      <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">Maturit&eacute;</a>
+      <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">La maturit&eacute;&nbsp;?</a>
       <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
       <a href="#" class="entree" data-entree="apropos" onclick="event.preventDefault();CM.Apropos.ouvrir();">&Agrave; propos</a>
     </nav>
@@ -3203,7 +3209,7 @@
     <a href="#" class="entree stub" data-entree="4-axes" aria-disabled="true" onclick="event.preventDefault();">Par mes 4 axes</a>
     <a href="#" class="entree actif" data-entree="question" onclick="event.preventDefault();CM.VuePorteQuestion.ouvrir();">Par ma question</a>
     <a href="#" class="entree" data-entree="cascade" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('cascade');">Cascade strat&eacute;gique</a>
-    <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">Maturit&eacute;</a>
+    <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">La maturit&eacute;&nbsp;?</a>
     <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
     <a href="#" class="entree" data-entree="apropos" onclick="event.preventDefault();CM.Apropos.ouvrir();">&Agrave; propos</a>
   </nav>
@@ -3240,7 +3246,7 @@
       <a href="#" class="entree stub" data-entree="4-axes" aria-disabled="true" onclick="event.preventDefault();">Par mes 4 axes</a>
       <a href="#" class="entree" data-entree="question" onclick="event.preventDefault();CM.VuePorteQuestion.ouvrir();">Par ma question</a>
       <a href="#" class="entree" data-entree="cascade" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('cascade');">Cascade strat&eacute;gique</a>
-      <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">Maturit&eacute;</a>
+      <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">La maturit&eacute;&nbsp;?</a>
       <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
       <a href="#" class="entree" data-entree="apropos" onclick="event.preventDefault();CM.Apropos.ouvrir();">&Agrave; propos</a>
     </nav>
@@ -4286,6 +4292,10 @@ CM.Referentiel = (function() {
   }
 
   function filtrerParContexte(contexte) {
+    /* Cas sans contexte (08/05/2026) — depuis l'ouverture des onglets internes
+       (Cascade, Maturité) directement par le bandeau du haut, contexte peut être
+       null/undefined. Pas de filtre = tous les indicateurs visibles. */
+    if (!contexte || !contexte.niveau) return _indicateurs.slice();
     return _indicateurs.filter(function(ind) {
       if (contexte.niveau === 'equipes') {
         if (ind.niveau !== 'operationnel') return false;
