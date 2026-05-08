@@ -13,18 +13,17 @@ Précédent — **6 mai 2026 (séance journée — palette + dette de référent
 
 *Bloc lu en premier à chaque reprise de session. Mis à jour comme dernière action avant de fermer la conversation. Doit tenir en ~10 lignes.*
 
-- **Événement majeur de la séance bis (08/05/2026 fin de nuit, 7 commits)** : **architecture finale de l'accueil actée** après 7 itérations de mockup-preview convergées. L'accueil 5 portes est remplacé par une **page unifiée *Choisir mes indicateurs*** : 2 cartouches repliables (Par ma question en haut, compteur en bas), 4 chips à combiner (Problème · Cadre · Niveau · Maturité), liste filtrée en grille 2 colonnes avec format de fiche-card riche identique au reste du site. **Mintzberg sort du visible.** Doctrine sauvegardée dans `project_accueil_unifie_v7.md`. Mockup de référence : `mockup-accueil-unifie-chips.html` v7 (`8589834`).
-- **Chantier 23 ouvert** dans le backlog (refonte radicale, 7 sous-chantiers ordonnés 23.a → 23.g, estimation 15-25h sur 4-6 séances). Constat collatéral n°1 sur le statut latent de l'attribut `axes:[...]` à arbitrer ultérieurement.
-- **Doctrines à amender ensuite** : `feedback_taxonomie_par_porte.md`, `project_contrat_coherence_portes.md`, `project_pyramide_en_sursis.md`, `project_porte_niveau_*.md`, `project_chantier_14_ouverture.md` — toutes deviennent partiellement caduques. L'orchestrateur stepper meurt, le traducteur orthodoxe reste.
-- **7 commits de mockup ce soir** : `2c56921` v1 mécanique chips · `626e00e` v2 cartouche cliquable · `3ec7826` v3 sans toggles + cartouche question · `8947260` v4 inversion + chip Angle · `7032aae` v5 sortie Angle + Mintzberg pastille · `e2079e3` v6 fiche-card riche · `8589834` v7 sans Mintzberg + grille 2 colonnes.
-- **Précédent — séance nuit (20 commits)** : bascule voie hybride (fond bleu nuit + matière blanc franc), bugs A et B clos, Cascade/Maturité activées au bandeau, sémantique β maturité, icônes Par ma question, tutoiement amorcé. Voir détail dans la version précédente de l'État courant (commit `9aa2ec6`).
-- **Chantiers ouverts cumulés** : 21 (vue Lexique) · 13.bis (chips cumulables maturité) · 22 (harmonisation tutoiement) · **23 (refonte radicale accueil — priorité haute)**.
-- **Doctrine `doc-cadre-visuel.md`** : § 6.0 / § 6.1 à amender vers la voie hybride (reporté) ; **ajout d'un § accueil unifié à venir au sous-chantier 23.a**.
+- **Événement majeur de la séance jour (08/05/2026, 7 commits)** : **chantier 23.a clos** — la doctrine de la refonte radicale de l'accueil est consignée dans les deux documents compagnons avant tout code. (i) `doc-cadre-visuel.md` : § 6.1 réécrit en *Accueil unifié* (`f5d5b66`), § 6.3 lentille neutralisée (`9f39aad`), § 6.4 actualisé pour retirer les 3 portes du périmètre étape B (`60bc923`). (ii) `doc-contrats-navigation.md` : § 4.1 invariants amendés — bandeau passe de **8 à 6 entrées** *Accueil · Mon tableau de bord · Cascade stratégique · La maturité ? · Lexique · À propos* (`30186ba`), § 6.1/6.2/6.3 façades dépréciées au 23.f (`35f3bae`), nouveau § 6.6 *Contrats CM.AccueilUnifie* en **portée équilibrée** avec pub/sub (`edb11d8`). (iii) Journaux des deux docs mis à jour (`e500d3f`).
+- **Arbitrages tranchés au 23.a (3 décisions clés)** : (1) Bandeau à 6 entrées — *Par mes 4 axes* sort comme libellé (devient mécanique chips de l'accueil), *Par ma question* sort comme onglet (devient cartouche d'accueil). Doctrine *« l'accueil est le seul point d'entrée pour choisir un indicateur »* posée comme nouvel invariant fondateur, qui remplace l'invariant *« deux modes d'entrée parallèles »* du 23/04/2026. (2) Façade `CM.AccueilUnifie` en portée équilibrée — pub/sub `surChangementFiltre` en place pour brancher facilement de futurs consommateurs ; persistance via `CM.Preferences` (localStorage) ; pas d'URL partageable des filtres pour l'instant. (3) URLs partageables des filtres reportées au **chantier 24 ouvert dans le backlog** — déclenchement par cas concret d'usage de partage (atelier, lien Slack), effort estimé 4-6h.
+- **Chantier 23 — état d'avancement** : 23.a ✅ clos · 23.b 🔴 prochain (squelette HTML page unifiée, sans encore brancher la mécanique) · 23.c → 23.g restants. Le mockup v7 (`8589834`) reste la référence visuelle. Le contrat d'API du § 6.6 fait foi pour l'implémentation.
+- **Précédent — séance fin de nuit (1 commit)** : `681ca3d` clôture séance avec ouverture du chantier 23 (7 sous-chantiers) et État courant. Précédent — séance bis (7 commits de mockup) : `2c56921` v1 → `8589834` v7 sans Mintzberg. Détail dans le commit `9aa2ec6`.
+- **Chantiers ouverts cumulés** : 21 (vue Lexique) · 13.bis (chips cumulables maturité) · 22 (harmonisation tutoiement) · **23 (refonte radicale accueil — priorité haute, sous-chantiers 23.b → 23.g)** · **24 (URLs partageables des filtres, en attente d'un trigger)**.
+- **Doctrines à amender ensuite (chantier 23.a non encore couvert)** : `feedback_taxonomie_par_porte.md`, `project_contrat_coherence_portes.md`, `project_pyramide_en_sursis.md`, `project_porte_niveau_*.md`, `project_chantier_14_ouverture.md` — à amender en cours de chantier 23 selon les besoins.
 - **Dette de référentiel cumulée (inchangée)** : 8 fiches métriques + 3 fiches cadres à créer.
-- **Workflow git sandbox** : pattern `mv .git/index.lock` (+ `HEAD.lock`) toujours actif. Paires `.git/*.lock.tmp.A→Z` accumulées en attente côté ordi.
-- **Mémoires actualisées cette séance** : `project_accueil_unifie_v7.md` (nouvelle).
-- **Prochaine action recommandée** : ouvrir le sous-chantier **23.a — consigne en doctrine** dans `doc-cadre-visuel.md` et `doc-contrats-navigation.md` avant tout code. Le mockup v7 est la référence visuelle ; les contrats d'API se posent par écrit avant que les consommateurs (page unifiée) soient implémentés (cf. mémoire `project_document_compagnon_contrats.md`).
-- **Blocages / questions ouvertes** : aucun. L'architecture est figée, le travail est de l'exécution.
+- **Workflow git sandbox** : pattern `mv .git/index.lock` (+ `HEAD.lock`) toujours actif. Paires `.git/*.lock.tmp.alpha → eta` accumulées sur la séance jour 23.a, à nettoyer côté ordi.
+- **Mémoires actualisées cette séance** : aucune nouvelle (la doctrine consignée dans les docs compagnons fait foi).
+- **Prochaine action recommandée** : ouvrir le sous-chantier **23.b — squelette HTML de la page unifiée** dans `cadre-indicateurs.html`. Structure HTML uniquement (en-tête centré, cartouche *Par ma question* repliée, marqueur — ou —, 4 chips, cartouche compteur replié), sans encore brancher la mécanique. Le squelette s'appuie sur le mockup v7 et sur le contrat `CM.AccueilUnifie` du § 6.6.
+- **Blocages / questions ouvertes** : aucun. La doctrine est figée par 23.a, le travail à venir est de l'exécution.
 
 
 ## 0. Chantiers majeurs livrés → archivés
@@ -1036,7 +1035,7 @@ Sur les quatre lots, 33 liens ont été posés sur 25 champs éditoriaux de 18 f
 
 | Étape | Mandat | État | Note |
 |---|---|---|---|
-| 23.a | Consigne en doctrine — `doc-cadre-visuel.md` § accueil unifié + `doc-contrats-navigation.md` § fin des 3 portes + suppression de la pyramide | 🔴 à faire | Avant tout code, fixer les contrats. |
+| 23.a | Consigne en doctrine — `doc-cadre-visuel.md` § accueil unifié + `doc-contrats-navigation.md` § fin des 3 portes + suppression de la pyramide | ✅ **clos le 08/05/2026** (7 commits `f5d5b66` → `e500d3f`) | 7 commits atomiques. Voir détail au § État courant. |
 | 23.b | Page unifiée — structure HTML + en-tête + cartouche *Par ma question* + 4 chips + cartouche compteur, sans encore brancher la mécanique | 🔴 à faire | Squelette statique sur lequel les étapes suivantes se greffent. |
 | 23.c | Mécanique chips — accordéon en place, sélecteurs mono/multi par axe | 🔴 à faire | S'appuie sur le traducteur orthodoxe du chantier 14. |
 | 23.d | Cartouches cliquables — repliable/dépliable, compteur live | 🔴 à faire | État persisté via `CM.Preferences` ? À arbitrer. |
@@ -1066,4 +1065,25 @@ Sur les quatre lots, 33 liens ont été posés sur 25 champs éditoriaux de 18 f
 - `project_pyramide_en_sursis.md` — la pyramide disparaît effectivement.
 - `project_porte_niveau_*.md` (statut, rôles, doctrine éditoriale, arbitrages, rendu visuel) — la porte niveau disparaît, le chantier 7.2 conservé pour son investissement éditorial qui peut nourrir la chip *Niveau* ou la page *Cascade*.
 - `project_chantier_14_ouverture.md` — l'orchestrateur stepper meurt, le traducteur reste (cf. 23.f).
+
+---
+
+## 24. URLs partageables des filtres d'accueil *(📋 ouverte le 08/05/2026 lors du chantier 23.a)*
+
+**Origine.** Au chantier 23.a, arbitrage entre trois portées du contrat `CM.AccueilUnifie` (modeste / équilibrée / exhaustive). La portée **exhaustive** ajoutait la persistance hash URL des filtres d'accueil — `outil.html#niveau=programme&cadre=dora` — qui apporte une **vraie valeur utilisateur** : URLs partageables (atelier, lien Slack), bouton *Précédent* du navigateur fonctionnel, bookmarks d'états de filtre, état restauré au F5. **Décision actée le 08/05/2026** : reporter au chantier 24 — la portée équilibrée du chantier 23 prépare le terrain (pub/sub `surChangementFiltre` en place) mais n'implémente pas le hash. Motif : tant qu'il n'y a pas d'usage de partage avéré, ne pas anticiper. Le chantier 24 s'ouvre le jour où un cas concret remontera (atelier qui en a besoin, lien envoyé à un collègue qui doit recliquer).
+
+**Périmètre.**
+
+- **Convention de hash** : `#niveau=programme&cadre=dora&probleme=flux,qualite&maturite=avance` (multi-sélection séparée par virgule sur Problème et Cadre, mono-sélection valeur unique sur Niveau et Maturité).
+- **Sérialisation** : à chaque appel de `appliquerFiltre()`, mettre à jour l'URL en silencieux (sans déclencher `hashchange`).
+- **Désérialisation** : au chargement, parser le hash et restaurer l'état des chips ; gérer les cas limites (cadre orthographié `dora` mais valeur réelle `DORA` dans le référentiel ; valeur inexistante ; mélange invalide) sans casser.
+- **Compatibilité** : ne pas casser l'invariant strict `#fiche=<id>` (cf. doc-contrats-navigation § 7.1). Les deux types de hash doivent cohabiter — un lien `#fiche=t4&niveau=programme` ouvre la fiche t4 sur fond d'accueil filtré niveau Programme.
+- **Précédent navigateur** : pousser un nouvel état dans l'historique à chaque changement de filtre (geste mesuré ; pas tous les micro-changements).
+- **Reset** : un bouton *Réinitialiser* dans l'URL (`#reset`) ou un appel à `reinitialiserChips()` qui efface le hash.
+
+**Effort estimé** : 4-6h sur 1-2 séances.
+
+**Trigger d'ouverture** : remontée d'un cas concret de partage. Exemples : (i) Lætitia prépare un atelier *« indicateurs DORA pour équipe Programme »* et veut un lien à coller dans la slide ; (ii) un collègue demande *« quels indicateurs tu suggères pour ce contexte ? »* et Lætitia veut envoyer un lien ; (iii) une demande explicite d'un utilisateur tiers en atelier.
+
+**Dépendance** : aucune. Le pub/sub posé en 23.a fournit le hook pour brancher la sérialisation. Le chantier 24 ne nécessite pas que les chantiers 23.b à 23.g soient terminés — il peut s'enchaîner après 23.c (mécanique chips fonctionnelle) à condition que 23.b et 23.c soient livrés.
 
