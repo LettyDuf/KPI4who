@@ -2823,9 +2823,16 @@
        déclarées localement sur .accueil-unifie pour éviter toute fuite.
     ══════════════════════════════════════════════════════ */
     .accueil-unifie {
-      --chip-fond:    #eef1f6;
-      --chip-bord:    #cbd0e0;
-      --chip-actif:   var(--niv-1-clair);
+      /* Tokens locaux — voie hybride respectée (fond bleu nuit + matière blanc franc).
+         --texte-sur-surface : couleur du texte foncé posé sur fond blanc des cartouches/sélecteurs.
+         --texte-2-sur-surface : couleur des libellés secondaires sur fond blanc.
+         Distinction stricte avec --texte-sur-page / --texte-2-sur-page qui restent
+         pour les éléments posés directement sur le fond bleu nuit. */
+      --texte-sur-surface:   #1c2033;
+      --texte-2-sur-surface: #5b6378;
+      --chip-fond:           #ffffff;
+      --chip-bord:           rgba(255, 255, 255, 0.45);
+      --chip-actif:          var(--niv-1-clair);
 
       max-width: 740px;
       margin: 0 auto;
@@ -2835,7 +2842,7 @@
       gap: 1rem;
     }
 
-    /* En-tête centré (strate 2 du § 6.1) */
+    /* En-tête centré (strate 2 du § 6.1) — sur fond bleu nuit, donc tokens sur-page */
     .accueil-unifie .page-entete {
       text-align: center;
       margin-bottom: 0.6rem;
@@ -2843,7 +2850,7 @@
     .accueil-unifie .page-entete .surtitre {
       font-size: 0.78rem;
       font-weight: 600;
-      color: var(--texte-2);
+      color: var(--texte-2-sur-page);
       letter-spacing: 0.06em;
       text-transform: uppercase;
       margin-bottom: 0.2rem;
@@ -2852,20 +2859,21 @@
       margin: 0 0 0.35rem;
       font-size: 1.55rem;
       font-weight: 700;
-      color: var(--niv-1);
+      color: var(--texte-sur-page);
       letter-spacing: -0.01em;
     }
     .accueil-unifie .page-entete .barre {
       width: 60px;
       height: 3px;
-      background: var(--niv-1);
+      background: var(--texte-sur-page);
+      opacity: 0.55;
       margin: 0.2rem auto 0.55rem;
       border-radius: 2px;
     }
     .accueil-unifie .page-entete .baseline {
       margin: 0;
       font-size: 0.92rem;
-      color: var(--texte-2);
+      color: var(--texte-2-sur-page);
       font-style: italic;
     }
 
@@ -2925,11 +2933,11 @@
       font-weight: 600;
     }
 
-    /* Marqueur typographique « — ou — » (strate 4 du § 6.1) */
+    /* Marqueur typographique « — ou — » (strate 4 du § 6.1) — sur fond bleu nuit */
     .accueil-unifie .marqueur-bloc {
       text-align: center;
       font-size: 0.85rem;
-      color: var(--texte-2);
+      color: var(--texte-2-sur-page);
       font-style: italic;
       margin: 0.2rem 0;
       letter-spacing: 0.04em;
@@ -2944,7 +2952,7 @@
     }
     .accueil-unifie .chip {
       background: var(--chip-fond);
-      color: var(--texte-1);
+      color: var(--texte-sur-surface);
       border: 1px solid var(--chip-bord);
       border-radius: 999px;
       padding: 0.45rem 1rem;
@@ -2956,7 +2964,8 @@
     }
     .accueil-unifie .chip:hover {
       background: white;
-      border-color: var(--niv-1);
+      border-color: var(--niv-1-moyen);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
     .accueil-unifie .chip.actif {
       background: var(--chip-actif);
@@ -3008,13 +3017,13 @@
     }
     .accueil-unifie .selecteur-entete strong {
       font-size: 0.92rem;
-      color: var(--texte-1);
+      color: var(--texte-sur-surface);
     }
     .accueil-unifie .selecteur-entete em {
       font-style: normal;
       font-size: 0.72rem;
-      color: var(--texte-2);
-      background: var(--chip-fond);
+      color: var(--texte-2-sur-surface);
+      background: #eef1f6;
       padding: 0.1rem 0.45rem;
       border-radius: 4px;
     }
@@ -3028,16 +3037,17 @@
       align-items: center;
       gap: 0.4rem;
       padding: 0.35rem 0.65rem;
-      border: 1px solid var(--chip-bord);
+      border: 1px solid #cbd0e0;
       border-radius: 6px;
       font-size: 0.82rem;
       background: #f9fafc;
-      color: var(--texte-1);
+      color: var(--texte-sur-surface);
       cursor: pointer;
       transition: var(--trans);
     }
     .accueil-unifie .selecteur-options label:hover {
       border-color: var(--niv-1);
+      background: white;
     }
     .accueil-unifie .selecteur-options label.coche {
       border-color: var(--niv-1);
@@ -3055,10 +3065,11 @@
     }
     .accueil-unifie .selecteur-options label .corps .titre {
       font-weight: 500;
+      color: var(--texte-sur-surface);
     }
     .accueil-unifie .selecteur-options label .corps .sous {
       font-size: 0.72rem;
-      color: var(--texte-2);
+      color: var(--texte-2-sur-surface);
       font-style: italic;
     }
     .accueil-unifie .selecteur-options label.coche .corps .sous {
@@ -3095,23 +3106,23 @@
       margin-top: 0.4rem;
     }
 
-    /* Pied minimaliste */
+    /* Pied minimaliste — sur fond bleu nuit */
     .accueil-unifie-pied {
       text-align: center;
       margin-top: 1.5rem;
       padding-top: 1rem;
-      border-top: 1px solid var(--chip-bord);
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
     }
     .accueil-unifie-pied a {
-      color: var(--texte-2);
+      color: var(--texte-2-sur-page);
       font-size: 0.85rem;
       text-decoration: none;
-      border-bottom: 1px dotted var(--chip-bord);
+      border-bottom: 1px dotted rgba(255, 255, 255, 0.32);
       padding-bottom: 1px;
     }
     .accueil-unifie-pied a:hover {
-      color: var(--niv-1);
-      border-color: var(--niv-1);
+      color: var(--texte-sur-page);
+      border-color: var(--texte-sur-page);
     }
 
     /* Responsive — bascule en 1 colonne sous 720px */
