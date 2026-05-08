@@ -2667,6 +2667,71 @@
       color: var(--texte-2);
     }
 
+    /* ─── Bandeau du haut — accueil portes + vue par question (étape 1.bis du MVP v1)
+       8 entrées définies dans doc-contrats-navigation.md § 4.1 (23/04/2026).
+       Position fixed, masqué par défaut, contrôlé par JS. ─── */
+    .bandeau-portes {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      background: white;
+      border-bottom: 1px solid var(--bordure);
+      padding: 0.55rem 1.5rem;
+      display: flex; align-items: center; gap: 0.8rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      box-sizing: border-box;
+      flex-wrap: wrap;
+      font-family: inherit;
+    }
+    .bandeau-portes[hidden] { display: none !important; }
+    .bandeau-portes-logo {
+      font-weight: 800; font-size: 0.95rem;
+      color: var(--niv-1); letter-spacing: -0.3px;
+      flex-shrink: 0;
+    }
+    .bandeau-portes-spacer { flex: 1; min-width: 0; }
+    .bandeau-portes-nav {
+      display: flex; align-items: center; gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+    .bandeau-portes-nav a {
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.83rem;
+      font-weight: 500;
+      color: var(--texte-2);
+      background: transparent;
+      text-decoration: none;
+      cursor: pointer;
+      transition: var(--trans);
+      white-space: nowrap;
+    }
+    .bandeau-portes-nav a:hover {
+      background: var(--fond);
+      color: var(--texte);
+    }
+    .bandeau-portes-nav a.actif {
+      background: var(--niv-1-clair);
+      color: var(--niv-1);
+      font-weight: 700;
+    }
+    .bandeau-portes-nav a.stub {
+      opacity: 0.5;
+      cursor: default;
+    }
+    .bandeau-portes-nav a.stub:hover {
+      background: transparent;
+      color: var(--texte-2);
+    }
+    /* Compensation pour ne pas être sous le bandeau fixe */
+    #accueil-portes:not([hidden]) ~ * #app,  /* fallback */
+    #accueil-portes { padding-top: 4.2rem; }
+    #vue-par-question { padding-top: 3.2rem; }
+    @media (max-width: 720px) {
+      .bandeau-portes { padding: 0.4rem 1rem; gap: 0.5rem; }
+      .bandeau-portes-nav a { padding: 0.3rem 0.65rem; font-size: 0.76rem; }
+      #accueil-portes  { padding-top: 5.5rem; }
+      #vue-par-question { padding-top: 4.5rem; }
+    }
+
   </style>
 </head>
 <body>
@@ -2879,7 +2944,20 @@
        5. vue-par-question              — par ma question   (vue d'index minimaliste)
 ═══════════════════════════════════════════════════════ -->
 <div id="accueil-portes" hidden>
-  <button class="apropos-btn" onclick="CM.Apropos.ouvrir()" aria-label="&Agrave; propos de cet outil">&Agrave; propos</button>
+  <header id="bandeau-portes-accueil" class="bandeau-portes" role="banner">
+    <span class="bandeau-portes-logo">&#x2B21; Indicateurs</span>
+    <span class="bandeau-portes-spacer"></span>
+    <nav class="bandeau-portes-nav" role="navigation" aria-label="Navigation principale">
+      <a href="#accueil"        class="entree actif"  data-entree="accueil"      onclick="event.preventDefault();CM.App.afficherAccueil('portes');">Accueil</a>
+      <a href="#tableau-bord"   class="entree"                          data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord</a>
+      <a href="#"               class="entree stub"                     data-entree="4-axes"       onclick="event.preventDefault();" aria-disabled="true">Par mes 4 axes</a>
+      <a href="#par-ma-question" class="entree" data-entree="question"     onclick="event.preventDefault();CM.VuePorteQuestion.ouvrir();">Par ma question</a>
+      <a href="#"               class="entree stub"                     data-entree="cascade"      onclick="event.preventDefault();" aria-disabled="true">Cascade stratégique</a>
+      <a href="#"               class="entree stub"                     data-entree="maturite"     onclick="event.preventDefault();" aria-disabled="true">La maturité&nbsp;?</a>
+      <a href="#"               class="entree stub"                     data-entree="lexique"      onclick="event.preventDefault();" aria-disabled="true">Lexique</a>
+      <a href="#"               class="entree"                          data-entree="apropos"      onclick="event.preventDefault();CM.Apropos.ouvrir();">À propos</a>
+    </nav>
+  </header>
 
   <div class="portes-intro">
     <h1>Par où veux-tu entrer&nbsp;?</h1>
@@ -2937,7 +3015,6 @@
   </div>
 
   <div class="portes-pied">
-    <a href="#lexique" data-action="ouvrir-lexique">Lexique des termes</a>
     <a href="#lire-fiche" data-action="ouvrir-aide">Comment lire une fiche indicateur&nbsp;?</a>
     <a href="#pyramide" onclick="event.preventDefault();CM.App.basculerAccueil('pyramide');" data-action="aller-pyramide">Voir la pyramide des niveaux &rarr;</a>
   </div>
@@ -3048,15 +3125,19 @@
      s'enrichira en étape 3 du plan MVP global (filtre par panel, niveau).
 ══════════════════════════════════════════════════════ -->
 <div id="vue-par-question" hidden>
-  <header class="porte-en-tete" role="banner">
-    <button type="button" class="btn-changer"
-            onclick="CM.VuePorteQuestion.retourAccueil()"
-            aria-label="Retour à l'accueil">&larr; Accueil</button>
-    <span class="porte-en-tete-titre">&#x2753; Par ma question</span>
-    <span class="porte-en-tete-spacer"></span>
-    <button type="button" class="apropos-btn"
-            onclick="CM.Apropos.ouvrir()"
-            aria-label="&Agrave; propos de cet outil">&Agrave; propos</button>
+  <header id="bandeau-portes-question" class="bandeau-portes" role="banner">
+    <span class="bandeau-portes-logo">&#x2B21; Indicateurs</span>
+    <span class="bandeau-portes-spacer"></span>
+    <nav class="bandeau-portes-nav" role="navigation" aria-label="Navigation principale">
+      <a href="#accueil"        class="entree"  data-entree="accueil"      onclick="event.preventDefault();CM.App.afficherAccueil('portes');">Accueil</a>
+      <a href="#tableau-bord"   class="entree"                          data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord</a>
+      <a href="#"               class="entree stub"                     data-entree="4-axes"       onclick="event.preventDefault();" aria-disabled="true">Par mes 4 axes</a>
+      <a href="#par-ma-question" class="entree actif" data-entree="question"     onclick="event.preventDefault();CM.VuePorteQuestion.ouvrir();">Par ma question</a>
+      <a href="#"               class="entree stub"                     data-entree="cascade"      onclick="event.preventDefault();" aria-disabled="true">Cascade stratégique</a>
+      <a href="#"               class="entree stub"                     data-entree="maturite"     onclick="event.preventDefault();" aria-disabled="true">La maturité&nbsp;?</a>
+      <a href="#"               class="entree stub"                     data-entree="lexique"      onclick="event.preventDefault();" aria-disabled="true">Lexique</a>
+      <a href="#"               class="entree"                          data-entree="apropos"      onclick="event.preventDefault();CM.Apropos.ouvrir();">À propos</a>
+    </nav>
   </header>
   <main class="porte-contenu" role="main">
     <div class="porte-intro">
@@ -9218,9 +9299,14 @@ CM.App = (function() {
   function _montrerAccueil(mode) {
     var pyramide = document.getElementById('accueil');
     var portes   = document.getElementById('accueil-portes');
+    var vueQ     = document.getElementById('vue-par-question');
     var afficherPortes = (mode === 'portes');
     pyramide.hidden = afficherPortes;
     portes.hidden   = !afficherPortes;
+    if (vueQ) vueQ.hidden = true;
+    /* Le bandeau est intégré aux vues (un par vue) : si on bascule sur la
+       pyramide, aucune vue à bandeau n'est visible donc le bandeau du
+       coin se masque avec son hôte (#accueil-portes ou #vue-par-question). */
   }
 
   function _cacherAccueils() {
@@ -9266,6 +9352,27 @@ CM.App = (function() {
     btn.classList.add('actif');
     btn.setAttribute('aria-selected', 'true');
     _basculerVue(id);
+  }
+
+  /* Exemple : CM.App.ouvrirTableauBord() depuis le bandeau du haut (étape 1.bis MVP v1)
+     Ouvre l'app sur l'onglet « Mon tableau de bord » SANS contexte. Le panier vide
+     affiche son message « Votre tableau de bord est vide » (déjà géré dans
+     _rendreTableauDeBord / _htmlVide). Quand la dette T1 chantier 9 sera comblée,
+     les visiteurs pourront avoir leur panier prérempli. */
+  function ouvrirTableauBord() {
+    _cacherAccueils();
+    var vueQ = document.getElementById('vue-par-question');
+    if (vueQ) vueQ.hidden = true;
+    document.getElementById('app').classList.add('actif');
+    _activerOnglet('tableau-bord');
+    var badge = document.getElementById('badge-contexte');
+    if (badge) {
+      badge.textContent = 'Consultation';
+      badge.style.background = '';
+    }
+    _rendreTableauDeBord();
+    try { window.scrollTo({ top: 0, behavior: 'instant' }); }
+    catch (e) { window.scrollTo(0, 0); }
   }
 
   function changerMaturite(id) {
@@ -10344,6 +10451,7 @@ CM.App = (function() {
     reinitQuestionnaire:  reinitQuestionnaire,
     basculerAccueil:      basculerAccueil,
     afficherAccueil:      afficherAccueil,
+    ouvrirTableauBord:    ouvrirTableauBord,
     retirerDuPanier:        retirerDuPanier,     /* 9.B.1 — consommé par onclick inline */
     reinitialiserPanier:    reinitialiserPanier, /* 9.B.3 — bouton ↻ Réinitialiser */
     basculerStatutPanier:   basculerStatutPanier, /* 9.C — voie rapide ic. panier sur les fiches */
