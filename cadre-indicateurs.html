@@ -3208,6 +3208,19 @@
       margin-top: 0.4rem;
     }
 
+    /* État vide de la liste filtrée — combinaison d'axes sans correspondance.
+       Voix française, ton bienveillant. Le grid-column 1 / -1 force le
+       paragraphe à occuper toute la largeur de la grille 2 colonnes. */
+    .accueil-unifie .liste-fiches-vide {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: var(--texte-2);
+      font-style: italic;
+      font-size: 0.92rem;
+      margin: 0;
+      padding: 1.4rem 0.6rem;
+    }
+
     /* Pied minimaliste — sur fond bleu nuit */
     .accueil-unifie-pied {
       text-align: center;
@@ -6095,6 +6108,60 @@ CM.AccueilUnifie = (function() {
     if (axesActifsEl) axesActifsEl.textContent = _libelleAxesActifs(nFiltre);
   }
 
+  /* ═══ Peuplement de la liste filtrée 2 colonnes (23.e) ═══
+
+     Branchée sur surChangementFiltre : à chaque changement d'état des chips,
+     le panneau de la cartouche compteur (<div id="panneau-cartouche-compteur"
+     class="liste-fiches">) est repeuplé avec les fiches correspondantes,
+     rendues via CM.Composants.htmlCarte (cohérence visuelle stricte avec
+     le reste du site — bordure colorée fiabilité, panier ✓/💡 actif).
+
+     Doctrine traducteur orthodoxe respectée : aucun re-tri côté accueil,
+     l'ordre est celui de CM.Referentiel.tous() (ordre canonique du
+     référentiel — cf. CM.RequeteMetriques.executer, « capping après
+     filtrage, sans re-tri »).
+
+     Trois cas couverts :
+       (1) sur événement — on a payload.fiches: ID[], on résout via
+                           CM.Referentiel.chercher(id) ;
+       (2) au montage    — pas encore d'événement émis, calcul direct
+                           via CM.RequeteMetriques.executer(filtre)
+                           pour obtenir directement les objets fiches ;
+       (3) zéro résultat — message pédagogique court (voix française,
+                           ton bienveillant). */
+
+  function _rafraichirListeFiches(racine, ids) {
+    var conteneur = racine.querySelector('#panneau-cartouche-compteur');
+    if (!conteneur) return;
+
+    var fiches;
+    if (Array.isArray(ids)) {
+      fiches = [];
+      for (var i = 0; i < ids.length; i++) {
+        var f = CM.Referentiel.chercher(ids[i]);
+        if (f) fiches.push(f); /* defensive : id orphelin ignoré */
+      }
+    } else {
+      fiches = (CM.RequeteMetriques && CM.RequeteMetriques.executer)
+        ? CM.RequeteMetriques.executer(_construireFiltre())
+        : [];
+    }
+
+    if (fiches.length === 0) {
+      conteneur.innerHTML =
+        '<p class="liste-fiches-vide">'
+        + 'Aucune fiche ne correspond \u00e0 cette combinaison d\'axes.'
+        + '</p>';
+      return;
+    }
+
+    var html = '';
+    for (var j = 0; j < fiches.length; j++) {
+      html += CM.Composants.htmlCarte(fiches[j], null, true, false);
+    }
+    conteneur.innerHTML = html;
+  }
+
   /* ═══ Synchronisation DOM des cartouches (23.d-1) ═══
 
      Reflète l'état persisté etat.cartouches[id] sur l'apparence du bouton
@@ -6228,6 +6295,7 @@ CM.AccueilUnifie = (function() {
     surChangementFiltre(function(payload) {
       _rafraichirToutesChips(racine);
       _rafraichirCompteur(racine, payload && payload.total);
+      _rafraichirListeFiches(racine, payload && payload.fiches);
     });
 
     /* S'abonne aux changements de cartouches pour synchroniser l'apparence
@@ -6236,12 +6304,13 @@ CM.AccueilUnifie = (function() {
       _rafraichirToutesCartouches(racine);
     });
 
-    /* Restaure l'état des chips et des cartouches au montage,
-       puis recalcule le compteur live à partir de l'état restauré. */
+    /* Restaure l'état des chips et des cartouches au montage, puis
+       recalcule compteur live et liste filtrée à partir de l'état restauré. */
     _restaurer();
     _rafraichirToutesChips(racine);
     _rafraichirToutesCartouches(racine);
     _rafraichirCompteur(racine);
+    _rafraichirListeFiches(racine);
   }
 
   function init() {
