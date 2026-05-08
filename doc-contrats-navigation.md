@@ -258,6 +258,92 @@ Le routeur minimal actuel vit dans `CM.App.init` et prend en charge `#fiche=<id>
 
 **Point d'évolution attendu.** La refonte ajoute probablement de nouveaux hashs (onglet, porte). Le routeur devient un cœur plus visible — à extraire comme module `CM.Router` si sa taille le justifie (règle boy-scout 3.2, à décider au fil du chantier). Signature de façade à poser *si* extraction : `CM.Router.naviguer(hash)`, `CM.Router.surChangement(cb)`.
 
+### 6.6 Contrats de l'accueil unifié — `CM.AccueilUnifie`
+
+*Section ajoutée au chantier 23.a (08/05/2026). Fixe le contrat d'API du module qui porte la page unifiée *Choisir mes indicateurs*. Portée **équilibrée** retenue (cf. arbitrage 23.a — modeste / équilibrée / exhaustive). La portée exhaustive — URLs partageables des filtres — est reportée au chantier 24, à ouvrir si un usage de partage le justifie.*
+
+**Architecture.** `CM.AccueilUnifie` est un **module orchestrateur** qui pilote la page d'accueil. Il **ne contient pas** la logique de filtrage du référentiel — celle-ci reste dans le **traducteur orthodoxe** introduit au chantier 14, qui survit à la refonte (cf. `project_doctrine_traducteur_orthodoxe.md`). `CM.AccueilUnifie` invoque le traducteur ; il ne le réimplémente pas. Doctrine architecture hexagonale : le traducteur est le domaine, l'accueil est l'adaptateur d'entrée (UI).
+
+**Façade publique.**
+
+| Fonction | Signature | Comportement |
+|---|---|---|
+| `ouvrir()` | aucun argument | Affiche la page d'accueil unifiée. Restaure l'état des chips et des cartouches depuis `CM.Preferences` si présent, sinon état initial (chips vides, cartouches repliés). Appelée au chargement de l'app et depuis `CM.App.demanderRetourAccueil()`. |
+| `ouvrirCartouche(id)` | `id: 'question' \| 'compteur'` | Déplie le cartouche correspondant. Persiste l'état dans `CM.Preferences`. Émet l'événement `cartouche-change`. |
+| `fermerCartouche(id)` | `id: 'question' \| 'compteur'` | Replie le cartouche. Persiste l'état. Émet `cartouche-change`. |
+| `selectionnerChip(axe, valeur)` | `axe: 'probleme' \| 'cadre' \| 'niveau' \| 'maturite'`, `valeur: string` | Enregistre une valeur sur l'axe demandé. Mono-sélection sur `niveau` et `maturite` (la valeur précédente est remplacée). Multi-sélection sur `probleme` et `cadre` (la valeur s'ajoute). Persiste l'état. Déclenche `appliquerFiltre()` qui émet `filtre-change`. |
+| `deselectionnerChip(axe, valeur)` | mêmes signatures que ci-dessus | Retire la valeur de l'axe. Persiste l'état. Déclenche `appliquerFiltre()`. |
+| `reinitialiserChips()` | aucun argument | Vide toutes les chips. Persiste l'état. Déclenche `appliquerFiltre()`. |
+| `appliquerFiltre()` | aucun argument | Recalcule la liste filtrée en invoquant le traducteur orthodoxe avec l'état courant des chips. Met à jour le compteur live et la liste de fiches-cards. Émet `filtre-change` avec un payload qui décrit l'état du filtre et le nombre de résultats. |
+| `surChangementFiltre(callback)` | `callback: (event) => void` | S'abonne aux événements `filtre-change`. Pattern pub/sub identique à `CM.Panier`. Le callback reçoit un objet `{ chips: { probleme, cadre, niveau, maturite }, total: number, fiches: ID[] }`. |
+| `surChangementCartouche(callback)` | `callback: (event) => void` | S'abonne aux événements `cartouche-change`. Le callback reçoit `{ id: 'question' \| 'compteur', etat: 'ouvert' \| 'ferme' }`. |
+
+**État interne — non exposé.**
+
+L'état courant de l'accueil est encapsulé dans le module et accessible uniquement via les façades. Il ressemble à :
+
+```
+{
+  cartouches: { question: 'ferme', compteur: 'ferme' },
+  chips: {
+    probleme: ['flux', 'qualite'],   // multi-sélection
+    cadre:    ['dora'],              // multi-sélection
+    niveau:   'programme',           // mono-sélection (ou null)
+    maturite: null                   // mono-sélection (ou null)
+  }
+}
+```
+
+**Persistance — `CM.Preferences`.**
+
+L'état est persisté **localement** (localStorage de `CM.Preferences`, mécanisme déjà existant). Sur refresh, l'état est restauré : les cartouches retrouvent leur position dépliée/repliée, les chips retrouvent leurs valeurs sélectionnées, la liste filtrée se recalcule.
+
+L'état n'est **pas** porté par l'URL en portée équilibrée — un lien collé à un collègue n'embarque pas les filtres. Cette limite est assumée et tracée pour le chantier 24.
+
+**Cycle de vie d'une interaction utilisateur.**
+
+```
+1. Utilisateur clique sur la chip Niveau → accordéon ouvre
+2. Sélection 'Programme'                  → chip se referme en mode actif
+                                          → CM.AccueilUnifie.selectionnerChip('niveau', 'programme')
+                                          → état persisté
+                                          → appliquerFiltre() invoque le traducteur
+                                          → événement 'filtre-change' émis
+                                          → les abonnés (compteur, liste, futurs consommateurs) se mettent à jour
+```
+
+**Branchement sur le traducteur orthodoxe.**
+
+Le module `CM.AccueilUnifie` ne lit **jamais** le référentiel directement. Il appelle :
+
+```
+CM.TraducteurOrthodoxe.formulerFiltre({
+  problemes: ['flux', 'qualite'],
+  cadres:    ['dora'],
+  niveau:    'programme',
+  maturite:  null
+})
+→ retourne ID[] (liste des fiches du référentiel qui passent le filtre)
+```
+
+Cette frontière respecte la doctrine du chantier 14 : *« un traducteur formule, il ne post-filtre pas »*. L'accueil consomme la formulation. Si demain on change la sémantique du filtrage (par exemple : passer du AND inter-axes au OR pour le niveau), c'est dans le traducteur que le changement se fait, pas dans l'accueil.
+
+**Invariants.**
+
+- L'accueil unifié n'expose **jamais** d'objet `Fiche` directement ; il manipule des `ID[]` retournées par le traducteur. Le rendu de chaque fiche-card passe par `CM.Composants.htmlCarte(id)` (cf. § 6.4 *Contrats transverses préservés*, invariant § 7.3).
+- L'accueil unifié n'écrit **jamais** dans le panier ; les boutons ✓ / 💡 des fiches-cards sont câblés sur `CM.Panier` (cf. § 6.4) par la délégation globale de clics intra-fiche (§ 7.4).
+- L'accueil unifié **persiste son état**, mais ne persiste **pas** le panier (`CM.Panier` a sa propre persistance).
+
+**Ce que ce contrat ne couvre pas — à concevoir au chantier 23.b/23.c.**
+
+- Le rendu visuel exact des chips repliées (passive vs active) — c'est de l'implémentation visuelle, pas du contrat d'API. Le mockup `mockup-accueil-unifie-chips.html` v7 (`8589834`) est la référence visuelle.
+- L'animation d'ouverture/fermeture des cartouches et des chips — détail d'incarnation à arbitrer dans les sous-chantiers d'implémentation.
+- Le comportement responsive sous breakpoint mobile — les chips wrapent naturellement, mais la grille 2 colonnes de la liste filtrée doit basculer en 1 colonne sous une largeur seuil à fixer (probablement ~768 px).
+
+**Compatibilité avec le bandeau du haut.**
+
+`CM.AccueilUnifie.ouvrir()` est invoquée par `CM.App.demanderRetourAccueil()` quand l'utilisateur clique sur l'entrée *Accueil* du bandeau depuis n'importe quelle autre vue. La fonction préserve l'état persisté — l'utilisateur retrouve ses chips actives s'il en avait. Si l'utilisateur veut repartir de zéro, il utilise `reinitialiserChips()` (à exposer comme bouton dans la page si l'usage le justifie ; pas dans v7 du mockup).
+
 ---
 
 ## 7. Invariants à préserver
