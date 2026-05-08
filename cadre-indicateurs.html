@@ -2795,6 +2795,18 @@
       background: transparent;
       color: var(--texte-2);
     }
+    /* Compteur live d'indices au tableau de bord (23.e-fix5).
+       Affiché à côté du libellé « Mon tableau de bord » dans les 6 bandeaux,
+       mis à jour par _rafraichirCompteurTableauBord à chaque mutation du
+       panier. Format : ` (N)` si N > 0, vide si N = 0 (discrétion). */
+    .bandeau-portes-nav a .compteur-tableau-bord {
+      color: var(--niv-1);
+      font-weight: 700;
+      margin-left: 0.2rem;
+    }
+    .bandeau-portes-nav a.actif .compteur-tableau-bord {
+      color: inherit;
+    }
     /* Compensation pour ne pas être sous le bandeau fixe */
     #accueil-portes:not([hidden]) ~ * #app,  /* fallback */
     #accueil-portes { padding-top: 4.2rem; }
@@ -3460,7 +3472,7 @@
   <span class="bandeau-portes-spacer"></span>
   <nav class="bandeau-portes-nav" role="navigation" aria-label="Navigation principale">
     <a href="#" class="entree actif" data-entree="accueil" onclick="event.preventDefault();CM.App.demanderRetourAccueil();">Accueil</a>
-    <a href="#" class="entree" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord</a>
+    <a href="#" class="entree" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord<span class="compteur-tableau-bord" aria-live="polite"></span></a>
     <a href="#" class="entree" data-entree="cascade" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('cascade');">Cascade strat&eacute;gique</a>
     <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">La maturit&eacute;&nbsp;?</a>
     <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
@@ -3567,7 +3579,7 @@
     <span class="bandeau-portes-spacer"></span>
     <nav class="bandeau-portes-nav" role="navigation" aria-label="Navigation principale">
       <a href="#" class="entree" data-entree="accueil" onclick="event.preventDefault();CM.App.demanderRetourAccueil();">Accueil</a>
-      <a href="#" class="entree" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord</a>
+      <a href="#" class="entree" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord<span class="compteur-tableau-bord" aria-live="polite"></span></a>
       <a href="#" class="entree" data-entree="cascade" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('cascade');">Cascade strat&eacute;gique</a>
       <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">La maturit&eacute;&nbsp;?</a>
       <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
@@ -3599,7 +3611,7 @@
     <span class="bandeau-portes-spacer"></span>
     <nav class="bandeau-portes-nav" role="navigation" aria-label="Navigation principale">
       <a href="#" class="entree" data-entree="accueil" onclick="event.preventDefault();CM.App.demanderRetourAccueil();">Accueil</a>
-      <a href="#" class="entree" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord</a>
+      <a href="#" class="entree" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord<span class="compteur-tableau-bord" aria-live="polite"></span></a>
       <a href="#" class="entree" data-entree="cascade" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('cascade');">Cascade strat&eacute;gique</a>
       <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">La maturit&eacute;&nbsp;?</a>
       <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
@@ -3636,7 +3648,7 @@
     <span class="bandeau-portes-spacer"></span>
     <nav class="bandeau-portes-nav" role="navigation" aria-label="Navigation principale">
       <a href="#" class="entree" data-entree="accueil" onclick="event.preventDefault();CM.App.demanderRetourAccueil();">Accueil</a>
-      <a href="#" class="entree" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord</a>
+      <a href="#" class="entree" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord<span class="compteur-tableau-bord" aria-live="polite"></span></a>
       <a href="#" class="entree" data-entree="cascade" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('cascade');">Cascade strat&eacute;gique</a>
       <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">La maturit&eacute;&nbsp;?</a>
       <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
@@ -3670,7 +3682,7 @@
   <span class="bandeau-portes-spacer"></span>
   <nav class="bandeau-portes-nav" role="navigation" aria-label="Navigation principale">
     <a href="#" class="entree" data-entree="accueil" onclick="event.preventDefault();CM.App.demanderRetourAccueil();">Accueil</a>
-    <a href="#" class="entree" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord</a>
+    <a href="#" class="entree" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord<span class="compteur-tableau-bord" aria-live="polite"></span></a>
     <a href="#" class="entree" data-entree="cascade" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('cascade');">Cascade strat&eacute;gique</a>
     <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">La maturit&eacute;&nbsp;?</a>
     <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
@@ -3764,7 +3776,7 @@
     <span class="bandeau-portes-spacer"></span>
     <nav class="bandeau-portes-nav" role="navigation" aria-label="Navigation principale">
       <a href="#" class="entree" data-entree="accueil" onclick="event.preventDefault();CM.App.demanderRetourAccueil();">Accueil</a>
-      <a href="#" class="entree actif" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord</a>
+      <a href="#" class="entree actif" data-entree="tableau-bord" onclick="event.preventDefault();CM.App.ouvrirTableauBord();">Mon tableau de bord<span class="compteur-tableau-bord" aria-live="polite"></span></a>
       <a href="#" class="entree" data-entree="cascade" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('cascade');">Cascade strat&eacute;gique</a>
       <a href="#" class="entree" data-entree="maturite" onclick="event.preventDefault();CM.App.ouvrirVueDuBandeau('maturite');">La maturit&eacute;&nbsp;?</a>
       <a href="#" class="entree stub" data-entree="lexique" aria-disabled="true" onclick="event.preventDefault();">Lexique</a>
@@ -11470,6 +11482,21 @@ CM.App = (function() {
     _rafraichirIconesPanierFiche(ficheId);
   }
 
+  /* 23.e-fix5 — Compteur d'indices au tableau de bord (libellé du bandeau).
+     Lit CM.Panier.taille() et met à jour les 6 occurrences du span
+     .compteur-tableau-bord présentes dans le DOM (un par bandeau de vue).
+     Format ` (N)` si N > 0, vide si N = 0. Idempotent : peut être appelé
+     au montage et à chaque mutation du panier sans effet de bord. */
+  function _rafraichirCompteurTableauBord() {
+    if (!CM.Panier || typeof CM.Panier.taille !== 'function') return;
+    var n = CM.Panier.taille();
+    var libelle = (n > 0) ? ' (' + n + ')' : '';
+    var spans = document.querySelectorAll('.compteur-tableau-bord');
+    for (var i = 0; i < spans.length; i++) {
+      spans[i].textContent = libelle;
+    }
+  }
+
   function _rafraichirIconesPanierFiche(ficheId) {
     var nouveauStatut = CM.Panier.statut(ficheId);
     var groupes = document.querySelectorAll('.panier-icones[data-fiche-id="' + ficheId + '"]');
@@ -11880,7 +11907,13 @@ CM.App = (function() {
       _rendreTableauDeBord();
       _rafraichirIconesPanier(resultat);
       _rafraichirVoieLenteSiOuverte(resultat); /* 9.D — voie lente du tiroir */
+      _rafraichirCompteurTableauBord();        /* 23.e-fix5 — compteur live des bandeaux */
     });
+    /* 23.e-fix5 — Initialisation du compteur au montage avant tout événement.
+       MemoireDepot démarre vide donc N=0 et le span reste vide ; mais si une
+       implémentation future de Depot persiste l'état (LocalStorage, API), le
+       compteur reflètera la taille restaurée dès l'ouverture de la page. */
+    _rafraichirCompteurTableauBord();
 
     /* Chantier 9.G — Garde-fou beforeunload (perte de RAM).
        CM.Panier stocke en mémoire JS (MemoireDepot) : fermer l'onglet ou
