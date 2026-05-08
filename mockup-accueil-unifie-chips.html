@@ -2,28 +2,30 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Mockup-preview v3 — accueil unifié, sans toggles, 2 cartouches</title>
+<title>Mockup-preview v4 — inversion blocs + 5e chip Angle (Mintzberg)</title>
 <style>
   /* ──────────────────────────────────────────────────────────────
-     Mockup-preview v3 — accueil unifié *Choisir mes indicateurs*
-     3 panneaux côte à côte. Architecture finale, à valider.
+     Mockup-preview v4 — accueil unifié *Choisir mes indicateurs*
+     3 panneaux côte à côte. Évolution v3 → v4 (08/05/2026) :
 
-     v2 → v3 (08/05/2026) :
-       — suppression des toggles « Par une porte » / « En croisant les axes »
-         / « + futur mode » : redondants avec la sémantique mono/multi déjà
-         portée par chaque chip ; absence de gouvernance réelle ;
-       — sous-titre reformulé : « Quatre lentilles à combiner. »
-       — AJOUT d'un second cartouche « Par ma question » sur l'accueil,
-         pour ne pas reléguer les fiches-questions au bandeau du haut
-         (chemin obscur). Mêmes règles que le cartouche compteur :
-         repliable / dépliable, chevron ▾/▴, libellé d'action Voir/Masquer.
-       — Hiérarchie : Bloc 1 = filtrer le référentiel (chips + cartouche) ;
-         Bloc 2 = lire une question terrain (cartouche compagnon).
-         Sémantiques distinctes, cohérence visuelle complète.
+     (1) INVERSION DES BLOCS — la matière courte reste visible :
+         Cartouche Par ma question MONTE au-dessus du bloc des chips.
+         Logique : si l'utilisateur déploie les 75 indicateurs, il ne
+         perd pas de vue les 5 fiches-questions terrain.
 
-     A — état initial            : 0 chip, deux cartouches repliés
-     B — cartouche compteur déplié : chips actives + liste indicateurs filtrée
-     C — cartouche question déplié : 5 fiches-questions terrain visibles
+     (2) AJOUT D'UNE 5e CHIP « Angle » (variante α) — multi-sélection,
+         qui groupe les 4 axes Mintzberg du référentiel (les fiches ont
+         déjà `axes: ["projet","stratégique",...]`). La chip s'ouvre en
+         accordéon comme les 4 autres et révèle 4 cases.
+         Couleurs : --axe-* extraites du HTML pour cohérence.
+         Label « Angle » à valider — alternatives possibles : Lentille
+         Mintzberg, Dimension, Champ, Registre. Le label retenu doit
+         rester court, neutre, accessible à un non-expert.
+
+     A — état initial            : 0 chip · cartouches repliés · ordre inversé
+     B — chip Angle ouverte      : sélecteur multi (cases carrées) déroulé
+     C — 2 chips actives          : Niveau:Programme + Angle:Projet,Stratégique
+                                    cartouche compteur déplié, liste filtrée
      ────────────────────────────────────────────────────────────── */
 
   :root {
@@ -33,6 +35,12 @@
     --indigo:       #4c1d95;
     --indigo-clair: #ede9fe;
     --bleu-prusse:  #1d3a5f;
+
+    /* Couleurs Mintzberg, fidèles au HTML (lignes 54-57) */
+    --axe-humaine:        #5d7fa6;
+    --axe-projet:         #4f7e74;
+    --axe-methodologique: #7d6b96;
+    --axe-strategique:    #917a55;
 
     /* Voie hybride */
     --fond:         #0d1b4f;
@@ -87,7 +95,7 @@
     border-top: none;
     border-radius: 0 0 10px 10px;
     padding: 1.1rem 1rem 1.4rem;
-    min-height: 700px;
+    min-height: 720px;
   }
 
   .bandeau {
@@ -149,10 +157,77 @@
   .chip[data-axe="cadre"].actif    { color: var(--niv-1); }
   .chip[data-axe="niveau"].actif   { color: var(--niv-3); }
   .chip[data-axe="maturite"].actif { color: var(--niv-eq-af); }
+  .chip[data-axe="angle"].actif    { color: var(--axe-projet); }
   .chip .valeur { font-weight: 600; margin-left: 0.1rem; }
   .chip .valeur::before { content: "·"; margin: 0 0.3rem; color: #94a3b8; }
+  .chip.ouverte { box-shadow: 0 0 0 2px rgba(76,29,149,0.30); border-color: var(--indigo); }
 
-  /* ─── Cartouche bouton (commun aux deux blocs) ─── */
+  .selecteur {
+    background: #ffffff;
+    border: 1px solid var(--carte-bord);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    margin: 0 0 0.9rem;
+    color: #1c2033;
+  }
+  .selecteur-entete {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 0.55rem;
+  }
+  .selecteur-entete strong { font-size: 0.9rem; color: #1c2033; }
+  .selecteur-entete em {
+    font-style: normal;
+    font-size: 0.72rem;
+    color: #5b6378;
+    background: #f1f5f9;
+    padding: 0.1rem 0.45rem;
+    border-radius: 4px;
+  }
+  .selecteur-options { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+  .selecteur-options label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.32rem 0.6rem;
+    border: 1px solid #d8dceb;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    background: #f9fafc;
+    color: #1c2033;
+    cursor: default;
+  }
+  .selecteur-options label.coche {
+    border-color: var(--indigo);
+    background: var(--indigo-clair);
+    color: var(--indigo);
+    font-weight: 600;
+  }
+  .selecteur-options label .marker {
+    display: inline-block;
+    width: 12px; height: 12px;
+    border: 1.5px solid #94a3b8;
+    flex-shrink: 0;
+  }
+  .selecteur.mono .marker { border-radius: 50%; }
+  .selecteur.multi .marker { border-radius: 2px; }
+  .selecteur-options label.coche .marker {
+    background: var(--indigo);
+    border-color: var(--indigo);
+  }
+  /* Sélecteur Angle : couleurs Mintzberg sur les pastilles */
+  .selecteur-options label[data-mintzberg="projet"]         .pastille { background: var(--axe-projet); }
+  .selecteur-options label[data-mintzberg="strategique"]    .pastille { background: var(--axe-strategique); }
+  .selecteur-options label[data-mintzberg="humaine"]        .pastille { background: var(--axe-humaine); }
+  .selecteur-options label[data-mintzberg="methodologique"] .pastille { background: var(--axe-methodologique); }
+  .selecteur-options label .pastille {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    opacity: 0.9;
+  }
+
+  /* Cartouche bouton (commun aux deux blocs) */
   .cartouche {
     display: flex;
     justify-content: space-between;
@@ -174,28 +249,18 @@
     border-bottom-right-radius: 0;
     border-bottom-color: transparent;
   }
-  .cartouche-libelle {
-    display: flex; flex-direction: column; gap: 0.15rem;
-  }
-  .cartouche-libelle strong {
-    font-size: 0.95rem;
-    color: var(--indigo);
-    font-weight: 700;
-  }
+  .cartouche-libelle { display: flex; flex-direction: column; gap: 0.15rem; }
+  .cartouche-libelle strong { font-size: 0.95rem; color: var(--indigo); font-weight: 700; }
   .cartouche-libelle .total { color: #5b6378; font-size: 0.95rem; font-weight: 500; }
   .cartouche-libelle .axes-actifs { font-size: 0.74rem; color: #5b6378; }
   .cartouche-libelle .sous-titre  { font-size: 0.74rem; color: #5b6378; }
   .cartouche-chevron {
-    font-size: 0.95rem;
-    color: var(--indigo);
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
+    font-size: 0.95rem; color: var(--indigo);
+    flex-shrink: 0; display: inline-flex;
+    align-items: center; gap: 0.35rem;
   }
   .cartouche-chevron .libelle-action { font-size: 0.78rem; font-weight: 500; color: #5b6378; }
 
-  /* ─── Liste révélée (commune aux deux blocs) ─── */
   .liste {
     background: #ffffff;
     border: 1px solid var(--carte-bord);
@@ -205,7 +270,6 @@
     margin-bottom: 0.9rem;
   }
 
-  /* Liste indicateurs (bloc 1) */
   .fiches-grille { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
   .fiche-card {
     background: #f9fafc;
@@ -229,7 +293,6 @@
     border: 1px dashed #d8dceb;
   }
 
-  /* Liste fiches-questions (bloc 2) */
   .questions-liste { display: flex; flex-direction: column; gap: 0.45rem; }
   .question-card {
     background: #f9fafc;
@@ -261,7 +324,6 @@
     font-style: italic;
   }
 
-  /* Marqueur visuel inter-blocs */
   .marqueur-bloc {
     text-align: center;
     font-size: 0.65rem;
@@ -284,15 +346,15 @@
 <body>
 
   <div class="meta">
-    <h1>Mockup-preview v3 — accueil unifié, deux cartouches, sans toggles</h1>
-    <p>Suppression des toggles (sémantique déjà portée par chaque chip). Sous-titre reformulé. Ajout d'un <strong>second cartouche compagnon « Par ma question »</strong> pour rendre les fiches-questions terrain accessibles dès l'accueil — pas reléguées au bandeau du haut. Deux cartouches au même patron : repliés à l'arrivée, chevron ▾/▴, libellé d'action <em>Voir / Masquer</em>. <strong>Bloc 1</strong> = filtrer le référentiel ; <strong>Bloc 2</strong> = lire une question terrain. Sémantiques distinctes, cohérence visuelle complète.</p>
+    <h1>Mockup-preview v4 — inversion des blocs + 5<sup>e</sup> chip <em>Angle</em></h1>
+    <p>Deux évolutions sur la même page : <strong>(1) inversion</strong> — le cartouche <em>Par ma question</em> monte au-dessus du bloc des chips (la matière courte reste visible quand l'autre se déploie) ; <strong>(2) intégration des axes Mintzberg</strong> en variante α — une <strong>5<sup>e</sup> chip <em>Angle</em></strong> (multi-sélection) qui s'ouvre en accordéon et révèle 4 cases : <em>Projet · Stratégique · Humaine · Méthodologique</em>. Couleurs Mintzberg fidèles au HTML. Label <em>Angle</em> à valider.</p>
   </div>
 
   <div class="grille">
 
-    <!-- ───── A — initial : tout replié ───── -->
+    <!-- ───── A — initial : tout replié, ordre inversé ───── -->
     <div>
-      <div class="col-entete"><strong>A — État initial</strong><em>0 chip · deux cartouches repliés · page calme</em></div>
+      <div class="col-entete"><strong>A — État initial</strong><em>0 chip · cartouches repliés · ordre inversé</em></div>
       <div class="preview">
         <nav class="bandeau">
           <span class="entree actif">Accueil</span>
@@ -307,24 +369,8 @@
           <div class="surtitre">Page unifiée</div>
           <h2>Choisir mes indicateurs</h2>
           <div class="barre"></div>
-          <p class="baseline">Quatre lentilles à combiner.</p>
+          <p class="baseline">Cinq lentilles à combiner.</p>
         </div>
-
-        <div class="axes">
-          <span class="chip" data-axe="probleme">Problème</span>
-          <span class="chip" data-axe="cadre">Cadre</span>
-          <span class="chip" data-axe="niveau">Niveau</span>
-          <span class="chip" data-axe="maturite">Maturité</span>
-        </div>
-        <button class="cartouche" type="button" aria-expanded="false">
-          <span class="cartouche-libelle">
-            <span><strong>75</strong> <span class="total">sur 75 indicateurs</span></span>
-            <span class="axes-actifs">Aucun axe actif — l'index complet attend.</span>
-          </span>
-          <span class="cartouche-chevron"><span class="libelle-action">Voir</span> ▾</span>
-        </button>
-
-        <div class="marqueur-bloc">— ou —</div>
 
         <button class="cartouche" type="button" aria-expanded="false">
           <span class="cartouche-libelle">
@@ -334,14 +380,31 @@
           <span class="cartouche-chevron"><span class="libelle-action">Voir</span> ▾</span>
         </button>
 
-        <div class="pied">L'accueil est l'outil. Aucun mur, aucun tunnel, aucun chemin obscur.</div>
+        <div class="marqueur-bloc">— ou —</div>
+
+        <div class="axes">
+          <span class="chip" data-axe="probleme">Problème</span>
+          <span class="chip" data-axe="cadre">Cadre</span>
+          <span class="chip" data-axe="niveau">Niveau</span>
+          <span class="chip" data-axe="maturite">Maturité</span>
+          <span class="chip" data-axe="angle">Angle</span>
+        </div>
+        <button class="cartouche" type="button" aria-expanded="false">
+          <span class="cartouche-libelle">
+            <span><strong>75</strong> <span class="total">sur 75 indicateurs</span></span>
+            <span class="axes-actifs">Aucun axe actif — l'index complet attend.</span>
+          </span>
+          <span class="cartouche-chevron"><span class="libelle-action">Voir</span> ▾</span>
+        </button>
+
+        <div class="pied">Les questions restent visibles, les chips restent disponibles.</div>
       </div>
-      <p class="col-annot"><strong>Lecture.</strong> Page d'arrivée : 4 chips disponibles, deux cartouches sous elles. L'utilisateur voit ses deux portes claires — <em>filtrer les indicateurs</em> ou <em>lire une question terrain</em>. Aucune liste ne s'étale tant qu'il n'a pas demandé à voir.</p>
+      <p class="col-annot"><strong>Lecture.</strong> Le cartouche des questions terrain est en haut. En dessous, les 5 chips (4 lentilles primaires + 5<sup>e</sup> chip <em>Angle</em>). Si l'utilisateur déploie les 75 indicateurs (panneau C), les questions resteront visibles au-dessus, jamais perdues.</p>
     </div>
 
-    <!-- ───── B — cartouche compteur déplié ───── -->
+    <!-- ───── B — chip Angle ouverte (multi-sélection) ───── -->
     <div>
-      <div class="col-entete"><strong>B — Cartouche compteur déplié</strong><em>Niveau:Programme + Cadre:Scrum,DORA · 9/75 ▴ · liste indicateurs</em></div>
+      <div class="col-entete"><strong>B — Chip <em>Angle</em> ouverte</strong><em>Multi-sélection · 4 cases Mintzberg colorées</em></div>
       <div class="preview">
         <nav class="bandeau">
           <span class="entree actif">Accueil</span>
@@ -356,120 +419,110 @@
           <div class="surtitre">Page unifiée</div>
           <h2>Choisir mes indicateurs</h2>
           <div class="barre"></div>
-          <p class="baseline">Quatre lentilles à combiner.</p>
+          <p class="baseline">Cinq lentilles à combiner.</p>
         </div>
+
+        <button class="cartouche" type="button" aria-expanded="false">
+          <span class="cartouche-libelle">
+            <span><strong>5</strong> <span class="total">questions terrain</span></span>
+            <span class="sous-titre">Une question concrète, une fiche qui éclaire.</span>
+          </span>
+          <span class="cartouche-chevron"><span class="libelle-action">Voir</span> ▾</span>
+        </button>
+
+        <div class="marqueur-bloc">— ou —</div>
 
         <div class="axes">
           <span class="chip" data-axe="probleme">Problème</span>
-          <span class="chip actif" data-axe="cadre"><span class="check">&check;</span> Cadre <span class="valeur">Scrum, DORA</span></span>
+          <span class="chip" data-axe="cadre">Cadre</span>
+          <span class="chip" data-axe="niveau">Niveau</span>
+          <span class="chip" data-axe="maturite">Maturité</span>
+          <span class="chip ouverte" data-axe="angle">Angle</span>
+        </div>
+        <div class="selecteur multi">
+          <div class="selecteur-entete">
+            <strong>Angles cumulables</strong>
+            <em>Plusieurs choix · cadre Mintzberg</em>
+          </div>
+          <div class="selecteur-options">
+            <label data-mintzberg="projet"><span class="marker"></span><span class="pastille"></span>Projet</label>
+            <label data-mintzberg="strategique"><span class="marker"></span><span class="pastille"></span>Stratégique</label>
+            <label data-mintzberg="humaine"><span class="marker"></span><span class="pastille"></span>Humaine</label>
+            <label data-mintzberg="methodologique"><span class="marker"></span><span class="pastille"></span>Méthodologique</label>
+          </div>
+        </div>
+        <button class="cartouche" type="button" aria-expanded="false">
+          <span class="cartouche-libelle">
+            <span><strong>75</strong> <span class="total">sur 75 indicateurs</span></span>
+            <span class="axes-actifs">Aucun axe actif (rien n'est encore coché).</span>
+          </span>
+          <span class="cartouche-chevron"><span class="libelle-action">Voir</span> ▾</span>
+        </button>
+
+        <div class="pied">Marqueurs carrés = cumulable. Pastilles colorées = signature Mintzberg.</div>
+      </div>
+      <p class="col-annot"><strong>Lecture.</strong> La chip <em>Angle</em> ouverte révèle les 4 axes Mintzberg en cases (multi). Chaque case porte une <strong>pastille colorée</strong> avec la teinte signature de l'axe (déjà dans le HTML). Le cartouche reste à sa place. La sémantique <em>cumulable</em> est annoncée explicitement.</p>
+    </div>
+
+    <!-- ───── C — chips actives + compteur déplié ───── -->
+    <div>
+      <div class="col-entete"><strong>C — 2 chips actives, compteur déplié</strong><em>Niveau:Programme + Angle:Projet,Stratégique · 14/75 ▴</em></div>
+      <div class="preview">
+        <nav class="bandeau">
+          <span class="entree actif">Accueil</span>
+          <span class="entree">Mon tableau de bord</span>
+          <span class="entree">Par ma question</span>
+          <span class="entree">Cascade</span>
+          <span class="entree">La maturité&nbsp;?</span>
+          <span class="entree stub">Lexique</span>
+          <span class="entree">À propos</span>
+        </nav>
+        <div class="page-entete">
+          <div class="surtitre">Page unifiée</div>
+          <h2>Choisir mes indicateurs</h2>
+          <div class="barre"></div>
+          <p class="baseline">Cinq lentilles à combiner.</p>
+        </div>
+
+        <button class="cartouche" type="button" aria-expanded="false">
+          <span class="cartouche-libelle">
+            <span><strong>5</strong> <span class="total">questions terrain</span></span>
+            <span class="sous-titre">Toujours là, jamais perdues.</span>
+          </span>
+          <span class="cartouche-chevron"><span class="libelle-action">Voir</span> ▾</span>
+        </button>
+
+        <div class="marqueur-bloc">— ou —</div>
+
+        <div class="axes">
+          <span class="chip" data-axe="probleme">Problème</span>
+          <span class="chip" data-axe="cadre">Cadre</span>
           <span class="chip actif" data-axe="niveau"><span class="check">&check;</span> Niveau <span class="valeur">Programme</span></span>
           <span class="chip" data-axe="maturite">Maturité</span>
+          <span class="chip actif" data-axe="angle"><span class="check">&check;</span> Angle <span class="valeur">Projet, Stratégique</span></span>
         </div>
         <button class="cartouche deplie" type="button" aria-expanded="true">
           <span class="cartouche-libelle">
-            <span><strong>9</strong> <span class="total">sur 75 indicateurs</span></span>
-            <span class="axes-actifs">2 axes actifs — Niveau, Cadre.</span>
+            <span><strong>14</strong> <span class="total">sur 75 indicateurs</span></span>
+            <span class="axes-actifs">2 axes actifs — Niveau, Angle.</span>
           </span>
           <span class="cartouche-chevron"><span class="libelle-action">Masquer</span> ▴</span>
         </button>
         <div class="liste">
           <div class="fiches-grille">
-            <div class="fiche-card">Lead time DORA<span class="pts"><span></span><span></span></span></div>
-            <div class="fiche-card">Deployment frequency<span class="pts"><span></span><span></span></span></div>
-            <div class="fiche-card">Change failure rate<span class="pts"><span></span><span></span></span></div>
-            <div class="fiche-card">MTTR DORA<span class="pts"><span></span><span></span></span></div>
-            <div class="fiche-card">Sprint completion<span class="pts"><span></span></span></div>
-            <div class="fiche-card">Throughput d'équipe<span class="pts"><span></span></span></div>
-            <div class="fiche-card suite">+ 3 autres fiches</div>
+            <div class="fiche-card">Lead time programme<span class="pts"><span></span><span></span></span></div>
+            <div class="fiche-card">Throughput d'initiatives<span class="pts"><span></span><span></span></span></div>
+            <div class="fiche-card">Efficacité de flux<span class="pts"><span></span><span></span></span></div>
+            <div class="fiche-card">Variance de plan<span class="pts"><span></span></span></div>
+            <div class="fiche-card">Taux de complétion<span class="pts"><span></span></span></div>
+            <div class="fiche-card">Coût standard d'initiative<span class="pts"><span></span></span></div>
+            <div class="fiche-card suite">+ 8 autres fiches</div>
           </div>
         </div>
 
-        <div class="marqueur-bloc">— ou —</div>
-
-        <button class="cartouche" type="button" aria-expanded="false">
-          <span class="cartouche-libelle">
-            <span><strong>5</strong> <span class="total">questions terrain</span></span>
-            <span class="sous-titre">Une question concrète, une fiche qui éclaire.</span>
-          </span>
-          <span class="cartouche-chevron"><span class="libelle-action">Voir</span> ▾</span>
-        </button>
-
-        <div class="pied">L'utilisateur a filtré, il a ouvert la liste. L'autre porte reste là, repliée.</div>
+        <div class="pied">Les questions terrain sont toujours visibles en haut, même quand la liste se déploie.</div>
       </div>
-      <p class="col-annot"><strong>Lecture.</strong> 2 chips actives, cartouche compteur déplié, liste des 9 indicateurs filtrés. Le second cartouche reste accessible et replié — il n'a pas disparu, il attend simplement. L'utilisateur peut ouvrir l'un sans fermer l'autre.</p>
-    </div>
-
-    <!-- ───── C — cartouche question déplié ───── -->
-    <div>
-      <div class="col-entete"><strong>C — Cartouche question déplié</strong><em>5 fiches-questions terrain visibles · cartouche compteur intact</em></div>
-      <div class="preview">
-        <nav class="bandeau">
-          <span class="entree actif">Accueil</span>
-          <span class="entree">Mon tableau de bord</span>
-          <span class="entree">Par ma question</span>
-          <span class="entree">Cascade</span>
-          <span class="entree">La maturité&nbsp;?</span>
-          <span class="entree stub">Lexique</span>
-          <span class="entree">À propos</span>
-        </nav>
-        <div class="page-entete">
-          <div class="surtitre">Page unifiée</div>
-          <h2>Choisir mes indicateurs</h2>
-          <div class="barre"></div>
-          <p class="baseline">Quatre lentilles à combiner.</p>
-        </div>
-
-        <div class="axes">
-          <span class="chip" data-axe="probleme">Problème</span>
-          <span class="chip" data-axe="cadre">Cadre</span>
-          <span class="chip" data-axe="niveau">Niveau</span>
-          <span class="chip" data-axe="maturite">Maturité</span>
-        </div>
-        <button class="cartouche" type="button" aria-expanded="false">
-          <span class="cartouche-libelle">
-            <span><strong>75</strong> <span class="total">sur 75 indicateurs</span></span>
-            <span class="axes-actifs">Aucun axe actif — l'index complet attend.</span>
-          </span>
-          <span class="cartouche-chevron"><span class="libelle-action">Voir</span> ▾</span>
-        </button>
-
-        <div class="marqueur-bloc">— ou —</div>
-
-        <button class="cartouche deplie" type="button" aria-expanded="true">
-          <span class="cartouche-libelle">
-            <span><strong>5</strong> <span class="total">questions terrain</span></span>
-            <span class="sous-titre">Une question concrète, une fiche qui éclaire.</span>
-          </span>
-          <span class="cartouche-chevron"><span class="libelle-action">Masquer</span> ▴</span>
-        </button>
-        <div class="liste">
-          <div class="questions-liste">
-            <div class="question-card">
-              <span class="icone">&#128064;</span>
-              <span class="titre">Mes indicateurs reflètent-ils la réalité du terrain&nbsp;?</span>
-            </div>
-            <div class="question-card">
-              <span class="icone">&#128197;</span>
-              <span class="titre">Quoi mettre dans mon pilotage hebdomadaire&nbsp;?</span>
-            </div>
-            <div class="question-card">
-              <span class="icone">&#128260;</span>
-              <span class="titre">Par où démarrer une démarche d'amélioration continue&nbsp;?</span>
-            </div>
-            <div class="question-card">
-              <span class="icone">&#9888;</span>
-              <span class="titre">Pourquoi ma transformation résiste&nbsp;?</span>
-            </div>
-            <div class="question-card">
-              <span class="icone">&#128218;</span>
-              <span class="titre">Comment cascader des objectifs jusqu'au terrain&nbsp;?</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="pied">L'autre porte reste là, repliée. L'utilisateur peut basculer à tout moment.</div>
-      </div>
-      <p class="col-annot"><strong>Lecture.</strong> L'utilisateur a ouvert la seconde porte. Les 5 fiches-questions s'affichent en liste verticale avec leurs icônes (héritées de la vue <em>Par ma question</em>). Cliquer une carte ouvre la fiche correspondante. Le cartouche du référentiel reste accessible et replié.</p>
+      <p class="col-annot"><strong>Lecture.</strong> 2 chips actives, compteur déplié, liste filtrée. <strong>Le cartouche des questions terrain reste accessible en haut</strong> — c'est exactement ce que l'inversion garantit. L'utilisateur ne perd jamais de vue qu'il a aussi cette autre porte.</p>
     </div>
 
   </div>
