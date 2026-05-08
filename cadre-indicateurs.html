@@ -3247,12 +3247,14 @@
   </header>
   <header class="en-tete" role="banner">
     <span id="badge-contexte" class="badge-contexte"></span>
-    <nav class="onglets" role="tablist" aria-label="Vues disponibles">
-      <button class="onglet" onclick="CM.App.changerVue('tableau-bord',this)" role="tab" aria-selected="false">Mon tableau de bord</button>
-      <button class="onglet" onclick="CM.App.changerVue('cascade',this)" role="tab" aria-selected="false">Cascade strat&eacute;gique</button>
-      <button class="onglet actif" onclick="CM.App.changerVue('questionnaire',this)" role="tab" aria-selected="true">Choisir mes indicateurs</button>
-      <button class="onglet" onclick="CM.App.changerVue('maturite',this)" role="tab" aria-selected="false">Maturit&eacute; &amp; Recommandations</button>
-    </nav>
+    <!-- Bug A résolu 08/05/2026 — bandeau interne .onglets retiré.
+         Toutes les fonctions sont désormais accessibles depuis le bandeau du
+         haut (Mon tableau de bord, Cascade stratégique, Maturité). La vue
+         questionnaire (« Choisir mes indicateurs ») reste dans le DOM mais
+         sans onglet d'accès — elle est en sursis (décision D1 02/05/2026,
+         suppression prévue au chantier 10.3). _activerOnglet bascule en
+         fallback _basculerVue quand l'onglet est introuvable, donc l'app
+         continue de fonctionner. -->
   </header>
 
   <main class="contenu" role="main">
