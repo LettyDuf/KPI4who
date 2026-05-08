@@ -2,32 +2,36 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Mockup-preview v5 — 4 chips, Mintzberg sort en pastille de fiche</title>
+<title>Mockup-preview v6 — fiche-card riche, identique partout</title>
 <style>
   /* ──────────────────────────────────────────────────────────────
-     Mockup-preview v5 — accueil unifié *Choisir mes indicateurs*
-     3 panneaux côte à côte. Évolution v4 → v5 (08/05/2026) :
+     Mockup-preview v6 — accueil unifié *Choisir mes indicateurs*
+     3 panneaux côte à côte. Évolution v5 → v6 (08/05/2026) :
 
-     SORTIE DE LA CHIP « Angle ». Esprit critique : les axes Mintzberg
-     recoupent massivement les chips existantes (Niveau, Problème, Cadre,
-     Maturité), ne correspondent pas au langage utilisateur, et le naming
-     forcé (Angle / Dimension / Champ) signale un concept sans place
-     naturelle en filtre. Garder Mintzberg en filtre dilue la simplicité
-     conquise.
+     FORMAT RICHE UNIQUE — identique sur l'accueil et sur le reste du
+     site. Mon mockup v5 simplifiait à l'extrême ; Lætitia pointe
+     l'incohérence : l'objet « fiche-card » doit être unifié.
 
-     MINTZBERG CONSERVÉ COMME ATTRIBUT DESCRIPTIF DES FICHES — visible sur
-     chaque fiche-card affichée sous forme de 1-2 pastilles colorées à
-     côté du titre, avec tooltip au survol qui nomme la dimension.
-     Pédagogie là où elle sert (lecture d'une fiche), pas filtre là où
-     elle redonderait (porte d'entrée).
+     Format reproduit fidèlement depuis htmlCarte() ligne 7412
+     de cadre-indicateurs.html :
+       — en-tête : icône colorée + type (ICP) + nom + badge fiabilité ;
+       — corps : définition tronquée + meta (fréquence + maturité)
+                 + chip(s) du cadre méthodologique ;
+       — pied : 2 boutons panier (✓ en place / 💡 à envisager)
+                + lien « Voir le détail → » ;
+       — bordure colorée selon FIABILITE (vert Fiable / orange Précaution).
 
-     Sous-titre : retour à « Quatre lentilles à combiner. ».
-     `axes: [...]` reste dans le code des fiches (attribut métier).
+     Justification : si l'accueil est l'outil, les actions panier
+     doivent y être disponibles directement. Sans elles, l'accueil
+     redevient une page de consultation, pas un poste de travail.
+
+     Mintzberg conservé en attribut descriptif de la fiche : 1-2
+     pastilles colorées en haut à droite, à côté du badge fiabilité.
 
      A — état initial            : 4 chips, deux cartouches repliés
-     B — chip Niveau ouverte     : mono-sélection (ronds) déroulée
-     C — 2 chips actives          : compteur déplié, fiche-cards portant
-                                    leurs pastilles Mintzberg signature
+     B — chip Niveau ouverte     : mono-sélection (ronds)
+     C — 2 chips actives          : compteur déplié, 4 fiches riches
+                                    + Mintzberg en pastilles + légende
      ────────────────────────────────────────────────────────────── */
 
   :root {
@@ -38,11 +42,20 @@
     --indigo-clair: #ede9fe;
     --bleu-prusse:  #1d3a5f;
 
-    /* Couleurs Mintzberg, fidèles au HTML (lignes 54-57) */
+    /* Couleurs Mintzberg, fidèles au HTML */
     --axe-humaine:        #5d7fa6;
     --axe-projet:         #4f7e74;
     --axe-methodologique: #7d6b96;
     --axe-strategique:    #917a55;
+
+    /* Couleurs types d'indicateur */
+    --type-ICP:   #1565c0;
+    --type-FLUX:  #e65100;
+    --type-DORA:  #00695c;
+
+    /* Fiabilité */
+    --fib-fiable:     #2e7d32;
+    --fib-precaution: #e65100;
 
     /* Voie hybride */
     --fond:         #0d1b4f;
@@ -216,7 +229,6 @@
     border-color: var(--indigo);
   }
 
-  /* Cartouche bouton */
   .cartouche {
     display: flex;
     justify-content: space-between;
@@ -230,7 +242,6 @@
     text-align: left;
     cursor: pointer;
     gap: 0.6rem;
-    transition: background 0.15s ease;
   }
   .cartouche:hover { background: #f9fafc; }
   .cartouche.deplie {
@@ -250,43 +261,66 @@
   }
   .cartouche-chevron .libelle-action { font-size: 0.78rem; font-weight: 500; color: #5b6378; }
 
-  .liste {
+  .liste-fiches {
     background: #ffffff;
     border: 1px solid var(--carte-bord);
     border-top: 1px dashed var(--carte-bord);
     border-radius: 0 0 12px 12px;
-    padding: 0.8rem 1rem 1rem;
+    padding: 0.85rem 1rem 0.95rem;
     margin-bottom: 0.9rem;
   }
+  .fiches-grille { display: grid; grid-template-columns: 1fr; gap: 0.55rem; }
 
-  .fiches-grille { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
-  .fiche-card {
-    background: #f9fafc;
-    border: 1px solid var(--carte-bord);
-    border-radius: 6px;
-    padding: 0.45rem 0.6rem;
-    font-size: 0.74rem;
+  /* ─── Fiche-card riche, fidèle à htmlCarte() ligne 7412 ─── */
+  .carte-ind {
+    background: #ffffff;
+    border: 1.5px solid var(--carte-bord);
+    border-radius: 8px;
+    padding: 0.7rem 0.85rem 0.6rem;
     color: #1c2033;
+    cursor: pointer;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
     gap: 0.4rem;
   }
-  .fiche-card .titre { flex: 1; min-width: 0; }
-  .fiche-card.suite {
-    color: #5b6378;
-    font-style: italic;
-    grid-column: 1 / -1;
-    background: transparent;
-    border: 1px dashed #d8dceb;
-  }
+  .carte-ind.fib-fiable     { border-color: var(--fib-fiable); }
+  .carte-ind.fib-precaution { border-color: var(--fib-precaution); }
 
-  /* ─── Pastilles Mintzberg sur les fiches ─── */
-  .mintzberg {
-    display: inline-flex;
-    gap: 3px;
+  .carte-en-tete { display: flex; gap: 0.5rem; align-items: flex-start; }
+  .carte-icone {
+    width: 2.1rem; height: 2.1rem;
+    border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 1.05rem;
+  }
+  .carte-titres { flex: 1; min-width: 0; }
+  .carte-ligne-haut {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 0.4rem; min-width: 0;
+  }
+  .carte-type {
+    font-size: 0.66rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .carte-droite-haut {
+    display: flex; align-items: center; gap: 0.35rem;
     flex-shrink: 0;
   }
+  .badge-fiabilite {
+    color: #ffffff;
+    font-size: 0.66rem;
+    font-weight: 700;
+    padding: 0.13rem 0.45rem;
+    border-radius: 99px;
+    display: inline-flex; align-items: center; gap: 0.25rem;
+    white-space: nowrap;
+  }
+  .badge-fiabilite.fiable     { background: var(--fib-fiable); }
+  .badge-fiabilite.precaution { background: var(--fib-precaution); }
+  .mintzberg { display: inline-flex; gap: 3px; flex-shrink: 0; align-self: center; }
   .mintzberg .pastille {
     display: inline-block;
     width: 8px; height: 8px;
@@ -298,7 +332,69 @@
   .mintzberg .pastille[data-axe="humaine"]        { background: var(--axe-humaine); }
   .mintzberg .pastille[data-axe="methodologique"] { background: var(--axe-methodologique); }
 
-  /* ─── Légende Mintzberg en pied de liste ─── */
+  .carte-nom {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #1c2033;
+    line-height: 1.25;
+    margin-top: 0.15rem;
+  }
+
+  .carte-def {
+    font-size: 0.78rem;
+    color: #5b6378;
+    line-height: 1.45;
+  }
+  .carte-meta-bas {
+    display: flex; flex-wrap: wrap; gap: 0.4rem 0.85rem;
+    font-size: 0.74rem;
+    color: #5b6378;
+  }
+  .carte-freq, .badge-maturite {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+  }
+  .carte-chips-cadres { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .chip-cadre {
+    background: #eef1f6;
+    color: #1c2033;
+    font-size: 0.72rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 99px;
+    border: 1px solid var(--chip-bord);
+    display: inline-flex; align-items: center; gap: 0.25rem;
+  }
+  .chip-cadre.generique { background: #f1f5f9; color: #5b6378; }
+
+  .carte-pied {
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 0.45rem;
+    margin-top: 0.2rem;
+  }
+  .panier-icones { display: inline-flex; gap: 0.35rem; }
+  .panier-btn {
+    width: 28px; height: 28px;
+    border-radius: 99px;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 1.05rem;
+  }
+  .panier-btn:hover { background: rgba(96,125,139,0.12); color: #5b6378; }
+  .panier-btn.actif-coche { color: #2e7d32; background: rgba(46,125,50,0.12); }
+  .panier-btn.actif-idee  { color: #b7791f; background: rgba(183,121,31,0.12); }
+  .btn-detail {
+    background: transparent;
+    border: none;
+    color: var(--indigo);
+    font-size: 0.76rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.25rem 0;
+  }
+
   .legende-mintzberg {
     margin-top: 0.7rem;
     padding-top: 0.55rem;
@@ -310,11 +406,7 @@
     font-size: 0.7rem;
     color: #5b6378;
   }
-  .legende-mintzberg span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-  }
+  .legende-mintzberg span { display: inline-flex; align-items: center; gap: 0.3rem; }
   .legende-mintzberg span::before {
     content: "";
     display: inline-block;
@@ -326,26 +418,15 @@
   .legende-mintzberg .leg-humaine::before        { background: var(--axe-humaine); }
   .legende-mintzberg .leg-methodologique::before { background: var(--axe-methodologique); }
 
-  .questions-liste { display: flex; flex-direction: column; gap: 0.45rem; }
-  .question-card {
-    background: #f9fafc;
-    border: 1px solid var(--carte-bord);
-    border-radius: 8px;
-    padding: 0.55rem 0.7rem;
+  .suite-fiches {
+    color: #5b6378;
+    font-style: italic;
+    text-align: center;
+    padding: 0.4rem;
+    border: 1px dashed #d8dceb;
+    border-radius: 6px;
     font-size: 0.78rem;
-    color: #1c2033;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
   }
-  .question-card .icone {
-    width: 1.4rem; height: 1.4rem;
-    display: inline-flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    color: var(--indigo);
-    font-size: 1rem;
-  }
-  .question-card .titre { font-weight: 500; }
 
   .pied {
     margin-top: 1.2rem;
@@ -356,7 +437,6 @@
     color: var(--texte-2);
     font-style: italic;
   }
-
   .marqueur-bloc {
     text-align: center;
     font-size: 0.65rem;
@@ -365,7 +445,6 @@
     color: var(--texte-2);
     margin: 0.7rem 0 0.4rem;
   }
-
   .col-annot {
     margin-top: 0.7rem;
     font-size: 0.78rem;
@@ -379,15 +458,15 @@
 <body>
 
   <div class="meta">
-    <h1>Mockup-preview v5 — 4 chips, Mintzberg sort en pastille de fiche</h1>
-    <p>Sortie de la chip <em>Angle</em> de l'accueil (recouvrement, langage, naming forcé). Mintzberg conservé <strong>comme attribut descriptif</strong> des fiches affichées : 1 à 2 pastilles colorées à côté du titre, tooltip au survol pour le nom de la dimension. Pédagogie là où elle sert (lecture d'une fiche), pas filtre là où elle redonderait (porte d'entrée). Retour à <em>Quatre lentilles à combiner</em>.</p>
+    <h1>Mockup-preview v6 — fiche-card riche, identique partout</h1>
+    <p>Format de fiche-card aligné sur <code>htmlCarte()</code> ligne 7412 du HTML : icône colorée, type (ICP / FLUX), nom, badge fiabilité, définition courte, fréquence, palier de maturité, chip du cadre, et boutons panier ✓ / 💡 + lien <em>Voir le détail</em>. <strong>Bordure colorée selon la fiabilité</strong> (vert / orange). Mintzberg en pastilles à droite du badge fiabilité. Justification : si l'accueil est l'outil, les actions panier doivent y être disponibles directement.</p>
   </div>
 
   <div class="grille">
 
-    <!-- ───── A — initial : 4 chips, ordre inversé ───── -->
+    <!-- ───── A — initial ───── -->
     <div>
-      <div class="col-entete"><strong>A — État initial</strong><em>4 chips · cartouches repliés · ordre inversé conservé</em></div>
+      <div class="col-entete"><strong>A — État initial</strong><em>4 chips · cartouches repliés</em></div>
       <div class="preview">
         <nav class="bandeau">
           <span class="entree actif">Accueil</span>
@@ -431,12 +510,12 @@
 
         <div class="pied">L'accueil est calme. Quatre lentilles, deux portes de matière.</div>
       </div>
-      <p class="col-annot"><strong>Lecture.</strong> Retour à 4 chips. Sous-titre <em>Quatre lentilles à combiner</em>. Mintzberg n'est plus visible sur l'accueil — il revient juste là où il sert, sur les fiches affichées (panneau C).</p>
+      <p class="col-annot"><strong>Lecture.</strong> Page d'arrivée : tout replié, deux portes proposées (questions terrain ou filtrage du référentiel). Aucune liste ne s'étale tant qu'on n'a pas demandé à voir.</p>
     </div>
 
-    <!-- ───── B — chip Niveau ouverte (mono) ───── -->
+    <!-- ───── B — Niveau ouverte ───── -->
     <div>
-      <div class="col-entete"><strong>B — Chip <em>Niveau</em> ouverte</strong><em>Mono-sélection · marqueurs ronds · sélecteur déroulé en place</em></div>
+      <div class="col-entete"><strong>B — Chip <em>Niveau</em> ouverte</strong><em>Mono-sélection · marqueurs ronds</em></div>
       <div class="preview">
         <nav class="bandeau">
           <span class="entree actif">Accueil</span>
@@ -492,12 +571,12 @@
 
         <div class="pied">Marqueurs ronds = un seul choix possible.</div>
       </div>
-      <p class="col-annot"><strong>Lecture.</strong> La chip <em>Niveau</em> s'ouvre en place et déroule un sélecteur mono (4 options, marqueurs ronds). Pas de nouvelle vue. À la sélection, la chip se ferme en mode actif avec sa valeur.</p>
+      <p class="col-annot"><strong>Lecture.</strong> Sélecteur déroulé en place. Mono-sélection. Le cartouche n'a pas encore bougé puisque rien n'est validé.</p>
     </div>
 
-    <!-- ───── C — chips actives + compteur déplié + pastilles Mintzberg ───── -->
+    <!-- ───── C — chips actives + compteur déplié + fiches riches ───── -->
     <div>
-      <div class="col-entete"><strong>C — 2 chips actives, compteur déplié</strong><em>Mintzberg en pastille colorée sur chaque fiche-card</em></div>
+      <div class="col-entete"><strong>C — 2 chips actives, fiches riches</strong><em>Format identique au reste du site · panier disponible</em></div>
       <div class="preview">
         <nav class="bandeau">
           <span class="entree actif">Accueil</span>
@@ -538,49 +617,153 @@
           </span>
           <span class="cartouche-chevron"><span class="libelle-action">Masquer</span> ▴</span>
         </button>
-        <div class="liste">
+
+        <div class="liste-fiches">
           <div class="fiches-grille">
-            <div class="fiche-card">
-              <span class="titre">Lead time DORA</span>
-              <span class="mintzberg">
-                <span class="pastille" data-axe="projet" title="Projet"></span>
-                <span class="pastille" data-axe="methodologique" title="Méthodologique"></span>
-              </span>
+
+            <!-- Fiche 1 — Lead time DORA, Fiable -->
+            <div class="carte-ind fib-fiable" tabindex="0" role="button">
+              <div class="carte-en-tete">
+                <div class="carte-icone" style="background:#00695c18;color:#00695c">⏱️</div>
+                <div class="carte-titres">
+                  <div class="carte-ligne-haut">
+                    <span class="carte-type" style="color:var(--type-DORA)">DORA · DELIVERY (4 KEYS)</span>
+                    <span class="carte-droite-haut">
+                      <span class="mintzberg">
+                        <span class="pastille" data-axe="projet" title="Projet"></span>
+                        <span class="pastille" data-axe="methodologique" title="Méthodologique"></span>
+                      </span>
+                      <span class="badge-fiabilite fiable">&check; Fiable</span>
+                    </span>
+                  </div>
+                  <div class="carte-nom">Lead Time for Changes (DORA)</div>
+                </div>
+              </div>
+              <div class="carte-def">Délai entre un commit et sa mise en production. Mesure la vélocité réelle de mise en main des utilisateurs…</div>
+              <div class="carte-meta-bas">
+                <span class="carte-freq">🕐 Continue — par déploiement</span>
+                <span class="badge-maturite">🌱 Équipe débutante</span>
+              </div>
+              <div class="carte-chips-cadres">
+                <span class="chip-cadre">⚡ DORA</span>
+              </div>
+              <div class="carte-pied">
+                <div class="panier-icones">
+                  <button class="panier-btn" title="Marquer en place">&check;</button>
+                  <button class="panier-btn" title="Marquer à envisager">💡</button>
+                </div>
+                <button class="btn-detail">Voir le détail →</button>
+              </div>
             </div>
-            <div class="fiche-card">
-              <span class="titre">Deployment frequency</span>
-              <span class="mintzberg">
-                <span class="pastille" data-axe="projet" title="Projet"></span>
-                <span class="pastille" data-axe="methodologique" title="Méthodologique"></span>
-              </span>
+
+            <!-- Fiche 2 — Deployment frequency, Fiable -->
+            <div class="carte-ind fib-fiable" tabindex="0" role="button">
+              <div class="carte-en-tete">
+                <div class="carte-icone" style="background:#00695c18;color:#00695c">🚀</div>
+                <div class="carte-titres">
+                  <div class="carte-ligne-haut">
+                    <span class="carte-type" style="color:var(--type-DORA)">DORA · DELIVERY (4 KEYS)</span>
+                    <span class="carte-droite-haut">
+                      <span class="mintzberg">
+                        <span class="pastille" data-axe="projet" title="Projet"></span>
+                        <span class="pastille" data-axe="methodologique" title="Méthodologique"></span>
+                      </span>
+                      <span class="badge-fiabilite fiable">&check; Fiable</span>
+                    </span>
+                  </div>
+                  <div class="carte-nom">Deployment Frequency (DORA)</div>
+                </div>
+              </div>
+              <div class="carte-def">Cadence à laquelle l'équipe livre du code en production. Indice de sa capacité à délivrer en flux tendu…</div>
+              <div class="carte-meta-bas">
+                <span class="carte-freq">🕐 Continue — quotidien</span>
+                <span class="badge-maturite">🌱 Équipe débutante</span>
+              </div>
+              <div class="carte-chips-cadres">
+                <span class="chip-cadre">⚡ DORA</span>
+              </div>
+              <div class="carte-pied">
+                <div class="panier-icones">
+                  <button class="panier-btn actif-coche" title="Retirer du tableau de bord">&check;</button>
+                  <button class="panier-btn" title="Marquer à envisager">💡</button>
+                </div>
+                <button class="btn-detail">Voir le détail →</button>
+              </div>
             </div>
-            <div class="fiche-card">
-              <span class="titre">Change failure rate</span>
-              <span class="mintzberg">
-                <span class="pastille" data-axe="methodologique" title="Méthodologique"></span>
-              </span>
+
+            <!-- Fiche 3 — Sprint completion, Précaution -->
+            <div class="carte-ind fib-precaution" tabindex="0" role="button">
+              <div class="carte-en-tete">
+                <div class="carte-icone" style="background:#1565c018;color:#1565c0">🎯</div>
+                <div class="carte-titres">
+                  <div class="carte-ligne-haut">
+                    <span class="carte-type" style="color:var(--type-ICP)">ICP · INDICATEUR CLÉ DE PERFORMANCE (KPI)</span>
+                    <span class="carte-droite-haut">
+                      <span class="mintzberg">
+                        <span class="pastille" data-axe="projet" title="Projet"></span>
+                        <span class="pastille" data-axe="humaine" title="Humaine"></span>
+                      </span>
+                      <span class="badge-fiabilite precaution">⚠ Précaution</span>
+                    </span>
+                  </div>
+                  <div class="carte-nom">Sprint Completion (Scrum)</div>
+                </div>
+              </div>
+              <div class="carte-def">Part du périmètre engagé dans le sprint qui est effectivement terminée. Lue par tendance, non en absolu…</div>
+              <div class="carte-meta-bas">
+                <span class="carte-freq">🕐 À chaque sprint</span>
+                <span class="badge-maturite">🌿 Équipe intermédiaire</span>
+              </div>
+              <div class="carte-chips-cadres">
+                <span class="chip-cadre">🌀 Scrum</span>
+              </div>
+              <div class="carte-pied">
+                <div class="panier-icones">
+                  <button class="panier-btn" title="Marquer en place">&check;</button>
+                  <button class="panier-btn actif-idee" title="Retirer du tableau de bord">💡</button>
+                </div>
+                <button class="btn-detail">Voir le détail →</button>
+              </div>
             </div>
-            <div class="fiche-card">
-              <span class="titre">MTTR DORA</span>
-              <span class="mintzberg">
-                <span class="pastille" data-axe="methodologique" title="Méthodologique"></span>
-              </span>
+
+            <!-- Fiche 4 — Throughput d'équipe, Fiable -->
+            <div class="carte-ind fib-fiable" tabindex="0" role="button">
+              <div class="carte-en-tete">
+                <div class="carte-icone" style="background:#e6510018;color:#e65100">⚡</div>
+                <div class="carte-titres">
+                  <div class="carte-ligne-haut">
+                    <span class="carte-type" style="color:var(--type-FLUX)">FLUX · FLUX &amp; THROUGHPUT (LEAN)</span>
+                    <span class="carte-droite-haut">
+                      <span class="mintzberg">
+                        <span class="pastille" data-axe="projet" title="Projet"></span>
+                      </span>
+                      <span class="badge-fiabilite fiable">&check; Fiable</span>
+                    </span>
+                  </div>
+                  <div class="carte-nom">Throughput d'équipe (Lean / Kanban)</div>
+                </div>
+              </div>
+              <div class="carte-def">Nombre d'éléments terminés par unité de temps. Vitesse de sortie d'un système, mesurée en aval…</div>
+              <div class="carte-meta-bas">
+                <span class="carte-freq">🕐 Hebdomadaire</span>
+                <span class="badge-maturite">🌱 Équipe débutante</span>
+              </div>
+              <div class="carte-chips-cadres">
+                <span class="chip-cadre">♻️ Lean / Six Sigma</span>
+                <span class="chip-cadre">📊 Kanban</span>
+              </div>
+              <div class="carte-pied">
+                <div class="panier-icones">
+                  <button class="panier-btn" title="Marquer en place">&check;</button>
+                  <button class="panier-btn" title="Marquer à envisager">💡</button>
+                </div>
+                <button class="btn-detail">Voir le détail →</button>
+              </div>
             </div>
-            <div class="fiche-card">
-              <span class="titre">Sprint completion</span>
-              <span class="mintzberg">
-                <span class="pastille" data-axe="projet" title="Projet"></span>
-                <span class="pastille" data-axe="humaine" title="Humaine"></span>
-              </span>
-            </div>
-            <div class="fiche-card">
-              <span class="titre">Throughput d'équipe</span>
-              <span class="mintzberg">
-                <span class="pastille" data-axe="projet" title="Projet"></span>
-              </span>
-            </div>
-            <div class="fiche-card suite">+ 3 autres fiches</div>
+
+            <div class="suite-fiches">+ 5 autres fiches</div>
           </div>
+
           <div class="legende-mintzberg">
             <span class="leg-projet">Projet</span>
             <span class="leg-strategique">Stratégique</span>
@@ -589,9 +772,9 @@
           </div>
         </div>
 
-        <div class="pied">Mintzberg apparaît à droite du titre — pas en filtre, en lecture.</div>
+        <div class="pied">Format identique au reste du site. Boutons panier ✓ et 💡 disponibles dès l'accueil.</div>
       </div>
-      <p class="col-annot"><strong>Lecture.</strong> Chaque fiche-card porte 1 à 2 <strong>pastilles colorées</strong> à droite du titre — c'est sa signature Mintzberg. Tooltip au survol pour le nom de la dimension. Une légende discrète en pied de liste rappelle le code couleur. La grille de lecture reste lisible <em>sur la fiche</em>, sans encombrer la porte d'entrée.</p>
+      <p class="col-annot"><strong>Lecture.</strong> Chaque fiche-card porte son identité complète : icône, type, nom, fiabilité (bordure colorée), pitch, fréquence, palier de maturité, cadre méthodologique. Mintzberg en pastilles dans l'en-tête, légende en pied. <strong>Boutons panier en pied de chaque card</strong> : ✓ <em>marquer en place</em> et 💡 <em>marquer à envisager</em>. La 2<sup>e</sup> fiche est déjà <em>en place</em> (vert), la 3<sup>e</sup> est <em>à envisager</em> (ambre). L'utilisateur construit son tableau de bord depuis l'accueil.</p>
     </div>
 
   </div>
