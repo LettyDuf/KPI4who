@@ -2936,6 +2936,52 @@
       margin-top: -1rem;
       animation: accueil-unifie-fade-in 0.18s ease-out;
     }
+
+    /* Index inline des fiches-questions dans le panneau de la cartouche
+       question (23.d-3 — variante β tranchée par Lætitia 08/05/2026 sur
+       mockup-23d3 commit bd29219).
+       Calque fidèle du style #vue-par-question .liste-questions, scopé
+       ici sur le panneau pour éviter les fuites. Emojis (set validé) à
+       la place des SVG line, titres seuls (pas de sous-titre panel). */
+    .accueil-unifie .panneau-cartouche .liste-questions-inline {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 0.5rem;
+    }
+    .accueil-unifie .panneau-cartouche .liste-questions-inline a {
+      display: flex;
+      align-items: center;
+      gap: 0.95rem;
+      padding: 0.85rem 1rem;
+      background: #eef1f6;
+      border: 1.5px solid #d8dceb;
+      border-radius: 8px;
+      text-decoration: none;
+      color: inherit;
+      transition: var(--trans);
+    }
+    .accueil-unifie .panneau-cartouche .liste-questions-inline a:hover,
+    .accueil-unifie .panneau-cartouche .liste-questions-inline a:focus-visible {
+      border-color: var(--niv-2);
+      background: #e3e8f0;
+      transform: translateX(2px);
+    }
+    .accueil-unifie .panneau-cartouche .liste-questions-inline .emoji-q {
+      flex-shrink: 0;
+      width: 28px;
+      font-size: 22px;
+      line-height: 1;
+      text-align: center;
+    }
+    .accueil-unifie .panneau-cartouche .liste-questions-inline .titre {
+      flex: 1;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--texte-sur-surface);
+      line-height: 1.4;
+    }
     .accueil-unifie .cartouche-libelle {
       display: flex;
       flex-direction: column;
@@ -3441,7 +3487,34 @@
     </button>
 
     <!-- Panneau dépliable de la cartouche question — peuplé en 23.d-3 (index inline des fiches-questions) -->
-    <div id="panneau-cartouche-question" class="panneau-cartouche" data-cartouche-panneau="question" role="region" aria-label="Index des questions terrain" hidden></div>
+    <div id="panneau-cartouche-question" class="panneau-cartouche" data-cartouche-panneau="question" role="region" aria-label="Index des questions terrain" hidden>
+      <ol class="liste-questions-inline" role="list">
+        <li><a href="mockup-fiche-question-pasteque.html">
+          <span class="emoji-q" aria-hidden="true">&#x1F349;</span>
+          <span class="titre">Mes indicateurs refl&egrave;tent-ils la r&eacute;alit&eacute; du terrain&nbsp;?</span>
+        </a></li>
+        <li><a href="mockup-fiche-question-pilotage-hebdo.html">
+          <span class="emoji-q" aria-hidden="true">&#x1F4C5;</span>
+          <span class="titre">Quoi mettre dans mon pilotage hebdomadaire&nbsp;?</span>
+        </a></li>
+        <li><a href="mockup-fiche-question-amelioration-continue.html">
+          <span class="emoji-q" aria-hidden="true">&#x1F504;</span>
+          <span class="titre">Par o&ugrave; d&eacute;marrer une d&eacute;marche d'am&eacute;lioration continue&nbsp;?</span>
+        </a></li>
+        <li><a href="mockup-fiche-question-resistance-transformation.html">
+          <span class="emoji-q" aria-hidden="true">&#x1F6A7;</span>
+          <span class="titre">Pourquoi ma transformation r&eacute;siste&nbsp;?</span>
+        </a></li>
+        <li><a href="mockup-fiche-question-cascade-objectifs.html">
+          <span class="emoji-q" aria-hidden="true">&#x1FA9C;</span>
+          <span class="titre">Comment cascader des objectifs jusqu'au terrain&nbsp;?</span>
+        </a></li>
+        <li><a href="mockup-format-fiche-question.html">
+          <span class="emoji-q" aria-hidden="true">&#x1FA9E;</span>
+          <span class="titre">Sc&egrave;ne 1 &mdash; Dans le mockup-format</span>
+        </a></li>
+      </ol>
+    </div>
 
     <div class="marqueur-bloc">&mdash; ou &mdash;</div>
 
