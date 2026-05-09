@@ -1093,3 +1093,30 @@ Sur les quatre lots, 33 liens ont été posés sur 25 champs éditoriaux de 18 f
 
 **Dépendance** : aucune. Le pub/sub posé en 23.a fournit le hook pour brancher la sérialisation. Le chantier 24 ne nécessite pas que les chantiers 23.b à 23.g soient terminés — il peut s'enchaîner après 23.c (mécanique chips fonctionnelle) à condition que 23.b et 23.c soient livrés.
 
+
+
+## 25. Audit des zones inactives — code orphelin post-23.f *(📋 ouverte le 09/05/2026, repérée pendant le chantier 22)*
+
+**Origine.** Pendant la cartographie du chantier 22 (harmonisation tutoiement), repérage de la fonction `_rendreQuestionnaire()` (VUE 3 du module questionnaire, ~80 lignes JS + ~30 lignes éditoriales lignes 8730-8820 + variable `QUESTIONS`) : encore appelée par `_rendreToutesLesVues()`, mais **pas reliée au bandeau de navigation actuel** (6 entrées : Accueil / Tableau de bord / Cascade / Maturité ? / Lexique / À propos). Donc rendue mais inatteignable depuis l'UI. Code orphelin probable, hérité de l'ancien outil pré-23.f.
+
+**Doctrine.** Le chantier 23.f a déjà retiré 4 portes + pyramide + Stepper + DiagnosticCadre, soit ~2 934 lignes. Le présent chantier prolonge la même logique de nettoyage : **toute zone de code rendue mais inatteignable depuis le bandeau de nav actuel doit être identifiée, statuée, et retirée** si confirmée orpheline. Cohérent avec l'esprit Lean « pas de stock dormant », et avec l'engagement utilisateur du commit 127f592 (« Ne pas garder de code mort en attendant »).
+
+**Périmètre.**
+- **Audit systématique** : croiser tous les `_rendreXxx()` du code avec les `data-entree=` du bandeau de nav et les appels `CM.App.ouvrirVueDuBandeau(...)` pour identifier les zones rendues sans entrée d'accès.
+- **Cas connu n°1** : `_rendreQuestionnaire()` (VUE 3) + variable `QUESTIONS` + CSS `.questionnaire-intro` / `.resultat-zone` / `.resultat-titre` (lignes 467-484). À retirer si confirmé orphelin.
+- **Cas connu n°2** : `_rendreCascade()` et `_rendreMaturite()` sont eux dans le bandeau (entrées « Cascade » et « Maturité ? »), donc pas concernés. Bandeau actuel à valeur de référence pour l'audit.
+- **CSS associé** : retirer également les sélecteurs CSS qui ne sont consommés que par les zones inactives (analogie avec le commit `35bbc61` qui a retiré `.porte-statut`).
+
+**Hors périmètre.**
+- Le **traducteur orthodoxe** (`CM.AccueilUnifie._traduirePourReferentiel()`, doctrine `project_doctrine_traducteur_orthodoxe.md`) reste, même si certains chemins d'appel ont disparu en 23.f.
+- Les **fonctions utilitaires** (`_basculerVue()`, `_cacherAccueils()`, etc.) restent tant qu'elles servent au moins une vue active.
+
+**Méthode.**
+1. Inventaire grep : toutes les fonctions `_rendreXxx()` + tous les `data-entree=` du bandeau + tous les `ouvrirVueDuBandeau(`.
+2. Croisement pour produire la liste des « rendues sans entrée ».
+3. Pour chaque cas : confirmer l'orphelinat (grep récursif d'aucune référence externe), retirer en commit atomique avec message identifiant la zone (CSS + HTML + JS + référentiels associés).
+4. Smoke test interactif post-retrait pour vérifier qu'aucune fonction encore vivante ne s'appuyait silencieusement sur la zone retirée.
+
+**Articulations.** Indépendant des chantiers 21, 13.bis, 24. Peut être enchaîné juste après le chantier 22 (les zones tutoyées en 22 grappes A/B/C l'ont été *avant* statut d'orphelinat — si confirmées orphelines, elles seront retirées avec leurs frères, le travail tutoiement n'aura pas été perdu mais aura été protégé contre une future réactivation involontaire).
+
+**Effort estimé** : 2-4 h sur 1 séance pour le cas connu n°1 + audit complet.
