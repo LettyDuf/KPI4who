@@ -4,6 +4,40 @@
 
 ---
 
+## 0. Statut post-23.f (allègement option C, 08/05/2026)
+
+Le chantier 14 est livré (tag `mvp-chantier-14-livre` sur `6ea868b`).
+Le chantier 23.f a ensuite retiré les 4 portes consommatrices (porte
+problème, cadre, niveau, par question), la pyramide d'accueil et l'orchestrateur
+générique `CM.Stepper`. Ce qui reste vivant de l'architecture hexagonale :
+
+- **Le cœur du domaine** — `CM.RequeteMetriques.executer(filtre)` est l'API unique
+  par laquelle tous les chemins d'accès aux fiches passent. Le contrat formalisé
+  en §10.3 reste la source unique de vérité.
+- **Le panier** (`CM.Panier`) — agrégat utilisateur transverse, inchangé par 23.f.
+- **Le vocabulaire fermé** — 7 tags problèmes + 14 tags thématiques (§10.2),
+  toujours portés par les fiches.
+- **Le champ `reperes`** (§10.1) — affichage des bandes industrielles, optionnel,
+  inchangé.
+
+Ce qui devient caduc par 23.f :
+
+- Les sections **§2 Périmètre MVP — 4 portes existantes** et **§3.4 Architecture
+  livrée** décrivent une architecture qui n'existe plus. §3.4 a été réécrite
+  ci-dessous pour refléter l'état post-23.f. §2 est laissée en place comme
+  archive.
+- Les sections **§4 Plan d'attaque**, **§5 Procédure de versionnement**,
+  **§7 Articulations**, **§8 Ce que le chantier ne fait pas**, **§9 Journal**
+  sont des **archives historiques** du chantier 14 livré. Elles documentent
+  comment l'architecture a été construite, pas comment elle vit aujourd'hui.
+
+Le nouveau consommateur unique de `CM.RequeteMetriques.executer` est
+**`CM.AccueilUnifie`** (chantier 23.b→23.e), qui formule un filtre canonique
+à 4 axes (niveau / problème / cadre / maturité) à partir des chips de l'accueil
+unifié. Voir `cadre-indicateurs.html` § CM.AccueilUnifie pour le code.
+
+---
+
 ## 1. Mission
 
 Isoler la **description des métriques** (le domaine) des **chemins d'accès** (les portes, les questions, demain d'autres lentilles). Une métrique n'appartient à aucun chemin : elle existe dans le référentiel, elle est filtrée par des requêtes que les chemins formulent.
@@ -17,7 +51,7 @@ Vulgarisation : *la bibliothèque* garde les livres sur l'étagère centrale (le
 
 ---
 
-## 2. Périmètre MVP — 4 portes existantes
+## 2. Périmètre MVP — 4 portes existantes *(archive — caduc post-23.f)*
 
 Le MVP du chantier 14 est **iso-comportement visible** sur les quatre portes existantes (y compris celle encore en construction) :
 
@@ -70,55 +104,53 @@ Une seule règle : les flèches ne remontent pas. Un module du cœur ne connaît
 
 `CM.App` reste l'orchestrateur : événements globaux, routing hash, délégation de clics. Le chantier peut l'alléger en extrayant des sous-modules (`CM.Router` notamment, listé en Règle 1 du refactoring progressif) — mais seulement en greffe opportuniste, pas comme objectif.
 
-### 3.4 Architecture livrée (post-chantier 14)
+### 3.4 Architecture livrée (post-23.f, allègement option C)
 
-Section actée à la clôture de l'étape (d), 26/04/2026. Décrit ce qui est **vraiment en place** dans `cadre-indicateurs.html` après les étapes (a) → (d). Sert de référence pour le code, en complément de §3.1 (cible projetée à l'ouverture).
+Section réécrite le 08/05/2026 dans le cadre du chantier 23.f-7.5. Décrit
+ce qui est **vraiment en place** dans `cadre-indicateurs.html` après que
+les 4 portes du chantier 7.2a et l'orchestrateur générique `CM.Stepper`
+ont été retirés (commits 23.f-1 à 23.f-6, 08/05/2026).
 
 **Domaine isolé.** Les modules suivants forment le cœur, sans dépendance vers les chemins ni les vues :
 
-- `CM.Config` (~ligne 2541) — référentiel des types, fiabilités, maturités, niveaux de surface.
-- `CM.IndicateursMeta` (~ligne 3413) — métadonnées des fiches (tags, cadres, familles, tags thématiques, voisinage de cadres). Expose désormais aussi `rangFiabilite(ind)` — score numérique pour ordonner les fiches par qualité de mesure (mutualisé à l'étape (d), auparavant dupliqué dans trois modules consommateurs).
-- `CM.Referentiel` (catalogue des fiches indicateurs).
-- **`CM.RequeteMetriques`** (~ligne 3875) — API unique du domaine pour le filtrage. Signature `executer(filtre)` formalisée en §10.3. Tous les chemins passent par lui.
+- `CM.Config` — référentiel des types, fiabilités, maturités, niveaux de surface.
+- `CM.IndicateursMeta` — métadonnées des fiches (tags, cadres, familles, tags thématiques, voisinage de cadres). Expose `rangFiabilite(ind)` — score numérique pour ordonner les fiches par qualité de mesure (mutualisé à l'étape (d) du chantier 14).
+- `CM.Referentiel` — catalogue des fiches indicateurs.
+- **`CM.RequeteMetriques`** — API unique du domaine pour le filtrage. Signature `executer(filtre)` formalisée en §10.3. Tous les chemins passent par lui.
 
-**Chemins (adaptateurs d'entrée).** Trois traducteurs orthodoxes formulent un filtre conforme à §10.3 et délèguent à `executer` :
+**Chemins (adaptateurs d'entrée).** Un seul consommateur après 23.f :
 
-- `CM.DiagnosticProbleme` (~ligne 5924) — porte *Par mon problème*. Méthodes : `niveauxTous`, `niveauInfo`, `problemesPourNiveau`, `problemeInfo`, `recommander`, `aDeleguerPour`. La méthode `delegationPour` et sa table interne `DELEGATION` ont été retirées à l'étape (d) (code mort, 0 usages).
-- `CM.DiagnosticCadre` (~ligne 7066) — porte *Par mon cadre*. Méthodes : `niveauxTous`, `niveauInfo`, `cadreInfo`, `recommander`, `famillesAvecCadres`.
-- `CM.Roles` (porte *Par mon niveau*) — l'aspect traducteur sélection→filtre vit en pratique dans `CM.VuePorteNiveau._etapeResultats` après le refactor (c.3) : un `executer({niveau, tags, cadres})` à trois axes natif.
+- **`CM.AccueilUnifie`** — orchestrateur de la page unifiée *Choisir mes indicateurs* (chantier 23.b→23.e). Formule un filtre canonique à 4 axes (niveau / problème / cadre / maturité) à partir des chips de l'accueil unifié, et délègue à `CM.RequeteMetriques.executer`.
+- `CM.DiagnosticProbleme` — survit comme **fournisseur de métadonnées** (`niveauInfo`, `problemeInfo`, `niveauxTous`, `problemesPourNiveau`). Ses méthodes `recommander` et `aDeleguerPour` qui dérivaient des fiches via `executer` ont été supprimées avec la porte problème en 23.f-1. Reste utile à l'accueil unifié pour les libellés.
 
-**Vues (adaptateurs de sortie).** Quatre modules `CM.VuePorteX` rendent les fiches reçues :
+**Modules retirés au chantier 23.f.** Pour mémoire, le chantier 7.2a avait introduit plusieurs façades sur `CM.Stepper` qui n'existent plus :
 
-- `CM.VuePorteProbleme` (~ligne 6820) — façade au-dessus de `CM.Stepper`.
-- `CM.VuePorteCadre` (~ligne 7158) — contrôleur de la vue *Par mon cadre*.
-- `CM.VuePorteNiveau` (~ligne 7463) — façade `CM.Stepper`. `_etapeResultats` formule directement le filtre 3-axes, sans passer par les traducteurs frères (héritage du calque strict (c.3)).
-- `CM.VuePorteMaturite` — **emplacement réservé** (commentaire-balise architectural ~ligne 7982). Aucun module exécutable. Quand la porte sera instruite, suivra le patron des trois sœurs (cf. §c.4 et le commentaire-balise).
+- `CM.VuePorteProbleme`, `CM.VuePorteCadre`, `CM.VuePorteNiveau` (façades) — retirées en 23.f-1, 23.f-2, 23.f-3.
+- `CM.DiagnosticCadre` (chemin) — retiré en 23.f-3 (orphelin après suppression de ses 2 consommateurs).
+- `CM.VuePorteQuestion` (vue d'index) — retirée en 23.f-4 ; remplacée par l'index inline dans la cartouche question de l'accueil unifié.
+- `CM.Stepper` (orchestrateur générique) — retiré en 23.f-6 (orphelin après suppression des 3 façades).
+- `CM.App.basculerAccueil`, `CM.App.entrer` — retirées en 23.f-5 (toggle pyramide ↔ portes démantelé en 23.f-7.3).
 
-`CM.Composants` (~ligne 6216) et `CM.FicheViewModel` (~ligne 6127) restent les utilitaires de rendu HTML, partagés entre vues. Ne sont pas des chemins.
+**Vues survivantes.** L'app contextuelle (`#app`) avec ses 4 onglets internes (questionnaire, tableau de bord, cascade, maturité réflexive) reste pilotée par `CM.App.changerVue`. Le rendu des cartes indicateurs est assuré par `CM.Composants.htmlCarte` et `CM.FicheViewModel` — partagés par tous les consommateurs (accueil unifié, panier, fiches détaillées).
 
-**Tri local toléré.** Conformément à §10.3, les vues qui souhaitent un tri par fiabilité l'appliquent localement après réception, via `CM.IndicateursMeta.rangFiabilite(ind)`. Trois sites d'appel : `CM.DiagnosticProbleme.recommander`, `CM.DiagnosticCadre.recommander`, `CM.VuePorteNiveau._etapeResultats`.
+**Tri local toléré.** Conformément à §10.3, les vues qui souhaitent un tri par fiabilité l'appliquent localement après réception via `CM.IndicateursMeta.rangFiabilite(ind)`. Sites d'appel survivants : `CM.AccueilUnifie` (et toute future vue qui voudrait un tri spécifique).
 
-**Divergences avec §3.1 (cible projetée à l'ouverture).** Mineures, à acter pour l'historique :
-
-- L'étape (a) parlait d'un module `CM.Roles` qui deviendrait traducteur. En pratique, le rôle de traducteur pour la porte niveau est assumé par `CM.VuePorteNiveau._etapeResultats` directement (la vue formule le filtre, le module `CM.Roles` reste un inventaire). Aucun impact fonctionnel — la doctrine traducteur orthodoxe est respectée.
-- La porte *Par ma maturité* (c.4) reste un emplacement, pas un module. Acte documenté en §c.4.
-
-**Tags d'étape posés** (chaîne complète, pour reconstruire l'historique) :
+**Tags d'étape posés** (historique du chantier 14, archive) :
 
 | Tag | Commit | Acte |
 |---|---|---|
-| `baseline-avant-hexagonal` | `5655b03` | Point de retour absolu, posé à l'ouverture du chantier. |
+| `baseline-avant-hexagonal` | `5655b03` | Point de retour absolu, posé à l'ouverture du chantier 14. |
 | `mvp-etape-a-schema-inventorie` | `1ba5112` | Inventaire du schéma d'étiquettes livré. |
 | `mvp-etape-b-coeur-extrait` | `2a61336` | `CM.RequeteMetriques` extrait + tests verts. |
 | `mvp-etape-c1-porte-probleme-migree` | `83d3bd2` | Porte *Par mon problème* migrée. |
 | `mvp-etape-c2-porte-cadre-migree` | `894ab8a` | Porte *Par mon cadre* migrée. |
-| `mvp-etape-c3-porte-niveau-migree` | `34366f3` | Porte *Par mon niveau* migrée (premier triplet à 3 axes). |
-| `mvp-etape-c-portes-migrees` | `b17b776` | (c.4) actée, étape (c) globalement close. |
-| `mvp-chantier-14-livre` | *(à poser après §9 et MISSION.md)* | Clôture finale du chantier. |
+| `mvp-etape-c3-porte-niveau-migree` | `34366f3` | Porte *Par mon niveau* migrée. |
+| `mvp-etape-c-portes-migrees` | `b17b776` | Étape (c) globalement close. |
+| `mvp-chantier-14-livre` | `6ea868b` | Clôture du chantier 14, 26/04/2026. |
 
 ---
 
-## 4. Plan d'attaque
+## 4. Plan d'attaque *(archive — chantier 14 livré)*
 
 Quatre étapes. Chacune peut embarquer plusieurs commits atomiques. Validation explicite de Lætitia pour basculer d'une étape à la suivante.
 
@@ -208,7 +240,7 @@ Chaque porte migre indépendamment des autres. Sous-étape (c.N) = *porte N pass
 
 ---
 
-## 5. Procédure de versionnement et de rollback
+## 5. Procédure de versionnement et de rollback *(archive — chantier 14 livré)*
 
 Contrainte du chantier explicitement écrite noir sur blanc — pas juste un savoir-faire implicite.
 
@@ -261,7 +293,7 @@ Dans ces cas, Lætitia décide explicitement de convoquer tel ou tel panel. Pas 
 
 ---
 
-## 7. Articulations avec le reste du projet
+## 7. Articulations avec le reste du projet *(archive — chantier 14 livré)*
 
 ### 7.1 Chantier 10 — gelé à `5655b03`
 
@@ -282,7 +314,7 @@ Le chantier 12 (Transparence cotations → Lexique) et le chantier 13 (Outil de 
 
 ---
 
-## 8. Ce que le chantier 14 **ne** fait **pas**
+## 8. Ce que le chantier 14 **ne** fait **pas** *(archive — chantier 14 livré)*
 
 - Il ne change rien de visible pour l'utilisateur. Zéro nouveau libellé, zéro nouveau comportement, zéro nouvelle fiche.
 - Il ne crée pas les modes d'entrée parallèles (chantier 10 gelé).
@@ -460,7 +492,7 @@ Le module `CM.RequeteMetriques` compose donc deux sources de données ; il n'enr
 - Commit 3 (tests via patron générateur Node) : couvre tous les comportements limites du tableau ci-dessus + un panel de filtres représentatifs croisant 2 à 4 clauses.
 - Aucune modification des consommateurs (`CM.DiagnosticProbleme`, `CM.DiagnosticCadre`, `CM.Roles`) avant l'étape (c).
 
-## 9. Journal du chantier
+## 9. Journal du chantier *(archive — chantier 14 livré)*
 
 - **23/04/2026 fin de journée** — ouverture du chantier. Commit atomique `chore(chantier-14): ouverture — baseline + scénario régression + procédure rollback` embarquant (1) tag git `baseline-avant-hexagonal` sur `5655b03`, (2) `scenario-non-regression.md` posé, (3) ce doc compagnon, (4) backlog mis à jour avec chantier 14 actif / chantier 10 gelé, (5) mémoire `project_chantier_14_ouverture.md` posée. Prochaine étape : (a) inventaire du schéma d'étiquettes.
 - **24/04/2026 fin de journée — ouverture étape (b), tâche 1 tranchée.** Livraison du preview `preview-14b-seuils-paliers.html` (commit `21c76b2`). Arbitrage : **Option B retenue** — champ `reperes` optionnel sur les fiches à référentiel reconnu, structure flexible-normalisée, affichage collapsé par défaut. Décisions détaillées actées en §10.1 ci-dessus. Prochaines tâches de l'étape (b) : (2) arrêter le vocabulaire fermé des tags thématiques, (3) poser la signature `executer(filtre)`.
