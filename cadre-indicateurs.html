@@ -4164,7 +4164,7 @@ CM.RequeteMetriques = (function() {
     if (CLAUSES_ADMISES.indexOf(cle) !== -1) return;
     var sugg = suggestionClause(cle);
     var msg = "clause inconnue '" + cle + "'";
-    if (sugg) { msg += " (vouliez-vous dire '" + sugg + "' ?)"; }
+    if (sugg) { msg += " (voulais-tu dire '" + sugg + "' ?)"; }
     msg += ". Clauses admises : " + CLAUSES_ADMISES.join(', ') + ".";
     erreur(msg);
   }
@@ -8627,7 +8627,7 @@ CM.App = (function() {
     var total = CM.Panier.taille();
     if (total === 0) return;
     var pluriel = (total > 1);
-    var message = 'Vider entièrement votre tableau de bord ?\n\n'
+    var message = 'Vider entièrement ton tableau de bord ?\n\n'
       + total + ' fiche' + (pluriel ? 's' : '')
       + ' (en place + à envisager) '
       + 'ser' + (pluriel ? 'ont retirées' : 'a retirée')
