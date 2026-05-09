@@ -73,3 +73,54 @@ Deux registres lexicaux divergeaient : *indicateur / fiche*, *combine / correspo
 - Les valeurs ci-dessus sont valides **tant que** le contenu du référentiel ne change pas et que `CM.RequeteMetriques.executer` reste l'orchestrateur de filtre. Toute évolution de l'un ou de l'autre déclenche une recapture I1-I6 dans la même séance et un commit dédié.
 - Le **libellé d'axes actifs** (« Lentilles actives — Niveau. » pour I2, « Lentilles actives — Cadre. » pour I3) ne nomme que **l'axe**, pas la valeur. C'est cohérent avec le code de `_libelleAxesActifs` dans `CM.AccueilUnifie`. Pas un invariant à figer ici, mais à garder en tête si on évolue le libellé un jour.
 - I5 a été validé par croisement statique des fiches `p1` à `p5` du référentiel à la même date (cf. `git show d03ccd0:cadre-indicateurs.html` aux lignes ~6020 à ~6068). Pas de capture interactive supplémentaire requise tant que ces 5 fiches restent en tête de Niveau · Programme.
+
+---
+
+## Clôture chantier 23.g (09/05/2026)
+
+Le chantier 23.g — *tests E2E + sentinelles + scénario de non-régression de l'accueil unifié* — est officiellement clos.
+
+### Bilan livré
+
+- **23.g-1** (`8f746e7`) — `scenario-non-regression.md` réécrit pour l'architecture post-23.f : §1-§10 actualisés (~38 pas exécutables), §11 invariants I1-I6 posés en structure.
+- **23.g-2** (`6a3ba46`) — `journal-invariants-pre-c.md` retiré (60 l. caduques).
+- **23.g-3** (`fab24ff`) — ce journal créé, 6 invariants figés sur HEAD = `d03ccd0`, 3 constats collatéraux fixés.
+- **23.g-4** — tests automatisés `CM.AccueilUnifie`, livrés en 5 sous-commits :
+  - `46d1221` — squelette du harnais section A + générateur (4 tests pilotes)
+  - `56472ba` — section A complète (17 nouveaux tests, total 21 sur stubs)
+  - `942733d` — marqueurs `BEGIN/END` autour de `CM.Referentiel` et `CM.IndicateursMeta`
+  - `aa98e37` — marqueurs `CM.REFERENTIEL.DATA — BEGIN/END` autour des 15 blocs de données
+  - `abfb3aa` — harnais section B (sentinelles I1-I6) + générateur 5-zones (9 tests sur référentiel réel)
+- **Préalable C3 résolu** (`371a671`, hors chantier 23.g) — harmonisation des deux libellés vide sur la grammaire canonique du compteur. C3 marqué ✅ RÉSOLU dans ce journal.
+
+### Couverture des invariants
+
+| Invariant | Vérifié à la main (§ 11 scénario) | Vérifié automatiquement |
+|---|---|---|
+| I1 — total 89 fiches | ✅ | ✅ section B test I1 + cas adjacent A1 |
+| I2 — Programme = 9, ids p1-p5 | ✅ | ✅ section B test I2 + cas adjacent A2 |
+| I3 — DORA = 4, ids o1-o4 | ✅ | ✅ section B test I3 |
+| I4 — Programme ∩ DORA = 0 | ✅ | ✅ section B test I4 + cas adjacent A3 |
+| I5 — fiabilité décroissante | ✅ | ✅ section B test I5 |
+| I6 — Stratégique ∩ Scrum = 0 | ✅ | ✅ section B test I6 |
+
+Chaque sentinelle automatisée appelle directement `CM.RequeteMetriques.executer(filtre)` sur le référentiel réel inliné. Les cas adjacents A1-A3 valident en plus que la façade publique `CM.AccueilUnifie` (chips → libellés DOM) tombe sur les mêmes valeurs.
+
+### Doctrine de maintenance
+
+Quand une sentinelle passe au rouge, **ce n'est pas un bug à étouffer**. C'est un signal d'évolution du référentiel ou d'un module amont :
+
+1. Ouvrir ce journal → identifier l'invariant qui a bougé.
+2. Auditer la cause (ajout de fiche, retag d'un cadre, modification d'une clause de filtre).
+3. Si l'évolution est légitime : mettre à jour la valeur figée dans le tableau ci-dessus, mettre à jour le test correspondant dans `tests-accueil-unifie-sentinelles.html`, recommit dédié au geste.
+4. Si l'évolution est suspecte (ex. : un indicateur DORA tagué `programme` casse I4) : reverter et discuter avant.
+
+### Outil compagnon
+
+Avant un commit qui touche à `CM.AccueilUnifie`, `CM.Referentiel`, `CM.IndicateursMeta` ou `CM.RequeteMetriques`, lancer :
+
+```
+node outils/lancer-tests-accueil-unifie.js
+```
+
+Régénère les deux harnais et parse-check syntaxique. La validation comportementale reste manuelle dans Safari (doctrine zéro-dépendance, modules DOM-dépendants).

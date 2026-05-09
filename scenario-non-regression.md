@@ -119,6 +119,14 @@ Liste manuelle des clics à passer **avant** chaque évolution majeure de l'outi
 - ✎ **I5 — Tri par fiabilité — vérification visuelle.** Sur la sortie I2, vérifier que l'**ordre des fiches** suit la fiabilité décroissante (`fiable` avant `precaution` avant `risque`). Si plusieurs fiches partagent la même fiabilité, l'ordre secondaire doit être stable d'une exécution à l'autre — figer cet ordre dans le journal.
 - ✎ **I6 — Combinaison vide — message éditorial.** Choisir une combinaison sans correspondance (ex : *Niveau · Stratégique* + *Cadre · Scrum*). **Copier le texte exact** du message éditorial affiché — c'est lui qui doit être préservé après toute évolution.
 
+### Harnais automatisés (chantier 23.g-4)
+
+Depuis le chantier 23.g-4, les invariants I1-I6 ne se vérifient plus uniquement à la main : deux harnais HTML autonomes les exercent automatiquement.
+
+- ✎ **Smoke-test section A — sémantique du module en isolation.** Ouvrir `tests-accueil-unifie.html` dans Safari. Attendu : **✓ 21 / 21 tests passent.** Couvre la mécanique de `CM.AccueilUnifie` sur stubs synthétiques (sélection/désélection chips, persistance via Preferences, libellé d'axes actifs sur 4 patterns français, libellé canonique vide, comportements limites, pub/sub).
+- ✎ **Smoke-test section B — sentinelles I1-I6 sur référentiel réel.** Ouvrir `tests-accueil-unifie-sentinelles.html` dans Safari. Attendu : **✓ 9 / 9 sentinelles passent.** Reproduit les invariants I1-I6 du `journal-invariants-23g.md` en assertions automatiques + 3 cas adjacents qui exercent la façade publique. Doctrine : **une sentinelle rouge n'est pas un bug à étouffer, c'est un signal d'évolution du référentiel** — ouvrir le journal, acter le changement, mettre à jour le test.
+- ✎ **Outil compagnon CLI.** Avant un commit qui touche à `CM.AccueilUnifie`, `CM.Referentiel`, `CM.IndicateursMeta`, ou `CM.RequeteMetriques`, lancer : `node outils/lancer-tests-accueil-unifie.js`. Régénère les deux harnais (extraction des zones depuis `cadre-indicateurs.html`) et fait un parse-check syntaxique. Ne dispense pas du smoke-test Safari — la validation comportementale reste manuelle (les modules sont DOM-dépendants, doctrine zéro-dépendance du projet ne porte pas JSDOM).
+
 ---
 
 ## Procédure avant/après une évolution majeure
