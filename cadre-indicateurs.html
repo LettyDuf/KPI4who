@@ -126,26 +126,6 @@
       background: var(--page-bg);
       position: relative;
     }
-    .accueil-intro {
-      text-align: center;
-      color: white;
-      margin-bottom: 2rem;
-      max-width: 600px;
-    }
-    .accueil-intro h1 { font-size: 1.85rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.75rem; }
-    .accueil-intro p  {
-      font-size: 1.45rem;
-      font-weight: 400;
-      font-style: italic;
-      color: #FFD180;
-      line-height: 1.45;
-      margin: 0 auto 1rem;
-      max-width: 540px;
-      letter-spacing: 0.2px;
-      text-shadow: 0 1px 12px rgba(255, 180, 80, 0.25);
-    }
-    .intro-chip {
-      display: inline-flex; align-items: center; gap: 0.5rem;
       background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
       border-radius: 20px; padding: 0.3rem 0.9rem;
       font-size: 0.72rem; color: rgba(255,255,255,0.78);
@@ -333,86 +313,6 @@
       color: rgba(255,255,255,0.78);
       font-style: italic;
     }
-    /* Pyramide */
-    .pyramide { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; }
-    .bande {
-      background: rgba(255,255,255,0.08);
-      backdrop-filter: blur(12px);
-      border: 1.5px solid rgba(255,255,255,0.18);
-      border-radius: 12px;
-      padding: 1rem 1.5rem;
-      cursor: pointer;
-      transition: background 0.2s, border-color 0.2s, transform 0.18s, box-shadow 0.2s;
-      color: white;
-      font-family: inherit;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      gap: 0.9rem;
-    }
-    .bande:hover, .bande:focus-visible {
-      background: rgba(255,255,255,0.16);
-      border-color: rgba(255,255,255,0.38);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 28px rgba(0,0,0,0.28);
-      outline: none;
-    }
-    .bande.flash { background: rgba(255,255,255,0.32) !important; border-color: rgba(255,255,255,0.7) !important; }
-
-    /* Largeurs progressives + couleur de niveau par border-top (même pattern que le niveau 4) */
-    .bande-1 { width: 250px; border-top: 3px solid rgba(180,188,255,0.80); } /* Indigo clair — Stratégique */
-    .bande-2 { width: 390px; border-top: 3px solid rgba(100,181,246,0.80); } /* Bleu clair  — Portefeuille  */
-    .bande-3 { width: 530px; border-top: 3px solid rgba(102,210,130,0.80); } /* Vert clair  — Programme    */
-
-    /* Typographie des bandes niveaux 1-3 — tailles augmentées */
-    .b-icone { font-size: 2rem;    flex-shrink: 0; }
-    .b-corps { flex: 1; min-width: 0; }
-    .b-nom   { font-size: 1.02rem; font-weight: 700; margin-bottom: 0.2rem; }
-    .b-desc  { font-size: 0.83rem; opacity: 0.72; line-height: 1.4; }
-    .b-chip  {
-      display: inline-block; margin-top: 0.5rem;
-      background: rgba(255,255,255,0.13); border-radius: 20px;
-      padding: 0.15rem 0.6rem; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.3px;
-    }
-    .b-fleche { font-size: 1rem; opacity: 0.4; flex-shrink: 0; transition: opacity 0.18s, transform 0.18s; }
-    .bande:hover .b-fleche { opacity: 0.85; transform: translateX(3px); }
-
-    /* Niveau 4 — split TI / Affaires */
-    .niv4-container { width: 690px; display: flex; gap: 6px; align-items: stretch; }
-    .carte-branche {
-      flex: 1;
-      background: rgba(255,255,255,0.08);
-      backdrop-filter: blur(12px);
-      border: 1.5px solid rgba(255,255,255,0.18);
-      border-radius: 12px;
-      padding: 0.9rem 1rem;
-      display: flex; flex-direction: column; gap: 0.6rem;
-    }
-    .carte-ti  { border-top: 3px solid rgba(80,210,195,0.65); }  /* Turquoise — TI      */
-    .carte-aff { border-top: 3px solid rgba(255,160,80,0.65);  } /* Orange    — Affaires */
-    .branche-entete { display: flex; align-items: center; gap: 0.6rem; }
-    .branche-ico  { font-size: 1.75rem; flex-shrink: 0; }
-    .branche-nom  { font-size: 0.95rem; font-weight: 700; color: white; }
-    .branche-desc { font-size: 0.76rem; color: rgba(255,255,255,0.65); line-height: 1.35; margin-top: 0.1rem; }
-    .grille-sous { display: grid; gap: 0.35rem; }
-    .grille-ti  { grid-template-columns: 1fr 1fr; }
-    .grille-aff { grid-template-columns: 1fr 1fr; }
-    .btn-sous {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.13);
-      border-radius: 8px;
-      padding: 0.55rem 0.6rem;
-      cursor: pointer; font-family: inherit;
-      font-size: 0.80rem; font-weight: 600;
-      color: white; line-height: 1.3;
-      transition: background 0.15s, border-color 0.15s, transform 0.13s;
-      display: flex; align-items: center; gap: 0.35rem; justify-content: center; text-align: center;
-    }
-    .btn-sous:hover { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.3); transform: translateY(-1px); }
-    .btn-sous.flash { background: rgba(255,255,255,0.32) !important; border-color: rgba(255,255,255,0.7) !important; }
-    .s-ico { font-size: 1rem; }
-    .note-domaine { font-size: 0.70rem; color: rgba(255,255,255,0.40); text-align: center; line-height: 1.4; }
-    .note-bas { margin-top: 1rem; font-size: 0.72rem; color: rgba(255,255,255,0.32); text-align: center; }
 
     /* ══════════════════════════════════════════════
        APPLICATION — EN-TÊTE
@@ -1241,23 +1141,6 @@
        ACCUEIL PYRAMIDE — pied discret (lien vers vue alternative)
        Hérite de la palette sombre du fond pyramide (cohérence avec .portes-pied).
     ══════════════════════════════════════════════ */
-    .accueil-pied {
-      margin-top: 1.5rem;
-      text-align: center;
-      font-size: 0.85rem;
-    }
-    .accueil-pied a {
-      color: rgba(255,255,255,0.72);
-      text-decoration: none;
-      border-bottom: 1px dashed rgba(255,255,255,0.32);
-      padding-bottom: 1px;
-      transition: color 0.18s ease, border-bottom-color 0.18s ease;
-    }
-    .accueil-pied a:hover,
-    .accueil-pied a:focus-visible {
-      color: white;
-      border-bottom-color: white;
-    }
 
     /* ══════════════════════════════════════════════
        VUE PANIER — Mon tableau de bord (chantier 9.B)
@@ -1660,10 +1543,6 @@
       /* Vue panier — bascule empilée sous 900px : la métaphore miroir
          s'efface au profit de la lisibilité en largeur réduite. */
       .panier-tdb-grille { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 730px) {
-      .bande-1, .bande-2, .bande-3, .niv4-container { width: 100%; }
-      .niv4-container { flex-direction: column; }
     }
     @media (max-width: 640px) {
       .onglets { display: none; }
@@ -2357,125 +2236,6 @@
   </style>
 </head>
 <body>
-
-<!-- ══════════════════════════════════════════════════════
-     ACCUEIL — PYRAMIDE HIÉRARCHIQUE (4 niveaux)
-══════════════════════════════════════════════════════ -->
-<div id="accueil">
-  <button class="apropos-btn" onclick="CM.Apropos.ouvrir()" aria-label="&Agrave; propos de cet outil">&Agrave; propos</button>
-
-  <div class="accueil-intro">
-    <h1>Par mon niveau</h1>
-    <p>Ton attention est rare. O&ugrave; la portes-tu&nbsp;?</p>
-    <span class="intro-chip">Lean Six Sigma &middot; DORA &middot; OKRs &middot; Drucker &middot; 4 niveaux &middot; 75+ indicateurs</span>
-  </div>
-
-
-  <div class="pyramide">
-
-    <!-- Niveau 1 : Stratégique -->
-    <button class="bande bande-1" onclick="CM.App.entrer('strategique',null,null,this)">
-      <span class="b-icone">&#x1F3DB;</span>
-      <div class="b-corps">
-        <div class="b-nom">Strat&eacute;gique</div>
-        <div class="b-desc">Direction, Board &amp; Gouvernance</div>
-        <span class="b-chip">IGO &middot; ORC &middot; II</span>
-      </div>
-      <span class="b-fleche">&#8250;</span>
-    </button>
-
-    <!-- Niveau 2 : Portefeuille -->
-    <button class="bande bande-2" onclick="CM.App.entrer('portefeuille',null,null,this)">
-      <span class="b-icone">&#x1F4CA;</span>
-      <div class="b-corps">
-        <div class="b-nom">Portefeuille</div>
-        <div class="b-desc">Arbitrage investissements &amp; allocation des ressources</div>
-        <span class="b-chip">ICP &middot; ORC &middot; ROI &middot; Risques</span>
-      </div>
-      <span class="b-fleche">&#8250;</span>
-    </button>
-
-    <!-- Niveau 3 : Programme & Projet -->
-    <button class="bande bande-3" onclick="CM.App.entrer('programme',null,null,this)">
-      <span class="b-icone">&#x1F5C2;</span>
-      <div class="b-corps">
-        <div class="b-nom">Programme &amp; Projet</div>
-        <div class="b-desc">Coordination multi-équipes, livraison d'initiatives</div>
-        <span class="b-chip">ICP &middot; FLUX &middot; ICC &middot; Avancement</span>
-      </div>
-      <span class="b-fleche">&#8250;</span>
-    </button>
-
-    <!-- Niveau 4 : Équipes (TI | Affaires) -->
-    <div class="niv4-container">
-
-      <!-- Branche TI — 4 domaines distincts par profil de métriques -->
-      <div class="carte-branche carte-ti">
-        <div class="branche-entete">
-          <span class="branche-ico">&#x1F4BB;</span>
-          <div>
-            <div class="branche-nom">Equipes TI</div>
-            <div class="branche-desc">DORA &middot; FLUX &middot; Fiabilité &middot; Securite</div>
-          </div>
-        </div>
-        <div class="grille-sous grille-ti">
-          <button class="btn-sous" onclick="CM.App.entrer('equipes','ti','dev',this)">
-            <span class="s-ico">&#x1F3D7;</span> Developpement
-          </button>
-          <button class="btn-sous" onclick="CM.App.entrer('equipes','ti','plateforme',this)">
-            <span class="s-ico">&#x1F680;</span> Plateforme &amp; DevOps
-          </button>
-          <button class="btn-sous" onclick="CM.App.entrer('equipes','ti','ops-support',this)">
-            <span class="s-ico">&#x1F527;</span> Operations &amp; Support
-          </button>
-          <button class="btn-sous" onclick="CM.App.entrer('equipes','ti','sécurité',this)">
-            <span class="s-ico">&#x1F6E1;</span> Securite
-          </button>
-        </div>
-        <div class="note-domaine">Dev inclut Produit numérique &middot; Ops inclut Infrastructure</div>
-      </div>
-
-      <!-- Branche Affaires — 6 domaines fonctionnels distincts -->
-      <div class="carte-branche carte-aff">
-        <div class="branche-entete">
-          <span class="branche-ico">&#x1F3E2;</span>
-          <div>
-            <div class="branche-nom">Equipes Affaires</div>
-            <div class="branche-desc">ICP &middot; ICC &middot; ORC metier &middot; Flux</div>
-          </div>
-        </div>
-        <div class="grille-sous grille-aff">
-          <button class="btn-sous" onclick="CM.App.entrer('equipes','affaires','commercial',this)">
-            <span class="s-ico">&#x1F4C8;</span> Commercial
-          </button>
-          <button class="btn-sous" onclick="CM.App.entrer('equipes','affaires','marketing',this)">
-            <span class="s-ico">&#x1F4E3;</span> Marketing
-          </button>
-          <button class="btn-sous" onclick="CM.App.entrer('equipes','affaires','finance',this)">
-            <span class="s-ico">&#x1F4B0;</span> Finance
-          </button>
-          <button class="btn-sous" onclick="CM.App.entrer('equipes','affaires','rh',this)">
-            <span class="s-ico">&#x1F465;</span> RH
-          </button>
-          <button class="btn-sous" onclick="CM.App.entrer('equipes','affaires','operations',this)">
-            <span class="s-ico">&#x1F529;</span> Operations
-          </button>
-          <button class="btn-sous" onclick="CM.App.entrer('equipes','affaires','service-client',this)">
-            <span class="s-ico">&#x1F3AF;</span> Serv. client
-          </button>
-        </div>
-      </div>
-
-    </div><!-- /niv4-container -->
-  </div><!-- /pyramide -->
-
-  <p class="note-bas">Selectionnez votre niveau ou domaine pour acceder aux indicateurs pertinents</p>
-
-  <div class="accueil-pied">
-    <a href="#portes" onclick="event.preventDefault();CM.App.basculerAccueil('portes');" data-action="aller-portes">Voir les 4 portes d'entr&eacute;e &rarr;</a>
-  </div>
-</div><!-- /accueil -->
-
 
 <!-- ══════════════════════════════════════════════════════
      OVERLAY À PROPOS — partagé entre les accueils (pyramide + 4 portes)
@@ -8499,11 +8259,15 @@ CM.App = (function() {
        l'accueil voulu. Évite la superposition quand on bascule depuis
        n'importe quelle vue (porte, app, vue-par-question). */
     _masquerToutesVuesPremierRang();
+    /* Garde-fou 23.f-5 : la pyramide (id="accueil") n'existe plus dans le DOM,
+       elle a été retirée. Le démantèlement complet du toggle pyramide ↔ portes
+       est reporté à 23.f-7. Pour préserver le runtime ici, on ignore silencieusement
+       le getElementById qui retourne null. */
     var pyramide = document.getElementById('accueil');
     var portes   = document.getElementById('accueil-portes');
     var afficherPortes = (mode === 'portes');
-    pyramide.hidden = afficherPortes;
-    portes.hidden   = !afficherPortes;
+    if (pyramide) pyramide.hidden = afficherPortes;
+    if (portes)   portes.hidden   = !afficherPortes;
     marquerEntreeBandeau('accueil');
   }
 
@@ -8557,21 +8321,6 @@ CM.App = (function() {
   }
 
   /* ─── Navigation ─── */
-  function entrer(niveau, branche, domaine, elClic) {
-    /* Flash visuel 120ms, puis transition */
-    if (elClic) {
-      elClic.classList.add('flash');
-      setTimeout(function() { elClic.classList.remove('flash'); }, 120);
-    }
-    setTimeout(function() {
-      contexte = { niveau: niveau, branche: branche || null, domaine: domaine || null };
-      réponses = {};
-      maturiteActive = 'debutant';
-      _afficherApp();
-      _rendreTout();
-    }, 130);
-  }
-
   function retourAccueil() {
     contexte = null;
     réponses = {};
@@ -9767,7 +9516,6 @@ CM.App = (function() {
 
   /* API publique */
   return {
-    entrer:               entrer,
     retourAccueil:        retourAccueil,
     changerVue:           changerVue,
     changerMaturite:      changerMaturite,
