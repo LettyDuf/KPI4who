@@ -1964,7 +1964,13 @@
       margin-top: -1rem;
       animation: accueil-unifie-fade-in 0.18s ease-out;
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      /* 3 colonnes depuis 09/05/2026 (smoke test Lætitia) — harmonisation
+         avec la page maturité qui affiche aussi 3 cartes par ligne. Les
+         cartes font ~370 px chacune dans la nouvelle largeur 1240 px du
+         conteneur (vs ~440 en 2 colonnes), titres et définitions
+         restent lisibles. La bascule mobile à 1 colonne sous 720 px
+         reste valide (cf. @media plus bas). */
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0.9rem;
     }
 
