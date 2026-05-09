@@ -3442,6 +3442,7 @@ CM.PanierRecherche = (function() {
 
 <!-- ══ MODULE : CM.Referentiel — Stockage et requête des indicateurs ══ -->
 <script>
+/* ══ CM.Referentiel — BEGIN (zone extractible par outils/construire-tests-accueil-unifie-sentinelles.js) ══ */
 CM.Referentiel = (function() {
   'use strict';
   var _indicateurs = [];
@@ -3481,6 +3482,7 @@ CM.Referentiel = (function() {
 
   return { ajouter: ajouter, tous: tous, chercher: chercher, filtrerParContexte: filtrerParContexte };
 })();
+/* ══ CM.Referentiel — END ══ */
 </script>
 
 
@@ -3489,6 +3491,7 @@ CM.Referentiel = (function() {
      Permet aux vues "par problème", "par cadre" et "par maturité" de filtrer
      le référentiel sans jamais modifier les fiches indicateurs elles-mêmes. -->
 <script>
+/* ══ CM.IndicateursMeta — BEGIN (zone extractible par outils/construire-tests-accueil-unifie-sentinelles.js) ══ */
 CM.IndicateursMeta = (function() {
   'use strict';
 
@@ -3875,6 +3878,7 @@ CM.IndicateursMeta = (function() {
     valider: valider
   };
 })();
+/* ══ CM.IndicateursMeta — END ══ */
 </script>
 
 
