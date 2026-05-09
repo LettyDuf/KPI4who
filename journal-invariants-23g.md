@@ -36,9 +36,9 @@ function sonde() {
 | **I1** | (aucune) | `89 sur 89 indicateurs` | **89** | `s1` | — |
 | **I2** | Niveau · Programme | `9 sur 89 indicateurs` | **9** | `p1, p2, p3, p4, p5` | — |
 | **I3** | Cadre · DORA | `4 sur 89 indicateurs` | **4** | `o1, o2, o3, o4` | — |
-| **I4** | Niveau · Programme **et** Cadre · DORA | `0 sur 89 indicateurs` | **0** | (vide) | « Aucune fiche ne correspond à cette combinaison d'axes. » |
+| **I4** | Niveau · Programme **et** Cadre · DORA | `0 sur 89 indicateurs` | **0** | (vide) | « Aucun indicateur ne combine ces lentilles. » |
 | **I5** | Niveau · Programme (= I2) | (cf. I2) | (cf. I2) | `p1, p2, p3, p4, p5` — fiabilité décroissante validée : `fiable, fiable, fiable, precaution, precaution` | — |
-| **I6** | Niveau · Stratégique **et** Cadre · Scrum | `0 sur 89 indicateurs` | **0** | (vide) | « Aucune fiche ne correspond à cette combinaison d'axes. » |
+| **I6** | Niveau · Stratégique **et** Cadre · Scrum | `0 sur 89 indicateurs` | **0** | (vide) | « Aucun indicateur ne combine ces lentilles. » |
 
 ---
 
@@ -56,13 +56,15 @@ I5 valide non seulement la fiabilité décroissante (`fiable` avant `precaution`
 
 **Conséquence.** Toute insertion d'une nouvelle fiche `programme + fiable` entre `p3` et `p4` source (par déplacement dans le `.md` ou édition manuelle de la zone balisée) **changera** la valeur de I5. C'est une régression visuelle utilisateur (ordre de la grille). À traiter en commit explicite avec mise à jour du journal.
 
-### C3 — Double libellé pour combinaison vide (oubli d'harmonisation)
+### C3 — Double libellé pour combinaison vide (oubli d'harmonisation) — ✅ RÉSOLU 09/05/2026
 
-Sur I4 et I6, deux phrasings cohabitent pour le même état (zéro résultat) :
+Sur I4 et I6, deux phrasings cohabitaient pour le même état (zéro résultat) :
 - côté **compteur** (haut de l'accueil) : « Aucun indicateur ne combine ces lentilles. »
 - côté **panneau** (en dessous, dans `#panneau-cartouche-compteur .liste-fiches-vide`) : « Aucune fiche ne correspond à cette combinaison d'axes. »
 
-Deux registres lexicaux : *indicateur / fiche*, *combine / correspond*, *lentilles / axes*. **Arbitrage Lætitia 09/05/2026 : oubli d'harmonisation, à corriger** — un seul libellé sera retenu et appliqué aux deux endroits dans un commit éditorial dédié (cf. point reporté n°4 du backlog). Le choix éditorial est différé à l'ouverture de ce commit.
+Deux registres lexicaux divergeaient : *indicateur / fiche*, *combine / correspond*, *lentilles / axes*.
+
+**Résolu le 09/05/2026** (commit `371a671`) — Option A retenue par Lætitia après juxtaposition de 3 options. Le panneau adopte mot pour mot le libellé du compteur : **« Aucun indicateur ne combine ces lentilles. »**. Trois raisons : (i) « indicateur » est le mot canonique côté utilisateur (le compteur global de l'accueil dit déjà « 89 indicateurs ») ; (ii) « lentilles » est le vocabulaire de l'accueil unifié (chantier 23.e/v7), « axes » renvoyait à l'ancienne porte « Par mes 4 axes » retirée au 23.f ; (iii) la voix directe et bienveillante préfère un libellé court, et le panneau hérite de la grammaire qui tourne déjà bien à côté. Commentaire CSS adjacent (`.accueil-unifie .liste-fiches-vide`) aligné dans le même commit. I4 et I6 ci-dessus mis à jour avec le libellé canonique unique.
 
 ---
 
