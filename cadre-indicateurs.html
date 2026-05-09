@@ -5667,11 +5667,10 @@ CM.Preferences = (function() {
      Convention : les hashes sont des "raccourcis" pour préselectionner une vue.
      Format simple aujourd'hui (#portes), extensible demain (#portes/problème/...). */
   var HASH_VERS_PREFERENCE = {
-    'portes':   { cle:'accueil', valeur:'portes'   },
-    'pyramide': { cle:'accueil', valeur:'pyramide' }
+    'portes':   { cle:'accueil', valeur:'portes'   }
   };
 
-  // Exemple : CM.Preferences.lire('accueil', 'pyramide') → 'portes' si #portes dans l'URL
+  // Exemple : CM.Preferences.lire('theme', 'clair') → 'sombre' si stocké, 'clair' sinon
   function lire(cle, defaut) {
     var override = _lireHash();
     if (override && override.cle === cle) return override.valeur;
@@ -5679,7 +5678,7 @@ CM.Preferences = (function() {
     return stocke !== null && stocke !== undefined ? stocke : defaut;
   }
 
-  // Exemple : CM.Preferences.ecrire('accueil', 'portes') → true si écrit, false sinon
+  // Exemple : CM.Preferences.ecrire('theme', 'sombre') → true si écrit, false sinon
   function ecrire(cle, valeur) {
     return _ecrireStockage(cle, valeur);
   }
@@ -7902,33 +7901,20 @@ CM.App = (function() {
   var réponses  = {};
   var maturiteActive = 'debutant';
 
-  /* ─── Accueil : pyramide ↔ 4 portes ─── */
-  // Exemple : CM.App.basculerAccueil('portes') → persiste la préférence + change la vue
-  function basculerAccueil(mode) {
-    CM.Preferences.ecrire('accueil', mode);
-    _montrerAccueil(mode);
+  /* ─── Accueil unifié ─── */
+  // Exemple : CM.App.afficherAccueil() → masque toutes les vues et affiche l'accueil unifié.
+  function afficherAccueil() {
+    _montrerAccueil();
   }
 
-  // Exemple : CM.App.afficherAccueil('pyramide') → change la vue sans toucher la préférence
-  function afficherAccueil(mode) {
-    _montrerAccueil(mode);
-  }
-
-  function _montrerAccueil(mode) {
+  function _montrerAccueil() {
     /* Doctrine de masquage centralisée (Bug B 08/05/2026) : on masque
        d'abord toutes les vues de premier rang, puis on rend visible
-       l'accueil voulu. Évite la superposition quand on bascule depuis
-       n'importe quelle vue (porte, app, vue-par-question). */
+       l'accueil unifié. Évite la superposition quand on bascule depuis
+       n'importe quelle vue. */
     _masquerToutesVuesPremierRang();
-    /* Garde-fou 23.f-5 : la pyramide (id="accueil") n'existe plus dans le DOM,
-       elle a été retirée. Le démantèlement complet du toggle pyramide ↔ portes
-       est reporté à 23.f-7. Pour préserver le runtime ici, on ignore silencieusement
-       le getElementById qui retourne null. */
-    var pyramide = document.getElementById('accueil');
-    var portes   = document.getElementById('accueil-portes');
-    var afficherPortes = (mode === 'portes');
-    if (pyramide) pyramide.hidden = afficherPortes;
-    if (portes)   portes.hidden   = !afficherPortes;
+    var portes = document.getElementById('accueil-portes');
+    if (portes) portes.hidden = false;
     marquerEntreeBandeau('accueil');
   }
 
@@ -7980,8 +7966,7 @@ CM.App = (function() {
   function retourAccueil() {
     contexte = null;
     réponses = {};
-    var mode = CM.Preferences.lire('accueil', 'portes');
-    _montrerAccueil(mode);
+    _montrerAccueil();
     document.getElementById('app').classList.remove('actif');
     /* Réinitialiser l'onglet actif sur la vue d'entrée par défaut.
        Aligné sur _afficherApp pour que la prochaine entrée dans l'app
@@ -8004,7 +7989,7 @@ CM.App = (function() {
   /* Exemple : CM.App.demanderRetourAccueil() — dispatcher du clic « Accueil » du bandeau.
      Détecte la vue active et appelle son retourAccueil() spécifique pour préserver
      la sémantique de chaque module (reset stepper, fermeture vue, bascule accueil).
-     Fallback : afficherAccueil('portes') si aucune vue ouverte n'est reconnue. */
+     Fallback : afficherAccueil() si aucune vue ouverte n'est reconnue. */
   function demanderRetourAccueil() {
     function ouverte(id) {
       var el = document.getElementById(id);
@@ -8014,7 +7999,7 @@ CM.App = (function() {
     if (app && app.classList.contains('actif')) {
       return retourAccueil();
     }
-    afficherAccueil('portes');
+    afficherAccueil();
   }
 
   /* Exemple : CM.App.ouvrirTableauBord() depuis le bandeau du haut (étape 1.bis MVP v1)
@@ -8911,8 +8896,7 @@ CM.App = (function() {
 
   /* ─── Initialisation ─── */
   function init() {
-    var mode = CM.Preferences.lire('accueil', 'portes');
-    _montrerAccueil(mode);
+    _montrerAccueil();
     document.getElementById('app').classList.remove('actif');
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') CM.Composants.fermerTiroir();
@@ -9163,7 +9147,6 @@ CM.App = (function() {
     changerMaturite:      changerMaturite,
     repondre:             repondre,
     reinitQuestionnaire:  reinitQuestionnaire,
-    basculerAccueil:      basculerAccueil,
     afficherAccueil:      afficherAccueil,
     ouvrirTableauBord:    ouvrirTableauBord,
     ouvrirVueDuBandeau:   ouvrirVueDuBandeau,
