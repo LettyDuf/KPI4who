@@ -1854,6 +1854,43 @@
       letter-spacing: -0.01em;
     }
 
+    /* Mission « manifeste » en deux étages — strate 2 du § 6.1
+       Composition validée Beta du mockup-mission-accueil.html v6 (09/05/2026).
+       Verbes capitales scandés en haut + suite serif italique en dessous,
+       les deux étages portent visuellement le « : » de la phrase canonique
+       « Choisir, comprendre, expliquer : les indicateurs pertinents,
+       du terrain à la stratégie. ». Réintroduit la mission promise dans
+       le commit 127f592 (08/05/2026). */
+    .accueil-unifie .page-entete .mission-deux-etages {
+      margin: 0 0 1rem;
+      text-align: center;
+      padding: 0 0.5rem;
+    }
+    .accueil-unifie .page-entete .mission-deux-etages .verbes {
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.92rem;
+      letter-spacing: 0.18em;
+      color: var(--ambre);
+      margin: 0 0 0.6rem;
+      line-height: 1.2;
+    }
+    .accueil-unifie .page-entete .mission-deux-etages .verbes .sep {
+      color: rgba(255, 255, 255, 0.3);
+      font-weight: 300;
+      margin: 0 0.5rem;
+    }
+    .accueil-unifie .page-entete .mission-deux-etages .suite {
+      font-family: Georgia, "Times New Roman", serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.55rem;
+      line-height: 1.3;
+      color: var(--texte-sur-page);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
     /* Cartouches cliquables (strates 3 et 6 du § 6.1) */
     .accueil-unifie .cartouche {
       display: flex;
@@ -2319,6 +2356,10 @@
   <div class="accueil-unifie">
 
     <div class="page-entete">
+      <div class="mission-deux-etages">
+        <p class="verbes">Choisir <span class="sep">/</span> Comprendre <span class="sep">/</span> Expliquer</p>
+        <p class="suite">les indicateurs pertinents, du terrain &agrave; la strat&eacute;gie.</p>
+      </div>
       <h2>Choisir mes indicateurs</h2>
     </div>
 
