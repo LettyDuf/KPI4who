@@ -4876,13 +4876,13 @@ CM.AccueilUnifie = (function() {
     }
 
     var html = '';
-    var maturiteFiltre = etat.chips.maturite;
+    /* Estompage des fiches « éloignées » testé puis retiré (09/05/2026,
+       smoke test Lætitia) : à l'usage, l'opacité 0.72 n'apportait pas de
+       lisibilité supplémentaire — le tri remonte déjà les fiches
+       matchantes en tête, c'est suffisant. Le 4e param de htmlCarte
+       reste donc à false partout. */
     for (var j = 0; j < fiches.length; j++) {
-      /* contexte=true → opacité 0.72 sur les fiches d'autre maturité.
-         Réutilise le mécanisme déjà actif sur la page Maturité (« prochain
-         niveau » sur _rendreMaturite ligne ~8912). */
-      var eloignee = !!(maturiteFiltre && fiches[j].maturite_min !== maturiteFiltre);
-      html += CM.Composants.htmlCarte(fiches[j], null, true, eloignee);
+      html += CM.Composants.htmlCarte(fiches[j], null, true, false);
     }
     conteneur.innerHTML = html;
   }
