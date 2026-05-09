@@ -1138,11 +1138,6 @@
     }
 
     /* ══════════════════════════════════════════════
-       ACCUEIL PYRAMIDE — pied discret (lien vers vue alternative)
-       Hérite de la palette sombre du fond pyramide (cohérence avec .portes-pied).
-    ══════════════════════════════════════════════ */
-
-    /* ══════════════════════════════════════════════
        VUE PANIER — Mon tableau de bord (chantier 9.B)
        Deux colonnes miroir En place / À envisager.
        Consomme CM.Panier via CM.App._rendreVuePanier().
@@ -1944,10 +1939,9 @@
 
     /* Index inline des fiches-questions dans le panneau de la cartouche
        question (23.d-3 — variante β tranchée par Lætitia 08/05/2026 sur
-       mockup-23d3 commit bd29219).
-       Calque fidèle du style #vue-par-question .liste-questions, scopé
-       ici sur le panneau pour éviter les fuites. Emojis (set validé) à
-       la place des SVG line, titres seuls (pas de sous-titre panel). */
+       mockup-23d3 commit bd29219). Style scopé sur le panneau pour
+       éviter les fuites. Emojis (set validé) à la place des SVG line,
+       titres seuls (pas de sous-titre panel). */
     .accueil-unifie .panneau-cartouche .liste-questions-inline {
       list-style: none;
       padding: 0;
@@ -2230,7 +2224,7 @@
 <body>
 
 <!-- ══════════════════════════════════════════════════════
-     OVERLAY À PROPOS — partagé entre les accueils (pyramide + 4 portes)
+     OVERLAY À PROPOS — partagé par toutes les vues
      Position fixed : son rendu visuel ne dépend pas du parent DOM.
      Ouvert via CM.Apropos.ouvrir() depuis n'importe quel bouton .apropos-btn.
 ═══════════════════════════════════════════════════════ -->
@@ -2306,16 +2300,13 @@
 
 
 <!-- ══════════════════════════════════════════════════════
-     ACCUEIL — 4 PORTES (squelette inerte)
-
-     Future page d'entrée. Masquée par défaut (attribut [hidden]).
-     Sera activable ultérieurement via un basculeur dans CM.App.
-     Les quatre portes mènent respectivement à :
-       1. la pyramide (vue actuelle)   — par mon niveau
-       2. vue-par-problème              — par mon problème  (à créer)
-       3. vue-par-cadre                 — par mon cadre     (à créer)
-       4. vue-par-maturité              — par ma maturité   (à créer)
-       5. vue-par-question              — par ma question   (vue d'index minimaliste)
+     ACCUEIL UNIFIÉ — Choisir mes indicateurs (chantier 23.b→23.e)
+     Page d'entrée principale de l'outil. Visible par défaut.
+     Stratégie en 4 chips combinables (niveau / problème / cadre / maturité)
+     qui filtrent en live le catalogue des indicateurs.
+     Voir CM.AccueilUnifie pour l'orchestration et doc-cadre-visuel.md
+     § 6.1 pour la doctrine visuelle. L'id #accueil-portes est conservé
+     pour rétro-compat (sélecteurs CSS, hash URL #portes).
 ═══════════════════════════════════════════════════════ -->
 <div id="accueil-portes" hidden>
   <header id="bandeau-portes-accueil" class="bandeau-portes" role="banner">
@@ -3857,7 +3848,7 @@ CM.IndicateursMeta = (function() {
      puis ce qui demande de la précaution, puis ce qui est risqué (Goodhart).
      Indicateur sans fiabilité renseignée → score 0 (relégué en queue).
      Mutualisé ici à l'étape (d) du chantier 14 — auparavant dupliqué à l'identique
-     dans CM.DiagnosticProbleme, CM.DiagnosticCadre et CM.VuePorteNiveau. */
+     dans plusieurs modules diagnostic, désormais retirés au chantier 23.f. */
   // Exemple : rangFiabilite({fiabilite:'fiable'}) → 3
   var RANG_FIABILITE = { 'fiable': 3, 'precaution': 2, 'risque': 1 };
   function rangFiabilite(ind) {
@@ -7659,8 +7650,7 @@ CM.Composants = (function() {
 
      Quand la porte sera instruite (panels-on-demand : Lean, modèles de
      maturité — CMMI / Lean Maturity Assessment, coaching Agile), suivre
-     le patron des trois sœurs (CM.VuePorteProbleme, CM.VuePorteCadre,
-     CM.VuePorteNiveau) :
+     le patron de l'accueil unifié (CM.AccueilUnifie) :
        - façade orthodoxe vers CM.RequeteMetriques.executer ;
        - aucun accès direct à CM.Referentiel ni à CM.IndicateursMeta ;
        - tri local par fiabilité toléré (cf. doc-contrats-chantier-14.md §10.3).
@@ -7918,12 +7908,11 @@ CM.App = (function() {
     marquerEntreeBandeau('accueil');
   }
 
-  /* Masque toutes les vues de premier rang (les 6 entrées du bandeau qui
-     hébergent leur propre vue + l'app contextuelle). Centralisé ici parce
-     que CM.App est l'orchestrateur unique de la navigation depuis le bandeau.
-     Les modules consommateurs (VuePorteQuestion, stepper générique des 3
-     portes 4-axes, ouvrirTableauBord) appellent cette fonction avant de
-     rendre leur propre vue visible. */
+  /* Masque toutes les vues de premier rang (l'accueil unifié + l'app
+     contextuelle). Centralisé ici parce que CM.App est l'orchestrateur
+     unique de la navigation depuis le bandeau. Les points d'entrée
+     (ouvrirTableauBord, ouvrirVueDuBandeau, et toute future vue) appellent
+     cette fonction avant de rendre leur propre vue visible. */
   function _masquerToutesVuesPremierRang() {
     var ids = [
       'accueil-portes'
@@ -8071,11 +8060,11 @@ CM.App = (function() {
   }
 
   /* ── Active à la fois l'onglet et la vue correspondante ──
-     Centralisé pour que les points d'entrée dans l'app (entrer via
-     pyramide, retourAccueil) ne dupliquent plus la boucle de marquage
-     des onglets. Sélectionne l'onglet par son onclick (parsing simple
-     mais robuste tant que la convention CM.App.changerVue('id', this)
-     est respectée dans le HTML). */
+     Centralisé pour que les points d'entrée dans l'app (retourAccueil,
+     _afficherApp) ne dupliquent plus la boucle de marquage des onglets.
+     Sélectionne l'onglet par son onclick (parsing simple mais robuste
+     tant que la convention CM.App.changerVue('id', this) est respectée
+     dans le HTML). */
   function _activerOnglet(idVue) {
     var btn = document.querySelector(".onglet[onclick*=\"changerVue('" + idVue + "'\"]");
     if (btn) {
@@ -8091,9 +8080,6 @@ CM.App = (function() {
     _cacherAccueils();
     document.getElementById('app').classList.add('actif');
     /* Vue d'entrée par défaut : Choisir mes indicateurs.
-       Cohérent avec la pyramide qui sélectionne un niveau — la suite
-       logique est de proposer les indicateurs pertinents pour ce
-       niveau, pas de retomber sur le panier scorecard.
        Décision Lætitia 26/04/2026 (post-livraison 9.C). */
     _activerOnglet('questionnaire');
     /* Badge contexte */
