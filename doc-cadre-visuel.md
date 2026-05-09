@@ -137,7 +137,7 @@ Avant d'entrer dans les pages, ce que les trois incarnations partagent — et qu
 
 Décisions structurantes :
 
-- **Architecture verticale en 7 strates.** De haut en bas : (1) bandeau du haut à 6 entrées (cf. `doc-contrats-navigation.md` § 4.1) ; (2) en-tête centré *Page unifiée · Choisir mes indicateurs · Quatre lentilles à combiner* ; (3) cartouche compagnon *Par ma question ▾* en haut, repliée par défaut, qui héberge l'index des fiches-questions ; (4) marqueur typographique *« — ou — »* qui sépare les deux modes d'entrée ; (5) bloc des 4 chips à combiner *Problème · Cadre · Niveau · Maturité* ; (6) cartouche compteur *N sur 89 indicateurs ▾*, repliée par défaut ; (7) liste filtrée en grille 2 colonnes, révélée par déploiement du compteur.
+- **Architecture verticale en 7 strates.** De haut en bas : (1) bandeau du haut à 6 entrées (cf. `doc-contrats-navigation.md` § 4.1) ; (2) **mission en composition « manifeste deux étages »** posée au-dessus du titre — étage 1 : trois verbes en capitales scandés par des slashes, ambré `--ambre` (`Choisir / Comprendre / Expliquer`) ; étage 2 : suite en serif Georgia italique blanc cassé `les indicateurs pertinents, du terrain à la stratégie.` — puis le titre `Choisir mes indicateurs` en h2 blanc cassé qui reste l'ancrage de l'action concrète ; (3) cartouche compagnon *Par ma question ▾* en haut, repliée par défaut, qui héberge l'index des fiches-questions ; (4) marqueur typographique *« — ou — »* qui sépare les deux modes d'entrée ; (5) bloc des 4 chips à combiner *Problème · Cadre · Niveau · Maturité* ; (6) cartouche compteur *N sur 89 indicateurs ▾*, repliée par défaut ; (7) liste filtrée en grille 2 colonnes, révélée par déploiement du compteur.
 - **Mécanique des chips — accordéon en place.** Chaque chip s'ouvre en accordéon dans son emplacement (pas de modale, pas de panneau latéral) et révèle son sélecteur. Mono-sélection sur Niveau et Maturité (marqueurs ronds, comme un radio-bouton). Multi-sélection sur Problème et Cadre (marqueurs carrés, comme une case à cocher). À la sélection, la chip se referme en mode actif avec sa valeur visible : `✓ Niveau · Programme`. Recliquer dessus la rouvre pour modifier. Pas de limite haute sur le nombre de chips actives — l'utilisateur pilote son seuil de bruit.
 - **Cartouches cliquables, repliés par défaut à l'arrivée.** Pas de mur de matière à l'ouverture. Chaque cartouche affiche un compteur live de son contenu, un chevron `▾`/`▴`, et un libellé d'action *Voir / Masquer*. La doctrine *« on regarde ensemble »* de l'axe 2 *artisanal sous discipline* tient même quand l'utilisateur n'a encore rien fait : il découvre l'outil par strates qu'il déplie à son rythme.
 - **Format de fiche-card UNIQUE — `htmlCarte()` partout.** Le composant de fiche-card de la liste filtrée est strictement identique à celui des autres pages de l'outil (tableau de bord, lentilles antérieures). En-tête (icône colorée, type, nom, badge fiabilité), corps (pitch tronqué, meta fréquence/maturité, chip cadre), pied (boutons panier ✓ *en place* / 💡 *à envisager*, lien *Voir le détail →*). Bordure colorée selon la fiabilité (vert *Fiable* / orange *Précaution*). **Boutons panier disponibles dès l'accueil** — c'est ce qui rend l'accueil-outil opérationnel : l'utilisateur peut commencer à sélectionner ses indicateurs sans changer de page. Cohérent avec l'axe 6 *Standardisé sur les composants* poussé jusqu'à son terme.
@@ -156,6 +156,20 @@ Décisions structurantes :
 - Le diagnostic *« la pyramide manquait de cohérence avec la grammaire visuelle »* reste vrai et continue de motiver son retrait.
 - Les axes 1, 4, 6, 8 (sobre, sérieux pas mignon, standardisé sur les composants, voix située) demeurent les ancrages de l'incarnation visuelle de cette page.
 
+
+**Mission au-dessus du titre — composition « manifeste deux étages ».**
+
+Le bloc d'en-tête a été épuré le 08/05/2026 (commit `127f592`) en retirant trois éléments jugés techno-narcissiques ou redondants (surtitre `PAGE UNIFIÉE`, filet décoratif, sous-titre `Quatre lentilles à combiner`). La promesse était de réintroduire une mission dans un commit dédié. C'est fait le 09/05/2026 (commit `378634d`) après itération avec deux experts DA + UX writer (3 mockups, 6 variantes, validation Beta).
+
+La phrase canonique est : *« Choisir, comprendre, expliquer : les indicateurs pertinents, du terrain à la stratégie. »*
+
+Trois principes typographiques :
+
+1. **Mission au-dessus du titre, pas en dessous.** La mission cadre l'outil tout entier ; le titre `Choisir mes indicateurs` nomme l'action concrète à faire sur cette page. La hiérarchie verticale dit donc : *raison d'être → action proposée → mécaniques.*
+2. **Deux étages typographiques contrastés.** Étage 1 sans-serif capitales ambré (registre signal, scande les trois verbes). Étage 2 serif Georgia italique blanc cassé 1.55 rem (registre éditorial, porte la phrase complète). Le mélange des deux familles est la signature visuelle de la mission, référence Pentagram. Le « : » de la phrase canonique est porté visuellement par les deux étages, donc ne figure pas dans le markup.
+3. **Aucun caractère « IA-typé ».** Pas d'em dash `—`, pas d'en dash `–`, pas d'ellipsis Unicode `…`, pas de smart quote. Apostrophes droites, guillemets français `« »` pour les citations, slashes ASCII pour les scandages. Cette règle de propreté de caractères s'étendra au reste de l'app dans des passes suivantes.
+
+Mockup d'arbitrage conservé : `mockup-mission-accueil.html` (v6 final).
 
 ### 6.2 Fiche d'indicateur
 
