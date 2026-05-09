@@ -1,130 +1,139 @@
-# Scénario de non-régression — MVP 4 portes
+# Scénario de non-régression — accueil unifié (post-23.f)
 
-Liste manuelle des clics à passer **avant** chaque étape du chantier 14 (refactor hexagonal), et **après** chaque commit d'étape. Si un scénario ne donne plus exactement le même résultat qu'avant, on arrête, on diagnostique, et on rollback à l'étape précédente si besoin.
+Liste manuelle des clics à passer **avant** chaque évolution majeure de l'outil, et **après** chaque commit d'étape. Si un scénario ne donne plus exactement le même résultat qu'avant, on arrête, on diagnostique, et on rollback à l'étape précédente si besoin.
 
-**Règle d'or.** On ne déplace pas un test pour le faire passer. Si un scénario change, c'est qu'on a changé le comportement — ce qui est interdit sous le sceau *iso-comportement* du chantier 14.
+**Règle d'or.** On ne déplace pas un test pour le faire passer. Si un scénario change, c'est qu'on a changé le comportement — soit explicitement (et le scénario est mis à jour dans le même commit), soit par effet de bord (et c'est une régression à corriger).
 
-**Méthode.** Ouvrir `cadre-indicateurs.html` dans un navigateur neuf (ou session privée pour ignorer le `localStorage`). Exécuter les scénarios dans l'ordre. Durée cible : ~10-12 minutes pour passer la liste complète, hors §10 (invariants pré-(c) à figer).
+**Méthode.** Ouvrir `cadre-indicateurs.html` dans un navigateur neuf (ou session privée pour ignorer le `localStorage`). Exécuter les scénarios dans l'ordre. Durée cible : ~10-15 minutes pour passer la liste complète, hors §11 (invariants à figer — exécution ponctuelle).
 
 **Convention de notation.**
 
 - `[ ]` = pas à exécuter et cocher.
 - `⏸ skip` = pas gelé : décrit un comportement non livré aujourd'hui (chantier dédié au backlog). Ne pas exécuter, ne pas cocher.
-- `✎ figer` = pas qui sert à *figer une valeur de référence* avant la bascule (étape (c)). À noter sur papier ou dans le journal d'étape.
+- `✎ figer` = pas qui sert à *figer une valeur de référence*. À noter sur papier ou dans le journal d'étape.
+
+**Historique.** Ce document a été entièrement réécrit au chantier 23.g-1 (08/05/2026) après la livraison du chantier 23.f qui a retiré les 4 portes du chantier 7.2a et la pyramide d'accueil. La version précédente (datée du 25/04/2026, posée pour le chantier 14) décrivait une architecture qui n'existe plus. Pour mémoire historique, voir les commits du chantier 14 (`baseline-avant-hexagonal` à `mvp-chantier-14-livre`).
 
 ---
 
-## 1. Accueil et navigation de base
+## 1. Accueil unifié — affichage par défaut
 
-- [ ] **A1 — Accueil par défaut.** Ouverture directe → `#accueil` s'affiche avec la **pyramide à 4 étages** : Stratégique (Direction & Gouvernance) · Tactique (id `portefeuille` — Arbitrage & Allocation) · Programme & Projet · Équipes. Titre H1 « Par mon niveau », sous-titre « Ton attention est rare. Où la portes-tu ? ». **Aucun bandeau d'onglets n'est visible sur l'accueil** — la nav `<nav class="onglets">` est dans `#app`, masqué jusqu'à entrée par la pyramide ou par une porte.
-- [ ] **A2 — Bascule vers les portes.** Lien de pied « Voir les 4 portes d'entrée → » → `#accueil-portes` s'affiche, `#accueil` masqué. Les 4 cartouches *Par mon niveau · Par mon problème · Par mon cadre · Par ma maturité* sont visibles. *Par ma maturité* affiche le badge « Bientôt » et reste désactivée au clic (`aria-disabled="true"`).
-- [ ] **A3 — Bouton « À propos ».** Présent en haut à droite sur les deux écrans d'accueil → ouvre la modale `apropos-overlay`. Croix ferme la modale, `aria-hidden` redevient `true`.
-
-> **Note A1/A3 — Pas de bandeau de 7 onglets sur l'accueil.** La cible « nav unifiée à 8 onglets » de la fiche mémoire `project_deux_modes_entree` est gelée derrière la livraison du chantier 14. Aucun bandeau d'accueil avec *Accueil / Tableau de bord / Cascade / Lexique / À propos / etc.* n'a jamais été codé.
+- [ ] **A1 — Accueil par défaut.** Ouverture directe → la page **Choisir mes indicateurs** s'affiche : le bandeau du haut à 8 entrées en haut, l'en-tête réduit au h2 *Choisir mes indicateurs*, deux cartouches (compagnon *6 questions terrain ▾* en haut, compteur `N sur 89 indicateurs ▾` plus bas), bloc des 4 chips à combiner *Problème · Cadre · Niveau · Maturité* entre les deux cartouches, marqueur *« — ou — »* visible, largeur de la page bornée à 920px.
+- [ ] **A2 — État initial des cartouches.** Les deux cartouches sont **repliées** à l'arrivée (chevron `▾`, libellé *Voir*). Aucune liste de fiches n'est affichée tant que la cartouche compteur n'est pas dépliée. La pyramide n'existe plus dans le DOM (`#accueil` retourne `null`).
+- [ ] **A3 — Bouton « À propos ».** Clic sur l'entrée *À propos* du bandeau → ouvre la modale `apropos-overlay`. Croix ferme la modale, `aria-hidden` redevient `true`. Aucun bouton flottant *À propos* sur l'accueil (retiré en 23.b).
 
 ---
 
-## 2. Porte *Par mon problème*
+## 2. Chips — sélecteurs accordéon
 
-- [ ] **B1 — Entrée.** Clic sur *Par mon problème* → vue `#vue-porte-probleme` étape 1. Les 4 niveaux affichés portent les libellés exacts du canon `CM.DiagnosticProbleme` : **Stratégique · Tactique · Programme / Projet · Opérationnel**.
-- [ ] **B2 — Sélection niveau.** Clic sur *Programme / Projet* → étape 2 (choix du problème). La liste affichée est un sous-ensemble du vocabulaire fermé des 7 familles : *Délais & prévisibilité · Qualité & stabilité · Flux & goulots · Valeur & rentabilité · Engagement & humain · Alignement stratégique · Risque, sécurité & conformité*.
-- [ ] **B3 — Sélection problème.** Clic sur *Délais & prévisibilité* → étape 3 (recommandations). Entre 1 et 5 fiches s'affichent (le nombre est volontairement faible — la matrice est éditoriale, pas exhaustive). Chaque fiche affiche titre + pastille fiabilité + clic ouvre le tiroir.
-- [ ] **B4 — Ouverture fiche.** Clic sur une fiche → tiroir latéral s'ouvre avec le contenu des 11 sections (`rendreEnteteFiche`, `rendreCadreLecture`, …, `rendreDomaine`, `Gemba.htmlEncartFiche`). **Aucun bouton « Ajouter au panier » n'est rendu** — voir §6.
-- [ ] **B5 — Pivot étape 2.** Depuis l'étape 3, clic sur le pas étape 2 dans le stepper → retour à l'étape 2 avec le niveau préservé.
-- [ ] **B6 — Retour accueil.** Bouton « ← Accueil » dans le bandeau de la porte → retour à `#accueil-portes` (pas la pyramide). État de la porte non conservé au prochain clic d'entrée.
-
-> **Note B3 — « Visibilité sur l'avancement ».** Cette formulation **n'existe pas** dans le catalogue actuel. La famille la plus proche est *Alignement stratégique* (visibilité descendante) ou *Délais & prévisibilité* (visibilité du flux). Item de backlog ouvert : enrichissement du catalogue.
+- [ ] **B1 — Ouverture chip Niveau.** Clic sur la chip *Niveau* → la chip s'étend en accordéon en place (les 3 autres chips restent à leur place), 4 options s'affichent (Stratégique · Tactique · Programme · Opérationnel) avec **marqueurs ronds** (mono-sélection). Aucune option pré-sélectionnée à l'ouverture initiale.
+- [ ] **B2 — Sélection mono Niveau.** Clic sur *Programme* → la chip se referme automatiquement en mode actif, libellé devient `✓ Niveau · Programme`. Le compteur de la cartouche compteur passe à un nombre `N sur 89` cohérent avec le filtre (à figer en §11 I2).
+- [ ] **B3 — Modification Niveau.** Re-clic sur la chip *Niveau · Programme* → la chip se rouvre. Marqueur rond plein sur *Programme*. Clic sur *Stratégique* → bascule mono. Clic sur l'X de fermeture (ou re-clic sur l'option active) → désactive la chip, libellé revient à `Niveau`.
+- [ ] **B4 — Multi-sélection Cadre.** Clic sur *Cadre* → la chip s'étend, les options affichent des **marqueurs carrés** (multi-sélection). Clic sur *DORA* puis sur *Lean* sans refermer → 2 options actives. Refermer → libellé `✓ Cadre · DORA · Lean` (ou `✓ Cadre · 2 actifs` selon design).
+- [ ] **B5 — Marqueurs des chips.** Niveau + Maturité = marqueurs **ronds** (mono). Problème + Cadre = marqueurs **carrés** (multi). Vérifier visuellement.
+- [ ] **B6 — Compteur live à chaque clic.** Le compteur `N sur 89 indicateurs` se met à jour en live à chaque sélection / désélection. Aucun bouton *Appliquer* n'est nécessaire.
 
 ---
 
-## 3. Porte *Par mon cadre*
+## 3. Cartouche compagnon — 6 questions terrain
 
-- [ ] **C1 — Entrée.** Clic sur *Par mon cadre* → vue `#vue-porte-cadre` étape 1 (accordéon par école de pensée). Les 7 familles sont listées **toutes fermées à l'arrivée** : *Empirisme agile · Excellence opérationnelle · Observabilité du delivery · Pilotage par les objectifs · IT Service Management · Aide à la décision · Universel*. (Lean / Six Sigma est fusionné dans *Excellence opérationnelle*.)
-- [ ] **C2 — Ouverture accordéon.** Clic sur une famille (ex : *Excellence opérationnelle*) → contenu déplié, cadres listés. Les autres familles restent fermées.
-- [ ] **C3 — Sélection cadre.** Clic sur un cadre (ex : *DORA*) → étape 2 (choix du niveau). Les 4 niveaux affichés portent **le même canon que la porte problème** (délégation de `CM.DiagnosticCadre.niveauxTous` à `CM.DiagnosticProbleme.niveauxTous`) : **Stratégique · Tactique · Programme / Projet · Opérationnel**.
-- [ ] **C4 — Sélection niveau.** Clic sur *Opérationnel* → étape 3 (résultats). Fiches du couple (cadre × niveau) affichées.
-- [ ] **C5 — Cadres voisins.** En pied d'étape 3, le bloc *Cadres voisins dans le référentiel* propose 2-3 cadres connexes cliquables.
-- [ ] **C6 — Pivot à étage constant.** Clic sur un cadre voisin → remplacement des résultats **sans** régression d'étape (on reste à l'étape 3, niveau préservé). Vérifie l'utilisation de la primitive `remplacerChoix` posée au chantier 7.2a-code.2.
+- [ ] **Q1 — Déploiement cartouche question.** Clic sur l'en-tête de la cartouche *6 questions terrain ▾* → le panneau s'ouvre en accordéon, chevron passe à `▴`, libellé devient *Masquer*. La cartouche compteur reste à sa place (pas de superposition).
+- [ ] **Q2 — Index inline des 6 fiches.** À l'intérieur du panneau déployé, 6 fiches-questions cliquables sont listées avec leurs emojis (🍉 📅 🔄 🚧 🪜 🪞), titres seuls (pas de sous-titre). Clic sur une fiche → ouverture du mockup HTML correspondant (lien navigateur natif, même fenêtre — voir aussi friction §11 reportée).
+- [ ] **Q3 — Repli.** Clic sur l'en-tête de la cartouche question (ou sur *Masquer*) → la cartouche se replie. Les 6 fiches disparaissent.
 
 ---
 
-## 4. Porte *Par mon niveau*
+## 4. Cartouche compteur — N sur 89 indicateurs
 
-- [ ] **N1 — Entrée transitoire.** Clic sur *Par mon niveau* → l'application bascule vers `#accueil` (la pyramide à 4 étages). C'est le **comportement provisoire** posé par `onclick="CM.App.afficherAccueil('pyramide')"` en attendant la livraison du chantier 7.2a-code.3.
-
-> ⏸ **skip — N2 / N3 / accordéon rôles / axes Mintzberg.** La transformation de cette porte en stepper accordéons à 4 cartouches Mintzberg (cf. fiches mémoire `project_porte_niveau_roles`, `project_porte_niveau_rendu_visuel`) est livrée côté code (`CM.Roles`, `CM.VuePorteNiveau` extraits aux chantiers 7.2a-code.1 et .2) mais **non câblée à la porte**. À ré-ouvrir au chantier 7.2a-code.3.
-
----
-
-## 5. Porte *Par ma maturité*
-
-- [ ] **M1 — Badge Bientôt.** La carte est visible avec badge « Bientôt » (`porte-statut bientot`). Clic ne déclenche aucune navigation, aucune erreur console.
+- [ ] **R1 — Déploiement cartouche compteur.** Clic sur *N sur 89 indicateurs ▾* (ou clic sur l'en-tête) → le panneau s'ouvre, chevron passe à `▴`, libellé devient *Masquer*. **Aucune ligne bleue de séparation** entre l'en-tête et le panneau (fix 23.e-fix4).
+- [ ] **R2 — Liste filtrée 2 colonnes.** Le panneau affiche les fiches filtrées en **grille 2 colonnes**, chaque carte fait ~412px de large à 920px de page (titre du type complet, définition à 3 lignes). Les cartes utilisent `htmlCarte()` réutilisé tel quel — format identique au reste du site (voir doctrine `project_accueil_unifie_v7.md`).
+- [ ] **R3 — Couleur du nom de carte.** Le titre de chaque carte (`carte-nom`) est lisible — couleur sombre sur fond clair (fix 23.e-fix3 : la carte est blindée contre tout contexte parent à couleur héritée non foncée).
+- [ ] **R4 — Ordre canonique.** Sans aucune chip active, les fiches sont affichées dans l'**ordre de déclaration de `CM.Referentiel.tous()`** (ordre éditorialement curé, stable, prévisible — cf. doc-contrats-chantier-14 §10.3).
+- [ ] **R5 — État vide pédagogique.** Activer une combinaison de chips qui ne matche aucune fiche (ex : *Niveau · Stratégique* + *Cadre · Scrum*) → message éditorial *« Aucun indicateur ne correspond à votre sélection »* (à vérifier exactement). Pas de liste vide silencieuse, pas d'erreur console.
+- [ ] **R6 — Repli.** Clic sur l'en-tête → la cartouche compteur se replie, la liste de fiches disparaît.
 
 ---
 
-## 6. Tableau de bord et panier
+## 5. Bandeau du haut — 8 entrées
 
-> ⏸ **skip — T1 / T2 / T3 / T4.** Le module `CM.Panier` est extrait, testé en isolation par `tests-panier.html`, mais **aucun bouton « Ajouter au panier » n'est rendu en UI**. Le tiroir de fiche, les cartes de recommandation et les listes de résultats ne contiennent pas de point d'entrée vers `CM.Panier.ajouter`. Seul `CM.App.retirerDuPanier` est câblé (vue *Mon tableau de bord*, ligne ~8212).
->
-> Conséquence : la vue *Mon tableau de bord* affiche le résultat d'un panier vide tant que rien n'est ajouté programmatiquement. Pas de régression à tester ici aujourd'hui.
-
----
-
-## 7. Lexique et onglets annexes
-
-- [ ] **L1 — Nav réelle après entrée.** Entrer par la pyramide (clic sur *Niveau Équipes*) → la nav `<nav class="onglets">` apparaît avec **4 onglets seulement** : *Mon tableau de bord · Cascade stratégique · Choisir mes indicateurs · Maturité & Recommandations*. **Pas d'onglet *Lexique*, pas d'onglet *À propos*, pas d'onglet *La maturité ?* séparé.**
-- [ ] **L2 — À propos.** Bouton flottant en haut-droite (sur l'accueil et dans `#app`) → ouvre la modale.
-- [ ] **L3 — Bouton « ← Accueil ».** À droite du bandeau dans `#app` → retour à l'accueil.
-
-> ⏸ **skip — Lexique en onglet, *La maturité ?* en onglet, intégration sur le bandeau d'accueil.** Cible du chantier 10 *Deux modes d'entrée parallèles* (cf. `project_deux_modes_entree`), gelée derrière la livraison du chantier 14.
+- [ ] **N1 — 8 entrées visibles.** Le bandeau du haut affiche dans l'ordre attendu (cf. `doc-contrats-navigation.md` §4.1) : *Accueil · Mon tableau de bord (N) · Par mes 4 axes · Par ma question · Cascade stratégique · La maturité ? · Lexique · À propos*.
+- [ ] **N2 — État actif sur l'accueil.** À l'arrivée, l'entrée *Accueil* a la classe `actif` (fond pill `--niv-1-clair`). Les autres entrées sont neutres.
+- [ ] **N3 — Compteur live tableau de bord.** Le libellé devient *Mon tableau de bord (N)* dès qu'au moins un indicateur est au panier. Span vide (rien d'écrit) quand le panier est vide. Mis à jour à chaque mutation via `CM.Panier.abonner` (fix 23.e-fix5).
+- [ ] **N4 — Stub Lexique.** L'entrée *Lexique* a `aria-disabled="true"` et la classe `stub` — un clic n'ouvre rien. Comportement attendu (chantier 21 ouvert, vue Lexique pas encore livrée).
 
 ---
 
-## 8. Deep-linking et transverses
+## 6. Mon tableau de bord — panier
 
-- [ ] **D1 — Hash `#portes`.** `cadre-indicateurs.html#portes` au chargement → `#accueil-portes` est affiché directement (pas la pyramide). Implémenté par `CM.Preferences.HASH_VERS_PREFERENCE`.
-- [ ] **D2 — Hash `#pyramide`.** `cadre-indicateurs.html#pyramide` au chargement → `#accueil` (la pyramide) est affiché. Comportement par défaut quand aucun hash n'est présent.
-- [ ] **D3 — Hash `#fiche=<id>`.** `cadre-indicateurs.html#fiche=p5` au chargement → le tiroir s'ouvre directement sur la fiche `p5` (chantier 7.6). Le hash est mis à jour quand on ouvre/ferme une fiche.
-
-> ⏸ **skip — `#porte-probleme`, `#porte-cadre`, `#porte-niveau`, `#app-tableau-de-bord`.** Ces hashes ne sont pas implémentés dans `HASH_VERS_PREFERENCE`. À ouvrir au backlog si besoin produit.
+- [ ] **T1 — Ouverture vue panier.** Clic sur *Mon tableau de bord* → bascule vers `#app`, l'accueil unifié est masqué. La nav interne `<nav class="onglets">` apparaît avec les 4 onglets *Mon tableau de bord · Cascade stratégique · Choisir mes indicateurs · Maturité & Recommandations*. Onglet *Mon tableau de bord* actif par défaut.
+- [ ] **T2 — Vue panier vide.** Si aucun indicateur n'a été ajouté → message éditorial *« Votre tableau de bord est vide »*, pas d'erreur console.
+- [ ] **T3 — Ajout au panier depuis l'accueil unifié.** Retour accueil (clic *Accueil*), déployer la cartouche compteur, sur une carte cliquer le bouton *✓ en place* (panier) → la carte montre l'état actif. Ouvrir *Mon tableau de bord* → l'indicateur est listé en colonne *En place*. Compteur du bandeau passe à `Mon tableau de bord (1)`.
+- [ ] **T4 — Bouton « 💡 à envisager ».** Sur une autre carte, clic sur *💡 à envisager* → l'indicateur passe en colonne *À envisager* dans le tableau de bord.
+- [ ] **T5 — Retrait du panier.** Dans *Mon tableau de bord*, bouton de retrait sur un indicateur → l'indicateur disparaît, compteur du bandeau décrémente.
 
 ---
 
-## 9. Console et santé technique
+## 7. Cascade stratégique / Maturité réflexive
 
-- [ ] **S1 — Console propre.** Aucune erreur rouge dans la console DevTools au chargement initial ni en navigant entre les portes / la pyramide / les onglets.
+- [ ] **K1 — Cascade stratégique.** Clic sur *Cascade stratégique* dans le bandeau → bascule vers `#app`, onglet *Cascade* actif, contenu rendu (vue déjà livrée avant 23.f).
+- [ ] **K2 — La maturité ?** Clic sur *La maturité ?* dans le bandeau → bascule, onglet *Maturité & Recommandations* actif, contenu réflexif sur le panier (vue déjà livrée).
+
+> ⏸ **skip — Cible chantier 10**. Les modes d'entrée parallèles *Par mes 4 axes* / *Par ma question* sont reportés au chantier 10 — actuellement gelés derrière MISSION.md. Voir mémoire `project_chantier_10_decisions_ouverture`.
+
+---
+
+## 8. Tiroir de fiche
+
+- [ ] **F1 — Ouverture tiroir.** Clic sur le titre d'une carte (depuis l'accueil unifié, le panier ou ailleurs) → tiroir latéral s'ouvre avec le contenu des sections de la fiche (`rendreEnteteFiche`, `rendreCadreLecture`, anti-patterns, alternatives, repères industriels si présents, encart Gemba, etc.). Le hash URL passe à `#fiche=<id>`.
+- [ ] **F2 — Fermeture tiroir.** Clic sur la croix du tiroir, sur le fond noir, ou touche `Escape` → tiroir se ferme, hash URL revient à l'état précédent.
+- [ ] **F3 — Boutons panier dans le tiroir.** Le tiroir affiche les boutons *✓ en place* / *💡 à envisager* qui pilotent le panier (chantier 9.C).
+
+---
+
+## 9. Hash URLs et deep-linking
+
+- [ ] **D1 — Hash `#portes`.** `cadre-indicateurs.html#portes` au chargement → l'accueil unifié s'affiche directement (l'id DOM `accueil-portes` est conservé pour rétro-compat — chantier 23.f-7.4).
+- [ ] **D2 — Hash `#pyramide` ignoré.** `cadre-indicateurs.html#pyramide` au chargement → l'accueil unifié s'affiche quand même (le mapping `'pyramide'` a été retiré de `CM.Preferences.HASH_VERS_PREFERENCE` au commit 23.f-7.3 `7963402`). Pas d'erreur console.
+- [ ] **D3 — Hash `#fiche=<id>`.** `cadre-indicateurs.html#fiche=p5` au chargement → le tiroir s'ouvre directement sur la fiche `p5`. Le hash est mis à jour quand on ouvre/ferme une fiche depuis l'UI.
+
+---
+
+## 10. Console et santé technique
+
+- [ ] **S1 — Console propre.** Aucune erreur rouge dans la console DevTools au chargement initial ni en navigant entre l'accueil unifié, le tableau de bord, la cascade et la maturité réflexive.
 - [ ] **S2 — Tests panier verts.** Ouvrir `tests-panier.html` → tous les tests verts.
-- [ ] **S3 — Tests porte niveau verts.** Ouvrir `tests-porte-niveau.html` → tous les tests verts.
-- [ ] **S4 — Tests requête métriques verts.** Ouvrir `tests-requete-metriques.html` → tous les tests verts (cible : ce que le harnais annonce dans son rapport — voir bloc État courant du backlog pour la valeur de référence).
+- [ ] **S3 — Tests requête métriques verts.** Ouvrir `tests-requete-metriques.html` → tous les tests verts (cible : ce que le harnais annonce dans son rapport — voir bloc État courant du backlog pour la valeur de référence).
+
+> ⏸ **skip — Tests porte niveau.** Le harnais `tests-porte-niveau.html` a été retiré au chantier 23.f-6 (option C tranchée). Le générateur `outils/construire-tests-porte-niveau.js` aussi.
 
 ---
 
-## 10. Invariants pré-(c) — valeurs à figer avant la bascule
+## 11. Invariants à figer
 
-> Ces pas sont à exécuter **une fois** (ou lors d'une mise à jour majeure du catalogue) pour figer des valeurs de référence. Après la bascule de chaque porte sur `CM.RequeteMetriques.executer` à l'étape (c), repasser ces mêmes pas et confronter les valeurs : iso-comportement strict.
+> Ces pas sont à exécuter **une fois** (ou lors d'une mise à jour majeure du catalogue) pour figer des valeurs de référence. Après une évolution architecturale majeure, repasser ces mêmes pas et confronter les valeurs : iso-comportement strict.
 
-- ✎ **I1 — Premier id et nombre total — porte problème, couple (Programme / Projet × Délais & prévisibilité).** Exécuter B1 → B2 (*Programme / Projet*) → B3 (*Délais & prévisibilité*). Noter : (a) l'**identifiant de la première fiche affichée** (ex : `p2`), (b) le **nombre total de fiches** dans la sortie. Ce sont les références d'iso-comportement pour la migration de la porte problème.
-- ✎ **I2 — Premier id et nombre total — porte cadre, couple (DORA × Opérationnel).** Exécuter C1 → C2 (*Observabilité du delivery*) → C3 (*DORA*) → C4 (*Opérationnel*). Noter id de la première fiche et nombre total.
-- ✎ **I3 — Tri par fiabilité — vérification visuelle.** Sur la sortie I1 puis I2, vérifier que l'**ordre des fiches** suit la fiabilité décroissante (`fiable` avant `precaution` avant `prudence`). Si plusieurs fiches partagent la même fiabilité, l'ordre secondaire doit être stable d'une exécution à l'autre — figer cet ordre dans le journal d'étape.
-- ✎ **I4 — Triplet vide — message éditorial.** Choisir un couple que la matrice ne couvre pas (ex : *Stratégique × Flux & goulots* qui est volontairement creux selon `MAPPING_REROUTAGE` ligne 82 de `CM.DiagnosticProbleme`). Vérifier qu'un **message éditorial** s'affiche (pas de liste vide silencieuse, pas d'erreur console). **Copier le texte exact** du message dans le journal — c'est lui qui doit être préservé après bascule.
-- ✎ **I5 — Capping `limite` — porte cadre.** Choisir un cadre densément peuplé (ex : *Universel* × *Opérationnel*). Compter les fiches affichées vs le total potentiel dans le référentiel pour ce cadre. Si un capping éditorial est appliqué, **figer la valeur du plafond observé**.
-- ⏸ ✎ **I6 — Intersection rôle × problème × cadre — porte niveau.** Skip aujourd'hui (porte non rebranchée). À activer dans le scenario de l'étape (c.3) ou (c.4) quand `CM.VuePorteNiveau` consommera `CM.RequeteMetriques`.
+- ✎ **I1 — Accueil sans chip — total et premier id.** Sans aucune chip active, déployer la cartouche compteur. Noter : (a) le **compteur affiché** (doit être `89 sur 89 indicateurs`), (b) l'**identifiant de la première fiche** dans la grille 2 colonnes.
+- ✎ **I2 — Niveau Programme seul.** Activer chip *Niveau · Programme*. Noter : (a) le compteur `N sur 89`, (b) l'id de la première fiche affichée. C'est la référence d'iso-comportement pour les évolutions futures du filtre par niveau.
+- ✎ **I3 — Cadre DORA seul.** Sans niveau actif, activer chip *Cadre · DORA*. Noter : (a) le compteur `N sur 89`, (b) l'id de la première fiche affichée. Référence pour les évolutions du filtre par cadre.
+- ✎ **I4 — Combinaison Niveau Programme + Cadre DORA.** Activer les 2 chips simultanément. Noter le compteur. Vérifier que c'est l'**intersection** (AND) des deux filtres précédents — cohérent avec le contrat §10.3 de doc-contrats-chantier-14 (intersection inter-clauses).
+- ✎ **I5 — Tri par fiabilité — vérification visuelle.** Sur la sortie I2, vérifier que l'**ordre des fiches** suit la fiabilité décroissante (`fiable` avant `precaution` avant `risque`). Si plusieurs fiches partagent la même fiabilité, l'ordre secondaire doit être stable d'une exécution à l'autre — figer cet ordre dans le journal.
+- ✎ **I6 — Combinaison vide — message éditorial.** Choisir une combinaison sans correspondance (ex : *Niveau · Stratégique* + *Cadre · Scrum*). **Copier le texte exact** du message éditorial affiché — c'est lui qui doit être préservé après toute évolution.
 
 ---
 
-## Procédure avant/après une étape du chantier 14
+## Procédure avant/après une évolution majeure
 
-**Avant une étape** (ex : avant la migration d'une porte vers `CM.RequeteMetriques`) :
+**Avant l'évolution** :
 
-1. Passer §1 → §9 en intégralité. Toute divergence par rapport à l'attendu = stop, diagnostic.
-2. Si on n'a pas encore figé §10, le faire maintenant et reporter les valeurs dans `doc-contrats-chantier-14.md` (journal d'étape).
-3. Si tout est vert et §10 est figé, poser un tag git `mvp-avant-etape-X` sur le commit courant.
+1. Passer §1 → §10 en intégralité. Toute divergence par rapport à l'attendu = stop, diagnostic.
+2. Si on n'a pas encore figé §11, le faire maintenant et reporter les valeurs dans le commit ou dans le journal d'étape.
+3. Si tout est vert et §11 est figé, poser un tag git si pertinent (ex : `mvp-avant-chantier-XX` sur le commit courant).
 
 **Après chaque commit d'étape** :
 
-1. Repasser §1 → §9 + repasser §10 et **comparer chaque valeur figée**.
-2. Si un scénario rouge ou une valeur diverge : *stop*. Pas de commit suivant. Soit on corrige sans quitter l'étape, soit on rollback (`baseline-avant-hexagonal` = `5655b03`).
-3. Si tout vert et toutes valeurs identiques, commit atomique avec message clair. Tag git `mvp-etape-X-Y` sur les jalons majeurs.
+1. Repasser §1 → §10 + repasser §11 et **comparer chaque valeur figée**.
+2. Si un scénario rouge ou une valeur diverge : *stop*. Pas de commit suivant. Soit on corrige sans quitter l'étape, soit on rollback au tag pré-étape.
+3. Si tout vert et toutes valeurs identiques, commit atomique avec message clair. Tag git sur les jalons majeurs.
 
 ---
 
