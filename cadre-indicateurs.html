@@ -7940,12 +7940,7 @@ CM.App = (function() {
      rendre leur propre vue visible. */
   function _masquerToutesVuesPremierRang() {
     var ids = [
-      'accueil',
-      'accueil-portes',
-      'vue-par-question',
-      'vue-porte-probleme',
-      'vue-porte-cadre',
-      'vue-porte-niveau'
+      'accueil-portes'
     ];
     for (var i = 0; i < ids.length; i++) {
       var el = document.getElementById(ids[i]);
@@ -8015,18 +8010,6 @@ CM.App = (function() {
       var el = document.getElementById(id);
       return el && !el.hidden;
     }
-    if (ouverte('vue-par-question') && CM.VuePorteQuestion && CM.VuePorteQuestion.retourAccueil) {
-      return CM.VuePorteQuestion.retourAccueil();
-    }
-    if (ouverte('vue-porte-probleme') && CM.VuePorteProbleme && CM.VuePorteProbleme.retourAccueil) {
-      return CM.VuePorteProbleme.retourAccueil();
-    }
-    if (ouverte('vue-porte-cadre') && CM.VuePorteCadre && CM.VuePorteCadre.retourAccueil) {
-      return CM.VuePorteCadre.retourAccueil();
-    }
-    if (ouverte('vue-porte-niveau') && CM.VuePorteNiveau && CM.VuePorteNiveau.retourAccueil) {
-      return CM.VuePorteNiveau.retourAccueil();
-    }
     var app = document.getElementById('app');
     if (app && app.classList.contains('actif')) {
       return retourAccueil();
@@ -8041,8 +8024,6 @@ CM.App = (function() {
      les visiteurs pourront avoir leur panier prérempli. */
   function ouvrirTableauBord() {
     _cacherAccueils();
-    var vueQ = document.getElementById('vue-par-question');
-    if (vueQ) vueQ.hidden = true;
     document.getElementById('app').classList.add('actif');
     _activerOnglet('tableau-bord');
     var badge = document.getElementById('badge-contexte');
