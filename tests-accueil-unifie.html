@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Tests — CM.AccueilUnifie (chantier 23.g-4)</title>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       Harnais de tests — chantier 23.g-4
+
+       Intention : vérifier le contrat d'API et le comportement de
+       CM.AccueilUnifie (façade d'orchestration de la page unifiée
+       Choisir mes indicateurs). Couvre deux registres distincts :
+
+         · Section A — tests unitaires sur stubs.
+           Le module est exercé en isolation, ses 5 ports (Preferences,
+           RequeteMetriques, IndicateursMeta, Composants, Referentiel)
+           sont montés en doubles de test in-memory déclarés en dur
+           dans cette page. On y vérifie la sémantique du module :
+           sélection/désélection des chips, ouverture/fermeture des
+           cartouches, persistance via Preferences, libellé d'axes
+           actifs (les 4 patterns français : 0/1/2/3+ lentilles),
+           libellé canonique vide « Aucun indicateur ne combine ces
+           lentilles. » (résolution C3, commit 371a671).
+
+         · Section B — sentinelles I1-I6 sur référentiel réel.
+           [À introduire au sous-commit 23.g-4.3.] Le bloc
+           CM.Referentiel + zone de données CM.IndicateursMeta sera
+           inliné depuis cadre-indicateurs.html, et les valeurs vues
+           par l'utilisateur réel seront vérifiées contre les invariants
+           figés dans journal-invariants-23g.md à HEAD = d03ccd0
+           (89 fiches, Programme=9, DORA=4, Programme×DORA=0, etc.).
+
+       Mécanique : le bloc CM.AccueilUnifie de cadre-indicateurs.html est
+       inliné directement dans ce harnais, entre les marqueurs
+       CM.ACCUEIL-UNIFIE-INJECTION-BEGIN / END ci-dessous. Le bloc est
+       recopié automatiquement par outils/construire-tests-accueil-unifie.js ;
+       il ne faut JAMAIS le modifier à la main. Pour régénérer après une
+       modification de CM.AccueilUnifie, lancer :
+
+           node outils/construire-tests-accueil-unifie.js
+
+       Pourquoi cette mécanique : en Chrome moderne sur file://, un iframe
+       local a une origine "null" distincte du parent, donc l'approche
+       iframe + contentWindow est bloquée. Inliner le bloc dans la même
+       page lève cette barrière (cf. tests-requete-metriques.html, même patron).
+
+       Architecture hexagonale : CM.AccueilUnifie est un adaptateur d'entrée
+       (UI), pas un service de domaine. Il dépend de cinq ports — quatre
+       services côté domaine (Preferences, RequeteMetriques, IndicateursMeta,
+       Referentiel) et un composant côté présentation (Composants). Tous
+       sont montés en doubles de test ici, ce qui permet d'exercer la
+       logique d'orchestration sans dépendre du contenu éditorial réel.
+
+       Squelette DOM minimal : reproduit fidèlement la structure de
+       l'accueil dans cadre-indicateurs.html (lignes 2334-2407). Les
+       sélecteurs lus par CM.AccueilUnifie sont tous présents :
+         · .accueil-unifie               (racine)
+         · .cartouche[data-cartouche]    × 2 (question, compteur)
+         · [data-cartouche-panneau]      × 2
+         · .cartouche-libelle strong / .total / .axes-actifs
+         · .cartouche-chevron            × 2
+         · .chip[data-axe]               × 4 (probleme, cadre, niveau, maturite)
+         · .selecteur                    (panneau de sélection)
+         · #panneau-cartouche-compteur   (panneau filtré)
+
+       Ouverture : ouvrir ce fichier dans un navigateur. Les résultats
+       s'affichent automatiquement. Aucune dépendance externe, aucun
+       framework à installer. ══════════════════════════════════════════ -->
+
+  <style>
+    :root {
+      --ok:    #2a7f2a;
+      --ko:    #b00020;
+      --muted: #6b6b6b;
+      --bord:  #dcdcdc;
+      --fond-ok: #ecf7ec;
+      --fond-ko: #fbeaec;
+      --niv-1: #1f5945;
+      --niv-3: #1d3a5f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 960px;
+      margin: 2em auto;
+      padding: 0 1.5em 3em;
+      color: #222;
+      line-height: 1.5;
+    }
+    h1 { margin-top: 0; }
+    .preambule { color: var(--muted); font-size: 0.95em; margin-bottom: 2em; }
+    .bilan {
+      padding: 0.7em 1em;
+      border-radius: 6px;
+      font-weight: 600;
+      margin-bottom: 1.5em;
+    }
+    .bilan.ok { background: var(--fond-ok); color: var(--ok); }
+    .bilan.ko { background: var(--fond-ko); color: var(--ko); }
+    .section h2 { margin-top: 2em; padding-bottom: 0.3em; border-bottom: 2px solid var(--bord); }
+    .test {
+      padding: 0.5em 0.8em;
+      border-left: 4px solid var(--bord);
+      margin: 0.4em 0;
+      background: #fafafa;
+    }
+    .test.ok { border-left-color: var(--ok); background: var(--fond-ok); }
+    .test.ko { border-left-color: var(--ko); background: var(--fond-ko); }
+    .test .nom { font-weight: 600; }
+    .test .detail {
+      display: block;
+      margin-top: 0.3em;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.88em;
+      color: var(--muted);
+    }
+    .test.ko .detail { color: var(--ko); }
+    /* DOM caché — il existe pour CM.AccueilUnifie mais l'utilisateur du harnais
+       n'a pas besoin de le voir, ses contenus sont opaques pendant les tests. */
+    #dom-sous-test { display: none; }
+  </style>
+</head>
+<body>
+
+<h1>Tests — CM.AccueilUnifie</h1>
+<p class="preambule">
+  Harnais de tests du module <code>CM.AccueilUnifie</code> — chantier 23.g-4.
+  Section A : tests unitaires sur stubs. Section B (à venir au commit 23.g-4.3) :
+  sentinelles I1-I6 sur référentiel réel. Ouvrir cette page dans un navigateur,
+  les résultats apparaissent automatiquement.
+</p>
+
+<div id="bilan" class="bilan">Exécution en cours…</div>
+<div id="resultats"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     Squelette DOM minimal — reproduit la structure de l'accueil unifié
+     telle qu'elle vit dans cadre-indicateurs.html (lignes 2334-2407).
+     ═══════════════════════════════════════════════════════════════════════ -->
+
+<div id="dom-sous-test">
+  <div class="accueil-unifie">
+
+    <button class="cartouche" type="button" data-cartouche="question" aria-expanded="false" aria-controls="panneau-cartouche-question">
+      <span class="cartouche-libelle">
+        <span><strong>6</strong> <span class="total">questions terrain</span></span>
+        <span class="sous-titre">Une question concrète, une fiche qui éclaire.</span>
+      </span>
+      <span class="cartouche-chevron"><span class="libelle-action">Voir</span> &#x25BE;</span>
+    </button>
+
+    <div id="panneau-cartouche-question" class="panneau-cartouche" data-cartouche-panneau="question" role="region" aria-label="Index des questions terrain" hidden></div>
+
+    <div class="axes" role="group" aria-label="Quatre lentilles à combiner">
+      <button type="button" class="chip" data-axe="probleme" aria-expanded="false">Problème</button>
+      <button type="button" class="chip" data-axe="cadre" aria-expanded="false">Cadre</button>
+      <button type="button" class="chip" data-axe="niveau" aria-expanded="false">Niveau</button>
+      <button type="button" class="chip" data-axe="maturite" aria-expanded="false">Maturité</button>
+    </div>
+
+    <div class="selecteur" hidden data-axe="" role="region" aria-label="Sélecteur de valeurs"></div>
+
+    <button class="cartouche" type="button" data-cartouche="compteur" aria-expanded="false" aria-controls="panneau-cartouche-compteur">
+      <span class="cartouche-libelle">
+        <span><strong>0</strong> <span class="total">sur 0 indicateur</span></span>
+        <span class="axes-actifs">Aucune lentille active — l'index complet attend.</span>
+      </span>
+      <span class="cartouche-chevron"><span class="libelle-action">Voir</span> &#x25BE;</span>
+    </button>
+
+    <div id="panneau-cartouche-compteur" class="liste-fiches" hidden role="region" aria-label="Liste filtrée des indicateurs" data-cartouche-panneau="compteur"></div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     Prélude CM + stubs des 5 ports
+     Tous les stubs sont in-memory, déclaratifs, sans effet de bord global.
+     Réinitialisables entre les tests via les fonctions reset*().
+     ═══════════════════════════════════════════════════════════════════════ -->
+
+<script>
+  /* eslint-disable */
+  'use strict';
+  window.CM = window.CM || {};
+
+  /* ─── Stub CM.Preferences ──────────────────────────────────────────
+     In-memory key/value store. Sans persistance entre rechargements.
+     Mêmes signatures que la vraie : lire(cle, defaut) / ecrire(cle, valeur).
+     ─────────────────────────────────────────────────────────────── */
+  var _prefsStore = {};
+  CM.Preferences = {
+    lire: function(cle, defaut) {
+      return Object.prototype.hasOwnProperty.call(_prefsStore, cle)
+        ? _prefsStore[cle]
+        : defaut;
+    },
+    ecrire: function(cle, valeur) {
+      _prefsStore[cle] = valeur;
+    }
+  };
+  function resetPreferences() { _prefsStore = {}; }
+
+  /* ─── Stub CM.Referentiel ──────────────────────────────────────────
+     Jeu de fiches synthétiques minimaliste pour la section A.
+     8 fiches, couvrant 3 niveaux (équipe / programme / strategique)
+     et 3 cadres (lean, dora, generique). Volume volontairement petit
+     pour que les assertions soient lisibles d'un coup d'œil.
+     La section B (commit 23.g-4.3) substituera ce stub par un inlining
+     du vrai bloc CM.Referentiel issu de cadre-indicateurs.html.
+     ─────────────────────────────────────────────────────────────── */
+  var _fichesStub = [
+    { id: 'eq-a', niveau: 'équipe',       fiabilite: 'fiable',     maturite_min: 1, type: 'output',  domaine: 'flux' },
+    { id: 'eq-b', niveau: 'équipe',       fiabilite: 'fiable',     maturite_min: 2, type: 'output',  domaine: 'flux' },
+    { id: 'eq-c', niveau: 'équipe',       fiabilite: 'precaution', maturite_min: 1, type: 'outcome', domaine: 'qualite' },
+    { id: 'pr-a', niveau: 'programme',    fiabilite: 'fiable',     maturite_min: 2, type: 'output',  domaine: 'flux' },
+    { id: 'pr-b', niveau: 'programme',    fiabilite: 'precaution', maturite_min: 3, type: 'outcome', domaine: 'finance' },
+    { id: 'st-a', niveau: 'strategique',  fiabilite: 'fiable',     maturite_min: 3, type: 'outcome', domaine: 'finance' },
+    { id: 'st-b', niveau: 'strategique',  fiabilite: 'precaution', maturite_min: 4, type: 'outcome', domaine: 'finance' },
+    { id: 'st-c', niveau: 'strategique',  fiabilite: 'fiable',     maturite_min: 4, type: 'outcome', domaine: 'humain'  }
+  ];
+  CM.Referentiel = {
+    tous:     function() { return _fichesStub.slice(); },
+    chercher: function(id) {
+      for (var i = 0; i < _fichesStub.length; i++) {
+        if (_fichesStub[i].id === id) return _fichesStub[i];
+      }
+      return null;
+    }
+  };
+
+  /* ─── Stub CM.IndicateursMeta ──────────────────────────────────────
+     Tagging multi-axes synthétique. Un cadre par fiche pour la pilote ;
+     les 4 axes Mintzberg restent vides (CM.AccueilUnifie ne les lit
+     pas, mais le port doit exister).
+     ─────────────────────────────────────────────────────────────── */
+  var _cadresParFiche = {
+    'eq-a': ['lean'],      'eq-b': ['lean', 'dora'], 'eq-c': ['generique'],
+    'pr-a': ['lean'],      'pr-b': ['generique'],
+    'st-a': ['generique'], 'st-b': ['generique'], 'st-c': ['generique']
+  };
+  var _problemesParFiche = {}; /* vide en pilote — sera enrichi en 23.g-4.2 */
+  CM.IndicateursMeta = {
+    tousLesCadres: function() {
+      return [
+        { id: 'lean',       label: 'Lean / Six Sigma', couleur: '#1f5945' },
+        { id: 'dora',       label: 'DORA',             couleur: '#1d3a5f' },
+        { id: 'generique',  label: 'Générique',        couleur: '#6b6b6b' }
+      ];
+    },
+    tousLesProblemes: function() { return []; },
+    cadresDe:           function(id) { return _cadresParFiche[id]    || []; },
+    tagsDe:             function(id) { return _problemesParFiche[id] || []; },
+    tagsThematiquesDe:  function(id) { return []; }
+  };
+
+  /* ─── Stub CM.Composants ───────────────────────────────────────────
+     htmlCarte : version repérable mais non fonctionnelle. Les tests
+     vérifient le nombre de cartes produites et leurs ids, pas le
+     rendu visuel.
+     ─────────────────────────────────────────────────────────────── */
+  CM.Composants = {
+    htmlCarte: function(fiche) {
+      return '<div class="carte-stub" data-id="' + fiche.id + '">' + fiche.id + '</div>';
+    }
+  };
+
+  /* ─── Stub CM.RequeteMetriques ─────────────────────────────────────
+     Filtre minimaliste : applique les clauses niveau / maturiteMin /
+     cadres (intersection) sur le jeu de fiches stubbé. Suffisant pour
+     les tests pilotes ; le vrai module est testé séparément dans
+     tests-requete-metriques.html.
+     ─────────────────────────────────────────────────────────────── */
+  CM.RequeteMetriques = {
+    executer: function(filtre) {
+      filtre = filtre || {};
+      var resultats = [];
+      var fiches = CM.Referentiel.tous();
+      for (var i = 0; i < fiches.length; i++) {
+        var f = fiches[i];
+        /* niveau : array OR intra-clause (sémantique du chantier 14, § 10.3). */
+        if (filtre.niveau && filtre.niveau.length && filtre.niveau.indexOf(f.niveau) === -1) continue;
+        /* maturiteMin : seuil ordinal — en pilote, maturite_min est numérique. */
+        if (typeof filtre.maturiteMin === 'number' && f.maturite_min < filtre.maturiteMin) continue;
+        /* cadres : intersection non vide entre filtre.cadres et cadresDe(fiche). */
+        if (filtre.cadres && filtre.cadres.length) {
+          var cadresFiche = CM.IndicateursMeta.cadresDe(f.id);
+          var matchUn = false;
+          for (var c = 0; c < filtre.cadres.length; c++) {
+            if (cadresFiche.indexOf(filtre.cadres[c]) !== -1) { matchUn = true; break; }
+          }
+          if (!matchUn) continue;
+        }
+        /* tags (problèmes) : intersection non vide. Vide en pilote. */
+        if (filtre.tags && filtre.tags.length) {
+          var tagsFiche = CM.IndicateursMeta.tagsDe(f.id);
+          var matchTag = false;
+          for (var t = 0; t < filtre.tags.length; t++) {
+            if (tagsFiche.indexOf(filtre.tags[t]) !== -1) { matchTag = true; break; }
+          }
+          if (!matchTag) continue;
+        }
+        resultats.push(f);
+      }
+      return resultats;
+    }
+  };
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     Zone d'injection — bloc CM.AccueilUnifie copié de cadre-indicateurs.html
+     par outils/construire-tests-accueil-unifie.js. NE PAS ÉDITER À LA MAIN.
+     ═══════════════════════════════════════════════════════════════════════ -->
+<!-- CM.ACCUEIL-UNIFIE-INJECTION-BEGIN -->
+<script>
+/* ══ CM.AccueilUnifie — BEGIN ══ */
+CM.AccueilUnifie = (function() {
+  'use strict';
+
+  var CLE_PREFS = 'accueil-unifie-etat';
+
+  /* État interne — forme conforme au § 6.6.
+     - cartouches.{question,compteur} : 'ouvert' | 'ferme'
+     - chips.probleme / chips.cadre   : Array<string> (multi-sélection)
+     - chips.niveau / chips.maturite  : string | null  (mono-sélection) */
+  var etat = _etatParDefaut();
+
+  /* Pub/sub — abonnés notifiés à chaque changement. */
+  var abonnesFiltre = [];
+  var abonnesCartouche = [];
+
+  function _etatParDefaut() {
+    return {
+      cartouches: { question: 'ferme', compteur: 'ferme' },
+      chips:      { probleme: [], cadre: [], niveau: null, maturite: null }
+    };
+  }
+
+  function _emettreFiltreChange(total, fiches) {
+    /* En 23.d-2, total et fiches sont fournis par appliquerFiltre via le
+       traducteur orthodoxe (CM.RequeteMetriques.executer). Avant 23.d-2,
+       les abonnés recevaient toujours {total:0, fiches:[]} — le contrat
+       d'API du payload reste identique pour les abonnés (forme du payload
+       inchangée), seule la véracité des champs change. */
+    var payload = {
+      chips:  _copieEtatChips(),
+      total:  (typeof total  === 'number') ? total  : 0,
+      fiches: Array.isArray(fiches)        ? fiches : []
+    };
+    for (var i = 0; i < abonnesFiltre.length; i++) {
+      try { abonnesFiltre[i](payload); } catch (e) { /* abonné défaillant : ignoré */ }
+    }
+  }
+
+  function _emettreCartoucheChange(id) {
+    var payload = { id: id, etat: etat.cartouches[id] };
+    for (var i = 0; i < abonnesCartouche.length; i++) {
+      try { abonnesCartouche[i](payload); } catch (e) { /* idem */ }
+    }
+  }
+
+  function _copieEtatChips() {
+    return {
+      probleme: etat.chips.probleme.slice(),
+      cadre:    etat.chips.cadre.slice(),
+      niveau:   etat.chips.niveau,
+      maturite: etat.chips.maturite
+    };
+  }
+
+  function _persister() {
+    if (CM.Preferences && CM.Preferences.ecrire) {
+      try { CM.Preferences.ecrire(CLE_PREFS, JSON.stringify(etat)); } catch (e) { /* silencieux */ }
+    }
+  }
+
+  function _restaurer() {
+    if (!CM.Preferences || !CM.Preferences.lire) return;
+    var brut = CM.Preferences.lire(CLE_PREFS, null);
+    if (!brut) return;
+    try {
+      var charge = JSON.parse(brut);
+      if (charge && charge.cartouches && charge.chips) {
+        /* Validation légère : on ne fait confiance qu'aux clés qu'on connaît. */
+        etat = {
+          cartouches: {
+            question: (charge.cartouches.question === 'ouvert') ? 'ouvert' : 'ferme',
+            compteur: (charge.cartouches.compteur === 'ouvert') ? 'ouvert' : 'ferme'
+          },
+          chips: {
+            probleme: Array.isArray(charge.chips.probleme) ? charge.chips.probleme.slice() : [],
+            cadre:    Array.isArray(charge.chips.cadre)    ? charge.chips.cadre.slice()    : [],
+            niveau:   (typeof charge.chips.niveau   === 'string') ? charge.chips.niveau   : null,
+            maturite: (typeof charge.chips.maturite === 'string') ? charge.chips.maturite : null
+          }
+        };
+      }
+    } catch (e) {
+      /* Restauration silencieuse : si la persistance est corrompue, on garde
+         l'état par défaut. La régression la plus visible est la perte de
+         filtres restaurés — pas un blocage. */
+    }
+  }
+
+  /* ═══ Mécanique d'accordéon — DOM (23.c-2) ═══
+
+     Délégation de clic globale sur la racine .accueil-unifie. Un seul
+     panneau-sélecteur partagé entre les 4 chips ; au clic sur une chip,
+     toute autre chip ouverte se referme (un seul accordéon ouvert à la
+     fois). Le contenu du panneau est vide en 23.c-2 (peuplé en 23.c-3). */
+
+  function _estMonoSelection(axe) {
+    return axe === 'niveau' || axe === 'maturite';
+  }
+
+  function _fermerPanneau(racine) {
+    var panneau = racine.querySelector('.selecteur');
+    if (panneau) {
+      panneau.hidden = true;
+      panneau.dataset.axe = '';
+      panneau.classList.remove('mono', 'multi');
+      panneau.innerHTML = '';
+    }
+    var chipsOuvertes = racine.querySelectorAll('.chip.ouverte');
+    for (var i = 0; i < chipsOuvertes.length; i++) {
+      chipsOuvertes[i].classList.remove('ouverte');
+      chipsOuvertes[i].setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  /* ═══ Contenu des sélecteurs (23.c-3) ═══
+
+     Doctrine d'affichage tranchée par Lætitia 08/05/2026 :
+     - Niveau   : variante α (compact + sous-titre empilé)  — 4 valeurs mono
+     - Problème : variante α (compact + sous-titre empilé)  — 7 valeurs multi
+     - Cadre    : variante B (compact sans sous-titres)     — 12 valeurs multi
+     - Maturité : variante B (compact sans sous-titres)     — 3 valeurs mono
+
+     Sources de vérité (DRY, pas de duplication) :
+     - Niveau   : CM.DiagnosticProbleme.niveauxTous()
+     - Problème : CM.DiagnosticProbleme.tousLesProblemes()
+     - Cadre    : CM.IndicateursMeta.tousLesCadres()
+     - Maturité : hardcode local (3 valeurs simples, pas de source ailleurs).
+
+     Mapping vocabulaire technique : les ids retournés sont alignés sur le
+     vocabulaire fermé de CM.RequeteMetriques.executer (cf. § 10.3 du
+     doc-contrats-chantier-14.md). Le branchement filtre vit en chantier 23.e. */
+
+  var MATURITES = [
+    { id: 'debutant',      label: 'Débutant' },
+    { id: 'intermediaire', label: 'Intermédiaire' },
+    { id: 'avance',        label: 'Avancé' }
+  ];
+
+  /* Étiquette courte d'axe pour l'en-tête du sélecteur. */
+  var ETIQUETTE_AXE = {
+    probleme: { titre: 'Problème', mode: 'multi-sélection' },
+    cadre:    { titre: 'Cadre',         mode: 'multi-sélection' },
+    niveau:   { titre: 'Niveau',        mode: 'mono-sélection' },
+    maturite: { titre: 'Maturité', mode: 'mono-sélection' }
+  };
+
+  function _echappe(s) {
+    /* Échappe le minimum vital pour insérer un texte dans innerHTML. Les
+       sources de vérité (CM.Config, CM.IndicateursMeta) contiennent du
+       texte de confiance, mais on échappe par hygiène. */
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function _valeursPourAxe(axe) {
+    /* Retourne un tableau [{ id, label, icone?, sous? }] pour l'axe demandé.
+       Les emojis viennent des sources de vérité internes (CM.Config,
+       CM.IndicateursMeta) — cf. arbitrage Lætitia 08/05/2026 (mockup-emojis-
+       selecteurs.html, commit 9ea406c). Cohérence avec le reste de l'outil
+       qui affiche déjà ces emojis sur les cards, fiches et porte par mon
+       problème. La migration vers SVG line monochromes (doctrine § 6.0)
+       fera l'objet d'un chantier séparé à l'échelle de l'outil entier. */
+    if (axe === 'niveau') {
+      var niveaux = (CM.DiagnosticProbleme && CM.DiagnosticProbleme.niveauxTous)
+        ? CM.DiagnosticProbleme.niveauxTous() : [];
+      return niveaux.map(function(n) {
+        return { id: n.id, label: n.label, sous: n.sous, icone: n.icone };
+      });
+    }
+    if (axe === 'probleme') {
+      var problemes = (CM.DiagnosticProbleme && CM.DiagnosticProbleme.tousLesProblemes)
+        ? CM.DiagnosticProbleme.tousLesProblemes() : [];
+      /* Variante B retenue (consigne Lætitia 08/05/2026) — présentation
+         synthétique sans sous-titre, alignée sur Cadre et Maturité. */
+      return problemes.map(function(p) {
+        return { id: p.id, label: p.label, icone: p.icone };
+      });
+    }
+    if (axe === 'cadre') {
+      var cadres = (CM.IndicateursMeta && CM.IndicateursMeta.tousLesCadres)
+        ? CM.IndicateursMeta.tousLesCadres() : [];
+      /* Variante B retenue : libellés raccourcis, pas de sous-titre. */
+      var LIBELLES_COURTS = {
+        cx:       'Expérience client',
+        securite: 'Sécurité'
+      };
+      return cadres.map(function(c) {
+        return {
+          id:    c.id,
+          label: LIBELLES_COURTS[c.id] || c.label,
+          icone: c.icone
+        };
+      });
+    }
+    if (axe === 'maturite') {
+      /* Emojis de CM.Config.MATURITE (🌱 pousse, 🌿 feuille, 🌳 arbre).
+         On garde nos libellés courts (Débutant / Intermédiaire / Avancé)
+         plutôt que ceux du référentiel (« Équipe débutante »…) qui
+         supposent un contexte d'équipe. */
+      var maturiteData = (CM.Config && CM.Config.MATURITE) ? CM.Config.MATURITE : {};
+      return MATURITES.map(function(m) {
+        var info = maturiteData[m.id] || {};
+        return { id: m.id, label: m.label, icone: info.icone || '' };
+      });
+    }
+    return [];
+  }
+
+  function _estValeurSelectionnee(axe, id) {
+    if (axe === 'niveau' || axe === 'maturite') {
+      return etat.chips[axe] === id;
+    }
+    return etat.chips[axe].indexOf(id) !== -1;
+  }
+
+  function _peupleSelecteur(panneau, axe) {
+    var etiq = ETIQUETTE_AXE[axe];
+    var valeurs = _valeursPourAxe(axe);
+    if (!etiq || valeurs.length === 0) {
+      panneau.innerHTML = '';
+      return;
+    }
+
+    /* En-tête : titre de l'axe + chip mode (mono / multi). */
+    var html = '<div class="selecteur-entete">' +
+                 '<strong>' + _echappe(etiq.titre) + '</strong>' +
+                 '<em>' + _echappe(etiq.mode) + '</em>' +
+               '</div>';
+
+    /* Options : variante α (avec sous-titre empilé) ou B (sans). */
+    html += '<div class="selecteur-options">';
+    for (var i = 0; i < valeurs.length; i++) {
+      var v = valeurs[i];
+      var coche = _estValeurSelectionnee(axe, v.id) ? ' coche' : '';
+      var label = '<label class="' + ('option' + coche).trim() + '" data-valeur="' + _echappe(v.id) + '">' +
+                    '<span class="marker"></span>';
+      var iconeHTML = v.icone
+        ? '<span class="icone" aria-hidden="true">' + v.icone + '</span> '
+        : '';
+      if (v.sous) {
+        /* Variante α — corps en colonne avec titre + sous-titre.
+           Le sous-titre vient des sources de vérité internes (CM.Config,
+           CM.IndicateursMeta) et peut contenir du HTML de confiance
+           (par exemple <abbr title="...">WIP</abbr>). On le passe brut
+           pour préserver l'enrichissement éditorial. Les autres champs
+           (label, id) restent échappés par hygiène. */
+        label += '<span class="corps">' +
+                   '<span class="titre">' + iconeHTML + _echappe(v.label) + '</span>' +
+                   '<span class="sous">' + (v.sous || '') + '</span>' +
+                 '</span>';
+      } else {
+        /* Variante B — libellé seul (avec emoji optionnel devant). */
+        label += ' ' + iconeHTML + _echappe(v.label);
+      }
+      label += '</label>';
+      html += label;
+    }
+    html += '</div>';
+
+    panneau.innerHTML = html;
+  }
+
+  /* ═══ Sélection effective (23.c-4) ═══
+
+     Délégation de clic sur les labels du sélecteur. Toggle de la valeur :
+     si déjà sélectionnée → deselectionnerChip ; sinon → selectionnerChip.
+     Mono-sélection (Niveau, Maturité) : referme le panneau aussitôt après
+     sélection (pas après désélection — on laisse le panneau pour permettre
+     à l'utilisateur de re-sélectionner).
+     Multi-sélection (Problème, Cadre) : panneau reste ouvert, l'utilisateur
+     ferme manuellement (clic ailleurs ou re-clic chip). */
+
+  function _toggleValeur(racine, axe, valeur) {
+    var dejaSelectionne = _estValeurSelectionnee(axe, valeur);
+    if (dejaSelectionne) {
+      deselectionnerChip(axe, valeur);
+    } else {
+      selectionnerChip(axe, valeur);
+    }
+    /* La chip fermée se met à jour via l'abonnement surChangementFiltre.
+       Le panneau ouvert (multi-sélection) doit re-rendre ses .coche. */
+    if ((axe === 'niveau' || axe === 'maturite') && !dejaSelectionne) {
+      /* Mono : sélection effective → on referme. */
+      _fermerPanneau(racine);
+    } else {
+      /* Multi ou désélection mono : rafraîchir le panneau. */
+      var panneau = racine.querySelector('.selecteur');
+      if (panneau && !panneau.hidden) {
+        _peupleSelecteur(panneau, axe);
+      }
+    }
+  }
+
+  function _libelleValeur(axe, id) {
+    var liste = _valeursPourAxe(axe);
+    for (var i = 0; i < liste.length; i++) {
+      if (liste[i].id === id) return liste[i].label;
+    }
+    return id;
+  }
+
+  function _libellesValeursActives(axe) {
+    var brut = etat.chips[axe];
+    if (axe === 'niveau' || axe === 'maturite') {
+      if (!brut) return [];
+      return [_libelleValeur(axe, brut)];
+    }
+    return brut.map(function(id) { return _libelleValeur(axe, id); });
+  }
+
+  function _rafraichirChip(racine, axe) {
+    var chip = racine.querySelector('.chip[data-axe="' + axe + '"]');
+    if (!chip) return;
+    var libelleAxe = chip.dataset.libelle || '';
+    var brut = etat.chips[axe];
+    var contenuValeur = null;
+
+    if (axe === 'niveau' || axe === 'maturite') {
+      /* Mono-sélection : libellé de la valeur unique. */
+      if (brut) contenuValeur = _libelleValeur(axe, brut);
+    } else {
+      /* Multi-sélection (Problème, Cadre) — option A retenue par Lætitia
+         08/05/2026 : compteur seul, taille fixe quelle que soit le nombre
+         de valeurs sélectionnées. Évite l'instabilité de wrap horizontal. */
+      if (brut.length > 0) contenuValeur = '(' + brut.length + ')';
+    }
+
+    if (!contenuValeur) {
+      chip.innerHTML = _echappe(libelleAxe);
+      chip.classList.remove('actif');
+    } else {
+      chip.innerHTML = '<span class="check">&check;</span> ' +
+                       _echappe(libelleAxe) +
+                       ' <span class="valeur">' + _echappe(contenuValeur) + '</span>';
+      chip.classList.add('actif');
+    }
+  }
+
+  function _rafraichirToutesChips(racine) {
+    var axes = ['probleme', 'cadre', 'niveau', 'maturite'];
+    for (var i = 0; i < axes.length; i++) {
+      _rafraichirChip(racine, axes[i]);
+    }
+  }
+
+  /* ═══ Branchement traducteur orthodoxe (23.d-2) ═══
+
+     Mapping état chips → filtre canonique de CM.RequeteMetriques.executer.
+     - chips.niveau (mono, string|null) → filtre.niveau (array de 1 élément)
+     - chips.maturite (mono, string|null) → filtre.maturiteMin (seuil ordinal)
+     - chips.probleme (multi, array) → filtre.tags (les ids problèmes sont
+       les mêmes que les ids tags du référentiel : flux, qualité, valeur, etc.)
+     - chips.cadre (multi, array) → filtre.cadres
+
+     Sémantique : AND inter-clauses, OR intra-clause (cf. § 10.3). */
+
+  /* Cache du total absolu — calculé au premier rafraîchissement, constant
+     sur la durée d'une session (le référentiel n'évolue pas en runtime). */
+  var _totalAbsolu = null;
+
+  function _construireFiltre() {
+    var filtre = {};
+    if (etat.chips.niveau) {
+      filtre.niveau = [etat.chips.niveau];
+    }
+    if (etat.chips.maturite) {
+      filtre.maturiteMin = etat.chips.maturite;
+    }
+    if (etat.chips.probleme.length > 0) {
+      filtre.tags = etat.chips.probleme.slice();
+    }
+    if (etat.chips.cadre.length > 0) {
+      filtre.cadres = etat.chips.cadre.slice();
+    }
+    return filtre;
+  }
+
+  function _libelleAxesActifs(nResultats) {
+    /* Composer la liste des axes actifs dans l'ordre éditorial des chips
+       (Problème, Cadre, Niveau, Maturité) — c'est l'ordre que l'utilisateur
+       voit à l'écran, pas l'ordre alphabétique. */
+    var actifs = [];
+    if (etat.chips.probleme.length > 0) actifs.push('Problème');
+    if (etat.chips.cadre.length > 0)    actifs.push('Cadre');
+    if (etat.chips.niveau)              actifs.push('Niveau');
+    if (etat.chips.maturite)            actifs.push('Maturité');
+
+    if (actifs.length === 0) {
+      return "Aucune lentille active — l'index complet attend.";
+    }
+    if (nResultats === 0) {
+      return "Aucun indicateur ne combine ces lentilles.";
+    }
+
+    /* Liste française naturelle : 'A', 'A et B', 'A, B et C'. */
+    var liste;
+    if (actifs.length === 1) {
+      liste = actifs[0];
+    } else if (actifs.length === 2) {
+      liste = actifs[0] + ' et ' + actifs[1];
+    } else {
+      liste = actifs.slice(0, -1).join(', ') + ' et ' + actifs[actifs.length - 1];
+    }
+    return "Lentilles actives — " + liste + ".";
+  }
+
+  function _rafraichirCompteur(racine, total) {
+    var bouton = racine.querySelector('.cartouche[data-cartouche="compteur"]');
+    if (!bouton) return;
+
+    /* Si total n'est pas fourni (rafraîchissement au montage avant tout
+       événement), on calcule à la demande. */
+    var nFiltre = (typeof total === 'number')
+      ? total
+      : (CM.RequeteMetriques && CM.RequeteMetriques.executer)
+        ? CM.RequeteMetriques.executer(_construireFiltre()).length
+        : 0;
+
+    if (_totalAbsolu === null && CM.RequeteMetriques && CM.RequeteMetriques.executer) {
+      _totalAbsolu = CM.RequeteMetriques.executer({}).length;
+    }
+    var totalAbs = _totalAbsolu || 0;
+
+    var strongEl = bouton.querySelector('.cartouche-libelle strong');
+    if (strongEl) strongEl.textContent = String(nFiltre);
+
+    var totalEl = bouton.querySelector('.cartouche-libelle .total');
+    if (totalEl) {
+      totalEl.textContent = 'sur ' + totalAbs + ' indicateur' + (totalAbs > 1 ? 's' : '');
+    }
+
+    var axesActifsEl = bouton.querySelector('.cartouche-libelle .axes-actifs');
+    if (axesActifsEl) axesActifsEl.textContent = _libelleAxesActifs(nFiltre);
+  }
+
+  /* ═══ Peuplement de la liste filtrée 2 colonnes (23.e) ═══
+
+     Branchée sur surChangementFiltre : à chaque changement d'état des chips,
+     le panneau de la cartouche compteur (<div id="panneau-cartouche-compteur"
+     class="liste-fiches">) est repeuplé avec les fiches correspondantes,
+     rendues via CM.Composants.htmlCarte (cohérence visuelle stricte avec
+     le reste du site — bordure colorée fiabilité, panier ✓/💡 actif).
+
+     Doctrine traducteur orthodoxe respectée : aucun re-tri côté accueil,
+     l'ordre est celui de CM.Referentiel.tous() (ordre canonique du
+     référentiel — cf. CM.RequeteMetriques.executer, « capping après
+     filtrage, sans re-tri »).
+
+     Trois cas couverts :
+       (1) sur événement — on a payload.fiches: ID[], on résout via
+                           CM.Referentiel.chercher(id) ;
+       (2) au montage    — pas encore d'événement émis, calcul direct
+                           via CM.RequeteMetriques.executer(filtre)
+                           pour obtenir directement les objets fiches ;
+       (3) zéro résultat — message pédagogique court (voix française,
+                           ton bienveillant). */
+
+  function _rafraichirListeFiches(racine, ids) {
+    var conteneur = racine.querySelector('#panneau-cartouche-compteur');
+    if (!conteneur) return;
+
+    var fiches;
+    if (Array.isArray(ids)) {
+      fiches = [];
+      for (var i = 0; i < ids.length; i++) {
+        var f = CM.Referentiel.chercher(ids[i]);
+        if (f) fiches.push(f); /* defensive : id orphelin ignoré */
+      }
+    } else {
+      fiches = (CM.RequeteMetriques && CM.RequeteMetriques.executer)
+        ? CM.RequeteMetriques.executer(_construireFiltre())
+        : [];
+    }
+
+    if (fiches.length === 0) {
+      conteneur.innerHTML =
+        '<p class="liste-fiches-vide">'
+        + 'Aucun indicateur ne combine ces lentilles.'
+        + '</p>';
+      return;
+    }
+
+    var html = '';
+    for (var j = 0; j < fiches.length; j++) {
+      html += CM.Composants.htmlCarte(fiches[j], null, true, false);
+    }
+    conteneur.innerHTML = html;
+  }
+
+  /* ═══ Synchronisation DOM des cartouches (23.d-1) ═══
+
+     Reflète l'état persisté etat.cartouches[id] sur l'apparence du bouton
+     et du panneau associé : aria-expanded, classe .deplie, libellé d'action
+     « Voir » ↔ « Masquer », chevron ▾ ↔ ▴, panneau hidden true/false.
+
+     Le panneau associé est repéré par data-cartouche-panneau="<id>" :
+     - panneau de la cartouche question : <div class="panneau-cartouche">
+       (peuplé en 23.d-3 par l'index inline des fiches-questions) ;
+     - panneau de la cartouche compteur : <div class="liste-fiches">
+       (peuplée en 23.e par la liste filtrée 2 colonnes).
+
+     Le rafraîchissement est idempotent : on peut l'appeler au montage
+     (restauration depuis localStorage) ou sur événement (toggle utilisateur). */
+
+  function _rafraichirCartouche(racine, id) {
+    var bouton  = racine.querySelector('.cartouche[data-cartouche="' + id + '"]');
+    var panneau = racine.querySelector('[data-cartouche-panneau="' + id + '"]');
+    if (!bouton || !panneau) return;
+
+    var ouvert = (etat.cartouches[id] === 'ouvert');
+
+    bouton.classList.toggle('deplie', ouvert);
+    bouton.setAttribute('aria-expanded', ouvert ? 'true' : 'false');
+    panneau.hidden = !ouvert;
+
+    /* Met à jour le libellé d'action (Voir / Masquer) et le chevron (▾ / ▴).
+       On reconstruit le contenu du <span class="cartouche-chevron"> pour
+       garder une seule source de vérité — le nœud texte du chevron étant
+       distinct du span libelle-action. */
+    var chevron = bouton.querySelector('.cartouche-chevron');
+    if (chevron) {
+      chevron.innerHTML =
+        '<span class="libelle-action">' + (ouvert ? 'Masquer' : 'Voir') + '</span> ' +
+        (ouvert ? '\u25B4' : '\u25BE');
+    }
+  }
+
+  function _rafraichirToutesCartouches(racine) {
+    _rafraichirCartouche(racine, 'question');
+    _rafraichirCartouche(racine, 'compteur');
+  }
+
+  function _ouvrirPanneau(racine, axe) {
+    var panneau = racine.querySelector('.selecteur');
+    var chipCible = racine.querySelector('.chip[data-axe="' + axe + '"]');
+    if (!panneau || !chipCible) return;
+    _fermerPanneau(racine);
+    chipCible.classList.add('ouverte');
+    chipCible.setAttribute('aria-expanded', 'true');
+    panneau.dataset.axe = axe;
+    panneau.classList.add(_estMonoSelection(axe) ? 'mono' : 'multi');
+    _peupleSelecteur(panneau, axe);
+    panneau.hidden = false;
+  }
+
+  function _surClicAccueil(e) {
+    var racine = e.currentTarget;
+
+    /* Clic sur un label[data-valeur] du sélecteur ouvert : toggle. */
+    var label = e.target.closest('.selecteur label[data-valeur]');
+    if (label) {
+      var panneauActif = racine.querySelector('.selecteur');
+      var axeActif = panneauActif ? panneauActif.dataset.axe : null;
+      var valeurClic = label.dataset.valeur;
+      if (axeActif && valeurClic) {
+        e.preventDefault();
+        _toggleValeur(racine, axeActif, valeurClic);
+      }
+      return;
+    }
+
+    /* Clic sur une cartouche dépliable (question / compteur) : toggle ouvert/fermé.
+       Doit précéder le test sur les chips et le fallback de fermeture, sinon
+       le clic serait absorbé par le fallback "clic ailleurs" qui referme le
+       panneau du sélecteur. */
+    var cartoucheBtn = e.target.closest('.cartouche[data-cartouche]');
+    if (cartoucheBtn && racine.contains(cartoucheBtn)) {
+      var idCart = cartoucheBtn.dataset.cartouche;
+      /* Si un sélecteur de chip est ouvert, on le referme : changement de
+         contexte UX, l'utilisateur passe à un autre bloc. */
+      _fermerPanneau(racine);
+      if (etat.cartouches[idCart] === 'ouvert') {
+        fermerCartouche(idCart);
+      } else {
+        ouvrirCartouche(idCart);
+      }
+      return;
+    }
+
+    /* Clic sur une chip : ouvre/ferme son panneau. */
+    var chip = e.target.closest('.chip[data-axe]');
+    if (chip && racine.contains(chip)) {
+      var axeChip = chip.dataset.axe;
+      if (chip.classList.contains('ouverte')) {
+        _fermerPanneau(racine);
+      } else {
+        _ouvrirPanneau(racine, axeChip);
+      }
+      return;
+    }
+
+    /* Clic à l'intérieur du panneau (mais pas sur un label) : ne pas fermer. */
+    if (e.target.closest('.selecteur')) return;
+
+    /* Clic ailleurs dans .accueil-unifie : fermer. */
+    _fermerPanneau(racine);
+  }
+
+  function _brancherDOM() {
+    var racine = document.querySelector('.accueil-unifie');
+    if (!racine) return;
+    /* Idempotence : si déjà branché, ne pas re-attacher. */
+    if (racine.dataset.cmAccueilUnifieBranche === '1') return;
+    racine.dataset.cmAccueilUnifieBranche = '1';
+
+    /* Capture les libellés d'origine des chips pour pouvoir les restaurer
+       après désélection (la chip change d'innerHTML quand elle passe en
+       mode actif). Une seule passe au boot. */
+    var chipsInit = racine.querySelectorAll('.chip[data-axe]');
+    for (var i = 0; i < chipsInit.length; i++) {
+      if (!chipsInit[i].dataset.libelle) {
+        chipsInit[i].dataset.libelle = chipsInit[i].textContent.trim();
+      }
+    }
+
+    racine.addEventListener('click', _surClicAccueil);
+
+    /* S'abonne aux changements de filtre pour rafraîchir les chips fermées
+       et le compteur live de la cartouche compteur. */
+    surChangementFiltre(function(payload) {
+      _rafraichirToutesChips(racine);
+      _rafraichirCompteur(racine, payload && payload.total);
+      _rafraichirListeFiches(racine, payload && payload.fiches);
+    });
+
+    /* S'abonne aux changements de cartouches pour synchroniser l'apparence
+       (libellé d'action, chevron, classe .deplie, panneau hidden). */
+    surChangementCartouche(function() {
+      _rafraichirToutesCartouches(racine);
+    });
+
+    /* Restaure l'état des chips et des cartouches au montage, puis
+       recalcule compteur live et liste filtrée à partir de l'état restauré. */
+    _restaurer();
+    _rafraichirToutesChips(racine);
+    _rafraichirToutesCartouches(racine);
+    _rafraichirCompteur(racine);
+    _rafraichirListeFiches(racine);
+  }
+
+  function init() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _brancherDOM);
+    } else {
+      _brancherDOM();
+    }
+  }
+
+  /* ═══ Façade publique ═══ */
+
+  function ouvrir() {
+    _restaurer();
+    /* Le rendu DOM (état des chips, cartouches, liste filtrée) sera câblé
+       sur les événements émis par les fonctions ci-dessous au commit 23.c-2.
+       Pour 23.c-1 : juste la restauration de l'état + émission. */
+    appliquerFiltre();
+    _emettreCartoucheChange('question');
+    _emettreCartoucheChange('compteur');
+  }
+
+  function ouvrirCartouche(id) {
+    if (id !== 'question' && id !== 'compteur') return;
+    if (etat.cartouches[id] === 'ouvert') return;
+    etat.cartouches[id] = 'ouvert';
+    _persister();
+    _emettreCartoucheChange(id);
+  }
+
+  function fermerCartouche(id) {
+    if (id !== 'question' && id !== 'compteur') return;
+    if (etat.cartouches[id] === 'ferme') return;
+    etat.cartouches[id] = 'ferme';
+    _persister();
+    _emettreCartoucheChange(id);
+  }
+
+  function selectionnerChip(axe, valeur) {
+    if (!etat.chips.hasOwnProperty(axe) || typeof valeur !== 'string') return;
+    if (axe === 'niveau' || axe === 'maturite') {
+      /* Mono-sélection : remplace la valeur précédente. */
+      etat.chips[axe] = valeur;
+    } else {
+      /* Multi-sélection : ajoute si pas déjà présent. */
+      if (etat.chips[axe].indexOf(valeur) === -1) {
+        etat.chips[axe].push(valeur);
+      } else {
+        return; /* déjà présent — pas d'émission */
+      }
+    }
+    _persister();
+    appliquerFiltre();
+  }
+
+  function deselectionnerChip(axe, valeur) {
+    if (!etat.chips.hasOwnProperty(axe)) return;
+    if (axe === 'niveau' || axe === 'maturite') {
+      if (etat.chips[axe] === null) return;
+      etat.chips[axe] = null;
+    } else {
+      if (typeof valeur !== 'string') return;
+      var idx = etat.chips[axe].indexOf(valeur);
+      if (idx === -1) return;
+      etat.chips[axe].splice(idx, 1);
+    }
+    _persister();
+    appliquerFiltre();
+  }
+
+  function reinitialiserChips() {
+    var dejaVide = etat.chips.probleme.length === 0 &&
+                   etat.chips.cadre.length === 0 &&
+                   etat.chips.niveau === null &&
+                   etat.chips.maturite === null;
+    if (dejaVide) return;
+    etat.chips = _etatParDefaut().chips;
+    _persister();
+    appliquerFiltre();
+  }
+
+  function appliquerFiltre() {
+    /* Branchement effectif sur CM.RequeteMetriques.executer() (23.d-2).
+       L'accueil est l'adaptateur d'entrée hexagonal : il construit un filtre
+       canonique conforme au § 10.3 du doc-contrats-chantier-14.md, délègue
+       au traducteur orthodoxe, et émet le résultat. Aucune logique de
+       filtrage côté accueil — doctrine *« un traducteur formule, il ne
+       post-filtre pas »* (cf. project_doctrine_traducteur_orthodoxe). */
+    var filtre = _construireFiltre();
+    var fiches = (CM.RequeteMetriques && CM.RequeteMetriques.executer)
+      ? CM.RequeteMetriques.executer(filtre)
+      : [];
+    var ids = [];
+    for (var i = 0; i < fiches.length; i++) ids.push(fiches[i].id);
+    _emettreFiltreChange(ids.length, ids);
+  }
+
+  function surChangementFiltre(callback) {
+    if (typeof callback !== 'function') return;
+    abonnesFiltre.push(callback);
+  }
+
+  function surChangementCartouche(callback) {
+    if (typeof callback !== 'function') return;
+    abonnesCartouche.push(callback);
+  }
+
+  function etatChips() {
+    return _copieEtatChips();
+  }
+
+  function etatCartouche(id) {
+    if (id !== 'question' && id !== 'compteur') return null;
+    return etat.cartouches[id];
+  }
+
+  return {
+    ouvrir:                  ouvrir,
+    ouvrirCartouche:         ouvrirCartouche,
+    fermerCartouche:         fermerCartouche,
+    selectionnerChip:        selectionnerChip,
+    deselectionnerChip:      deselectionnerChip,
+    reinitialiserChips:      reinitialiserChips,
+    appliquerFiltre:         appliquerFiltre,
+    surChangementFiltre:     surChangementFiltre,
+    surChangementCartouche:  surChangementCartouche,
+    etatChips:               etatChips,
+    etatCartouche:           etatCartouche,
+    init:                    init
+  };
+})();
+/* ══ CM.AccueilUnifie — END ══ */
+</script>
+<!-- CM.ACCUEIL-UNIFIE-INJECTION-END -->
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     Mini-framework de tests + tests pilotes du commit 23.g-4.1
+     ═══════════════════════════════════════════════════════════════════════ -->
+
+<script>
+  'use strict';
+
+  /* ─── Mini-framework ──────────────────────────────────────────── */
+  var _resultats = [];
+  function test(nom, fn) {
+    var detail = '';
+    var ok = false;
+    try {
+      fn();
+      ok = true;
+    } catch (e) {
+      detail = (e && e.message) ? e.message : String(e);
+    }
+    _resultats.push({ nom: nom, ok: ok, detail: detail });
+  }
+  function assert(cond, message) {
+    if (!cond) throw new Error(message || 'assert a échoué');
+  }
+  function assertEqual(a, b, message) {
+    if (a !== b) throw new Error((message || 'assertEqual') + ' — attendu ' + JSON.stringify(b) + ', obtenu ' + JSON.stringify(a));
+  }
+  function assertDeepEqual(a, b, message) {
+    var sa = JSON.stringify(a);
+    var sb = JSON.stringify(b);
+    if (sa !== sb) throw new Error((message || 'assertDeepEqual') + ' — attendu ' + sb + ', obtenu ' + sa);
+  }
+
+  /* Lit le textContent d'un sélecteur dans la racine .accueil-unifie. */
+  function lire(selecteur) {
+    var el = document.querySelector('.accueil-unifie ' + selecteur);
+    return el ? el.textContent.trim() : null;
+  }
+
+  /* Réinitialise le module entre tests : on remet l'état à zéro via
+     deselectionnerChip + reinitialiserChips, puis on réinitialise le
+     stub de Preferences pour partir d'un état propre. */
+  function reset() {
+    resetPreferences();
+    if (CM.AccueilUnifie && CM.AccueilUnifie.reinitialiserChips) {
+      CM.AccueilUnifie.reinitialiserChips();
+    }
+    if (CM.AccueilUnifie && CM.AccueilUnifie.fermerCartouche) {
+      CM.AccueilUnifie.fermerCartouche('question');
+      CM.AccueilUnifie.fermerCartouche('compteur');
+    }
+  }
+
+  /* ─── Tests pilotes (commit 23.g-4.1) ──────────────────────────
+     But : valider que la mécanique du harnais tourne — module chargé,
+     squelette DOM en place, stubs branchés, état initial cohérent.
+     La couverture fonctionnelle complète arrive en 23.g-4.2. */
+
+  function lancerTests() {
+
+    /* Initialise le module : déclenche _brancherDOM, qui câble les
+       abonnements (surChangementFiltre, surChangementCartouche) et
+       restaure l'état persisté. _brancherDOM est idempotent
+       (garde-fou racine.dataset.cmAccueilUnifieBranche), donc cet
+       appel est sûr même si init() avait déjà tourné. */
+    CM.AccueilUnifie.init();
+
+    test('1. Le module CM.AccueilUnifie est chargé et expose son API publique', function() {
+      assert(window.CM && CM.AccueilUnifie, 'CM.AccueilUnifie introuvable — l\'injection a-t-elle été faite ? Lancer node outils/construire-tests-accueil-unifie.js');
+      var apiAttendue = ['ouvrir', 'ouvrirCartouche', 'fermerCartouche',
+                         'selectionnerChip', 'deselectionnerChip', 'reinitialiserChips',
+                         'appliquerFiltre', 'surChangementFiltre', 'surChangementCartouche',
+                         'etatChips', 'etatCartouche', 'init'];
+      for (var i = 0; i < apiAttendue.length; i++) {
+        assert(typeof CM.AccueilUnifie[apiAttendue[i]] === 'function',
+               'API publique manquante : ' + apiAttendue[i]);
+      }
+    });
+
+    test('2. État initial après init : chips vides, cartouches fermées', function() {
+      reset();
+      var chips = CM.AccueilUnifie.etatChips();
+      assertDeepEqual(chips.probleme, [], 'chips.probleme initial');
+      assertDeepEqual(chips.cadre, [],    'chips.cadre initial');
+      assertEqual(chips.niveau, null,     'chips.niveau initial');
+      assertEqual(chips.maturite, null,   'chips.maturite initial');
+      assertEqual(CM.AccueilUnifie.etatCartouche('question'), 'ferme', 'cartouche question');
+      assertEqual(CM.AccueilUnifie.etatCartouche('compteur'), 'ferme', 'cartouche compteur');
+    });
+
+    test('3. Libellé d\'axes actifs : « Aucune lentille active » quand aucune chip n\'est sélectionnée', function() {
+      reset();
+      CM.AccueilUnifie.appliquerFiltre();
+      var libelle = lire('.cartouche-libelle .axes-actifs');
+      assertEqual(libelle, 'Aucune lentille active — l\'index complet attend.', 'libellé 0 lentille');
+    });
+
+    test('4. Sélection d\'une chip niveau : libellé d\'axes actifs passe à « Lentilles actives — Niveau. »', function() {
+      reset();
+      CM.AccueilUnifie.selectionnerChip('niveau', 'équipe');
+      var libelle = lire('.cartouche-libelle .axes-actifs');
+      assertEqual(libelle, 'Lentilles actives — Niveau.', 'libellé 1 lentille');
+      var chips = CM.AccueilUnifie.etatChips();
+      assertEqual(chips.niveau, 'équipe', 'état chips.niveau après sélection');
+    });
+
+    /* ─── Affichage des résultats ─── */
+    var bilan = document.getElementById('bilan');
+    var racine = document.getElementById('resultats');
+    var nbOk = 0;
+    for (var i = 0; i < _resultats.length; i++) {
+      var r = _resultats[i];
+      if (r.ok) nbOk++;
+      var div = document.createElement('div');
+      div.className = 'test ' + (r.ok ? 'ok' : 'ko');
+      var nom = document.createElement('span');
+      nom.className = 'nom';
+      nom.textContent = (r.ok ? '✓ ' : '✗ ') + r.nom;
+      div.appendChild(nom);
+      if (r.detail) {
+        var det = document.createElement('span');
+        det.className = 'detail';
+        det.textContent = r.detail;
+        div.appendChild(det);
+      }
+      racine.appendChild(div);
+    }
+    var total = _resultats.length;
+    bilan.className = 'bilan ' + (nbOk === total ? 'ok' : 'ko');
+    bilan.textContent = nbOk === total
+      ? '✓ ' + total + ' / ' + total + ' tests passent.'
+      : '✗ ' + nbOk + ' / ' + total + ' tests passent — ' + (total - nbOk) + ' échec(s).';
+  }
+
+  /* CM.AccueilUnifie.init() s'attache à DOMContentLoaded ; on attend
+     un tick de plus pour être sûr que _brancherDOM a tourné. */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(lancerTests, 0);
+    });
+  } else {
+    setTimeout(lancerTests, 0);
+  }
+</script>
+
+</body>
+</html>
