@@ -1142,10 +1142,21 @@ CM.AccueilUnifie = (function() {
     }
   }
 
-  /* ─── Tests pilotes (commit 23.g-4.1) ──────────────────────────
-     But : valider que la mécanique du harnais tourne — module chargé,
-     squelette DOM en place, stubs branchés, état initial cohérent.
-     La couverture fonctionnelle complète arrive en 23.g-4.2. */
+  /* ═══════════════════════════════════════════════════════════════
+     Section A — Tests unitaires sur stubs (couverture complète)
+
+     Sous-sections :
+       · A.0  pilotes (1-4)        — sanity check, déjà en 23.g-4.1
+       · A.1  sélection/désélection des chips (5-9)
+       · A.2  libellé d'axes actifs : 4 patterns français (10-13)
+       · A.3  libellé canonique vide (14)
+       · A.4  persistance via Preferences (15-16)
+       · A.5  comportements limites + reset (17-19)
+       · A.6  pub/sub des abonnés (20-21)
+
+     La section B (sentinelles I1-I6 sur référentiel réel) arrivera
+     au commit 23.g-4.3.
+     ═══════════════════════════════════════════════════════════════ */
 
   function lancerTests() {
 
@@ -1193,6 +1204,214 @@ CM.AccueilUnifie = (function() {
       assertEqual(libelle, 'Lentilles actives — Niveau.', 'libellé 1 lentille');
       var chips = CM.AccueilUnifie.etatChips();
       assertEqual(chips.niveau, 'équipe', 'état chips.niveau après sélection');
+    });
+
+    /* ─── A.1 — Sélection / désélection des chips ──────────────── */
+
+    test('5. Mono-sélection (niveau) : selectionnerChip remplace la valeur précédente', function() {
+      reset();
+      CM.AccueilUnifie.selectionnerChip('niveau', 'équipe');
+      CM.AccueilUnifie.selectionnerChip('niveau', 'programme');
+      var chips = CM.AccueilUnifie.etatChips();
+      assertEqual(chips.niveau, 'programme', 'la dernière valeur écrase la précédente');
+    });
+
+    test('6. Mono-sélection (niveau) : deselectionnerChip remet à null', function() {
+      reset();
+      CM.AccueilUnifie.selectionnerChip('niveau', 'équipe');
+      CM.AccueilUnifie.deselectionnerChip('niveau', 'équipe');
+      assertEqual(CM.AccueilUnifie.etatChips().niveau, null, 'niveau remis à null');
+    });
+
+    test('7. Multi-sélection (cadre) : selectionnerChip ajoute, double sélection idempotente', function() {
+      reset();
+      CM.AccueilUnifie.selectionnerChip('cadre', 'lean');
+      CM.AccueilUnifie.selectionnerChip('cadre', 'dora');
+      assertDeepEqual(CM.AccueilUnifie.etatChips().cadre, ['lean', 'dora'], 'deux valeurs ajoutées');
+      CM.AccueilUnifie.selectionnerChip('cadre', 'lean'); /* déjà présent */
+      assertDeepEqual(CM.AccueilUnifie.etatChips().cadre, ['lean', 'dora'], 'doublon non ajouté');
+    });
+
+    test('8. Multi-sélection (cadre) : deselectionnerChip retire la valeur, absente = silencieux', function() {
+      reset();
+      CM.AccueilUnifie.selectionnerChip('cadre', 'lean');
+      CM.AccueilUnifie.selectionnerChip('cadre', 'dora');
+      CM.AccueilUnifie.deselectionnerChip('cadre', 'lean');
+      assertDeepEqual(CM.AccueilUnifie.etatChips().cadre, ['dora'], 'lean retiré');
+      /* Désélection d'une valeur absente : ne lève pas, ne modifie pas. */
+      CM.AccueilUnifie.deselectionnerChip('cadre', 'inexistante');
+      assertDeepEqual(CM.AccueilUnifie.etatChips().cadre, ['dora'], 'array inchangé');
+    });
+
+    test('9. reinitialiserChips remet tous les axes à leur état initial', function() {
+      reset();
+      CM.AccueilUnifie.selectionnerChip('niveau', 'équipe');
+      CM.AccueilUnifie.selectionnerChip('cadre', 'lean');
+      CM.AccueilUnifie.selectionnerChip('maturite', 'intermediaire');
+      CM.AccueilUnifie.reinitialiserChips();
+      var chips = CM.AccueilUnifie.etatChips();
+      assertDeepEqual(chips.probleme, [], 'probleme vide');
+      assertDeepEqual(chips.cadre,    [], 'cadre vide');
+      assertEqual(chips.niveau,   null, 'niveau null');
+      assertEqual(chips.maturite, null, 'maturite null');
+    });
+
+    /* ─── A.2 — Libellé d'axes actifs : 4 patterns français ───── */
+
+    test('10. Libellé 1 lentille : « Lentilles actives — Cadre. »', function() {
+      reset();
+      CM.AccueilUnifie.selectionnerChip('cadre', 'lean');
+      assertEqual(lire('.cartouche-libelle .axes-actifs'),
+                  'Lentilles actives — Cadre.',
+                  'pattern 1 lentille');
+    });
+
+    test('11. Libellé 2 lentilles : « Lentilles actives — Cadre et Niveau. »', function() {
+      reset();
+      CM.AccueilUnifie.selectionnerChip('cadre', 'lean');
+      CM.AccueilUnifie.selectionnerChip('niveau', 'équipe');
+      assertEqual(lire('.cartouche-libelle .axes-actifs'),
+                  'Lentilles actives — Cadre et Niveau.',
+                  'pattern 2 lentilles avec « et »');
+    });
+
+    test('12. Libellé 3 lentilles : « Lentilles actives — Cadre, Niveau et Maturité. »', function() {
+      reset();
+      CM.AccueilUnifie.selectionnerChip('cadre', 'lean');
+      CM.AccueilUnifie.selectionnerChip('niveau', 'équipe');
+      CM.AccueilUnifie.selectionnerChip('maturite', 'debutant');
+      assertEqual(lire('.cartouche-libelle .axes-actifs'),
+                  'Lentilles actives — Cadre, Niveau et Maturité.',
+                  'pattern 3+ lentilles avec virgules + « et » final');
+    });
+
+    test('13. Ordre éditorial des lentilles : Problème, Cadre, Niveau, Maturité (pas alphabétique)', function() {
+      reset();
+      /* Sélection dans un ordre arbitraire : niveau d\'abord, puis cadre. */
+      CM.AccueilUnifie.selectionnerChip('niveau', 'équipe');
+      CM.AccueilUnifie.selectionnerChip('cadre', 'lean');
+      /* Le libellé doit lister Cadre AVANT Niveau (ordre éditorial,
+         pas ordre de sélection). */
+      assertEqual(lire('.cartouche-libelle .axes-actifs'),
+                  'Lentilles actives — Cadre et Niveau.',
+                  'ordre éditorial respecté');
+    });
+
+    /* ─── A.3 — Libellé canonique vide (résolution C3) ──────────── */
+
+    test('14. Combinaison vide : « Aucun indicateur ne combine ces lentilles. » (libellé canonique unique, commit 371a671)', function() {
+      reset();
+      /* Niveau strategique × Cadre lean : aucune fiche du stub ne matche
+         (les fiches strategique sont taggées generique, pas lean). */
+      CM.AccueilUnifie.selectionnerChip('niveau', 'strategique');
+      CM.AccueilUnifie.selectionnerChip('cadre', 'lean');
+      assertEqual(lire('.cartouche-libelle .axes-actifs'),
+                  'Aucun indicateur ne combine ces lentilles.',
+                  'libellé canonique vide (compteur)');
+      /* Le panneau filtré doit afficher exactement le même libellé
+         (préalable C3 résolu en commit 371a671). */
+      var panneau = document.querySelector('#panneau-cartouche-compteur');
+      var pVide = panneau.querySelector('.liste-fiches-vide');
+      assert(pVide !== null, 'paragraphe vide doit exister');
+      assertEqual(pVide.textContent.trim(),
+                  'Aucun indicateur ne combine ces lentilles.',
+                  'libellé canonique vide (panneau)');
+    });
+
+    /* ─── A.4 — Persistance via Preferences ─────────────────────── */
+
+    test('15. Persistance écriture : selectionnerChip met à jour Preferences au format attendu', function() {
+      reset();
+      CM.AccueilUnifie.selectionnerChip('niveau', 'programme');
+      CM.AccueilUnifie.selectionnerChip('cadre', 'lean');
+      CM.AccueilUnifie.selectionnerChip('cadre', 'dora');
+      var brut = _prefsStore['accueil-unifie-etat'];
+      assert(typeof brut === 'string', 'la valeur stockée doit être une string JSON');
+      var parsed = JSON.parse(brut);
+      assert(parsed && parsed.chips, 'JSON doit avoir une clé chips');
+      assertEqual(parsed.chips.niveau, 'programme', 'niveau persisté');
+      assertDeepEqual(parsed.chips.cadre, ['lean', 'dora'], 'cadre persisté (ordre conservé)');
+      assert(parsed.cartouches, 'JSON doit avoir une clé cartouches');
+    });
+
+    test('16. Persistance lecture : init() restaure l\'état depuis Preferences', function() {
+      reset();
+      /* Préremplit Preferences avec un état persisté non-trivial. */
+      _prefsStore['accueil-unifie-etat'] = JSON.stringify({
+        cartouches: { question: 'ouvert', compteur: 'ferme' },
+        chips:      { probleme: [], cadre: ['lean'], niveau: 'programme', maturite: null }
+      });
+      /* Force le rebranchement en retirant le flag d\'idempotence. */
+      var racine = document.querySelector('.accueil-unifie');
+      delete racine.dataset.cmAccueilUnifieBranche;
+      /* Mais l\'état mémoire interne reste à zéro (reset l\'a vidé).
+         L\'appel à init() rebranche et déclenche _restaurer(). */
+      CM.AccueilUnifie.init();
+      var chips = CM.AccueilUnifie.etatChips();
+      assertEqual(chips.niveau, 'programme', 'niveau restauré depuis Preferences');
+      assertDeepEqual(chips.cadre, ['lean'], 'cadre restauré depuis Preferences');
+      assertEqual(CM.AccueilUnifie.etatCartouche('question'), 'ouvert',
+                  'cartouche question restaurée à ouvert');
+    });
+
+    /* ─── A.5 — Comportements limites ───────────────────────────── */
+
+    test('17. selectionnerChip avec axe inconnu : ignoré silencieusement', function() {
+      reset();
+      CM.AccueilUnifie.selectionnerChip('axe-inexistant', 'valeur');
+      var chips = CM.AccueilUnifie.etatChips();
+      assertDeepEqual(chips.probleme, [], 'aucun effet sur probleme');
+      assertEqual(chips.niveau, null, 'aucun effet sur niveau');
+      /* État cohérent : aucune chip touchée, aucun crash. */
+    });
+
+    test('18. selectionnerChip avec valeur non-string : ignoré silencieusement', function() {
+      reset();
+      CM.AccueilUnifie.selectionnerChip('cadre', null);
+      CM.AccueilUnifie.selectionnerChip('cadre', undefined);
+      CM.AccueilUnifie.selectionnerChip('cadre', { obj: 1 });
+      assertDeepEqual(CM.AccueilUnifie.etatChips().cadre, [], 'aucun ajout malgré valeurs invalides');
+    });
+
+    test('19. ouvrir/fermerCartouche avec id inconnu : ignoré silencieusement', function() {
+      reset();
+      CM.AccueilUnifie.ouvrirCartouche('inexistante');
+      CM.AccueilUnifie.fermerCartouche('autre');
+      assertEqual(CM.AccueilUnifie.etatCartouche('inexistante'), null,
+                  'etatCartouche d\'un id inconnu retourne null');
+      assertEqual(CM.AccueilUnifie.etatCartouche('question'), 'ferme',
+                  'cartouche question reste fermée');
+    });
+
+    /* ─── A.6 — Pub/sub des abonnés ─────────────────────────────── */
+
+    test('20. surChangementFiltre : abonné reçoit le payload {chips, total, fiches} après mutation', function() {
+      reset();
+      var recus = [];
+      CM.AccueilUnifie.surChangementFiltre(function(payload) {
+        recus.push(payload);
+      });
+      CM.AccueilUnifie.selectionnerChip('niveau', 'équipe');
+      assert(recus.length >= 1, 'au moins une notification');
+      var dernier = recus[recus.length - 1];
+      assert(dernier.chips, 'payload contient chips');
+      assertEqual(dernier.chips.niveau, 'équipe', 'chips reflètent l\'état post-mutation');
+      assert(typeof dernier.total === 'number', 'payload contient total numérique');
+      assert(Array.isArray(dernier.fiches), 'payload contient fiches en array');
+      /* 3 fiches équipe dans le stub : eq-a, eq-b, eq-c. */
+      assertEqual(dernier.total, 3, 'total = 3 fiches équipe dans le stub');
+    });
+
+    test('21. surChangementCartouche : abonné reçoit {id, etat} après ouverture', function() {
+      reset();
+      var recus = [];
+      CM.AccueilUnifie.surChangementCartouche(function(payload) {
+        recus.push(payload);
+      });
+      CM.AccueilUnifie.ouvrirCartouche('question');
+      assert(recus.length === 1, 'exactement une notification');
+      assertEqual(recus[0].id, 'question', 'payload.id');
+      assertEqual(recus[0].etat, 'ouvert', 'payload.etat');
     });
 
     /* ─── Affichage des résultats ─── */
