@@ -56,13 +56,13 @@ I5 valide non seulement la fiabilité décroissante (`fiable` avant `precaution`
 
 **Conséquence.** Toute insertion d'une nouvelle fiche `programme + fiable` entre `p3` et `p4` source (par déplacement dans le `.md` ou édition manuelle de la zone balisée) **changera** la valeur de I5. C'est une régression visuelle utilisateur (ordre de la grille). À traiter en commit explicite avec mise à jour du journal.
 
-### C3 — Double libellé pour combinaison vide
+### C3 — Double libellé pour combinaison vide (oubli d'harmonisation)
 
 Sur I4 et I6, deux phrasings cohabitent pour le même état (zéro résultat) :
 - côté **compteur** (haut de l'accueil) : « Aucun indicateur ne combine ces lentilles. »
 - côté **panneau** (en dessous, dans `#panneau-cartouche-compteur .liste-fiches-vide`) : « Aucune fiche ne correspond à cette combinaison d'axes. »
 
-Deux registres lexicaux : *indicateur / fiche*, *combine / correspond*, *lentilles / axes*. À arbitrer dans un commit éditorial dédié — choix volontaire à confirmer (deux endroits, deux registres) ou harmonisation à effectuer.
+Deux registres lexicaux : *indicateur / fiche*, *combine / correspond*, *lentilles / axes*. **Arbitrage Lætitia 09/05/2026 : oubli d'harmonisation, à corriger** — un seul libellé sera retenu et appliqué aux deux endroits dans un commit éditorial dédié (cf. point reporté n°4 du backlog). Le choix éditorial est différé à l'ouverture de ce commit.
 
 ---
 
