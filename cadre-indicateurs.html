@@ -4805,6 +4805,46 @@ CM.AccueilUnifie = (function() {
        (3) zéro résultat — message pédagogique court (voix française,
                            ton bienveillant). */
 
+  /* ═══ Tri par proximité de maturité (ajouté 09/05/2026) ═══
+
+     Quand la chip Maturité est active, les fiches sont classées par
+     distance ordinale au filtre choisi : match exact (distance 0) en
+     premier, autres maturités ensuite par ordre de proximité. Les fiches
+     « éloignées » (maturité différente du filtre) reçoivent l'opacité
+     réduite via le paramètre `contexte` de htmlCarte (classe CSS
+     `.carte-ind.contexte` à opacity 0.72, déjà utilisée sur la page
+     Maturité pour les fiches du « prochain niveau »).
+
+     Doctrine : alternative à la sémantique restrictive du filtre, qui
+     aurait demandé un re-tagging massif du référentiel (54 fiches sur
+     89 sont taguées 'debutant', le filtre Avancé strict aurait livré
+     3 fiches). Solution intermédiaire validée par Lætitia 09/05/2026 :
+     tout reste visible (esprit Lean « rien n'est exclu »), l'œil tombe
+     en haut sur ce qui correspond.
+
+     En cas d'égalité de distance (filtre Intermédiaire : Débutant et
+     Avancé sont tous deux à distance 1), tie-break par rang croissant
+     (fondamentaux avant sophistications).
+
+     Architecture hexagonale respectée : ce tri est un post-traitement
+     d'adaptateur d'entrée, pas une mutation du domaine. CM.RequeteMetriques
+     reste pur (« un traducteur formule, il ne post-filtre pas »). */
+  var MATURITES_ORDRE = ['debutant', 'intermediaire', 'avance'];
+
+  function _trierParMaturite(fiches, filtreMaturite) {
+    if (!filtreMaturite) return fiches;
+    var rangFiltre = MATURITES_ORDRE.indexOf(filtreMaturite);
+    if (rangFiltre < 0) return fiches;
+    return fiches.slice().sort(function(a, b) {
+      var rA = MATURITES_ORDRE.indexOf(a.maturite_min);
+      var rB = MATURITES_ORDRE.indexOf(b.maturite_min);
+      var dA = Math.abs(rA - rangFiltre);
+      var dB = Math.abs(rB - rangFiltre);
+      if (dA !== dB) return dA - dB;
+      return rA - rB;
+    });
+  }
+
   function _rafraichirListeFiches(racine, ids) {
     var conteneur = racine.querySelector('#panneau-cartouche-compteur');
     if (!conteneur) return;
@@ -4822,6 +4862,11 @@ CM.AccueilUnifie = (function() {
         : [];
     }
 
+    /* Tri par proximité de maturité (ajouté 09/05/2026 — voir le bloc de
+       doctrine au-dessus de _trierParMaturite). Sans effet quand la chip
+       Maturité est inactive. */
+    fiches = _trierParMaturite(fiches, etat.chips.maturite);
+
     if (fiches.length === 0) {
       conteneur.innerHTML =
         '<p class="liste-fiches-vide">'
@@ -4831,8 +4876,13 @@ CM.AccueilUnifie = (function() {
     }
 
     var html = '';
+    var maturiteFiltre = etat.chips.maturite;
     for (var j = 0; j < fiches.length; j++) {
-      html += CM.Composants.htmlCarte(fiches[j], null, true, false);
+      /* contexte=true → opacité 0.72 sur les fiches d'autre maturité.
+         Réutilise le mécanisme déjà actif sur la page Maturité (« prochain
+         niveau » sur _rendreMaturite ligne ~8912). */
+      var eloignee = !!(maturiteFiltre && fiches[j].maturite_min !== maturiteFiltre);
+      html += CM.Composants.htmlCarte(fiches[j], null, true, eloignee);
     }
     conteneur.innerHTML = html;
   }
