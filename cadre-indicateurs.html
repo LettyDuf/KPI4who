@@ -1831,9 +1831,18 @@
          le titre du type (« DORA · PERFORMANCE D… »). À 920px, chaque carte
          fait ~412px, le titre tient en entier, la définition garde 3 lignes.
          Arbitrage entre 880px et 920px tranché côté preview HTML autonome
-         (mockup-23e-largeur.html) : option B « généreux » retenue. */
+         (mockup-23e-largeur.html) : option B « généreux » retenue.
+
+         Réharmonisation 09/05/2026 (smoke test interactif Lætitia) : passe
+         à 1240px pour s'aligner sur .contenu (max-width des autres vues :
+         tableau de bord, cascade, maturité, lexique, à propos). Le décalage
+         de 320px restant depuis 23.e créait une dissonance visuelle entre
+         l'accueil et le reste de l'app. Bonus : les cartes 2-colonnes du
+         panneau cartouche compteur passent de ~440 à ~600 px chacune,
+         titres et définitions encore plus respirés. Les chips et le
+         marqueur restent groupés au centre par justify-content: center. */
       width: 100%;
-      max-width: 920px;
+      max-width: 1240px;
       margin: 0 auto;
       padding: 1.2rem 1.4rem 2.5rem;
       display: flex;
