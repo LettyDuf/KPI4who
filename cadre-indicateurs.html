@@ -5911,10 +5911,10 @@ CM.Referentiel.ajouter([
   {
     id:'s5', niveau:'strategique', type:'ICP', icone:'🏪',
     nom:'Part de marché',
-    definition:'Pourcentage du marche total capture par l\'organisation, analyse par segment et territoire.',
+    definition:'Pourcentage du marché total capturé par l\'organisation, analysé par segment et territoire.',
     objectif:'Mesurer la position concurrentielle et l\'efficacité de la stratégie de croissance.',
     frequence:'Semestrielle · Annuelle',
-    exemple_ent:'Passer de 8 % à 12 % de part de marche sur les PME en France sur 18 mois.',
+    exemple_ent:'Passer de 8 % à 12 % de part de marché sur les PME en France sur 18 mois.',
     exemple_eq:'Non directement visible au niveau équipe.',
     risque:'Peut croître en dégradant les marges (guerre des prix). Analyser imperative conjointement avec la rentabilité.',
     roles:['direction'], prioritaire:false, fiabilite:'fiable', maturite_min:'intermediaire'
@@ -6122,7 +6122,7 @@ CM.Referentiel.ajouter([
   {
     id:'p2', niveau:'programme', type:'ICP', icone:'💵',
     nom:'Écart budget (Budget Variance)',
-    definition:'Différence entre le budget consommé et le budget planifie à date, exprimée en pourcentage du budget total.',
+    definition:'Différence entre le budget consommé et le budget planifié à date, exprimée en pourcentage du budget total.',
     objectif:'Contrôler la maîtrise financière du programme et anticiper les dépassements.',
     frequence:'Mensuelle',
     exemple_ent:'Écart de +8 % a M6 — principalement lié à des achats de licences supplémentaires non prevus. Action correctrice lancée.',
@@ -6454,7 +6454,7 @@ CM.Referentiel.ajouter([
     objectif:'Mesurer l\'efficacité des corrections permanentes et de la pratique d\'analyse des causes profondes.',
     frequence:'Mensuelle',
     exemple_ent:'Taux de récurrence à 22 % — signale que les corrections sont souvent provisoires. Lancement d\'une initiative d\'analyse post-incident systématique.',
-    exemple_eq:'Chaque incident récurrent represente un échec de la correction précédente. Ce taux mesure la qualité de la resolution, pas juste la <a href="#fiche=o4">rapidite</a>.',
+    exemple_eq:'Chaque incident récurrent représente un échec de la correction précédente. Ce taux mesure la qualité de la resolution, pas juste la <a href="#fiche=o4">rapidite</a>.',
     risque:'Un taux de récurrence faible peut refleter un sous-signalement ou une categorisation inadaptée des incidents, pas une resolution systématique.',
     roles:['chef-équipe','membre-équipe'], prioritaire:false, fiabilite:'fiable', maturite_min:'intermediaire',
     branche:'ti', domaine:'ops-support'
@@ -6557,7 +6557,7 @@ CM.Referentiel.ajouter([
   {
     id:'o7', niveau:'operationnel', type:'FLUX', icone:'📋',
     nom:'Encours de travail (WIP)',
-    definition:'Nombre d\'elements traités simultanement dans le flux de l\'équipe à un instant donne. Indicateur fondamental du Kanban et du Lean.',
+    definition:'Nombre d\'elements traités simultanement dans le flux de l\'équipe à un instant donné. Indicateur fondamental du Kanban et du Lean.',
     objectif:'Identifier la surcharge, limiter les changements de contexte et rendre le flux previsible.',
     frequence:'Continue — revue quotidienne',
     exemple_ent:'L\'équipe fixe une limite d\'encours à 6 éléments pour 4 personnes — au-delà, tout nouvel élément est bloque jusqu\'a livraison.',
@@ -6690,7 +6690,7 @@ CM.Referentiel.ajouter([
   {
     id:'af-c4', niveau:'operationnel', type:'ICP', icone:'🏆',
     nom:'Taux d\'atteinte des quotas',
-    definition:'Pourcentage des representants commerciaux ayant atteint ou depasse leur objectif de vente sur la période.',
+    definition:'Pourcentage des representants commerciaux ayant atteint ou dépassé leur objectif de vente sur la période.',
     objectif:'Mesurer la performance globale de la force de vente et identifier les écarts entre individus.',
     frequence:'Mensuelle · Trimestrielle',
     exemple_ent:'62 % des commerciaux ont atteint leur quota ce trimestre — objectif : 75 %. Analyse des pratiques des top performers lancée.',
@@ -6724,7 +6724,7 @@ CM.Referentiel.ajouter([
     objectif:'Mesurer l\'efficience des investissements d\'acquisition et assurer la rentabilité du modele de croissance.',
     frequence:'Mensuelle · Trimestrielle',
     exemple_ent:'CAC à 2 800 EUR — en hausse de 15 % ce trimestre. Ratio <a href="#fiche=af-c3">LTV</a>/CAC à 3,2 : acceptable, mais à surveiller.',
-    exemple_eq:'Un CAC en hausse signale une baisse d\'efficience des canaux d\'acquisition ou une concurrence accrue sur le marche.',
+    exemple_eq:'Un CAC en hausse signale une baisse d\'efficience des canaux d\'acquisition ou une concurrence accrue sur le marché.',
     risque:'Le CAC calcule en période de forte croissance peut sous-estimer les coûts réels (délai entre investissement et acquisition).',
     roles:['chef-équipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
     branche:'affaires', domaine:'marketing'
@@ -6732,7 +6732,7 @@ CM.Referentiel.ajouter([
   {
     id:'af-m2', niveau:'operationnel', type:'ICP', icone:'🔗',
     nom:'Coût par lead qualifié (CPL)',
-    definition:'Depense marketing totale divisée par le nombre de leads qualifiés (MQL ou SQL) générés sur la période.',
+    definition:'Dépense marketing totale divisée par le nombre de leads qualifiés (MQL ou SQL) générés sur la période.',
     objectif:'Évaluer l\'efficience des campagnes marketing dans la génération de leads à forte probabilité de conversion.',
     frequence:'Mensuelle',
     exemple_ent:'CPL à 180 EUR sur le canal LinkedIn Ads contre 95 EUR sur le SEO — optimisation du budget vers le SEO lancée.',
@@ -6869,7 +6869,7 @@ CM.Referentiel.ajouter([
     objectif:'Mesurer la rétention des talents et identifier les causes structurelles de départs evitables.',
     frequence:'Trimestrielle',
     exemple_ent:'Taux de départ volontaire à 14 % annuel — au-dessus du benchmark (11 %). Analyse par équipe : turnover concentre dans les 2 premières années d\'ancienneté.',
-    exemple_eq:'Chaque départ volontaire represente une perte de connaissance et un coût de remplacement estime à 6-18 mois de salaire.',
+    exemple_eq:'Chaque départ volontaire représente une perte de connaissance et un coût de remplacement estimé à 6-18 mois de salaire.',
     risque:'Separer départs volontaires et involontaires est essentiel : les confondre masque les problèmes réels de rétention.',
     roles:['chef-équipe','direction'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
     branche:'affaires', domaine:'rh'
@@ -6877,7 +6877,7 @@ CM.Referentiel.ajouter([
   {
     id:'af-r4', niveau:'operationnel', type:'ICC', icone:'🎓',
     nom:'Taux de complétion des formations',
-    definition:'Pourcentage d\'employés ayant complete les formations planifiées dans leur plan de développement sur la période.',
+    definition:'Pourcentage d\'employés ayant complété les formations planifiées dans leur plan de développement sur la période.',
     objectif:'Mesurer l\'investissement réel dans le développement des competences et la culture d\'apprentissage.',
     frequence:'Trimestrielle',
     exemple_ent:'Taux de complétion à 71 % — les 29 % restants citent principalement le manque de temps. Signal d\'une charge de travail trop élevée.',
@@ -6898,7 +6898,7 @@ CM.Referentiel.ajouter([
     definition:'Produit de la disponibilité, de la performance et de la qualité d\'un equipement ou d\'un processus de production. Standard Lean Six Sigma.',
     objectif:'Identifier les pertes cachées dans le processus de production et prioriser les investissements d\'amélioration.',
     frequence:'Quotidienne · Hebdomadaire',
-    exemple_ent:'OEE à 72 % — la décomposition révèle 18 % de pertes dues aux arrets non planifiés, 10 % a des microarrets. Chantier 5S lance sur la ligne 3.',
+    exemple_ent:'OEE à 72 % — la décomposition révèle 18 % de pertes dues aux arrets non planifiés, 10 % a des microarrets. Chantier 5S lancé sur la ligne 3.',
     exemple_eq:'Un OEE de 85 % est considere comme le standard de classe mondiale. Sous 65 %, le processus nécessité une transformation significative.',
     risque:'L\'OEE seul ne dit pas quoi améliorer — la décomposition en ses trois composantes est indispensable pour prioriser les actions.',
     roles:['chef-équipe','portefeuille'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant',
@@ -6961,7 +6961,7 @@ CM.Referentiel.ajouter([
   {
     id:'af-sc2', niveau:'operationnel', type:'ICP', icone:'💬',
     nom:'Indice de recommandation client (NPS Service)',
-    definition:'Score de recommandation mesure spécifiquement après les interactions de service client (différent du NPS stratégique).',
+    definition:'Score de recommandation mesuré spécifiquement après les interactions de service client (différent du NPS stratégique).',
     objectif:'Évaluer si les interactions de service renforcent ou dégradent la relation client globale.',
     frequence:'Mensuelle',
     exemple_ent:'NPS Service à +34 — supérieur de 12 points au NPS produit, indiquant que le service est un facteur de rétention fort.',
