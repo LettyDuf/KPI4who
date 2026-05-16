@@ -8114,8 +8114,8 @@ CM.PanierImpression = (function() {
   }
   .fiche-q-opt {
     padding: 0.55rem 0.9rem;
-    background: rgba(255, 209, 128, 0.18); /* ambre doux pour les options non actives */
-    border: 1px solid transparent;
+    background: var(--carte-fond); /* blanc franc — pas d'ambre, doctrine § 6.5 */
+    border: 1px solid var(--bordure);
     border-radius: 5px;
     color: var(--texte-primaire);
     font-size: 0.92rem;
@@ -8309,7 +8309,7 @@ CM.FicheQuestion = (function() {
       variante: '§4.6',
       question: 'Mes indicateurs reflètent-ils la réalité du terrain ?',
       bandeauAttente: 'Deux questions courtes, deux minutes, tu repars avec trois indicateurs candidats pour trianguler ce que tes chiffres ne disent peut-être pas.',
-      panel: 'Triangulation méta — Drucker / Toyota Way / Edmondson',
+      panel: 'Triangulation méta : Drucker, Toyota Way, Edmondson',
 
       q1: Object.freeze({
         libelle: 'Quel signal t\'a alerté ?',
@@ -8407,7 +8407,7 @@ CM.FicheQuestion = (function() {
         libelle: 'Par où démarrer une démarche d\'amélioration continue ?'
       }),
 
-      ecoles: '<em>Drucker — management par objectifs</em> (le corollaire pervers de <em>what\'s measured improves</em> : ce qui n\'est pas mesuré dérive sans qu\'on le voie) · <em>Toyota Way — Genchi Genbutsu et Andon</em> (Liker, Imai — aller voir sur place et signaler sans peur) · <em>Edmondson — sécurité psychologique</em> (l\'humain dit la vérité quand il est protégé) · <em>DORA / SPACE</em> (la performance se triangule entre satisfaction perçue, mesures objectives et signaux humains, jamais sur une seule dimension). Les écoles convergent sur l\'idée qu\'aucune dimension de mesure n\'est suffisante seule ; elles divergent sur quelle dimension est <em>première</em> — le vécu, l\'observable, ou la déclaration.'
+      ecoles: '<em>Drucker, management par objectifs</em> (le corollaire pervers de <em>what\'s measured improves</em> : ce qui n\'est pas mesuré dérive sans qu\'on le voie) · <em>Toyota Way, Genchi Genbutsu et Andon</em> (Liker, Imai : aller voir sur place et signaler sans peur) · <em>Edmondson, sécurité psychologique</em> (l\'humain dit la vérité quand il est protégé) · <em>DORA / SPACE</em> (la performance se triangule entre satisfaction perçue, mesures objectives et signaux humains, jamais sur une seule dimension). Les écoles convergent sur l\'idée qu\'aucune dimension de mesure n\'est suffisante seule ; elles divergent sur quelle dimension est <em>première</em> : le vécu, l\'observable, ou la déclaration.'
     })
 
   });
@@ -8532,11 +8532,11 @@ CM.FicheQuestion = (function() {
             '<div class="fiche-q-reco">',
               '<div class="fiche-q-reco-titre">',
                 '<svg fill="none" height="13" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" width="13"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg>',
-                'Recommandation — niveau ', _esc(niveauLibelle),
+                'Recommandation : niveau ', _esc(niveauLibelle),
               '</div>',
               '<p>', etat.recommandation, '</p>',
             '</div>',
-            '<div class="fiche-q-cross-link">Question liée — <a href="#fiche-q=', _esc(etat.crossLink.ficheQ), '">', _esc(etat.crossLink.libelle), '</a></div>',
+            '<div class="fiche-q-cross-link">Question liée : <a href="#fiche-q=', _esc(etat.crossLink.ficheQ), '">', _esc(etat.crossLink.libelle), '</a></div>',
           '</div>',
 
           /* Pied écoles */
@@ -8567,7 +8567,7 @@ CM.FicheQuestion = (function() {
 
   function _htmlCard(c, index, optionsRendu) {
     var classeTete = (index === 0) ? 'fiche-q-card tete' : 'fiche-q-card';
-    var rang = (index === 0) ? '<div class="fiche-q-card-rang">Card 1 — par où commencer</div>' : '';
+    var rang = (index === 0) ? '<div class="fiche-q-card-rang">Card 1 : par où commencer</div>' : '';
     var niveauLibelle = _niveauLibelle(c.niveau);
     var lien;
     if (c.contenu.ficheRef === 'CADRES_A_VENIR') {
@@ -8589,7 +8589,7 @@ CM.FicheQuestion = (function() {
     return [
       '<div class="', classeTete, '">',
         rang,
-        '<div class="fiche-q-card-axe">', _esc(c.axe.nom), ' — <em>', _esc(c.axe.sousTitre), '</em></div>',
+        '<div class="fiche-q-card-axe">', _esc(c.axe.nom), ' : <em>', _esc(c.axe.sousTitre), '</em></div>',
         '<div class="fiche-q-card-niveau">', _esc(niveauLibelle), '</div>',
         '<h4 class="fiche-q-card-nom">', _esc(c.contenu.nom), traduction, '</h4>',
         '<p class="fiche-q-card-intention">', _esc(c.contenu.intention), '</p>',
