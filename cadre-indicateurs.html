@@ -8011,7 +8011,13 @@ CM.PanierImpression = (function() {
   /* ─── CSS de la fiche-question (chantier 26, doctrine § 6.5) ─── */
 
   .fiche-q {
-    max-width: 880px;
+    /* 1240px : alignement strict sur .contenu et .accueil-unifie du site.
+       Le 880px hérité du mockup-preview autonome créait une dissonance
+       visuelle de 360px (friction smoke test Lætitia 16/05/2026 après jalon B).
+       Décision arbitrage côté preview HTML autonome
+       (mockup-largeur-fiche-question.html, 4 options δ/α/β/γ juxtaposées
+       sur la matière pastèque) : option α retenue. */
+    max-width: 1240px;
     margin: 2rem auto;
     background: var(--carte-fond);
     border: 1px solid var(--bordure);
@@ -8667,7 +8673,7 @@ CM.FicheQuestion = (function() {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    max-width: 880px;
+    max-width: 1240px;  /* aligné sur .fiche-q (option α, 16/05/2026) */
     margin: 0 auto 1rem;
     padding: 0.45rem 0.9rem;
     background: transparent;
