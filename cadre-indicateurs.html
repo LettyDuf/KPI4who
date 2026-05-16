@@ -2492,6 +2492,12 @@
 </div><!-- /app -->
 
 
+<!-- ── Vue Fiche-question (chantier 26, jalon B) ──
+     Conteneur monté dynamiquement par CM.VueFicheQuestion sur hash #fiche-q=<id>.
+     Caché par défaut, masque accueil-portes et app quand actif. -->
+<section id="vue-fiche-question" class="vue-fiche-question-conteneur" hidden></section>
+
+
 <!-- ══════════════════════════════════════════════════════
      TIROIR — DÉTAIL INDICATEUR
 ══════════════════════════════════════════════════════ -->
@@ -8640,6 +8646,163 @@ CM.FicheQuestion = (function() {
   };
 })();
 /* ══ CM.FicheQuestion — END ══ */
+</script>
+
+
+<!-- ══ MODULE : CM.VueFicheQuestion — Orchestrateur de la vue fiche-question (chantier 26 jalon B) ══
+     Écoute hashchange pour les routes #fiche-q=<id>. Cache l'accueil et l'app
+     quand actif. Tient l'état utilisateur (choixQ1, choixQ2) et délègue le
+     rendu à CM.FicheQuestion.htmlFiche. ══ -->
+<style>
+  .vue-fiche-question-conteneur {
+    min-height: 100vh;
+    padding: 5.5rem 1.5rem 3rem;
+    background: #f6f1e1; /* papier crème, doctrine § 6.0 */
+  }
+  .vue-fiche-question-conteneur[hidden] { display: none !important; }
+  .vue-fiche-question-conteneur .fiche-q-retour {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    max-width: 880px;
+    margin: 0 auto 1rem;
+    padding: 0.45rem 0.9rem;
+    background: transparent;
+    border: 1px solid rgba(29, 58, 95, 0.25);
+    border-radius: 999px;
+    color: var(--accent-fiche-q);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--trans);
+  }
+  .vue-fiche-question-conteneur .fiche-q-retour:hover {
+    background: var(--accent-fiche-q-leger);
+  }
+</style>
+<script>
+/* ══ CM.VueFicheQuestion — BEGIN ══ */
+CM.VueFicheQuestion = (function() {
+  'use strict';
+
+  var conteneur = null;
+  /* État utilisateur local — pas de persistance MVP (cohérent avec
+     la doctrine session éphémère du panier, mémoire feedback_git_workflow). */
+  var etat = {
+    ficheId:  null,
+    choixQ1:  null,
+    choixQ2:  null
+  };
+
+  /* Démarrage au chargement DOM. */
+  function init() {
+    conteneur = document.getElementById('vue-fiche-question');
+    if (!conteneur) {
+      console.warn('[CM.VueFicheQuestion] conteneur #vue-fiche-question introuvable');
+      return;
+    }
+    window.addEventListener('hashchange', _surHashchange);
+    conteneur.addEventListener('click', _surClic);
+    _surHashchange(); /* premier rendu si hash déjà actif au chargement */
+  }
+
+  function _surHashchange() {
+    var hash = (window.location.hash || '').replace(/^#/, '');
+    var m = /^fiche-q=([\w-]{1,40})$/.exec(hash);
+    if (m) {
+      ouvrir(m[1]);
+    } else if (conteneur && !conteneur.hidden) {
+      fermer();
+    }
+  }
+
+  function ouvrir(ficheId) {
+    if (!conteneur) return;
+    try {
+      CM.FicheQuestion.obtenir(ficheId); /* lève si id inconnu */
+    } catch (e) {
+      console.error(e);
+      return;
+    }
+    /* Première ouverture : choisir des défauts pédagogiques (1ère option de chaque Q). */
+    if (etat.ficheId !== ficheId) {
+      var fiche = CM.FicheQuestion.obtenir(ficheId);
+      if (fiche.q1 && fiche.q1.options) etat.choixQ1 = fiche.q1.options[0].id;
+      if (fiche.q2 && fiche.q2.options) etat.choixQ2 = fiche.q2.options[0].id;
+    }
+    etat.ficheId = ficheId;
+
+    /* Cache accueil et app. */
+    var accueil = document.getElementById('accueil-portes');
+    var app = document.getElementById('app');
+    if (accueil) accueil.hidden = true;
+    if (app)     app.hidden = true;
+
+    _rendre();
+    conteneur.hidden = false;
+    window.scrollTo(0, 0);
+  }
+
+  function fermer() {
+    if (!conteneur) return;
+    conteneur.hidden = true;
+    conteneur.innerHTML = '';
+    /* Restaurer l'accueil par défaut. */
+    var accueil = document.getElementById('accueil-portes');
+    var app = document.getElementById('app');
+    if (accueil) accueil.hidden = false;
+    if (app)     app.hidden = false;
+  }
+
+  function _rendre() {
+    if (!conteneur || !etat.ficheId) return;
+    var html =
+      '<a href="#" class="fiche-q-retour" data-fiche-q-retour="1" aria-label="Retour à l\'accueil">' +
+      '<span aria-hidden="true">&larr;</span> Retour à l\'accueil' +
+      '</a>' +
+      CM.FicheQuestion.htmlFiche(etat.ficheId, etat.choixQ1, etat.choixQ2);
+    conteneur.innerHTML = html;
+  }
+
+  function _surClic(ev) {
+    var t = ev.target;
+    /* Recherche du bouton d'option le plus proche. */
+    var btnOpt = t.closest ? t.closest('[data-fiche-q-choix]') : null;
+    if (btnOpt) {
+      var champ = btnOpt.getAttribute('data-fiche-q-choix');
+      var val = btnOpt.getAttribute('data-fiche-q-opt');
+      if (champ === 'q1') etat.choixQ1 = val;
+      else if (champ === 'q2') etat.choixQ2 = val;
+      _rendre();
+      return;
+    }
+    /* Retour à l'accueil. */
+    var btnRetour = t.closest ? t.closest('[data-fiche-q-retour]') : null;
+    if (btnRetour) {
+      ev.preventDefault();
+      /* Suppression du fragment hash pour revenir à l'accueil. */
+      history.pushState('', document.title, window.location.pathname + window.location.search);
+      fermer();
+    }
+  }
+
+  /* ─── API publique ─────────────────────────────────────────── */
+  return {
+    init:    init,
+    ouvrir:  ouvrir,
+    fermer:  fermer
+  };
+})();
+
+/* Boot — déclenché après DOMContentLoaded pour que tous les modules soient
+   chargés et que le DOM soit prêt. Patron AccueilUnifie / Panier. */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', CM.VueFicheQuestion.init);
+} else {
+  CM.VueFicheQuestion.init();
+}
+/* ══ CM.VueFicheQuestion — END ══ */
 </script>
 
 
