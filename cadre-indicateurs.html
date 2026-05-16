@@ -8657,17 +8657,12 @@ CM.FicheQuestion = (function() {
   .vue-fiche-question-conteneur {
     min-height: 100vh;
     padding: 5.5rem 1.5rem 3rem;
-    background: #f6f1e1; /* papier crème, doctrine § 6.0 */
+    background: transparent; /* harmonisation sur le reste du site —
+                                le gradient --page-bg du body transparaît
+                                (cohérent avec accueil unifié et autres vues
+                                du chantier 23). */
   }
   .vue-fiche-question-conteneur[hidden] { display: none !important; }
-  /* Quand la vue est active, on surcharge le fond global du body
-     pour que le papier crème couvre toute la fenêtre (et pas seulement
-     le conteneur). Évite que le gradient bleu nuit --page-bg transparaisse
-     autour de la fiche. Classe posée/retirée par CM.VueFicheQuestion. */
-  body.fiche-question-ouverte {
-    background: #f6f1e1 !important;
-    background-image: none !important;
-  }
   .vue-fiche-question-conteneur .fiche-q-retour {
     display: inline-flex;
     align-items: center;
@@ -8746,7 +8741,6 @@ CM.VueFicheQuestion = (function() {
     var app = document.getElementById('app');
     if (accueil) accueil.hidden = true;
     if (app)     app.hidden = true;
-    document.body.classList.add('fiche-question-ouverte');
 
     _rendre();
     conteneur.hidden = false;
@@ -8757,7 +8751,6 @@ CM.VueFicheQuestion = (function() {
     if (!conteneur) return;
     conteneur.hidden = true;
     conteneur.innerHTML = '';
-    document.body.classList.remove('fiche-question-ouverte');
     /* Restaurer l'accueil par défaut. */
     var accueil = document.getElementById('accueil-portes');
     var app = document.getElementById('app');
