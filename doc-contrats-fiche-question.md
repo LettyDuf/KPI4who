@@ -27,7 +27,7 @@ Ce document ne décrit pas la matière éditoriale (les ~36 cellules à rédiger
 **Hors périmètre.**
 
 - Aucune nouvelle fiche-question. MVP fermé à 5 fiches.
-- Pas de mécanique d'ajout au panier depuis une fiche-question.
+- Pas de mécanique d'ajout au panier *visible* dans le chantier 26. **Mais point d'extension prévu** dans le contrat (cf. § 4 — paramètre `optionsRendu.avecActionsPanier` désactivé par défaut, branchable plus tard sans modifier le module domaine).
 - Pas de refonte du moteur de filtrage ni du référentiel.
 
 ---
@@ -247,8 +247,18 @@ CM.FicheQuestion = (function() {
     /* Rendu HTML — adapter vue. Pure fonction de l'état composé.
        Pas d'écriture DOM directe — renvoie une chaîne, le consommateur
        insère via innerHTML dans le conteneur prévu. Cohérent avec
-       le traducteur orthodoxe (project_doctrine_traducteur_orthodoxe.md). */
-    htmlFiche: function(id, choixQ1, choixQ2) { ... }
+       le traducteur orthodoxe (project_doctrine_traducteur_orthodoxe.md).
+
+       optionsRendu (optionnel, objet figé) — hook d'extension. Aujourd'hui
+       inutilisé (rendu standard). Drapeaux possibles à activer plus tard :
+         - avecActionsPanier (bool) : ajoute un bouton « Ajouter au tableau
+           de bord » sur chaque card du trio. Le délégué onAjouterAuPanier
+           (fonction injectée par le consommateur) reçoit (ficheRef, statut)
+           et appelle CM.Panier.ajouter ; le module domaine n'importe pas
+           CM.Panier (inversion de dépendance préservée).
+       Au chantier 26, optionsRendu est absent ou avecActionsPanier=false
+       par défaut. Le futur chantier branchera simplement le drapeau. */
+    htmlFiche: function(id, choixQ1, choixQ2, optionsRendu) { ... }
   };
 })();
 ```
@@ -257,7 +267,7 @@ CM.FicheQuestion = (function() {
 
 - **Séparation domaine / vue.** `composer` est pure et testable sans DOM (patron des sentinelles). `htmlFiche` est la couche adapter, elle compose le HTML à partir de l'état.
 - **État utilisateur côté appelant.** Le module ne tient pas d'état utilisateur. Le composant qui consomme le module (vue accueil ou route dédiée) garde les choix Q1/Q2 dans son propre état et appelle `composer` à chaque mutation.
-- **Pas de fuite vers `CM.Panier`.** Le mandat actuel exclut l'ajout au panier depuis une fiche-question (hors-périmètre § 1). Possibilité future si l'usage le motive — à traiter dans un chantier séparé, pas dans 26.
+- **Point d'extension vers `CM.Panier` prévu.** *(Décision actée le 16/05/2026 fin de jalon A, sur retour Lætitia.)* Le mandat du chantier 26 n'inclut pas l'ajout au panier depuis une fiche-question, mais le contrat **réserve une hook** pour qu'un chantier ultérieur puisse l'activer sans toucher au module domaine. Concrètement : la fonction `htmlFiche` accepte un paramètre optionnel `optionsRendu` (objet figé) qui peut porter un drapeau `avecActionsPanier: true`. Quand ce drapeau est vrai, chaque card du trio reçoit un bouton *« Ajouter au tableau de bord »* qui appelle `CM.Panier.ajouter(ficheRef, statut)` via un délégué `onAjouterAuPanier` injecté par le consommateur (le module domaine n'importe pas `CM.Panier`, l'inversion de dépendance reste propre). Au chantier 26, `optionsRendu` est absent ou `avecActionsPanier: false` par défaut — le rendu actuel ne change pas. Le futur chantier branchera simplement le drapeau et le délégué.
 
 ---
 
@@ -331,5 +341,6 @@ Patron : `tests-accueil-unifie.html` + `tests-accueil-unifie-sentinelles.html` (
 
 ## Journal du document
 
-- **2026-05-16 — v0.1 (séance d'ouverture chantier 26, jalon A).** Cadrage initial. Schéma de données pour les 3 variantes, API de `CM.FicheQuestion`, conventions visuelles renvoyées vers `doc-cadre-visuel.md` § 6.5, plan de migration, sentinelles d'invariants. Document compagnon prêt pour validation Lætitia avant ouverture du jalon B.
+- **2026-05-16 — v0.1 (séance d'ouverture chantier 26, jalon A).** Cadrage initial. Schéma de données pour les 3 variantes, API de `CM.FicheQuestion`, conventions visuelles renvoyées vers `doc-cadre-visuel.md` § 6.5, plan de migration, sentinelles d'invariants.
+- **2026-05-16 — v0.2 (fin de jalon A, retour Lætitia).** Trois arbitrages tranchés : (a) format source JavaScript figé retenu pour cohérence projet, (b) point d'extension vers `CM.Panier` *prévu* via `optionsRendu.avecActionsPanier` + délégué `onAjouterAuPanier` (inversion de dépendance préservée), (c) ordre de migration confirmé (pastèque d'abord).
 
