@@ -8344,8 +8344,8 @@ CM.FicheQuestion = (function() {
             ficheRef: 'p5'
           }),
           programme: Object.freeze({
-            nom: 'Roadmap engagée vs roadmap réalisée', traduction: '',
-            intention: 'Sur un horizon glissant (3-6 mois), comparer les promesses portées en revue de programme à ce qui a effectivement atterri en production ou en service. La roadmap déclarative vit en réunions ; la roadmap objective vit en logs.',
+            nom: 'Feuille de route engagée vs feuille de route réalisée', traduction: '',
+            intention: 'Sur un horizon glissant (3-6 mois), comparer les promesses portées en revue de programme à ce qui a effectivement atterri en production ou en service. La feuille de route déclarative vit en réunions ; la feuille de route objective vit en journaux d\'exécution.',
             ficheRef: 'p1'
           }),
           strategique: Object.freeze({
@@ -8357,7 +8357,7 @@ CM.FicheQuestion = (function() {
         objectif: Object.freeze({
           operationnel: Object.freeze({
             nom: 'Premier passage conforme', traduction: '/ First-pass yield',
-            intention: 'Compter la part des items livrés acceptés sans retour de retravail (pas de rework, pas de défaut remonté en revue). Mesure objective la plus directe d\'un écart entre conformité déclarée et conformité observée.',
+            intention: 'Compter la part des items livrés acceptés sans retour de retravail (pas de retravail, pas de défaut remonté en revue). Mesure objective la plus directe d\'un écart entre conformité déclarée et conformité observée.',
             ficheRef: 'lss-1'
           }),
           programme: Object.freeze({
@@ -8374,12 +8374,12 @@ CM.FicheQuestion = (function() {
         humain: Object.freeze({
           operationnel: Object.freeze({
             nom: 'Indice de bien-être équipe', traduction: '',
-            intention: 'Sondage anonyme bref (5 questions, hebdomadaire ou bi-mensuel) qui capte la voix humaine protégée — confiance dans le manager, sentiment d\'utilité, énergie en fin de semaine. La pastèque équipe se voit dans la baisse de la voix avant qu\'elle ne se voie dans les chiffres.',
+            intention: 'Sondage anonyme bref (5 questions, hebdomadaire ou bi-mensuel) qui capte la voix humaine protégée : confiance dans le ou la responsable, sentiment d\'utilité, énergie en fin de semaine. La pastèque équipe se voit dans la baisse de la voix avant qu\'elle ne se voie dans les chiffres.',
             ficheRef: 'x4'
           }),
           programme: Object.freeze({
             nom: 'Indice de friction programme', traduction: '',
-            intention: 'Sondage anonyme transversal aux équipes du programme (3-5 questions trimestrielles, champ libre obligatoire). Capte les frictions qui n\'ont pas remonté en steering parce que les rapports officiels ont été lissés.',
+            intention: 'Sondage anonyme transversal aux équipes du programme (3-5 questions trimestrielles, champ libre obligatoire). Capte les frictions qui n\'ont pas remonté au comité de pilotage parce que les rapports officiels ont été lissés.',
             ficheRef: 'CADRES_A_VENIR'
           }),
           strategique: Object.freeze({
@@ -8391,9 +8391,9 @@ CM.FicheQuestion = (function() {
       }),
 
       recommandationParNiveau: Object.freeze({
-        operationnel: 'Pour bien faire, traiter la triangulation comme une routine d\'équipe — discussion bi-mensuelle où le sprint déclaré, le premier passage conforme et le sondage anonyme sont mis à plat sans hiérarchie. La pastèque d\'équipe se dissipe quand l\'écart est nommé sans honte, jamais quand il est noté. Le piège classique consiste à <span class="anti-pattern">transformer le sondage en outil de management</span>, ce qui le tue dès la deuxième passe, ou à <span class="anti-pattern">chiffrer le sentiment d\'équipe</span> — l\'indice devient une cible, perd sa fonction de capteur.',
-        programme: 'Pour bien faire, organiser une rétrospective trimestrielle de programme où les 3 axes sont présentés au même rythme et avec la même crédibilité — pas la roadmap d\'abord (parce qu\'elle est la plus rassurante), puis le lead time, puis le sondage. Le piège classique consiste à <span class="anti-pattern">n\'amener au steering que l\'axe objectif</span> et à reléguer le sondage en annexe, ce qui condamne la voix humaine à n\'arriver qu\'après la crise.',
-        strategique: 'Pour bien faire, cadencer un audit semestriel qui rapproche les trois axes au comité de direction, et le traiter comme un miroir pour le board, jamais comme un bilan pour les équipes. La triangulation au stratégique réussit quand elle change la conversation du comité, pas quand elle produit un score. Le piège classique consiste à <span class="anti-pattern">publier l\'audit en interne sans accompagnement</span>, ou à <span class="anti-pattern">réécrire la stratégie déclarée pour qu\'elle ressemble à l\'exécution observée</span> — l\'écart tombe à zéro mais l\'organisation perd toute capacité de pilotage.'
+        operationnel: 'Pour bien faire, traiter la triangulation comme une routine d\'équipe : discussion bi-mensuelle où le sprint déclaré, le premier passage conforme et le sondage anonyme sont mis à plat sans hiérarchie. La pastèque d\'équipe se dissipe quand l\'écart est nommé sans honte, jamais quand il est noté. Le piège classique consiste à <span class="anti-pattern">transformer le sondage en outil de management</span>, ce qui le tue dès la deuxième passe, ou à <span class="anti-pattern">chiffrer le sentiment d\'équipe</span>, et l\'indice devient une cible, perd sa fonction de capteur.',
+        programme: 'Pour bien faire, organiser une rétrospective trimestrielle de programme où les 3 axes sont présentés au même rythme et avec la même crédibilité : pas la feuille de route d\'abord (parce qu\'elle est la plus rassurante), puis le lead time, puis le sondage. Le piège classique consiste à <span class="anti-pattern">n\'amener au comité de pilotage que l\'axe objectif</span> et à reléguer le sondage en annexe, ce qui condamne la voix humaine à n\'arriver qu\'après la crise.',
+        strategique: 'Pour bien faire, cadencer un audit semestriel qui rapproche les trois axes au comité de direction, et le traiter comme un miroir pour le comité de direction, jamais comme un bilan pour les équipes. La triangulation au stratégique réussit quand elle change la conversation du comité, pas quand elle produit un score. Le piège classique consiste à <span class="anti-pattern">publier l\'audit en interne sans accompagnement</span>, ou à <span class="anti-pattern">réécrire la stratégie déclarée pour qu\'elle ressemble à l\'exécution observée</span>, et l\'écart tombe à zéro mais l\'organisation perd toute capacité de pilotage.'
       }),
 
       lienSortantPatrimonial: Object.freeze({
@@ -8660,6 +8660,14 @@ CM.FicheQuestion = (function() {
     background: #f6f1e1; /* papier crème, doctrine § 6.0 */
   }
   .vue-fiche-question-conteneur[hidden] { display: none !important; }
+  /* Quand la vue est active, on surcharge le fond global du body
+     pour que le papier crème couvre toute la fenêtre (et pas seulement
+     le conteneur). Évite que le gradient bleu nuit --page-bg transparaisse
+     autour de la fiche. Classe posée/retirée par CM.VueFicheQuestion. */
+  body.fiche-question-ouverte {
+    background: #f6f1e1 !important;
+    background-image: none !important;
+  }
   .vue-fiche-question-conteneur .fiche-q-retour {
     display: inline-flex;
     align-items: center;
@@ -8738,6 +8746,7 @@ CM.VueFicheQuestion = (function() {
     var app = document.getElementById('app');
     if (accueil) accueil.hidden = true;
     if (app)     app.hidden = true;
+    document.body.classList.add('fiche-question-ouverte');
 
     _rendre();
     conteneur.hidden = false;
@@ -8748,6 +8757,7 @@ CM.VueFicheQuestion = (function() {
     if (!conteneur) return;
     conteneur.hidden = true;
     conteneur.innerHTML = '';
+    document.body.classList.remove('fiche-question-ouverte');
     /* Restaurer l'accueil par défaut. */
     var accueil = document.getElementById('accueil-portes');
     var app = document.getElementById('app');
