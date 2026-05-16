@@ -1144,3 +1144,38 @@ Sur les quatre lots, 33 liens ont été posés sur 25 champs éditoriaux de 18 f
 **Articulations.** Indépendant des chantiers 21, 13.bis, 24. Peut être enchaîné juste après le chantier 22 (les zones tutoyées en 22 grappes A/B/C l'ont été *avant* statut d'orphelinat — si confirmées orphelines, elles seront retirées avec leurs frères, le travail tutoiement n'aura pas été perdu mais aura été protégé contre une future réactivation involontaire).
 
 **Effort estimé** : 2-4 h sur 1 séance pour le cas connu n°1 + audit complet.
+
+## 26. Intégration et activation niveau 3 des fiches-questions *(📋 ouverte le 16/05/2026)*
+
+**Origine.** Les 5 fiches-questions terrain (pastèque, pilotage-hebdo, amelioration-continue, resistance-transformation, cascade-objectifs) existent à ce jour comme **mockups HTML autonomes** — chacun avec sa propre palette CSS recopiée à l'identique dans `:root`, sa propre structure, sa propre matière éditoriale. La doctrine *« autonome = source unique »* a été actée le 07/05/2026 pour la **phase éditoriale exploratoire** (mockups jetables si la mécanique ne marchait pas). Cette phase est close — les 5 grammaires sont stabilisées (§ 4.3 / § 4.4 / § 4.6).
+
+**Mandat (16/05/2026).** Lætitia demande deux choses simultanément : (a) **harmoniser visuellement** les 5 fiches sur le cadre visuel global du site (`doc-cadre-visuel.md`), (b) **activer les boutons de choix au niveau 3** (activation complète) — chaque clic recompose le trio cartographique selon le croisement Q1×Q2 sélectionné, et tous les croisements sont rédigés (~60 trios cumulés sur les 5 fiches, total exact à inventorier au jalon A).
+
+**Décision architecturale (16/05/2026).** Bascule des **mockups autonomes** vers une **architecture intégrée** : un module `CM.FicheQuestion` consomme un schéma de données et formule la vue, suivant le patron `CM.AccueilUnifie` / `CM.Referentiel` et la doctrine `project_doctrine_traducteur_orthodoxe.md`. Trois raisons : (1) la doctrine *« autonome = source unique »* avait sa raison d'être pour la phase éditoriale et perd sa pertinence au passage niveau 3 ; (2) l'harmonisation « sur le reste du site » est strictement infaisable de manière durable en mode autonome (la palette `:root` déjà recopiée 5 fois serait 5 fois à modifier à chaque évolution du cadre visuel) ; (3) le patron est éprouvé dans le projet (chantier 14, chantier 23).
+
+**Périmètre.**
+- **5 fiches** : pastèque (§ 4.6), pilotage-hebdo (§ 4.3), amelioration-continue (§ 4.4), resistance-transformation (§ 4.4), cascade-objectifs (§ 4.4).
+- **~60 croisements à rédiger** au total — détail confirmé au jalon A après inventaire fiche par fiche.
+- **Module** : `CM.FicheQuestion` (port domaine + adapter vue + générateur de données depuis source markdown ou JSON, suivant le patron `outils/construire-*.js`).
+- **Cibles visuelles** : palette, typographie, proportions, composants — alignés sur `doc-cadre-visuel.md` (8 axes), étalon précis à trancher au jalon A.
+
+**Hors périmètre.**
+- Aucune nouvelle fiche-question. MVP fermé à 5 fiches (décision 07/05/2026, garde-fou 16.2).
+- Pas de mécanique d'ajout au panier depuis une fiche-question (réservé à un chantier ultérieur si l'usage le motive).
+- Pas de refonte du moteur de filtrage ni du référentiel — le chantier reste cantonné aux fiches-questions et à leur intégration.
+
+**Jalons.**
+- **A — Cadrage et conception** (~3-4h, 1 séance). Audit doctrine visuelle, inventaire des croisements, conception du contrat de données et du module, document compagnon `doc-contrats-fiche-question.md` rédigé **avant** le code.
+- **B — PoC sur la fiche pastèque** (~3-4h, 1 séance). Structure du module, migration de la pastèque vers le format source, câblage clic + recomposition, sentinelles de test, validation interactive côté Safari. Si ce jalon ne convainc pas, on rectifie avant d'engager les 4 autres fiches.
+- **C — Migration des 4 autres fiches** (~12-15h, 3-4 séances). Une fiche par séance : pilotage-hebdo, amelioration-continue, resistance-transformation, cascade-objectifs. Rédaction des trios manquants.
+- **D — Câblage final dans l'accueil + retrait mockups** (~2h). Liens accueil → route interne, archivage des 5 mockups autonomes, archivage de la doctrine 07/05/2026 dans le backlog avec sa raison d'être historique.
+- **E — Tests E2E + smoke test final** (~2h). Sentinelles d'invariants pour `CM.FicheQuestion`, tests automatisés (patron `tests-accueil-unifie.html`), smoke test interactif, tag `mvp-chantier-26-livre`.
+
+**Discipline de progression.** Un seul jalon par séance. Pas de big-bang. Tag de point de retour absolu `baseline-avant-chantier-26` à poser **avant le jalon B** (premier commit de code). Si un jalon dérape, arrêt et rectification avant d'avancer. Document compagnon `doc-contrats-fiche-question.md` rédigé avant code (cf. mémoire `project_document_compagnon_contrats.md`).
+
+**Risques signalés.**
+- *Éditorial.* Les ~60 trios demandent de convoquer les panels d'experts (Lean, Agile, Drucker, ADKAR, Lean Six Sigma) pour chaque fiche. Sollicitation forte de Lætitia pour les arbitrages au jalon C.
+- *Doctrinal.* On archive une doctrine actée. Tracer dans le backlog la raison d'être historique au jalon D — sinon la prochaine reprise sera confuse.
+- *Visuel.* Étalon « reste du site » à trancher au jalon A : accueil unifié (1240px, palette bleu nuit, mission deux étages) vs vues internes (composition différente). Choix de proportion + typographie + palette à valider avant le PoC.
+
+**Effort estimé total** : 20-25h sur 5-7 séances.
