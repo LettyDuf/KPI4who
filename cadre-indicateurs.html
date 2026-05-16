@@ -7986,6 +7986,663 @@ CM.PanierImpression = (function() {
 
 
 
+
+
+
+<!-- ══ MODULE : CM.FicheQuestion — Catalogue et rendu des fiches-questions ══
+     Architecture hexagonale, patron CM.AccueilUnifie / CM.Referentiel.
+     Contrat figé dans doc-contrats-fiche-question.md v0.2 (chantier 26).
+
+     Trois variantes doctrinales (cf. doc-catalogue-questions-fines.md) :
+       - §4.2-§4.4 : standard, trio par niveau (Q1 ordre, Q2 trio)
+       - §4.3      : reformulation, double réponse cliquable (pas de Q1×Q2)
+       - §4.6      : méta, trio à 3 axes invariants (Q1 ordre des axes,
+                     Q2 contenu de chaque card)
+
+     Au jalon B (16/05/2026), seule la fiche pastèque (§4.6) est intégrée.
+     Les 4 autres fiches viennent aux jalons C.1 à C.4. ══ -->
+<style>
+  /* ─── CSS de la fiche-question (chantier 26, doctrine § 6.5) ─── */
+
+  .fiche-q {
+    max-width: 880px;
+    margin: 2rem auto;
+    background: var(--carte-fond);
+    border: 1px solid var(--bordure);
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre);
+    overflow: hidden;
+    font-family: inherit;
+  }
+
+  /* Filet de niveau saturé en haut (signature commune § 6.0) */
+  .fiche-q-haut {
+    height: 4px;
+    background: var(--niv-1); /* couleur du niveau dominant, surchargé par .fiche-q[data-niveau=...] */
+  }
+  .fiche-q[data-niveau="operationnel"] .fiche-q-haut { background: #6fa89e; }
+  .fiche-q[data-niveau="programme"]    .fiche-q-haut { background: #7d9670; }
+  .fiche-q[data-niveau="tactique"]     .fiche-q-haut { background: #c79373; }
+  .fiche-q[data-niveau="strategique"]  .fiche-q-haut { background: #5a4f7a; }
+
+  .fiche-q-corps {
+    padding: 2rem 2.5rem 2.5rem;
+  }
+
+  .fiche-q-question {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--texte-primaire);
+    line-height: var(--lh-tight);
+    margin-bottom: 0.8rem;
+  }
+
+  .fiche-q-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.9rem;
+    background: rgba(76, 29, 149, 0.07); /* indigo léger — bandeau d'attente */
+    border-left: 3px solid #4c1d95;
+    border-radius: 4px;
+    font-size: var(--fs-sm);
+    color: var(--texte-primaire);
+    margin-bottom: 1.8rem;
+  }
+  .fiche-q-meta svg { color: #4c1d95; flex-shrink: 0; }
+
+  .fiche-q-section {
+    margin-bottom: 1.8rem;
+  }
+  .fiche-q-section-titre {
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--texte-secondaire);
+    font-weight: 700;
+    margin-bottom: 0.7rem;
+  }
+
+  /* Questionnaire — Q1 + Q2 */
+  .fiche-q-cadrage {
+    background: var(--carte-fond-2);
+    border-radius: 8px;
+    padding: 1.2rem 1.4rem;
+  }
+  .fiche-q-qcourte {
+    margin-bottom: 1.2rem;
+  }
+  .fiche-q-qcourte:last-child {
+    margin-bottom: 0;
+    padding-top: 1.2rem;
+    border-top: 1px dashed var(--bordure);
+  }
+  .fiche-q-qcourte-titre {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.7rem;
+  }
+  .fiche-q-qcourte-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    background: var(--accent-fiche-q);
+    color: #ffffff;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .fiche-q-qcourte-label {
+    font-weight: 600;
+    color: var(--texte-primaire);
+  }
+  .fiche-q-qcourte-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-left: 2.3rem;
+  }
+  .fiche-q-opt {
+    padding: 0.55rem 0.9rem;
+    background: rgba(255, 209, 128, 0.18); /* ambre doux pour les options non actives */
+    border: 1px solid transparent;
+    border-radius: 5px;
+    color: var(--texte-primaire);
+    font-size: 0.92rem;
+    cursor: pointer;
+    transition: var(--trans);
+    text-align: left;
+    width: 100%;
+    font-family: inherit;
+  }
+  .fiche-q-opt:hover {
+    background: rgba(29, 58, 95, 0.06);
+    border-color: rgba(29, 58, 95, 0.2);
+  }
+  .fiche-q-opt.actif {
+    background: var(--accent-fiche-q-leger);
+    border-color: var(--accent-fiche-q);
+    color: var(--accent-fiche-q);
+    font-weight: 600;
+  }
+
+  /* Trois cards du trio */
+  .fiche-q-indicateurs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.9rem;
+  }
+  @media (max-width: 760px) {
+    .fiche-q-indicateurs { grid-template-columns: 1fr; }
+  }
+  .fiche-q-card {
+    background: var(--carte-fond);
+    border: 1px solid var(--bordure);
+    border-radius: 8px;
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .fiche-q-card.tete {
+    border-color: var(--accent-fiche-q);
+    box-shadow: 0 2px 8px rgba(29, 58, 95, 0.12);
+  }
+  .fiche-q-card-rang {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-fiche-q);
+    font-weight: 700;
+  }
+  .fiche-q-card-axe {
+    font-size: 0.75rem;
+    color: var(--texte-secondaire);
+    font-style: italic;
+  }
+  .fiche-q-card-niveau {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--texte-tertiaire);
+  }
+  .fiche-q-card-nom {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--texte-primaire);
+    margin-top: 0.2rem;
+  }
+  .fiche-q-card-nom .traduction {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--texte-secondaire);
+    font-style: italic;
+  }
+  .fiche-q-card-intention {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--texte-primaire);
+  }
+  .fiche-q-card-lien {
+    font-size: 0.85rem;
+    color: var(--accent-fiche-q);
+    text-decoration: none;
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  .fiche-q-card-lien:hover { text-decoration: underline; }
+  .fiche-q-card-lien.absent {
+    color: var(--gris, var(--texte-tertiaire));
+    cursor: default;
+  }
+
+  /* Lien sortant patrimonial */
+  .fiche-q-lien-sortant {
+    margin-top: 1.2rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--bordure);
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.88rem;
+  }
+  .fiche-q-lien-sortant .surtitre {
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--texte-tertiaire);
+  }
+  .fiche-q-lien-sortant a {
+    color: var(--accent-fiche-q);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .fiche-q-lien-sortant a:hover { text-decoration: underline; }
+  .fiche-q-lien-sortant .absent {
+    color: var(--texte-secondaire);
+    font-style: italic;
+    font-size: 0.82rem;
+  }
+
+  /* Bloc Recommandation */
+  .fiche-q-reco {
+    background: var(--reco-fond);
+    border-left: 4px solid var(--reco-bord);
+    border-radius: 4px;
+    padding: 1rem 1.2rem;
+  }
+  .fiche-q-reco-titre {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--reco-titre);
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.6rem;
+  }
+  .fiche-q-reco p {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--texte-primaire);
+  }
+  .fiche-q-reco .anti-pattern {
+    background: var(--accent-fiche-q-trame);
+    padding: 0 0.25em;
+    border-radius: 2px;
+  }
+
+  /* Cross-link */
+  .fiche-q-cross-link {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--texte-secondaire);
+  }
+  .fiche-q-cross-link a {
+    color: var(--accent-fiche-q);
+    text-decoration: none;
+  }
+  .fiche-q-cross-link a:hover { text-decoration: underline; }
+
+  /* Pied — écoles convoquées */
+  .fiche-q-ecoles {
+    margin-top: 1.8rem;
+    padding-top: 1.2rem;
+    border-top: 1px dashed var(--bordure);
+    font-size: 0.85rem;
+    color: var(--texte-secondaire);
+    line-height: 1.6;
+  }
+  .fiche-q-ecoles strong {
+    display: block;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--texte-tertiaire);
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .fiche-q-ecoles em { font-style: italic; }
+</style>
+
+<script>
+/* ══ CM.FicheQuestion — BEGIN ══ */
+CM.FicheQuestion = (function() {
+  'use strict';
+
+  /* ─── Catalogue des fiches-questions (chargé une fois, gelé) ───── */
+  var CATALOGUE = Object.freeze({
+
+    /* ═══ Fiche pastèque (variante § 4.6 méta, chantier 26 jalon B) ═══ */
+    pasteque: Object.freeze({
+      id: 'pasteque',
+      variante: '§4.6',
+      question: 'Mes indicateurs reflètent-ils la réalité du terrain ?',
+      bandeauAttente: 'Deux questions courtes, deux minutes, tu repars avec trois indicateurs candidats pour trianguler ce que tes chiffres ne disent peut-être pas.',
+      panel: 'Triangulation méta — Drucker / Toyota Way / Edmondson',
+
+      q1: Object.freeze({
+        libelle: 'Quel signal t\'a alerté ?',
+        options: Object.freeze([
+          Object.freeze({ id: 'malaise',            libelle: 'Le malaise se vit sur le terrain mais ne se mesure pas',           axeEnTete: 'humain'     }),
+          Object.freeze({ id: 'chiffresEcart',      libelle: 'Les chiffres affichés ne correspondent pas aux faits observés',    axeEnTete: 'objectif'   }),
+          Object.freeze({ id: 'prioritesDecouple',  libelle: 'Les priorités nommées ne s\'appliquent pas dans les arbitrages réels', axeEnTete: 'declaratif' })
+        ])
+      }),
+
+      q2: Object.freeze({
+        libelle: 'Où trianguler ?',
+        options: Object.freeze([
+          Object.freeze({ id: 'equipe',       libelle: 'Une équipe',           niveau: 'operationnel' }),
+          Object.freeze({ id: 'programme',    libelle: 'Un programme entier',  niveau: 'programme'    }),
+          Object.freeze({ id: 'organisation', libelle: 'Toute l\'organisation', niveau: 'strategique'  })
+        ])
+      }),
+
+      axes: Object.freeze([
+        Object.freeze({ id: 'declaratif', nom: 'Axe déclaratif',     sousTitre: 'Ce qu\'on dit'     }),
+        Object.freeze({ id: 'objectif',   nom: 'Axe objectif',       sousTitre: 'Ce qu\'on observe' }),
+        Object.freeze({ id: 'humain',     nom: 'Axe humain anonyme', sousTitre: 'Ce qu\'on vit'     })
+      ]),
+
+      /* Matrice 3 axes × 3 niveaux = 9 cellules. */
+      matrice: Object.freeze({
+        declaratif: Object.freeze({
+          operationnel: Object.freeze({
+            nom: 'Engagement de sprint vs livré', traduction: '/ Sprint Commitment vs Delivery',
+            intention: 'Comparer ce qui a été annoncé en début de sprint à ce qui a été effectivement livré et accepté en fin de sprint. Un écart répété signale un système qui s\'auto-rassure par la déclaration plutôt qu\'il ne mesure sa capacité réelle.',
+            ficheRef: 'p5'
+          }),
+          programme: Object.freeze({
+            nom: 'Roadmap engagée vs roadmap réalisée', traduction: '',
+            intention: 'Sur un horizon glissant (3-6 mois), comparer les promesses portées en revue de programme à ce qui a effectivement atterri en production ou en service. La roadmap déclarative vit en réunions ; la roadmap objective vit en logs.',
+            ficheRef: 'p1'
+          }),
+          strategique: Object.freeze({
+            nom: 'Objectifs stratégiques annuels', traduction: '/ OKR',
+            intention: 'Mesurer la part des Key Results déclarés qui décrivent un résultat utilisateur observable, plutôt qu\'une activité interne. Un OKR qui dit « lancer » au lieu de « faire adopter par X % » est une déclaration sans miroir.',
+            ficheRef: 's4'
+          })
+        }),
+        objectif: Object.freeze({
+          operationnel: Object.freeze({
+            nom: 'Premier passage conforme', traduction: '/ First-pass yield',
+            intention: 'Compter la part des items livrés acceptés sans retour de retravail (pas de rework, pas de défaut remonté en revue). Mesure objective la plus directe d\'un écart entre conformité déclarée et conformité observée.',
+            ficheRef: 'lss-1'
+          }),
+          programme: Object.freeze({
+            nom: 'Lead time programme', traduction: '/ Lead time',
+            intention: 'Délai bout à bout d\'une initiative cross-équipes, du moment où elle est inscrite au portfolio à sa release publique. Capteur objectif le plus tangible d\'un écart entre ambition affichée et capacité réelle de livrer.',
+            ficheRef: 'p9'
+          }),
+          strategique: Object.freeze({
+            nom: 'Coût de la non-qualité', traduction: '/ COPQ',
+            intention: 'Chiffrer ce que coûte chaque année le travail refait, les défauts livrés, les rappels client, la dette technique remboursée. La voix la plus tangible de l\'écart entre ce qu\'on dit livrer et ce qu\'on livre vraiment.',
+            ficheRef: 's11'
+          })
+        }),
+        humain: Object.freeze({
+          operationnel: Object.freeze({
+            nom: 'Indice de bien-être équipe', traduction: '',
+            intention: 'Sondage anonyme bref (5 questions, hebdomadaire ou bi-mensuel) qui capte la voix humaine protégée — confiance dans le manager, sentiment d\'utilité, énergie en fin de semaine. La pastèque équipe se voit dans la baisse de la voix avant qu\'elle ne se voie dans les chiffres.',
+            ficheRef: 'x4'
+          }),
+          programme: Object.freeze({
+            nom: 'Indice de friction programme', traduction: '',
+            intention: 'Sondage anonyme transversal aux équipes du programme (3-5 questions trimestrielles, champ libre obligatoire). Capte les frictions qui n\'ont pas remonté en steering parce que les rapports officiels ont été lissés.',
+            ficheRef: 'CADRES_A_VENIR'
+          }),
+          strategique: Object.freeze({
+            nom: 'Écart de vérité stratégique', traduction: '/ Strategic Truth Gap',
+            intention: 'Audit semestriel comparant la stratégie déclarée (priorités annoncées) aux ressources réellement allouées (budget, agenda, talents) et à la perception anonyme des équipes. Miroir lucide pour le board, jamais arme contre une fonction.',
+            ficheRef: 's12'
+          })
+        })
+      }),
+
+      recommandationParNiveau: Object.freeze({
+        operationnel: 'Pour bien faire, traiter la triangulation comme une routine d\'équipe — discussion bi-mensuelle où le sprint déclaré, le premier passage conforme et le sondage anonyme sont mis à plat sans hiérarchie. La pastèque d\'équipe se dissipe quand l\'écart est nommé sans honte, jamais quand il est noté. Le piège classique consiste à <span class="anti-pattern">transformer le sondage en outil de management</span>, ce qui le tue dès la deuxième passe, ou à <span class="anti-pattern">chiffrer le sentiment d\'équipe</span> — l\'indice devient une cible, perd sa fonction de capteur.',
+        programme: 'Pour bien faire, organiser une rétrospective trimestrielle de programme où les 3 axes sont présentés au même rythme et avec la même crédibilité — pas la roadmap d\'abord (parce qu\'elle est la plus rassurante), puis le lead time, puis le sondage. Le piège classique consiste à <span class="anti-pattern">n\'amener au steering que l\'axe objectif</span> et à reléguer le sondage en annexe, ce qui condamne la voix humaine à n\'arriver qu\'après la crise.',
+        strategique: 'Pour bien faire, cadencer un audit semestriel qui rapproche les trois axes au comité de direction, et le traiter comme un miroir pour le board, jamais comme un bilan pour les équipes. La triangulation au stratégique réussit quand elle change la conversation du comité, pas quand elle produit un score. Le piège classique consiste à <span class="anti-pattern">publier l\'audit en interne sans accompagnement</span>, ou à <span class="anti-pattern">réécrire la stratégie déclarée pour qu\'elle ressemble à l\'exécution observée</span> — l\'écart tombe à zéro mais l\'organisation perd toute capacité de pilotage.'
+      }),
+
+      lienSortantPatrimonial: Object.freeze({
+        libelle: 'Voir tous les indicateurs canoniques de la triangulation déclaratif / objectif / humain',
+        ficheRef: 'CADRES_A_VENIR',
+        mentionAbsent: '(fiche cadre en cours de constitution)'
+      }),
+
+      crossLink: Object.freeze({
+        ficheQ: 'amelioration-continue',
+        libelle: 'Par où démarrer une démarche d\'amélioration continue ?'
+      }),
+
+      ecoles: '<em>Drucker — management par objectifs</em> (le corollaire pervers de <em>what\'s measured improves</em> : ce qui n\'est pas mesuré dérive sans qu\'on le voie) · <em>Toyota Way — Genchi Genbutsu et Andon</em> (Liker, Imai — aller voir sur place et signaler sans peur) · <em>Edmondson — sécurité psychologique</em> (l\'humain dit la vérité quand il est protégé) · <em>DORA / SPACE</em> (la performance se triangule entre satisfaction perçue, mesures objectives et signaux humains, jamais sur une seule dimension). Les écoles convergent sur l\'idée qu\'aucune dimension de mesure n\'est suffisante seule ; elles divergent sur quelle dimension est <em>première</em> — le vécu, l\'observable, ou la déclaration.'
+    })
+
+  });
+
+  /* ─── API publique ───────────────────────────────────────────── */
+
+  function listerIds() {
+    return Object.keys(CATALOGUE);
+  }
+
+  function obtenir(id) {
+    if (!CATALOGUE.hasOwnProperty(id)) {
+      throw new Error('[CM.FicheQuestion] id inconnu : ' + id);
+    }
+    return CATALOGUE[id];
+  }
+
+  /* composer(id, choixQ1, choixQ2)
+     Calcule l'état de présentation de la fiche selon les choix utilisateur.
+     Pure : aucune écriture DOM, aucun effet de bord. Testable sans navigateur. */
+  function composer(id, choixQ1, choixQ2) {
+    var fiche = obtenir(id);
+
+    if (fiche.variante === '§4.6') {
+      return _composerMeta(fiche, choixQ1, choixQ2);
+    }
+    /* §4.4 et §4.3 viendront aux jalons C.x. */
+    throw new Error('[CM.FicheQuestion] variante non encore implémentée : ' + fiche.variante);
+  }
+
+  function _composerMeta(fiche, choixQ1, choixQ2) {
+    /* Validation et fallback : si choix absents, on prend la 1re option */
+    var optQ1 = _trouverOption(fiche.q1.options, choixQ1) || fiche.q1.options[0];
+    var optQ2 = _trouverOption(fiche.q2.options, choixQ2) || fiche.q2.options[0];
+
+    /* Q1 → réordonne les 3 axes pour mettre axeEnTete en card 1 */
+    var axeTete = optQ1.axeEnTete;
+    var axesOrdonnes = [];
+    var tete = null;
+    for (var i = 0; i < fiche.axes.length; i++) {
+      if (fiche.axes[i].id === axeTete) tete = fiche.axes[i];
+      else axesOrdonnes.push(fiche.axes[i]);
+    }
+    if (tete) axesOrdonnes.unshift(tete);
+
+    /* Q2 → contenu de chaque card = matrice[axe][niveau] */
+    var niveau = optQ2.niveau;
+    var contenuParCard = axesOrdonnes.map(function(axe) {
+      return {
+        axe: axe,
+        niveau: niveau,
+        contenu: fiche.matrice[axe.id][niveau]
+      };
+    });
+
+    return {
+      variante: '§4.6',
+      question: fiche.question,
+      bandeauAttente: fiche.bandeauAttente,
+      q1: fiche.q1,
+      q2: fiche.q2,
+      choixQ1: optQ1.id,
+      choixQ2: optQ2.id,
+      niveau: niveau,
+      cards: contenuParCard,
+      recommandation: fiche.recommandationParNiveau[niveau],
+      lienSortant: fiche.lienSortantPatrimonial,
+      crossLink: fiche.crossLink,
+      ecoles: fiche.ecoles
+    };
+  }
+
+  function _trouverOption(options, id) {
+    for (var i = 0; i < options.length; i++) {
+      if (options[i].id === id) return options[i];
+    }
+    return null;
+  }
+
+  /* htmlFiche(id, choixQ1, choixQ2, optionsRendu)
+     Pure : renvoie une chaîne HTML. Le consommateur l'injecte via innerHTML.
+     optionsRendu (objet figé, optionnel) : hook d'extension panier (cf. doc v0.2). */
+  function htmlFiche(id, choixQ1, choixQ2, optionsRendu) {
+    var etat = composer(id, choixQ1, choixQ2);
+    if (etat.variante === '§4.6') return _htmlMeta(etat, optionsRendu);
+    throw new Error('[CM.FicheQuestion] htmlFiche : variante non implémentée');
+  }
+
+  function _htmlMeta(etat, optionsRendu) {
+    var niveauLibelle = _niveauLibelle(etat.niveau);
+
+    return [
+      '<article class="fiche-q" data-niveau="', _esc(etat.niveau), '" data-fiche-q-id="', _esc(etat.choixQ1), '_', _esc(etat.choixQ2), '">',
+        '<div class="fiche-q-haut"></div>',
+        '<div class="fiche-q-corps">',
+          '<h2 class="fiche-q-question">', _esc(etat.question), '</h2>',
+          '<div class="fiche-q-meta">',
+            '<svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14"><path d="M3 12h18M9 6l-6 6 6 6M15 6l6 6-6 6"></path></svg>',
+            '<span>', etat.bandeauAttente, '</span>',
+          '</div>',
+
+          /* Cadrage */
+          '<div class="fiche-q-section">',
+            '<div class="fiche-q-section-titre">Cadrage</div>',
+            '<div class="fiche-q-cadrage">',
+              _htmlQuestionCourte(1, etat.q1, etat.choixQ1),
+              _htmlQuestionCourte(2, etat.q2, etat.choixQ2),
+            '</div>',
+          '</div>',
+
+          /* Trois axes pour trianguler */
+          '<div class="fiche-q-section">',
+            '<div class="fiche-q-section-titre">Trois axes pour trianguler</div>',
+            '<div class="fiche-q-indicateurs">',
+              etat.cards.map(function(c, i) { return _htmlCard(c, i, optionsRendu); }).join(''),
+            '</div>',
+            _htmlLienSortant(etat.lienSortant),
+          '</div>',
+
+          /* Recommandation */
+          '<div class="fiche-q-section">',
+            '<div class="fiche-q-reco">',
+              '<div class="fiche-q-reco-titre">',
+                '<svg fill="none" height="13" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" width="13"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg>',
+                'Recommandation — niveau ', _esc(niveauLibelle),
+              '</div>',
+              '<p>', etat.recommandation, '</p>',
+            '</div>',
+            '<div class="fiche-q-cross-link">Question liée — <a href="#fiche-q=', _esc(etat.crossLink.ficheQ), '">', _esc(etat.crossLink.libelle), '</a></div>',
+          '</div>',
+
+          /* Pied écoles */
+          '<div class="fiche-q-ecoles">',
+            '<strong>Cette question s\'appuie sur</strong>',
+            '<span class="liste">', etat.ecoles, '</span>',
+          '</div>',
+        '</div>',
+      '</article>'
+    ].join('');
+  }
+
+  function _htmlQuestionCourte(num, q, choixId) {
+    var options = q.options.map(function(opt) {
+      var classe = (opt.id === choixId) ? 'fiche-q-opt actif' : 'fiche-q-opt';
+      return '<button type="button" class="' + classe + '" data-fiche-q-choix="q' + num + '" data-fiche-q-opt="' + _esc(opt.id) + '">' + _esc(opt.libelle) + '</button>';
+    }).join('');
+    return [
+      '<div class="fiche-q-qcourte">',
+        '<div class="fiche-q-qcourte-titre">',
+          '<span class="fiche-q-qcourte-num">', String(num), '</span>',
+          '<span class="fiche-q-qcourte-label">', _esc(q.libelle), '</span>',
+        '</div>',
+        '<div class="fiche-q-qcourte-options" role="radiogroup">', options, '</div>',
+      '</div>'
+    ].join('');
+  }
+
+  function _htmlCard(c, index, optionsRendu) {
+    var classeTete = (index === 0) ? 'fiche-q-card tete' : 'fiche-q-card';
+    var rang = (index === 0) ? '<div class="fiche-q-card-rang">Card 1 — par où commencer</div>' : '';
+    var niveauLibelle = _niveauLibelle(c.niveau);
+    var lien;
+    if (c.contenu.ficheRef === 'CADRES_A_VENIR') {
+      lien = '<span class="fiche-q-card-lien absent">Fiche en cours de constitution</span>';
+    } else {
+      lien = '<a class="fiche-q-card-lien" href="#fiche=' + _esc(c.contenu.ficheRef) + '">Voir la fiche →</a>';
+    }
+    var traduction = c.contenu.traduction
+      ? ' <span class="traduction">' + _esc(c.contenu.traduction) + '</span>'
+      : '';
+
+    /* Hook panier — désactivé par défaut, branchable plus tard (cf. doc v0.2) */
+    var actionsPanier = '';
+    if (optionsRendu && optionsRendu.avecActionsPanier && typeof optionsRendu.onAjouterAuPanier === 'function') {
+      /* Le délégué est appelé par le consommateur ; on prépare seulement le bouton */
+      actionsPanier = '<button type="button" class="fiche-q-card-ajouter" data-fiche-ref="' + _esc(c.contenu.ficheRef) + '">+ Ajouter au tableau de bord</button>';
+    }
+
+    return [
+      '<div class="', classeTete, '">',
+        rang,
+        '<div class="fiche-q-card-axe">', _esc(c.axe.nom), ' — <em>', _esc(c.axe.sousTitre), '</em></div>',
+        '<div class="fiche-q-card-niveau">', _esc(niveauLibelle), '</div>',
+        '<h4 class="fiche-q-card-nom">', _esc(c.contenu.nom), traduction, '</h4>',
+        '<p class="fiche-q-card-intention">', _esc(c.contenu.intention), '</p>',
+        lien,
+        actionsPanier,
+      '</div>'
+    ].join('');
+  }
+
+  function _htmlLienSortant(lien) {
+    if (lien.ficheRef === 'CADRES_A_VENIR') {
+      return [
+        '<div class="fiche-q-lien-sortant">',
+          '<span class="surtitre">Aller plus loin</span>',
+          '<span class="absent">', _esc(lien.libelle), ' ', _esc(lien.mentionAbsent || ''), '</span>',
+        '</div>'
+      ].join('');
+    }
+    return [
+      '<div class="fiche-q-lien-sortant">',
+        '<span class="surtitre">Aller plus loin</span>',
+        '<a href="#fiche=', _esc(lien.ficheRef), '">', _esc(lien.libelle), ' →</a>',
+      '</div>'
+    ].join('');
+  }
+
+  var NIVEAU_LIBELLES = Object.freeze({
+    operationnel: 'équipe',
+    programme:    'programme',
+    tactique:     'tactique',
+    strategique:  'organisation'
+  });
+  function _niveauLibelle(niveauId) {
+    return NIVEAU_LIBELLES[niveauId] || niveauId;
+  }
+
+  /* Échappement HTML — utilitaire minimal pour le PoC.
+     Au jalon C on bascule sur CM.Html.echapper si pertinent. */
+  function _esc(s) {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /* ─── API publique exposée ─────────────────────────────────────── */
+  return {
+    listerIds: listerIds,
+    obtenir:   obtenir,
+    composer:  composer,
+    htmlFiche: htmlFiche
+  };
+})();
+/* ══ CM.FicheQuestion — END ══ */
+</script>
+
+
 <!-- ══ MODULE : CM.App — Etat, navigation et rendu des 4 vues ══ -->
 <script>
 CM.App = (function() {
