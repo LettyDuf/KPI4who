@@ -8300,105 +8300,72 @@ CM.PanierImpression = (function() {
   }
   .fiche-q-ecoles em { font-style: italic; }
 
-  /* ─── Card hybride (refonte 26.h.5+26.h.6, doctrine D3) ───────────────
-     La card de trio devient un conteneur de 3 strates :
-       - chrome haut (signature fiche-question : rang + axe + niveau)
-       - card d'accueil canonique au centre (réutilisée par htmlCarte)
-       - chrome bas (intention contextuelle pour la triangulation)
-     Les classes .carte-ind / .carte-en-tete / etc. sont définies dans le
-     bloc CSS principal de l'app (l. 397). On les neutralise ici quand elles
-     vivent à l'intérieur d'une card hybride, pour éviter un effet sandwich. */
-  .fiche-q-card.hybride {
-    background: var(--carte-fond);
-    border: 1px solid var(--bordure);
-    border-radius: 8px;
-    overflow: hidden;
+  /* ─── Card de trio — composition F4 v2 (refonte 26.h.8) ──────────────
+     La card de trio est désormais composée verticalement :
+       1. Card d'accueil canonique (réutilisée via CM.Composants.htmlCarte),
+          identique à celle de l'accueil — aucun chrome, aucune neutralisation.
+          Seule la card riche de rang 1 reçoit la classe .tete (bordure et
+          ombre bleu de Prusse).
+       2. Pied-info : ligne discrète 'Carte N · Axe · Niveau' en pied de card.
+       3. Zone Intention : libellé en surtitre + paragraphe non italique,
+          séparé par bordure pointillée.
+     Le wrapper .fiche-q-card-wrapper ne porte ni bordure ni fond — il est
+     juste un conteneur flex pour aligner les 3 éléments. */
+  .fiche-q-card-wrapper {
     display: flex;
     flex-direction: column;
-    /* annule padding/gap éventuels hérités de l'ancienne card simple */
-    padding: 0;
-    gap: 0;
   }
-  .fiche-q-card.hybride.tete {
+  /* F1 — .tete s'applique au wrapper, mais le style visuel passe sur la
+     .carte-ind à l'intérieur (le wrapper lui-même reste invisible). */
+  .fiche-q-card-wrapper.tete .carte-ind {
     border-color: var(--accent-fiche-q);
     box-shadow: 0 2px 10px rgba(29, 58, 95, 0.14);
   }
-  .fiche-q-card-cadrage-haut {
-    padding: 0.55rem 0.85rem;
-    background: var(--accent-fiche-q-leger);
-    border-bottom: 1px solid var(--bordure);
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-  }
-  .fiche-q-card.hybride .fiche-q-card-rang {
-    font-size: 0.66rem;
+  /* Pied-info — ligne discrète sous la card d'accueil */
+  .fiche-q-card-pied-info {
+    margin-top: 0.5rem;
+    padding: 0 0.85rem;
+    font-size: 0.64rem;
     text-transform: uppercase;
-    letter-spacing: 0.09em;
-    color: var(--accent-fiche-q);
-    font-weight: 800;
-    margin: 0;
-  }
-  .fiche-q-card-ax-niv {
-    font-size: 0.72rem;
-    color: var(--texte-secondaire);
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-  }
-  .fiche-q-card.hybride .fiche-q-card-axe {
-    font-style: italic;
-    color: var(--texte-secondaire);
-    font-size: 0.72rem;
-  }
-  .fiche-q-card.hybride .fiche-q-card-niveau {
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.07em;
     color: var(--texte-tertiaire);
-    font-size: 0.66rem;
-    align-self: center;
-    margin: 0;
   }
-  /* Neutralisation des styles .carte-ind quand elle vit dans le chrome */
-  .fiche-q-card.hybride .carte-ind {
-    border: none;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-    cursor: default;
+  .fiche-q-card-pied-info strong {
+    color: var(--accent-fiche-q);
+    font-weight: 700;
   }
-  .fiche-q-card.hybride .carte-ind:hover {
-    box-shadow: none;
-    transform: none;
+  /* Zone Intention — libellé + paragraphe non italique */
+  .fiche-q-card-zone-intention {
+    margin-top: 0.5rem;
+    padding: 0.55rem 0.85rem 0.7rem;
+    border-top: 1px dashed var(--bordure);
   }
-  /* Cadrage bas : intention contextuelle */
-  .fiche-q-card-cadrage-bas {
-    padding: 0.65rem 0.85rem 0.85rem;
-    background: var(--accent-fiche-q-leger);
-    border-top: 1px dashed var(--accent-fiche-q);
-  }
-  .fiche-q-card-cadrage-bas-libelle {
-    font-size: 0.62rem;
+  .fiche-q-card-zone-intention-libelle {
+    font-size: 0.6rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--accent-fiche-q);
+    color: var(--texte-tertiaire);
     font-weight: 700;
     margin-bottom: 0.25rem;
   }
-  .fiche-q-card-cadrage-bas-intention {
+  .fiche-q-card-zone-intention-texte {
     font-size: 0.78rem;
     color: var(--texte-secondaire);
     line-height: 1.5;
     margin: 0;
   }
-  /* Mode dégradé pour CADRES_A_VENIR ou ficheRef introuvable */
+  /* Mode dégradé pour CADRES_A_VENIR ou ficheRef introuvable.
+     Bordure pointillée + fond gris très léger, jamais en .tete (F1). */
   .fiche-q-card-degrade {
-    padding: 1.5rem 0.85rem;
     background: rgba(28, 32, 51, 0.03);
-    flex: 1;
+    border: 1px dashed var(--bordure);
+    border-radius: 10px;
+    padding: 2rem 0.85rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
+    min-height: 200px;
   }
   .fiche-q-card-degrade-mention {
     font-size: 0.75rem;
@@ -8406,7 +8373,6 @@ CM.PanierImpression = (function() {
     letter-spacing: 0.08em;
     color: var(--texte-tertiaire);
     font-weight: 700;
-    text-align: center;
   }
 </style>
 
@@ -8671,48 +8637,44 @@ CM.FicheQuestion = (function() {
     ].join('');
   }
 
-  /* _htmlCard — refonte 26.h.6 (doctrine D3 + harmonisation card d'accueil).
-     La card de trio se compose désormais en 3 strates :
-       1. Cadrage haut — signature fiche-question (rang + axe + niveau)
-       2. Corps        — card d'accueil canonique (CM.Composants.htmlCarte)
-                         résolue par CM.Referentiel.chercher(ficheRef), OU
-                         mode dégradé honnête si CADRES_A_VENIR
-       3. Cadrage bas  — intention rédigée pour la triangulation pastèque
+  /* _htmlCard — refonte 26.h.8 (composition F4 v2, validée mockup-card-friction4-v2).
+     La card de trio est désormais une composition vertical à 3 éléments :
+       1. Card d'accueil canonique pure (CM.Composants.htmlCarte) au centre,
+          OU mode dégradé honnête si ficheRef === 'CADRES_A_VENIR'
+       2. Pied-info : ligne discrète 'Carte N · Axe X · Niveau Y' (rang
+          en bleu de Prusse en strong)
+       3. Zone Intention : libellé en surtitre + paragraphe rédigé
+          (non italique, séparé par bordure pointillée)
 
-     Le hook optionsRendu.avecActionsPanier de la v0.2 du contrat est rendu
-     caduc : la card d'accueil porte d'office le pied panier (coche +
-     ampoule + Voir le détail), donc le panier est activé par construction.
-     Le paramètre est conservé en signature pour compatibilité descendante
-     mais n'est plus consulté ici. */
+     Plus aucun chrome coloré autour de la card : elle ressemble strictement
+     à la card d'accueil. La signature pastèque (rang/axe/niveau/intention)
+     vit en pied de chaque card sans envahir le visuel.
+
+     F1 : la classe .tete est UNIQUEMENT appliquée quand la card est riche
+     ET de rang 1 (pas sur les cases dégradées CADRES_A_VENIR).
+
+     F2 : le mot 'Card' (anglais) a été remplacé par 'Carte'.
+
+     Le paramètre optionsRendu est conservé en signature pour compatibilité
+     descendante ; il n'est plus consulté (le panier est porté par htmlCarte). */
   function _htmlCard(c, index, optionsRendu) {
-    var classeTete = (index === 0) ? 'fiche-q-card hybride tete' : 'fiche-q-card hybride';
-    var libelleRang = (index === 0) ? 'Card 1 : par où commencer' : 'Card ' + (index + 1);
+    var libelleRang = (index === 0) ? 'Carte 1 : par où commencer' : 'Carte ' + (index + 1);
     var niveauLibelle = _niveauLibelle(c.niveau);
+    var estDegrade = (c.contenu.ficheRef === 'CADRES_A_VENIR');
 
-    /* Cadrage haut : signature fiche-question */
-    var cadrageHaut = [
-      '<div class="fiche-q-card-cadrage-haut">',
-        '<div class="fiche-q-card-rang">', _esc(libelleRang), '</div>',
-        '<div class="fiche-q-card-ax-niv">',
-          '<span class="fiche-q-card-axe">', _esc(c.axe.nom), ' : <em>', _esc(c.axe.sousTitre), '</em></span>',
-          '<span class="fiche-q-card-niveau"> · ', _esc(niveauLibelle), '</span>',
-        '</div>',
-      '</div>'
-    ].join('');
-
-    /* Corps : card d'accueil canonique OU mode dégradé selon ficheRef */
+    /* Corps : card d'accueil canonique pure OU mode dégradé */
     var corps;
-    if (c.contenu.ficheRef === 'CADRES_A_VENIR') {
+    var classeTete = '';
+    if (estDegrade) {
       corps = '<div class="fiche-q-card-degrade"><div class="fiche-q-card-degrade-mention">Métrique en cours de constitution</div></div>';
+      /* F1 — pas de mise en avant .tete sur une case vide */
     } else if (CM.Referentiel && CM.Referentiel.chercher) {
       var fiche = CM.Referentiel.chercher(c.contenu.ficheRef);
       if (!fiche) {
         corps = '<div class="fiche-q-card-degrade"><div class="fiche-q-card-degrade-mention">Référence introuvable : ' + _esc(c.contenu.ficheRef) + '</div></div>';
       } else if (CM.Composants && CM.Composants.htmlCarte) {
-        /* Réutilise la card d'accueil canonique. Le CSS .fiche-q-card.hybride
-           .carte-ind neutralise sa bordure et son ombre pour qu'elle s'insère
-           sans effet sandwich dans le chrome de la fiche-question. */
         corps = CM.Composants.htmlCarte(fiche, null, false, false);
+        if (index === 0) classeTete = ' tete';  /* F1 — tête seulement si card riche de rang 1 */
       } else {
         corps = '<div class="fiche-q-card-degrade"><div class="fiche-q-card-degrade-mention">Module CM.Composants indisponible</div></div>';
       }
@@ -8720,15 +8682,22 @@ CM.FicheQuestion = (function() {
       corps = '<div class="fiche-q-card-degrade"><div class="fiche-q-card-degrade-mention">Module CM.Referentiel indisponible</div></div>';
     }
 
-    /* Cadrage bas : intention contextuelle pour la triangulation */
-    var cadrageBas = [
-      '<div class="fiche-q-card-cadrage-bas">',
-        '<div class="fiche-q-card-cadrage-bas-libelle">Intention</div>',
-        '<p class="fiche-q-card-cadrage-bas-intention">', _esc(c.contenu.intention), '</p>',
+    /* Pied info : ligne rang · axe · niveau */
+    var piedInfo = [
+      '<div class="fiche-q-card-pied-info">',
+        '<strong>', _esc(libelleRang), '</strong> · ', _esc(c.axe.nom), ' · ', _esc(niveauLibelle),
       '</div>'
     ].join('');
 
-    return '<article class="' + classeTete + '">' + cadrageHaut + corps + cadrageBas + '</article>';
+    /* Zone Intention : libellé + paragraphe */
+    var zoneIntention = [
+      '<div class="fiche-q-card-zone-intention">',
+        '<div class="fiche-q-card-zone-intention-libelle">Intention</div>',
+        '<p class="fiche-q-card-zone-intention-texte">', _esc(c.contenu.intention), '</p>',
+      '</div>'
+    ].join('');
+
+    return '<div class="fiche-q-card-wrapper' + classeTete + '">' + corps + piedInfo + zoneIntention + '</div>';
   }
 
   function _htmlLienSortant(lien) {
@@ -8795,25 +8764,31 @@ CM.FicheQuestion = (function() {
                                 du chantier 23). */
   }
   .vue-fiche-question-conteneur[hidden] { display: none !important; }
+  /* F3 — bouton retour rendu plus visible (16/05/2026) :
+     fond bleu de Prusse léger au lieu de transparent, padding plus généreux,
+     SVG flèche gauche en line au lieu du caractère &larr; HTML entity. */
   .vue-fiche-question-conteneur .fiche-q-retour {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    max-width: 1240px;  /* aligné sur .fiche-q (option α, 16/05/2026) */
-    margin: 0 auto 1rem;
-    padding: 0.45rem 0.9rem;
-    background: transparent;
-    border: 1px solid rgba(29, 58, 95, 0.25);
+    gap: 0.5rem;
+    margin: 0 0 1.2rem;
+    padding: 0.55rem 1rem;
+    background: var(--accent-fiche-q-leger);
+    border: 1px solid var(--accent-fiche-q);
     border-radius: 999px;
     color: var(--accent-fiche-q);
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     font-weight: 600;
     text-decoration: none;
     cursor: pointer;
     transition: var(--trans);
   }
   .vue-fiche-question-conteneur .fiche-q-retour:hover {
-    background: var(--accent-fiche-q-leger);
+    background: var(--accent-fiche-q);
+    color: #ffffff;
+  }
+  .vue-fiche-question-conteneur .fiche-q-retour svg {
+    width: 16px; height: 16px; flex-shrink: 0;
   }
 </style>
 <script>
@@ -8894,7 +8869,8 @@ CM.VueFicheQuestion = (function() {
     if (!conteneur || !etat.ficheId) return;
     var html =
       '<a href="#" class="fiche-q-retour" data-fiche-q-retour="1" aria-label="Retour à l\'accueil">' +
-      '<span aria-hidden="true">&larr;</span> Retour à l\'accueil' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>' +
+      'Retour à l\'accueil' +
       '</a>' +
       CM.FicheQuestion.htmlFiche(etat.ficheId, etat.choixQ1, etat.choixQ2);
     conteneur.innerHTML = html;
