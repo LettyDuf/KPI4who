@@ -8299,6 +8299,115 @@ CM.PanierImpression = (function() {
     margin-bottom: 0.4rem;
   }
   .fiche-q-ecoles em { font-style: italic; }
+
+  /* ─── Card hybride (refonte 26.h.5+26.h.6, doctrine D3) ───────────────
+     La card de trio devient un conteneur de 3 strates :
+       - chrome haut (signature fiche-question : rang + axe + niveau)
+       - card d'accueil canonique au centre (réutilisée par htmlCarte)
+       - chrome bas (intention contextuelle pour la triangulation)
+     Les classes .carte-ind / .carte-en-tete / etc. sont définies dans le
+     bloc CSS principal de l'app (l. 397). On les neutralise ici quand elles
+     vivent à l'intérieur d'une card hybride, pour éviter un effet sandwich. */
+  .fiche-q-card.hybride {
+    background: var(--carte-fond);
+    border: 1px solid var(--bordure);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    /* annule padding/gap éventuels hérités de l'ancienne card simple */
+    padding: 0;
+    gap: 0;
+  }
+  .fiche-q-card.hybride.tete {
+    border-color: var(--accent-fiche-q);
+    box-shadow: 0 2px 10px rgba(29, 58, 95, 0.14);
+  }
+  .fiche-q-card-cadrage-haut {
+    padding: 0.55rem 0.85rem;
+    background: var(--accent-fiche-q-leger);
+    border-bottom: 1px solid var(--bordure);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .fiche-q-card.hybride .fiche-q-card-rang {
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--accent-fiche-q);
+    font-weight: 800;
+    margin: 0;
+  }
+  .fiche-q-card-ax-niv {
+    font-size: 0.72rem;
+    color: var(--texte-secondaire);
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+  .fiche-q-card.hybride .fiche-q-card-axe {
+    font-style: italic;
+    color: var(--texte-secondaire);
+    font-size: 0.72rem;
+  }
+  .fiche-q-card.hybride .fiche-q-card-niveau {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--texte-tertiaire);
+    font-size: 0.66rem;
+    align-self: center;
+    margin: 0;
+  }
+  /* Neutralisation des styles .carte-ind quand elle vit dans le chrome */
+  .fiche-q-card.hybride .carte-ind {
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    cursor: default;
+  }
+  .fiche-q-card.hybride .carte-ind:hover {
+    box-shadow: none;
+    transform: none;
+  }
+  /* Cadrage bas : intention contextuelle */
+  .fiche-q-card-cadrage-bas {
+    padding: 0.65rem 0.85rem 0.85rem;
+    background: var(--accent-fiche-q-leger);
+    border-top: 1px dashed var(--accent-fiche-q);
+  }
+  .fiche-q-card-cadrage-bas-libelle {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-fiche-q);
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  .fiche-q-card-cadrage-bas-intention {
+    font-size: 0.78rem;
+    color: var(--texte-secondaire);
+    line-height: 1.5;
+    margin: 0;
+  }
+  /* Mode dégradé pour CADRES_A_VENIR ou ficheRef introuvable */
+  .fiche-q-card-degrade {
+    padding: 1.5rem 0.85rem;
+    background: rgba(28, 32, 51, 0.03);
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .fiche-q-card-degrade-mention {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--texte-tertiaire);
+    font-weight: 700;
+    text-align: center;
+  }
 </style>
 
 <script>
@@ -8345,52 +8454,43 @@ CM.FicheQuestion = (function() {
       matrice: Object.freeze({
         declaratif: Object.freeze({
           operationnel: Object.freeze({
-            nom: 'Engagement de sprint vs livré', traduction: '/ Sprint Commitment vs Delivery',
-            intention: 'Comparer ce qui a été annoncé en début de sprint à ce qui a été effectivement livré et accepté en fin de sprint. Un écart qui se répète mérite d\'être compris, pas reproché. Les causes sont multiples : pression d\'une partie prenante influente, imprévus pris en cours de route, capacité réelle mal connue, périmètre mal cadré.',
+                        intention: 'Comparer ce qui a été annoncé en début de sprint à ce qui a été effectivement livré et accepté en fin de sprint. Un écart qui se répète mérite d\'être compris, pas reproché. Les causes sont multiples : pression d\'une partie prenante influente, imprévus pris en cours de route, capacité réelle mal connue, périmètre mal cadré.',
             ficheRef: 'CADRES_A_VENIR'
           }),
           programme: Object.freeze({
-            nom: 'Feuille de route engagée vs feuille de route réalisée', traduction: '',
-            intention: 'Sur un horizon glissant (3-6 mois), comparer les promesses portées en revue de programme à ce qui a effectivement atterri en production ou en service. La feuille de route déclarative vit en réunions ; la feuille de route objective vit en journaux d\'exécution.',
+                        intention: 'Sur un horizon glissant (3-6 mois), comparer les promesses portées en revue de programme à ce qui a effectivement atterri en production ou en service. La feuille de route déclarative vit en réunions ; la feuille de route objective vit en journaux d\'exécution.',
             ficheRef: 'CADRES_A_VENIR'
           }),
           strategique: Object.freeze({
-            nom: 'Objectifs stratégiques annuels', traduction: '/ OKR',
-            intention: 'Mesurer la part des Key Results déclarés qui décrivent un résultat utilisateur observable, plutôt qu\'une activité interne. Un OKR qui dit « lancer » au lieu de « faire adopter par X % » est une déclaration sans miroir.',
+                        intention: 'Mesurer la part des Key Results déclarés qui décrivent un résultat utilisateur observable, plutôt qu\'une activité interne. Un OKR qui dit « lancer » au lieu de « faire adopter par X % » est une déclaration sans miroir.',
             ficheRef: 's4'
           })
         }),
         objectif: Object.freeze({
           operationnel: Object.freeze({
-            nom: 'Premier passage conforme', traduction: '/ First-pass yield',
-            intention: 'Compter la part des items livrés acceptés sans retour de retravail (pas de retravail, pas de défaut remonté en revue). Mesure objective la plus directe d\'un écart entre conformité déclarée et conformité observée.',
+                        intention: 'Compter la part des items livrés acceptés sans retour de retravail (pas de retravail, pas de défaut remonté en revue). Mesure objective la plus directe d\'un écart entre conformité déclarée et conformité observée.',
             ficheRef: 'lss-1'
           }),
           programme: Object.freeze({
-            nom: 'Lead time programme', traduction: '/ Lead time',
-            intention: 'Délai bout à bout d\'une initiative cross-équipes, du moment où elle est inscrite au portfolio à sa release publique. Capteur objectif le plus tangible d\'un écart entre ambition affichée et capacité réelle de livrer.',
+                        intention: 'Délai bout à bout d\'une initiative cross-équipes, du moment où elle est inscrite au portfolio à sa release publique. Capteur objectif le plus tangible d\'un écart entre ambition affichée et capacité réelle de livrer.',
             ficheRef: 'p9'
           }),
           strategique: Object.freeze({
-            nom: 'Coût de la non-qualité', traduction: '/ COPQ',
-            intention: 'Chiffrer ce que coûte chaque année le travail refait, les défauts livrés, les rappels client, la dette technique remboursée. La voix la plus tangible de l\'écart entre ce qu\'on dit livrer et ce qu\'on livre vraiment.',
+                        intention: 'Chiffrer ce que coûte chaque année le travail refait, les défauts livrés, les rappels client, la dette technique remboursée. La voix la plus tangible de l\'écart entre ce qu\'on dit livrer et ce qu\'on livre vraiment.',
             ficheRef: 's11'
           })
         }),
         humain: Object.freeze({
           operationnel: Object.freeze({
-            nom: 'Indice de bien-être équipe', traduction: '',
-            intention: 'Quelques questions courtes, anonymes, posées à l\'équipe chaque semaine ou tous les quinze jours. Elles cherchent ce qu\'on n\'ose pas dire en réunion : si on a confiance dans sa hiérarchie, si on se sent libre de refuser ou de contester une décision qu\'on trouve incohérente ou dénuée de bon sens, si on donne du sens à son travail, dans quelle humeur on finit la semaine.',
+                        intention: 'Quelques questions courtes, anonymes, posées à l\'équipe chaque semaine ou tous les quinze jours. Elles cherchent ce qu\'on n\'ose pas dire en réunion : si on a confiance dans sa hiérarchie, si on se sent libre de refuser ou de contester une décision qu\'on trouve incohérente ou dénuée de bon sens, si on donne du sens à son travail, dans quelle humeur on finit la semaine.',
             ficheRef: 'x4'
           }),
           programme: Object.freeze({
-            nom: 'Indice de friction programme', traduction: '',
-            intention: 'Quelques questions courtes, anonymes, posées chaque trimestre à toutes les équipes du programme. On y demande explicitement ce que les rapports officiels ne disent pas : les blocages restés sans réponse, les arbitrages incompris, les promesses non tenues entre équipes.',
+                        intention: 'Quelques questions courtes, anonymes, posées chaque trimestre à toutes les équipes du programme. On y demande explicitement ce que les rapports officiels ne disent pas : les blocages restés sans réponse, les arbitrages incompris, les promesses non tenues entre équipes.',
             ficheRef: 'CADRES_A_VENIR'
           }),
           strategique: Object.freeze({
-            nom: 'Écart de vérité stratégique', traduction: '/ Strategic Truth Gap',
-            intention: 'Audit semestriel comparant la stratégie déclarée (priorités annoncées) aux ressources réellement allouées (budget, agenda, talents) et à la perception anonyme des équipes. Miroir lucide pour le board, jamais arme contre une fonction.',
+                        intention: 'Audit semestriel comparant la stratégie déclarée (priorités annoncées) aux ressources réellement allouées (budget, agenda, talents) et à la perception anonyme des équipes. Miroir lucide pour le board, jamais arme contre une fonction.',
             ficheRef: 's12'
           })
         })
@@ -8571,38 +8671,64 @@ CM.FicheQuestion = (function() {
     ].join('');
   }
 
+  /* _htmlCard — refonte 26.h.6 (doctrine D3 + harmonisation card d'accueil).
+     La card de trio se compose désormais en 3 strates :
+       1. Cadrage haut — signature fiche-question (rang + axe + niveau)
+       2. Corps        — card d'accueil canonique (CM.Composants.htmlCarte)
+                         résolue par CM.Referentiel.chercher(ficheRef), OU
+                         mode dégradé honnête si CADRES_A_VENIR
+       3. Cadrage bas  — intention rédigée pour la triangulation pastèque
+
+     Le hook optionsRendu.avecActionsPanier de la v0.2 du contrat est rendu
+     caduc : la card d'accueil porte d'office le pied panier (coche +
+     ampoule + Voir le détail), donc le panier est activé par construction.
+     Le paramètre est conservé en signature pour compatibilité descendante
+     mais n'est plus consulté ici. */
   function _htmlCard(c, index, optionsRendu) {
-    var classeTete = (index === 0) ? 'fiche-q-card tete' : 'fiche-q-card';
-    var rang = (index === 0) ? '<div class="fiche-q-card-rang">Card 1 : par où commencer</div>' : '';
+    var classeTete = (index === 0) ? 'fiche-q-card hybride tete' : 'fiche-q-card hybride';
+    var libelleRang = (index === 0) ? 'Card 1 : par où commencer' : 'Card ' + (index + 1);
     var niveauLibelle = _niveauLibelle(c.niveau);
-    var lien;
-    if (c.contenu.ficheRef === 'CADRES_A_VENIR') {
-      lien = '<span class="fiche-q-card-lien absent">Fiche en cours de constitution</span>';
-    } else {
-      lien = '<a class="fiche-q-card-lien" href="#fiche=' + _esc(c.contenu.ficheRef) + '">Voir la fiche →</a>';
-    }
-    var traduction = c.contenu.traduction
-      ? ' <span class="traduction">' + _esc(c.contenu.traduction) + '</span>'
-      : '';
 
-    /* Hook panier — désactivé par défaut, branchable plus tard (cf. doc v0.2) */
-    var actionsPanier = '';
-    if (optionsRendu && optionsRendu.avecActionsPanier && typeof optionsRendu.onAjouterAuPanier === 'function') {
-      /* Le délégué est appelé par le consommateur ; on prépare seulement le bouton */
-      actionsPanier = '<button type="button" class="fiche-q-card-ajouter" data-fiche-ref="' + _esc(c.contenu.ficheRef) + '">+ Ajouter au tableau de bord</button>';
-    }
-
-    return [
-      '<div class="', classeTete, '">',
-        rang,
-        '<div class="fiche-q-card-axe">', _esc(c.axe.nom), ' : <em>', _esc(c.axe.sousTitre), '</em></div>',
-        '<div class="fiche-q-card-niveau">', _esc(niveauLibelle), '</div>',
-        '<h4 class="fiche-q-card-nom">', _esc(c.contenu.nom), traduction, '</h4>',
-        '<p class="fiche-q-card-intention">', _esc(c.contenu.intention), '</p>',
-        lien,
-        actionsPanier,
+    /* Cadrage haut : signature fiche-question */
+    var cadrageHaut = [
+      '<div class="fiche-q-card-cadrage-haut">',
+        '<div class="fiche-q-card-rang">', _esc(libelleRang), '</div>',
+        '<div class="fiche-q-card-ax-niv">',
+          '<span class="fiche-q-card-axe">', _esc(c.axe.nom), ' : <em>', _esc(c.axe.sousTitre), '</em></span>',
+          '<span class="fiche-q-card-niveau"> · ', _esc(niveauLibelle), '</span>',
+        '</div>',
       '</div>'
     ].join('');
+
+    /* Corps : card d'accueil canonique OU mode dégradé selon ficheRef */
+    var corps;
+    if (c.contenu.ficheRef === 'CADRES_A_VENIR') {
+      corps = '<div class="fiche-q-card-degrade"><div class="fiche-q-card-degrade-mention">Métrique en cours de constitution</div></div>';
+    } else if (CM.Referentiel && CM.Referentiel.chercher) {
+      var fiche = CM.Referentiel.chercher(c.contenu.ficheRef);
+      if (!fiche) {
+        corps = '<div class="fiche-q-card-degrade"><div class="fiche-q-card-degrade-mention">Référence introuvable : ' + _esc(c.contenu.ficheRef) + '</div></div>';
+      } else if (CM.Composants && CM.Composants.htmlCarte) {
+        /* Réutilise la card d'accueil canonique. Le CSS .fiche-q-card.hybride
+           .carte-ind neutralise sa bordure et son ombre pour qu'elle s'insère
+           sans effet sandwich dans le chrome de la fiche-question. */
+        corps = CM.Composants.htmlCarte(fiche, null, false, false);
+      } else {
+        corps = '<div class="fiche-q-card-degrade"><div class="fiche-q-card-degrade-mention">Module CM.Composants indisponible</div></div>';
+      }
+    } else {
+      corps = '<div class="fiche-q-card-degrade"><div class="fiche-q-card-degrade-mention">Module CM.Referentiel indisponible</div></div>';
+    }
+
+    /* Cadrage bas : intention contextuelle pour la triangulation */
+    var cadrageBas = [
+      '<div class="fiche-q-card-cadrage-bas">',
+        '<div class="fiche-q-card-cadrage-bas-libelle">Intention</div>',
+        '<p class="fiche-q-card-cadrage-bas-intention">', _esc(c.contenu.intention), '</p>',
+      '</div>'
+    ].join('');
+
+    return '<article class="' + classeTete + '">' + cadrageHaut + corps + cadrageBas + '</article>';
   }
 
   function _htmlLienSortant(lien) {
