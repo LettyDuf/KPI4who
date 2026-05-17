@@ -8315,7 +8315,7 @@ CM.FicheQuestion = (function() {
       variante: '§4.6',
       question: 'Mes indicateurs reflètent-ils la réalité du terrain ?',
       bandeauAttente: 'Deux questions courtes, deux minutes, tu repars avec trois indicateurs candidats pour trianguler ce que tes chiffres ne disent peut-être pas.',
-      panel: 'Triangulation méta : Drucker, Toyota Way, Edmondson',
+      panel: 'Triangulation des mesures : Drucker, Toyota Way, Edmondson',
 
       q1: Object.freeze({
         libelle: 'Quel signal t\'a alerté ?',
@@ -8346,7 +8346,7 @@ CM.FicheQuestion = (function() {
         declaratif: Object.freeze({
           operationnel: Object.freeze({
             nom: 'Engagement de sprint vs livré', traduction: '/ Sprint Commitment vs Delivery',
-            intention: 'Comparer ce qui a été annoncé en début de sprint à ce qui a été effectivement livré et accepté en fin de sprint. Un écart répété signale un système qui s\'auto-rassure par la déclaration plutôt qu\'il ne mesure sa capacité réelle.',
+            intention: 'Comparer ce qui a été annoncé en début de sprint à ce qui a été effectivement livré et accepté en fin de sprint. Un écart qui se répète mérite d\'être compris, pas reproché. Les causes sont multiples : pression d\'une partie prenante influente, imprévus pris en cours de route, capacité réelle mal connue, périmètre mal cadré.',
             ficheRef: 'p5'
           }),
           programme: Object.freeze({
@@ -8380,12 +8380,12 @@ CM.FicheQuestion = (function() {
         humain: Object.freeze({
           operationnel: Object.freeze({
             nom: 'Indice de bien-être équipe', traduction: '',
-            intention: 'Sondage anonyme bref (5 questions, hebdomadaire ou bi-mensuel) qui capte la voix humaine protégée : confiance dans le ou la responsable, sentiment d\'utilité, énergie en fin de semaine. La pastèque équipe se voit dans la baisse de la voix avant qu\'elle ne se voie dans les chiffres.',
+            intention: 'Quelques questions courtes, anonymes, posées à l\'équipe chaque semaine ou tous les quinze jours. Elles cherchent ce qu\'on n\'ose pas dire en réunion : si on a confiance dans sa hiérarchie, si on se sent libre de refuser ou de contester une décision qu\'on trouve incohérente ou dénuée de bon sens, si on donne du sens à son travail, dans quelle humeur on finit la semaine.',
             ficheRef: 'x4'
           }),
           programme: Object.freeze({
             nom: 'Indice de friction programme', traduction: '',
-            intention: 'Sondage anonyme transversal aux équipes du programme (3-5 questions trimestrielles, champ libre obligatoire). Capte les frictions qui n\'ont pas remonté au comité de pilotage parce que les rapports officiels ont été lissés.',
+            intention: 'Quelques questions courtes, anonymes, posées chaque trimestre à toutes les équipes du programme. On y demande explicitement ce que les rapports officiels ne disent pas : les blocages restés sans réponse, les arbitrages incompris, les promesses non tenues entre équipes.',
             ficheRef: 'CADRES_A_VENIR'
           }),
           strategique: Object.freeze({
@@ -8397,7 +8397,7 @@ CM.FicheQuestion = (function() {
       }),
 
       recommandationParNiveau: Object.freeze({
-        operationnel: 'Pour bien faire, traiter la triangulation comme une routine d\'équipe : discussion bi-mensuelle où le sprint déclaré, le premier passage conforme et le sondage anonyme sont mis à plat sans hiérarchie. La pastèque d\'équipe se dissipe quand l\'écart est nommé sans honte, jamais quand il est noté. Le piège classique consiste à <span class="anti-pattern">transformer le sondage en outil de management</span>, ce qui le tue dès la deuxième passe, ou à <span class="anti-pattern">chiffrer le sentiment d\'équipe</span>, et l\'indice devient une cible, perd sa fonction de capteur.',
+        operationnel: 'Pour bien faire, traiter la triangulation comme une routine d\'équipe : discussion tous les quinze jours où le sprint déclaré, le premier passage conforme et le sondage anonyme sont posés côte à côte, sans hiérarchie. L\'écart entre ce qui est annoncé et ce qui est vécu se résorbe quand il est nommé sans honte, jamais quand il est noté. Le piège classique consiste à <span class="anti-pattern">transformer le sondage en outil de management</span>, ce qui le tue dès la deuxième passe, ou à <span class="anti-pattern">chiffrer le sentiment d\'équipe</span> : l\'indice devient une cible et cesse d\'être un capteur.',
         programme: 'Pour bien faire, organiser une rétrospective trimestrielle de programme où les 3 axes sont présentés au même rythme et avec la même crédibilité : pas la feuille de route d\'abord (parce qu\'elle est la plus rassurante), puis le lead time, puis le sondage. Le piège classique consiste à <span class="anti-pattern">n\'amener au comité de pilotage que l\'axe objectif</span> et à reléguer le sondage en annexe, ce qui condamne la voix humaine à n\'arriver qu\'après la crise.',
         strategique: 'Pour bien faire, cadencer un audit semestriel qui rapproche les trois axes au comité de direction, et le traiter comme un miroir pour le comité de direction, jamais comme un bilan pour les équipes. La triangulation au stratégique réussit quand elle change la conversation du comité, pas quand elle produit un score. Le piège classique consiste à <span class="anti-pattern">publier l\'audit en interne sans accompagnement</span>, ou à <span class="anti-pattern">réécrire la stratégie déclarée pour qu\'elle ressemble à l\'exécution observée</span>, et l\'écart tombe à zéro mais l\'organisation perd toute capacité de pilotage.'
       }),
