@@ -8143,13 +8143,26 @@ CM.PanierImpression = (function() {
   }
 
   /* Trois cards du trio */
+  /* Refonte 26.h.8c — grid 3×3 (3 colonnes × 3 rows : cards / pied-info /
+     zone-intention). Le wrapper .fiche-q-card-wrapper utilise display:contents
+     pour transmettre ses 3 enfants directement à ce grid. grid-auto-flow:column
+     les place colonne par colonne dans l'ordre du DOM. Chaque row prend la
+     hauteur du plus grand élément → toutes les cards d'accueil uniformes,
+     tous les pied-info uniformes, toutes les intentions uniformes. */
   .fiche-q-indicateurs {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.9rem;
+    grid-template-rows: auto auto auto;
+    grid-auto-flow: column;
+    column-gap: 0.9rem;
+    row-gap: 0.5rem;
   }
   @media (max-width: 760px) {
-    .fiche-q-indicateurs { grid-template-columns: 1fr; }
+    .fiche-q-indicateurs {
+      grid-template-columns: 1fr;
+      grid-template-rows: none;
+      grid-auto-flow: row;
+    }
   }
   .fiche-q-card {
     background: var(--carte-fond);
@@ -8300,31 +8313,26 @@ CM.PanierImpression = (function() {
   }
   .fiche-q-ecoles em { font-style: italic; }
 
-  /* ─── Card de trio — composition F4 v2 (refonte 26.h.8) ──────────────
-     La card de trio est désormais composée verticalement :
-       1. Card d'accueil canonique (réutilisée via CM.Composants.htmlCarte),
-          identique à celle de l'accueil — aucun chrome, aucune neutralisation.
-          Seule la card riche de rang 1 reçoit la classe .tete (bordure et
-          ombre bleu de Prusse).
-       2. Pied-info : ligne discrète 'Carte N · Axe · Niveau' en pied de card.
-       3. Zone Intention : libellé en surtitre + paragraphe non italique,
-          séparé par bordure pointillée.
-     Le wrapper .fiche-q-card-wrapper ne porte ni bordure ni fond — il est
-     juste un conteneur flex pour aligner les 3 éléments. */
+  /* ─── Card de trio — composition F4 v3 (refonte 26.h.8c) ──────────────
+     Architecture en grid 3×3 piloté par .fiche-q-indicateurs lui-même
+     (voir la modification de grid-auto-flow ci-après dans cette même
+     section CSS) :
+       Row 1 = les 3 cards d'accueil (canoniques ou dégradées)
+       Row 2 = les 3 pied-info
+       Row 3 = les 3 zones Intention
+     Chaque row prend la hauteur de son plus grand élément → tous les
+     rectangles d'une même row sont automatiquement uniformes, peu importe
+     la longueur du contenu d'une colonne donnée. Solution robuste qui
+     ne dépend ni de min-height fragile ni de flex calculé sur des sous-arbres.
+
+     Le wrapper .fiche-q-card-wrapper utilise display:contents : il
+     transmet ses 3 enfants directement au grid parent, en préservant
+     la sémantique HTML (regroupement par card) sans imposer de bloc. */
   .fiche-q-card-wrapper {
-    display: flex;
-    flex-direction: column;
-    /* F6 — hauteur uniforme : grandit à la hauteur du grid pour que toutes
-       les cards (riches OU dégradées) aient la même taille verticale. */
-    height: 100%;
+    display: contents;
   }
-  /* F7 — la classe .tete a été retirée du wrapper. Le contour coloré
-     fiabilité (vert/orange/rouge) signale la qualité de la métrique.
-     Le signal 'par où commencer' est porté par le libellé explicite
-     dans pied-info. */
   /* Pied-info — ligne discrète sous la card d'accueil */
   .fiche-q-card-pied-info {
-    margin-top: 0.5rem;
     padding: 0 0.85rem;
     font-size: 0.64rem;
     text-transform: uppercase;
@@ -8337,7 +8345,6 @@ CM.PanierImpression = (function() {
   }
   /* Zone Intention — libellé + paragraphe non italique */
   .fiche-q-card-zone-intention {
-    margin-top: 0.5rem;
     padding: 0.55rem 0.85rem 0.7rem;
     border-top: 1px dashed var(--bordure);
   }
@@ -8356,8 +8363,8 @@ CM.PanierImpression = (function() {
     margin: 0;
   }
   /* Mode dégradé pour CADRES_A_VENIR ou ficheRef introuvable.
-     Bordure pointillée + fond gris très léger. F6 : flex:1 pour s'étirer
-     à la hauteur disponible dans le wrapper (cohérent avec les cards riches). */
+     Bordure pointillée + fond gris très léger. Avec le grid 3×3, sa
+     hauteur s'aligne automatiquement sur celle des cards riches voisines. */
   .fiche-q-card-degrade {
     background: rgba(28, 32, 51, 0.03);
     border: 1px dashed var(--bordure);
@@ -8367,7 +8374,6 @@ CM.PanierImpression = (function() {
     align-items: center;
     justify-content: center;
     text-align: center;
-    flex: 1;
   }
   .fiche-q-card-degrade-mention {
     font-size: 0.75rem;
