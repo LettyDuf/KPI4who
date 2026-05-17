@@ -96,9 +96,9 @@ Le format source de référence est **JavaScript figé** (pas JSON) pour deux ra
     },
     trios: {
       equipe: [
-        { id: 'leadTime', niveau: 'equipe', nom: 'Lead time', traduction: 'Délai bout à bout', intention: '...', ficheRef: 'o3' },
-        { id: 'firstPassYield', niveau: 'equipe', nom: 'First-pass yield', traduction: 'Premier passage conforme', intention: '...', ficheRef: 'lss-1' },
-        { id: 'throughput', niveau: 'equipe', nom: 'Throughput', traduction: 'Débit', intention: '...', ficheRef: 'o4' }
+        { id: 'leadTime',       niveau: 'equipe', intention: 'paragraphe rédigé pour la triangulation', ficheRef: 'o3' },
+        { id: 'firstPassYield', niveau: 'equipe', intention: '...', ficheRef: 'lss-1' },
+        { id: 'throughput',     niveau: 'equipe', intention: '...', ficheRef: 'o4' }
       ],
       programme: [ ... 3 cards ... ],
       strategique: [ ... 3 cards ... ]
@@ -189,9 +189,9 @@ Le format source de référence est **JavaScript figé** (pas JSON) pour deux ra
     ],
     matrice: {
       declaratif: {
-        equipe:      { nom: 'Discours OKR équipe', intention: '...', ficheRef: 'p5' },
-        programme:   { nom: 'Discours programme', intention: '...', ficheRef: 'p5' },
-        strategique: { nom: 'Discours stratégique', intention: '...', ficheRef: 's11' }
+        equipe:      { intention: 'paragraphe rédigé pour la triangulation', ficheRef: 'CADRES_A_VENIR' },
+        programme:   { intention: '...',                                      ficheRef: 'CADRES_A_VENIR' },
+        strategique: { intention: '...',                                      ficheRef: 's4' }
       },
       objectif: { equipe: {...}, programme: {...}, strategique: {...} },
       humain:   { equipe: {...}, programme: {...}, strategique: {...} }
@@ -207,6 +207,59 @@ Le format source de référence est **JavaScript figé** (pas JSON) pour deux ra
 
 - Q1 → réordonne les 3 axes en plaçant en tête l'axe désigné par `axeEnTete`.
 - Q2 → change le contenu de chaque card (sélection de `matrice[axe][niveau]`).
+
+### 3.5 Doctrine D3 — séparation matière éditoriale / source canonique
+
+*Doctrine actée le 16/05/2026 (séance reprise sous-chantier 26.h), suite à un constat éditorial sur la matrice pastèque.*
+
+**Constat de départ.** La matrice de la fiche pastèque portait initialement un champ `nom` rédigé pour la triangulation (ex : *« Engagement de sprint vs livré »*) et un champ `traduction` patrimonial (ex : *« / Sprint Commitment vs Delivery »*). Audit factuel sur les 9 cellules :
+
+- 6 cellules : le `nom` rédigé était la version courte du nom canonique de la fiche pointée par `ficheRef` dans `CM.Referentiel` (ex : *« Premier passage conforme »* pour `lss-1` qui s'appelle *« Premier passage conforme (First-Pass Yield) »*) — pure abréviation, donc duplication.
+- 2 cellules : le `nom` rédigé n'était pas une métrique canonique mais un **dispositif d'observation** (comparaison entre 2 mesures, ex : *« Engagement de sprint vs livré »*) qui n'a pas d'équivalent 1:1 dans le référentiel. Le `ficheRef` pointait par défaut vers une métrique voisine, créant une discordance.
+- 1 cellule : `ficheRef` honnêtement en `CADRES_A_VENIR`.
+
+**Doctrine retenue (D3).**
+
+1. **La matrice ne porte plus de `nom` ni de `traduction`.** Source unique de vérité du nom canonique = `CM.Referentiel`. Élimine la duplication éditoriale et la possibilité de divergence avec la fiche cible.
+2. **La matrice ne porte que `ficheRef` + `intention` (+ option `mentionAbsent` pour les cellules dégradées).**
+3. **`ficheRef` doit pointer rigoureusement vers une métrique canonique du référentiel**, ou bien expliciter `CADRES_A_VENIR` quand la métrique n'existe pas encore. **Les dispositifs d'observation ne sont pas des métriques** — ils basculent en `CADRES_A_VENIR` jusqu'à ce que la métrique canonique correspondante soit créée dans `CM.Referentiel`.
+4. **Le rendu (`_htmlCard`) résout le nom + meta riche en interrogeant `CM.Referentiel.obtenir(ficheRef)`** quand `ficheRef !== 'CADRES_A_VENIR'`. Mode dégradé honnête sinon.
+
+**Conséquence schéma — cellule de matrice § 4.6 :**
+
+```js
+matrice[axe][niveau] = {
+  intention: 'paragraphe rédigé pour la triangulation',
+  ficheRef:  'p5' | 'CADRES_A_VENIR'
+}
+```
+
+**Conséquence schéma — card de trio § 4.4 :**
+
+```js
+trios[niveau][i] = {
+  id:        'identifiantLocal',
+  niveau:    'equipe' | 'programme' | 'strategique',
+  intention: 'paragraphe rédigé',
+  ficheRef:  'lss-1' | 'CADRES_A_VENIR'
+}
+```
+
+Les champs `nom`, `traduction` qui figuraient dans les versions précédentes sont retirés. Cohérent avec la doctrine du *traducteur orthodoxe* (mémoire `project_doctrine_traducteur_orthodoxe.md`) : un module formule, il ne duplique pas.
+
+### 3.6 Doctrine du mot « pastèque » dans le produit
+
+*Doctrine actée le 16/05/2026, suite à constat de Lætitia : le mot « pastèque » désigne, dans la métaphore Kersten (*Project to Product*, 2018), l'effet pervers à débusquer (vert dehors, rouge dedans), pas l'opération positive. L'opération positive, c'est la triangulation déclaratif/objectif/humain.*
+
+**Trois niveaux d'usage du mot dans le produit :**
+
+| Niveau | Où | Doctrine |
+|---|---|---|
+| 1. **Texte visible utilisateur** (intentions, recommandations, libellés de zone, bandeau d'attente) | À **bannir** — l'utilisateur n'a pas à rencontrer un mot qui désigne un travers comme étiquette positive |
+| 2. **Référence patrimoniale érudite** (bloc *« Cette question s'appuie sur »*, citations d'auteurs) | À **garder** — Kersten cité par son nom et sa métaphore d'origine dans le pied, c'est de la doctrine |
+| 3. **Identifiant technique** (`id: 'pasteque'`, route `#fiche-q=pasteque`, nom de fichier `mockup-fiche-question-pasteque.html`) | À **garder** pour l'instant — interne, pas de bénéfice à renommer maintenant. Consigné comme dette technique latente. |
+
+Application au sous-chantier 26.h : audit éditorial des 9 intentions + 3 recommandations + bandeauAttente + panel — toute occurrence du mot au niveau 1 a été retirée. Le pied *« Cette question s'appuie sur »* reste tel quel (niveau 2).
 
 ---
 
@@ -313,8 +366,9 @@ CM.FicheQuestion = (function() {
 | Jalon C.2 | amélioration-continue (§ 4.4) | 3h | Première vraie matière § 4.4 à câbler (déjà rédigée pour une cellule). |
 | Jalon C.3 | résistance-transformation (§ 4.4) | 3h | Mécanique ADKAR comme grille pédagogique de Q1. |
 | Jalon C.4 | cascade-objectifs (§ 4.4) | 3h | Famille Drucker fermée — terrain doctrinal le plus stable. |
+| **Sous-chantier 26.h** | **(refonte transverse)** | **~5h** | **Harmonisation des cards de trio avec la card d'accueil canonique. Doctrine D3 (§ 3.5) + Doctrine du mot pastèque (§ 3.6). Découpé en 8 étapes : audit éditorial, application des reformulations, bascule des cellules discordantes en CADRES_A_VENIR, refonte du contrat module, refonte de la structure de données, refonte de `_htmlCard`, CSS de la card hybride, clôture. Inséré entre jalon B et C.1 sur retour Lætitia (« pourquoi ces fiches devraient-elles être différentes des cards d'accueil ? »).** |
 
-**Ordre de migration justifié.** Pastèque en PoC parce qu'elle implémente la variante § 4.6 (la plus exigeante mécaniquement — matrice 3×3) ; si le PoC tient sur § 4.6, il tient *a fortiori* sur § 4.4 plus simple. Pilotage-hebdo après le PoC parce qu'elle apporte de la cohérence visuelle sans engager de logique nouvelle (§ 4.3 sans Q1×Q2). Les 3 fiches § 4.4 ensuite, dans l'ordre de maturité de la matière éditoriale (du plus simple au plus politique).
+**Ordre de migration justifié.** Pastèque en PoC parce qu'elle implémente la variante § 4.6 (la plus exigeante mécaniquement — matrice 3×3) ; si le PoC tient sur § 4.6, il tient *a fortiori* sur § 4.4 plus simple. Pilotage-hebdo après le PoC parce qu'elle apporte de la cohérence visuelle sans engager de logique nouvelle (§ 4.3 sans Q1×Q2). Les 3 fiches § 4.4 ensuite, dans l'ordre de maturité de la matière éditoriale (du plus simple au plus politique). **Le sous-chantier 26.h s'insère entre jalon B et C.1** parce qu'il refond l'API du rendu des cards de trio — il bénéficie immédiatement à la pastèque déjà livrée et conditionne le rendu des fiches § 4.4 à venir (C.2, C.3, C.4). C.1 (pilotage-hebdo, § 4.3, double colonne sans trio) n'est pas affecté par cette refonte.
 
 ---
 
@@ -343,4 +397,5 @@ Patron : `tests-accueil-unifie.html` + `tests-accueil-unifie-sentinelles.html` (
 
 - **2026-05-16 — v0.1 (séance d'ouverture chantier 26, jalon A).** Cadrage initial. Schéma de données pour les 3 variantes, API de `CM.FicheQuestion`, conventions visuelles renvoyées vers `doc-cadre-visuel.md` § 6.5, plan de migration, sentinelles d'invariants.
 - **2026-05-16 — v0.2 (fin de jalon A, retour Lætitia).** Trois arbitrages tranchés : (a) format source JavaScript figé retenu pour cohérence projet, (b) point d'extension vers `CM.Panier` *prévu* via `optionsRendu.avecActionsPanier` + délégué `onAjouterAuPanier` (inversion de dépendance préservée), (c) ordre de migration confirmé (pastèque d'abord).
+- **2026-05-16 — v0.3 (reprise séance, sous-chantier 26.h).** Constat éditorial sur la matrice pastèque : `nom` et `traduction` portés par la matrice étaient soit redondants avec `CM.Referentiel` (6 cellules), soit des dispositifs d'observation sans équivalent canonique (2 cellules). Trois doctrines posées : **D3 (§ 3.5)** — la matrice ne porte plus que `intention` + `ficheRef`, source unique de vérité = `CM.Referentiel`, dispositifs d'observation basculent en `CADRES_A_VENIR` ; **Doctrine du mot pastèque (§ 3.6)** — banni des libellés visibles utilisateur (niveau 1), conservé en référence érudite (niveau 2) et en identifiant technique (niveau 3) ; **Pied panier activé** dans les cards de fiche-question via `optionsRendu.avecActionsPanier=true` (sortie de l'attente MVP, hook préparé en v0.2). Le sous-chantier 26.h s'insère entre jalon B et C.1 et refond `_htmlCard` pour lire les attributs riches depuis le référentiel (icone, type, fiabilité, fréquence, maturité, cadres, panier) tout en conservant la signature pastèque (rang, axe, niveau, intention) en chrome autour de la card d'accueil canonique. Schémas § 3.2 et § 3.4 mis à jour : `nom` et `traduction` retirés.
 
