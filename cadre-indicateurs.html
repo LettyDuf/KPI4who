@@ -8314,13 +8314,14 @@ CM.PanierImpression = (function() {
   .fiche-q-card-wrapper {
     display: flex;
     flex-direction: column;
+    /* F6 — hauteur uniforme : grandit à la hauteur du grid pour que toutes
+       les cards (riches OU dégradées) aient la même taille verticale. */
+    height: 100%;
   }
-  /* F1 — .tete s'applique au wrapper, mais le style visuel passe sur la
-     .carte-ind à l'intérieur (le wrapper lui-même reste invisible). */
-  .fiche-q-card-wrapper.tete .carte-ind {
-    border-color: var(--accent-fiche-q);
-    box-shadow: 0 2px 10px rgba(29, 58, 95, 0.14);
-  }
+  /* F7 — la classe .tete a été retirée du wrapper. Le contour coloré
+     fiabilité (vert/orange/rouge) signale la qualité de la métrique.
+     Le signal 'par où commencer' est porté par le libellé explicite
+     dans pied-info. */
   /* Pied-info — ligne discrète sous la card d'accueil */
   .fiche-q-card-pied-info {
     margin-top: 0.5rem;
@@ -8355,7 +8356,8 @@ CM.PanierImpression = (function() {
     margin: 0;
   }
   /* Mode dégradé pour CADRES_A_VENIR ou ficheRef introuvable.
-     Bordure pointillée + fond gris très léger, jamais en .tete (F1). */
+     Bordure pointillée + fond gris très léger. F6 : flex:1 pour s'étirer
+     à la hauteur disponible dans le wrapper (cohérent avec les cards riches). */
   .fiche-q-card-degrade {
     background: rgba(28, 32, 51, 0.03);
     border: 1px dashed var(--bordure);
@@ -8365,7 +8367,7 @@ CM.PanierImpression = (function() {
     align-items: center;
     justify-content: center;
     text-align: center;
-    min-height: 200px;
+    flex: 1;
   }
   .fiche-q-card-degrade-mention {
     font-size: 0.75rem;
@@ -8664,7 +8666,6 @@ CM.FicheQuestion = (function() {
 
     /* Corps : card d'accueil canonique pure OU mode dégradé */
     var corps;
-    var classeTete = '';
     if (estDegrade) {
       corps = '<div class="fiche-q-card-degrade"><div class="fiche-q-card-degrade-mention">Métrique en cours de constitution</div></div>';
       /* F1 — pas de mise en avant .tete sur une case vide */
@@ -8673,8 +8674,12 @@ CM.FicheQuestion = (function() {
       if (!fiche) {
         corps = '<div class="fiche-q-card-degrade"><div class="fiche-q-card-degrade-mention">Référence introuvable : ' + _esc(c.contenu.ficheRef) + '</div></div>';
       } else if (CM.Composants && CM.Composants.htmlCarte) {
-        corps = CM.Composants.htmlCarte(fiche, null, false, false);
-        if (index === 0) classeTete = ' tete';  /* F1 — tête seulement si card riche de rang 1 */
+        corps = CM.Composants.htmlCarte(fiche, null, true, false);
+        /* prioritaire=true → contour coloré selon fiabilité (vert/orange/rouge),
+           comme sur l'accueil. La classe .tete pour le rang 1 a été retirée
+           (F7) car elle entrait en conflit avec le style inline du contour
+           fiabilité. Le signal 'par où commencer' reste porté par le
+           libellé explicite en pied-info. */
       } else {
         corps = '<div class="fiche-q-card-degrade"><div class="fiche-q-card-degrade-mention">Module CM.Composants indisponible</div></div>';
       }
@@ -8697,7 +8702,7 @@ CM.FicheQuestion = (function() {
       '</div>'
     ].join('');
 
-    return '<div class="fiche-q-card-wrapper' + classeTete + '">' + corps + piedInfo + zoneIntention + '</div>';
+    return '<div class="fiche-q-card-wrapper">' + corps + piedInfo + zoneIntention + '</div>';
   }
 
   function _htmlLienSortant(lien) {
@@ -8764,17 +8769,17 @@ CM.FicheQuestion = (function() {
                                 du chantier 23). */
   }
   .vue-fiche-question-conteneur[hidden] { display: none !important; }
-  /* F3 — bouton retour rendu plus visible (16/05/2026) :
-     fond bleu de Prusse léger au lieu de transparent, padding plus généreux,
-     SVG flèche gauche en line au lieu du caractère &larr; HTML entity. */
+  /* F5 — bouton retour rendu visible quel que soit le fond derrière
+     (clair ou foncé) : fond blanc franc + bordure et texte bleu de Prusse.
+     Au hover, inversion → fond bleu de Prusse plein + texte blanc. */
   .vue-fiche-question-conteneur .fiche-q-retour {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     margin: 0 0 1.2rem;
     padding: 0.55rem 1rem;
-    background: var(--accent-fiche-q-leger);
-    border: 1px solid var(--accent-fiche-q);
+    background: #ffffff;
+    border: 1.5px solid var(--accent-fiche-q);
     border-radius: 999px;
     color: var(--accent-fiche-q);
     font-size: 0.88rem;
@@ -8782,6 +8787,7 @@ CM.FicheQuestion = (function() {
     text-decoration: none;
     cursor: pointer;
     transition: var(--trans);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   }
   .vue-fiche-question-conteneur .fiche-q-retour:hover {
     background: var(--accent-fiche-q);
