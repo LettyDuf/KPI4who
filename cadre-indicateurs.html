@@ -8650,6 +8650,7 @@ CM.FicheQuestion = (function() {
   function htmlFiche(id, choixQ1, choixQ2, optionsRendu) {
     var etat = composer(id, choixQ1, choixQ2);
     if (etat.variante === '§4.6') return _htmlMeta(etat, optionsRendu);
+    if (etat.variante === '§4.3') return _htmlReformulation(etat, optionsRendu);
     throw new Error('[CM.FicheQuestion] htmlFiche : variante non implémentée');
   }
 
@@ -8704,6 +8705,120 @@ CM.FicheQuestion = (function() {
         '</div>',
       '</article>'
     ].join('');
+  }
+
+  /* _htmlReformulation — vue de la variante §4.3 (chantier 26 jalon C.1.3).
+
+     Composition (cohérente avec _htmlMeta et le mockup pilotage-hebdo v3) :
+       1. Filet de niveau + question + bandeau d'attente (indigo léger).
+       2. Section principale = bloc *Ton vrai sujet* avec deux colonnes
+          cliquables (la colonne est l'unité d'action, pas un bouton interne).
+          Chaque colonne porte un pied de destination *(« → Engagement & humain »)*
+          qui annonce la fiche-question voisine.
+       3. Bloc Recommandation (cartouche bord+titre+fond léger en bleu de Prusse).
+       4. Cross-link vers fiche-question liée (italique).
+       5. Pied — écoles convoquées + citation patrimoniale.
+
+     Mécanique clic colonne. Trois cas :
+       - ficheQCible vide ou 'CADRES_A_VENIR'      → mode dégradé honnête.
+       - ficheQCible présent dans CM.FicheQuestion → lien actif #fiche-q=...
+       - ficheQCible inconnu du catalogue          → mode dégradé honnête
+         (pas de href, aria-disabled). Permet de prédéclarer une voisine
+         qui n'est pas encore migrée (cas amelioration-continue avant C.2).
+
+     Le paramètre optionsRendu est conservé en signature pour cohérence avec
+     _htmlMeta. Il n'est pas consulté ici (pas de mécanique panier sur §4.3
+     — la fiche redirige, elle ne propose pas d'ajout direct). */
+  function _htmlReformulation(etat, optionsRendu) {
+    var blocCitation = etat.citationPied
+      ? '<div class="fiche-q-citation-pied">' + etat.citationPied + '</div>'
+      : '';
+
+    return [
+      '<article class="fiche-q" data-niveau="', _esc(etat.niveau || 'operationnel'), '" data-fiche-q-id="', _esc(etat.id), '">',
+        '<div class="fiche-q-haut"></div>',
+        '<div class="fiche-q-corps">',
+          '<h2 class="fiche-q-question">', _esc(etat.question), '</h2>',
+          '<div class="fiche-q-meta">',
+            '<svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14"><path d="M5 12h14M13 5l7 7-7 7"></path></svg>',
+            '<span>', etat.bandeauAttente, '</span>',
+          '</div>',
+
+          /* Bloc double-réponse */
+          '<div class="fiche-q-section">',
+            '<div class="fiche-q-section-titre">', _esc(etat.sectionTitre), '</div>',
+            '<div class="fiche-q-double-reponse">',
+              '<p class="fiche-q-double-reponse-intro">', etat.introDoubleResponse, '</p>',
+              '<div class="fiche-q-colonnes">',
+                _htmlColonneReformulation(etat.colonnes.gauche, 'gauche'),
+                _htmlColonneReformulation(etat.colonnes.droite, 'droite'),
+              '</div>',
+            '</div>',
+          '</div>',
+
+          /* Recommandation */
+          '<div class="fiche-q-section">',
+            '<div class="fiche-q-reco">',
+              '<div class="fiche-q-reco-titre">',
+                '<svg fill="none" height="13" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" width="13"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg>',
+                'Recommandation',
+              '</div>',
+              '<p>', etat.recommandation, '</p>',
+            '</div>',
+            '<div class="fiche-q-cross-link">Question liée : <a href="#fiche-q=', _esc(etat.crossLink.ficheQ), '">', _esc(etat.crossLink.libelle), '</a></div>',
+          '</div>',
+
+          /* Pied écoles + citation patrimoniale */
+          '<div class="fiche-q-ecoles">',
+            '<strong>Cette question s\'appuie sur</strong>',
+            '<span class="liste">', etat.ecoles, '</span>',
+          '</div>',
+          blocCitation,
+        '</div>',
+      '</article>'
+    ].join('');
+  }
+
+  /* Rendu d'une colonne §4.3. Position = 'gauche' | 'droite'. */
+  function _htmlColonneReformulation(col, position) {
+    var cible = col.destination ? col.destination.ficheQCible : 'CADRES_A_VENIR';
+    var cibleConnue = cible && cible !== 'CADRES_A_VENIR' && _ficheQExisteAuCatalogue(cible);
+    var ouvrant, fermant;
+
+    if (cibleConnue) {
+      ouvrant = '<a class="fiche-q-col-rep fiche-q-col-rep-' + _esc(position) + '" href="#fiche-q=' + _esc(cible) + '" data-fiche-q-cible="' + _esc(cible) + '">';
+      fermant = '</a>';
+    } else {
+      /* Mode dégradé honnête : pas de href, signal aria. La cible
+         déclarée reste lisible (utile pour debug) mais le clic n'a pas
+         d'effet de navigation. Le pied de colonne le signale visuellement. */
+      ouvrant = '<div class="fiche-q-col-rep fiche-q-col-rep-' + _esc(position) + ' fiche-q-col-rep-en-attente" aria-disabled="true" data-fiche-q-cible="' + _esc(cible || 'CADRES_A_VENIR') + '">';
+      fermant = '</div>';
+    }
+
+    var libelleDest = col.destination ? col.destination.libelle : '';
+    var suffixeAttente = cibleConnue
+      ? ''
+      : ' <span class="fiche-q-col-rep-attente">(fiche en cours de constitution)</span>';
+
+    return [
+      ouvrant,
+        '<div class="fiche-q-col-rep-etiquette">', _esc(col.etiquette), '</div>',
+        '<h4 class="fiche-q-col-rep-titre">', _esc(col.titre), '</h4>',
+        '<p class="fiche-q-col-rep-desc">', col.description, '</p>',
+        '<div class="fiche-q-col-rep-indicateurs">',
+          '<strong>Indicateurs</strong>',
+          '<span class="liste">', col.indicateurs, '</span>',
+        '</div>',
+        '<div class="fiche-q-col-rep-destination">→ <em>', _esc(libelleDest), '</em>', suffixeAttente, '</div>',
+      fermant
+    ].join('');
+  }
+
+  /* Helper d'existence — vérifie qu'un id est dans le CATALOGUE du module.
+     Pas d'exception : retourne booléen. */
+  function _ficheQExisteAuCatalogue(id) {
+    return CATALOGUE.hasOwnProperty(id);
   }
 
   function _htmlQuestionCourte(num, q, choixId) {
