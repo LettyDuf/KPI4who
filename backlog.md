@@ -1204,3 +1204,11 @@ Items levés pendant le jalon C.1 (migration de `pilotage-hebdo`) et son smoke t
 | Item | Description | Quand traiter |
 |---|---|---|
 | **26.c1.coll.1** *(dette éditoriale)* | **Espaces insécables absents du module `CM.FicheQuestion`.** La matière du module (pastèque § 4.6 et pilotage-hebdo § 4.3) utilise des espaces normales avant `;`, `:`, `%` et autour des guillemets `«` `»`, là où la typographie française demande une espace insécable. La fiche `pilotage-hebdo` C.1 a été alignée sur cette convention (espaces normales) pour rester cohérente avec la pastèque voisine, plutôt que d'introduire une divergence locale. À traiter comme un audit typographique global du module, sur le modèle du chantier 1.quater (référentiel). | À l'occasion d'un audit typographique du module fiche-question |
+
+### 26.c2.coll Constats collatéraux du jalon C.2 *(ouverts le 20/05/2026)*
+
+Items levés pendant le jalon C.2 (migration de `amelioration-continue`). Hors scope du jalon en cours.
+
+| Item | Description | Quand traiter |
+|---|---|---|
+| **26.c2.coll.1** *(proposition de fiche-question, hors MVP)* | **Fiche-question candidate « pilotage stratégique d'une démarche d'amélioration ».** Origine : lors du cadrage C.2.a, deux compositions étaient possibles pour le trio organisation de `amelioration-continue`. L'option 1 (`s12` Écart de vérité stratégique · `s11` Coût de la non-qualité · `s6` Capacité d'absorption du changement) a été retenue car elle préserve le triptyque vitesse/qualité/capacité et la mécanique Q1 sur les trois niveaux. L'**option 2** écartée (`s11` Coût de la non-qualité · `s6` Capacité d'absorption du changement · `s4` OKR stratégiques) raconte une autre histoire, propre au board : une démarche d'amélioration s'y pilote par son **coût**, sa **soutenabilité culturelle** et son **ancrage stratégique**. Lætitia souhaite préserver cet angle dans une fiche-question dédiée plutôt que l'écraser dans `amelioration-continue`. Inspirations : Drucker (MBO, ancrage des objectifs individuels et organisationnels) et Lean (COPQ, culture kaizen durable). **Statut** : hors MVP — le doc compagnon du chantier 26 (§ 1) ferme le MVP à 5 fiches-questions. À statuer pour un chantier post-MVP. Question terrain à formuler avec Lætitia (non figée, pour ne pas extrapoler). | Chantier post-MVP, à statuer |
