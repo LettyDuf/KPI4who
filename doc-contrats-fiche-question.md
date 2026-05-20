@@ -69,60 +69,66 @@ Une fiche-question est décrite par un **objet JavaScript figé** (`Object.freez
 
 Le format source de référence est **JavaScript figé** (pas JSON) pour deux raisons : (a) cohérence avec `CM.Referentiel` et `CM.IndicateursMeta` qui sont déjà des objets gelés dans le code, (b) commentaires inline possibles, plus lisibles à la relecture éditoriale qu'un JSON. Un générateur Node.js (`outils/construire-fiches-questions.js`, patron éprouvé) peut produire la zone balisée du HTML à partir d'une source markdown si la rédaction éditoriale le demande au jalon C.
 
-### 3.2 Variante standard § 4.2/§ 4.4 — trio par niveau
+### 3.2 Variante standard § 4.4 — trio par niveau
+
+*Schéma actualisé v0.7 (jalon C.2) pour refléter l'implémentation réelle. Comme pour le § 3.3 en v0.5, le code a divergé du schéma initial v0.1 sur trois points, par cohérence avec les modules voisins : (a) `variante: '§4.4'`, pas `'§4.2-§4.4'` ; (b) pas de wrapper `blocs`, les champs sont à la racine de l'objet, comme la fiche pastèque § 4.6 ; (c) les trios sont indexés par les clés de niveau du référentiel (`operationnel` / `programme` / `strategique`), pas `equipe`.*
 
 ```js
 {
-  ...communs,
-  variante: '§4.2-§4.4',
-  blocs: {
-    q1: {
-      libelle: 'D\'où vient le besoin ?',
-      orientation: 'symptome',
-      options: [
-        { id: 'goulot', libelle: 'Une étape goulot connue', cardEnTete: 'throughput' },
-        { id: 'defauts', libelle: 'Des défauts qui se répètent', cardEnTete: 'firstPassYield' },
-        ...
-      ]
-    },
-    q2: {
-      libelle: 'Où agir ?',
-      orientation: 'perimetre',
-      options: [
-        { id: 'equipe', libelle: 'Une équipe pilote', niveau: 'equipe' },
-        { id: 'programme', libelle: 'Un programme entier', niveau: 'programme' },
-        { id: 'organisation', libelle: 'Toute l\'organisation', niveau: 'strategique' }
-      ]
-    },
-    trios: {
-      equipe: [
-        { id: 'leadTime',       niveau: 'equipe', intention: 'paragraphe rédigé pour la triangulation', ficheRef: 'o3' },
-        { id: 'firstPassYield', niveau: 'equipe', intention: '...', ficheRef: 'lss-1' },
-        { id: 'throughput',     niveau: 'equipe', intention: '...', ficheRef: 'o4' }
-      ],
-      programme: [ ... 3 cards ... ],
-      strategique: [ ... 3 cards ... ]
-    },
-    liensSortantsParNiveau: {
-      equipe:      { fiche: 'amelioration-continue-cadre', libelle: 'Voir tous les indicateurs canoniques de l\'amélioration continue' },
-      programme:   { fiche: 'amelioration-continue-cadre', libelle: '...' },
-      strategique: { fiche: 'amelioration-continue-cadre', libelle: '...' }
-    },
-    recommandationParNiveau: {
-      equipe:      'paragraphe rédigé',
-      programme:   'paragraphe rédigé',
-      strategique: 'paragraphe rédigé'
-    },
-    crossLink: { fiche: 'pasteque', libelle: 'Mes indicateurs reflètent-ils la réalité du terrain ?' }
-  }
+  id: 'amelioration-continue',
+  variante: '§4.4',
+  question, bandeauAttente, panel,          // champs communs
+  q1: {
+    libelle: 'D\'où vient le besoin ?',
+    options: [
+      { id: 'delais', libelle: 'Des délais imprévisibles', cardEnTete: 'vitesse' },
+      // ... 5 symptômes ; cardEnTete pointe un id d'axe
+    ]
+  },
+  q2: {
+    libelle: 'Où agir ?',
+    options: [
+      { id: 'equipe',       libelle: 'Une équipe pilote',     niveau: 'operationnel' },
+      { id: 'programme',    libelle: 'Un programme entier',   niveau: 'programme'    },
+      { id: 'organisation', libelle: 'Toute l\'organisation', niveau: 'strategique'  }
+    ]
+  },
+  axes: [                                   // 3 axes stables, communs aux 3 niveaux
+    { id: 'vitesse',  nom: 'Vitesse'  },
+    { id: 'qualite',  nom: 'Qualité'  },
+    { id: 'capacite', nom: 'Capacité' }
+  ],
+  trios: {
+    operationnel: [
+      { id: 'vitesse',  niveau: 'operationnel', ficheRef: 'o5',    intention: '...' },
+      { id: 'qualite',  niveau: 'operationnel', ficheRef: 'lss-1', intention: '...' },
+      { id: 'capacite', niveau: 'operationnel', ficheRef: 'o6',    intention: '...' }
+    ],
+    programme:   [ /* 3 cards */ ],
+    strategique: [ /* 3 cards */ ]
+  },
+  recommandationParNiveau: { operationnel: '...', programme: '...', strategique: '...' },
+  liensSortantsParNiveau: {
+    operationnel: { ficheRef: 'CADRES_A_VENIR', libelle: '...', mentionAbsent: '...' },
+    programme:    { /* ... */ },
+    strategique:  { /* ... */ }
+  },
+  crossLink: { ficheQ: 'pasteque', libelle: '...' },
+  ecoles, citationPied                      // champs communs
 }
 ```
 
+**Doctrine D3.** Comme en § 4.6, une card de trio ne porte que `id` (l'axe), `niveau`, `ficheRef` et `intention`. Le nom canonique de la métrique vient de `CM.Referentiel.chercher(ficheRef)`. Tout `ficheRef` doit exister dans le référentiel ou expliciter `CADRES_A_VENIR`.
+
+**Les trois axes.** Le bloc `axes` définit trois rôles stables (`vitesse`, `qualite`, `capacite`) communs aux trois niveaux ; chaque trio a exactement une card par axe. C'est cette stabilité qui permet à `cardEnTete` (porté par les options Q1) de réordonner proprement le trio quel que soit le niveau actif. Le `nom` de l'axe alimente le pied-info de la card.
+
 **Mécanique d'interaction.**
 
-- Q1 → réordonne le trio actif (trio défini par Q2) en plaçant en tête la card désignée par `cardEnTete`.
-- Q2 → change le trio actif (sélection de `trios.equipe` / `trios.programme` / `trios.strategique`).
-- Le bloc recommandation et le lien sortant patrimonial s'adaptent au niveau (Q2).
+- Q1 → réordonne le trio actif en plaçant en tête la card dont l'`id` d'axe égale le `cardEnTete` de l'option choisie.
+- Q2 → change le trio actif (sélection de `trios.operationnel` / `trios.programme` / `trios.strategique`).
+- La recommandation et le lien sortant s'adaptent au niveau (Q2).
+
+**Rendu factorisé (v0.7).** Les variantes § 4.4 et § 4.6 produisent un état avec un champ `cards` de format identique (`{ axe, niveau, contenu }`). Le rendu est donc commun : la fonction `_htmlTrioParNiveau` (anciennement dédiée à § 4.6, généralisée au jalon C.2) sert les deux variantes, paramétrée par `etat.titreSectionTrio` (« Trois axes pour trianguler » en § 4.6, « Trois indicateurs » en § 4.4). Aucune duplication de code de rendu entre les deux variantes.
 
 ### 3.3 Variante à reformulation § 4.3
 
@@ -386,7 +392,7 @@ CM.FicheQuestion = (function() {
 |---|---|---|---|
 | Jalon B (PoC) | pastèque (§ 4.6) | 3-4h | Fiche la plus mûre, mécanique méta atypique — bonne preuve de robustesse. |
 | **Jalon C.1** ✅ | **pilotage-hebdo (§ 4.3)** | **~2h** | **✅ LIVRÉ le 2026-05-20 (chantier 26 jalon C.1) sur 4 commits atomiques `c36f2ca` (données) → `168920f` (composer §4.3) → `0b48633` (htmlFiche §4.3) → `e402694` (CSS double colonne).** Vocabulaire actualisé : `porteCible` (caduc depuis 23.f) renommé `ficheQCible`. Option C actée pour le clic colonne : voisine prédéclarée + bascule auto en mode dégradé honnête tant que la fiche cible n'est pas au catalogue. Cibles : gauche `CADRES_A_VENIR` (pas de voisine candidate sur Engagement & humain), droite `amelioration-continue` (active au C.2). Smoke test interactif Lætitia + tag de clôture `mvp-chantier-c1-livre` à poser au C.1.7. |
-| Jalon C.2 | amélioration-continue (§ 4.4) | 3h | Première vraie matière § 4.4 à câbler (déjà rédigée pour une cellule). |
+| **Jalon C.2** ✅ | **amélioration-continue (§ 4.4)** | **~4h** | **✅ LIVRÉ le 2026-05-20 (jalon C.2).** Cadrage éditorial (trois trios distincts sur trois axes stables vitesse / qualité / capacité), 9 intentions + 3 recommandations rédigées avec le panel Lean (Toyota Way, Lean Six Sigma, TOC, Kata), portage en 3 commits atomiques `e2ab39c` (données) → `01bc994` (composer §4.4) → `76dff14` (htmlFiche + factorisation `_htmlTrioParNiveau`). Doctrine v0.6 appliquée. Option 2 du trio organisation consignée comme fiche-question candidate post-MVP (backlog 26.c2.coll.1). Tag de clôture `mvp-chantier-c2-livre`. |
 | Jalon C.3 | résistance-transformation (§ 4.4) | 3h | Mécanique ADKAR comme grille pédagogique de Q1. |
 | Jalon C.4 | cascade-objectifs (§ 4.4) | 3h | Famille Drucker fermée — terrain doctrinal le plus stable. |
 | **Sous-chantier 26.h** ✅ | **(refonte transverse)** | **~6h** | **Harmonisation des cards de trio avec la card d'accueil canonique. ✅ LIVRÉ le 16/05/2026 (séance reprise) sur 7 commits successifs `348d146` → `48c35e5`. Doctrine D3 (§ 3.5) + Doctrine du mot pastèque (§ 3.6) appliquées. Composition retenue (option F4 v2 après 3 smoke tests Lætitia) : card d'accueil canonique pure + pied-info discret (rang · axe · niveau) + zone Intention séparée. Aucun chrome coloré autour des cards. Uniformité des hauteurs via grid 3×3 (`grid-auto-flow: column`, `display: contents` sur le wrapper). Pied panier activé. Contour fiabilité (vert/orange/rouge) restauré comme à l'accueil. Bouton retour rendu visible (fond blanc franc + bordure bleu de Prusse). Tag de clôture : `mvp-chantier-26h-livre` sur `48c35e5`.** |
@@ -423,6 +429,7 @@ Patron : `tests-accueil-unifie.html` + `tests-accueil-unifie-sentinelles.html` (
 - **2026-05-16 — v0.3 (reprise séance, sous-chantier 26.h).** Constat éditorial sur la matrice pastèque : `nom` et `traduction` portés par la matrice étaient soit redondants avec `CM.Referentiel` (6 cellules), soit des dispositifs d'observation sans équivalent canonique (2 cellules). Trois doctrines posées : **D3 (§ 3.5)** — la matrice ne porte plus que `intention` + `ficheRef`, source unique de vérité = `CM.Referentiel`, dispositifs d'observation basculent en `CADRES_A_VENIR` ; **Doctrine du mot pastèque (§ 3.6)** — banni des libellés visibles utilisateur (niveau 1), conservé en référence érudite (niveau 2) et en identifiant technique (niveau 3) ; **Pied panier activé** dans les cards de fiche-question via `optionsRendu.avecActionsPanier=true` (sortie de l'attente MVP, hook préparé en v0.2). Le sous-chantier 26.h s'insère entre jalon B et C.1 et refond `_htmlCard` pour lire les attributs riches depuis le référentiel (icone, type, fiabilité, fréquence, maturité, cadres, panier) tout en conservant la signature pastèque (rang, axe, niveau, intention) en chrome autour de la card d'accueil canonique. Schémas § 3.2 et § 3.4 mis à jour : `nom` et `traduction` retirés.
 - **2026-05-16 — v0.4 (clôture sous-chantier 26.h).** Composition de la card de trio actée après 3 smoke tests Lætitia successifs (7 frictions traitées au total) : **(1)** chrome bleu de Prusse autour des cards (proposition initiale) écrasait visuellement la card d'accueil → retiré complètement ; **(2)** mot anglais *« Card »* francisé en *« Carte »* ; **(3)** bouton retour rendu visible (fond blanc franc + bordure bleu de Prusse + SVG flèche line) ; **(4)** composition finale F4 v2 — card d'accueil canonique pure + pied-info discret + zone Intention séparée par bordure pointillée ; **(5)** mise en avant `.tete` (bordure bleu) retirée à cause du conflit avec border-color inline du contour fiabilité — le signal *« par où commencer »* reste porté par le libellé du pied-info ; **(6)** `prioritaire=true` passé à `CM.Composants.htmlCarte` → contour coloré selon fiabilité (vert/orange/rouge), comme à l'accueil ; **(7)** uniformité des hauteurs résolue par grid 3×3 piloté par `.fiche-q-indicateurs` (`grid-auto-flow: column`, `display: contents` sur le wrapper). Section § 5 enrichie d'un bloc *« Composition d'une card de trio »* qui pose les 3 strates et la mécanique grid. Section § 6 marque le sous-chantier comme ✅ livré sur le tag `mvp-chantier-26h-livre`.
 
-- **2026-05-20 — v0.6 (smoke test C.1, friction 1 — fluidité et profondeur).** Smoke test interactif Lætitia sur la fiche `pilotage-hebdo` intégrée. Deux frictions : (a) *« page difficile à lire, trop de lecture »* ; (b) *« explications trop faibles »* (la fiche affirme sans expliquer). Traitement : panel UX convoqué (Krug, Tufte, Bringhurst), trois mockups-preview produits puis un Hybride enrichi validé. **Schéma § 3.3 actualisé** : `description`, `recommandation`, `ecoles` acceptent une chaîne ou un tableau de paragraphes (helper `_normaliserParagraphes`, rendu `<p>` par entrée — rétro-compatible). **Doctrine éditoriale v0.6 posée** : la fiche explique le pourquoi, elle n'affirme pas — applicable aux fiches §4.4 des jalons C.2 à C.4. **Correction de balisage** : la loi de Little, principe explicatif, retirée du `<span class="anti-pattern">` où le mockup d'origine l'avait placée à tort, puis glosée. Rétroport en 4 commits atomiques : `c3523d9` (rendu multi-paragraphes JS + CSS), `4865a3a` (données enrichies), doc compagnon v0.6, État courant. Note : le module `CM.FicheQuestion` n'utilise pas d'espaces insécables (typographie française incomplète, aligné sur la pastèque) — dette consignée au backlog.
 - **2026-05-20 — v0.5 (jalon C.1 livré, en attente smoke test).** Migration de la fiche `pilotage-hebdo` (variante § 4.3) du mockup autonome vers le catalogue intégré. Quatre commits atomiques (`c36f2ca` → `e402694`) couvrant données + domaine + vue + CSS. Le module `CM.FicheQuestion.composer()` reconnaît la variante § 4.3 (pure fonction sans Q1/Q2, retourne `{ variante, colonnes, recommandation, crossLink, ecoles, citationPied, ... }`). Le module `htmlFiche()` produit une composition fidèle au mockup v3 du 07/05/2026 : filet niveau, bandeau d'attente, section *Ton vrai sujet* avec double colonne cliquable, recommandation, cross-link, écoles convoquées, citation patrimoniale en pied. **Trois doctrines documentées :** (i) vocabulaire `porteCible` (caduc depuis 23.f) renommé `ficheQCible` — schéma § 3.3 et mécanique d'interaction mis à jour ; (ii) option C actée pour le clic colonne — voisine prédéclarée par `ficheQCible`, le rendu détecte automatiquement si la voisine est au catalogue (lien actif) ou pas (mode dégradé honnête avec suffixe *« (fiche en cours de constitution) »*) ; (iii) anglicismes patrimoniaux dans `<span class="traduction">` pour Throughput / Lead time / Change failure rate (forme FR / EN attestée patrimoniale, cohérent avec la mémoire `feedback_champ_traduction_reserve_signatures.md` : ces termes sont des signatures patrimoniales canoniques). Doctrine B rétrospective appliquée aux em dashes du mockup d'origine (matière née avant 16/05). Smoke test interactif Lætitia reporté au C.1.7.
+- **2026-05-20 — v0.6 (smoke test C.1, friction 1 — fluidité et profondeur).** Smoke test interactif Lætitia sur la fiche `pilotage-hebdo` intégrée. Deux frictions : (a) *« page difficile à lire, trop de lecture »* ; (b) *« explications trop faibles »* (la fiche affirme sans expliquer). Traitement : panel UX convoqué (Krug, Tufte, Bringhurst), trois mockups-preview produits puis un Hybride enrichi validé. **Schéma § 3.3 actualisé** : `description`, `recommandation`, `ecoles` acceptent une chaîne ou un tableau de paragraphes (helper `_normaliserParagraphes`, rendu `<p>` par entrée — rétro-compatible). **Doctrine éditoriale v0.6 posée** : la fiche explique le pourquoi, elle n'affirme pas — applicable aux fiches §4.4 des jalons C.2 à C.4. **Correction de balisage** : la loi de Little, principe explicatif, retirée du `<span class="anti-pattern">` où le mockup d'origine l'avait placée à tort, puis glosée. Rétroport en 4 commits atomiques : `c3523d9` (rendu multi-paragraphes JS + CSS), `4865a3a` (données enrichies), doc compagnon v0.6, État courant. Note : le module `CM.FicheQuestion` n'utilise pas d'espaces insécables (typographie française incomplète, aligné sur la pastèque) — dette consignée au backlog.
+- **2026-05-20 — v0.7 (jalon C.2 livré).** Migration de la fiche `amelioration-continue` (variante § 4.4 standard, trio par niveau). **Cadrage C.2.a** : trois trios distincts sur trois axes stables (vitesse / qualité / capacité), cibles validées par Lætitia — équipe `o5·lss-1·o6`, programme `p9·p7·p5`, organisation `s12·s11·s6` ; l'option 2 écartée du trio organisation (`s11·s6·s4`, angle coût / soutenabilité / ancrage) est consignée comme fiche-question candidate post-MVP (backlog 26.c2.coll.1). **Rédaction C.2.b** : 9 intentions + 3 recommandations, panel Lean, doctrine v0.6 (la fiche explique le pourquoi). **Portage C.2.c** en 3 commits : `e2ab39c` (données), `01bc994` (`composer()` étendu, `_composerStandard`), `76dff14` (`htmlFiche()` étendu, `_htmlMeta` généralisé en `_htmlTrioParNiveau` partagé §4.4/§4.6). **Schéma § 3.2 actualisé** pour refléter l'implémentation réelle (variante `'§4.4'`, pas de wrapper `blocs`, trios indexés `operationnel`/`programme`/`strategique`, bloc `axes`). Smoke test interactif Lætitia validé sans friction. Tag `mvp-chantier-c2-livre`.
 
