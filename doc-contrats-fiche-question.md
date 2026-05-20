@@ -138,15 +138,15 @@ Le format source de référence est **JavaScript figé** (pas JSON) pour deux ra
         etiquette: 'Ce que tu demandes',
         titre: 'Reporting d\'occupation',
         description: 'paragraphe',
-        indicateurs: ['Taux de remplissage du sprint', 'Capacité brûlée', 'Vélocité points'],
-        destination: { libelle: 'Engagement & humain', porteCible: 'engagement' }
+        indicateurs: 'Capacité utilisée · vélocité par sprint · points engagés vs consommés · ...',
+        destination: { libelle: 'Engagement & humain', ficheQCible: 'CADRES_A_VENIR' }
       },
       droite: {
         etiquette: 'Ce que tu cherches peut-être',
         titre: 'Pilotage par le flux',
         description: 'paragraphe',
-        indicateurs: ['Lead time', 'Throughput', 'Prévisibilité'],
-        destination: { libelle: 'Flux & goulots', porteCible: 'flux' }
+        indicateurs: 'Débit / Throughput · Lead time · WIP · ...',
+        destination: { libelle: 'Flux & goulots', ficheQCible: 'amelioration-continue' }
       }
     },
     recommandation: 'paragraphe avec anti-patterns en span',
@@ -155,7 +155,15 @@ Le format source de référence est **JavaScript figé** (pas JSON) pour deux ra
 }
 ```
 
-**Mécanique d'interaction.** Clic sur colonne entière (cf. v4.2 actée 07/05/2026) → redirection vers la porte préconfigurée correspondant à `destination.porteCible`. Pas de mécanique Q1×Q2.
+**Mécanique d'interaction.** Clic sur colonne entière (cf. v4.2 actée 07/05/2026) → redirection vers la fiche-question voisine désignée par `destination.ficheQCible`. Pas de mécanique Q1×Q2.
+
+*Vocabulaire — actualisation v0.5 (chantier 26 jalon C.1).* Le champ `porteCible` des versions antérieures (v0.1 à v0.4) a été renommé `ficheQCible` au moment de l'intégration, après le retrait des portes en chantier 23.f. Cohérent avec la convention de nommage `ficheRef` du domaine. Les valeurs sont désormais des ids de fiches-questions du catalogue, ou le marqueur explicite `'CADRES_A_VENIR'` quand aucune voisine n'est candidate.
+
+*Trois cas à l'exécution (option C actée en ouverture C.1) :*
+
+- `ficheQCible = 'CADRES_A_VENIR'` → mode dégradé honnête, pas de `href`, attribut `aria-disabled="true"`, suffixe *(fiche en cours de constitution)* en pied de colonne.
+- `ficheQCible` présent dans le catalogue → lien actif `#fiche-q=...`.
+- `ficheQCible` inconnu du catalogue (cas où la voisine est déclarée mais pas encore migrée) → mode dégradé honnête (idem `CADRES_A_VENIR`), permet de prédéclarer une voisine qui s'activera automatiquement quand elle sera ajoutée au catalogue. Exemple : `pilotage-hebdo.colonnes.droite.destination.ficheQCible = 'amelioration-continue'` rend en mode dégradé en C.1 et bascule en lien actif au moment où C.2 migre `amelioration-continue` au catalogue.
 
 ### 3.4 Variante méta § 4.6 — trio à 3 axes invariants
 
@@ -372,7 +380,7 @@ CM.FicheQuestion = (function() {
 | Étape | Fiche | Niveau d'effort | Notes |
 |---|---|---|---|
 | Jalon B (PoC) | pastèque (§ 4.6) | 3-4h | Fiche la plus mûre, mécanique méta atypique — bonne preuve de robustesse. |
-| Jalon C.1 | pilotage-hebdo (§ 4.3) | 2h | Seulement harmonisation visuelle (pas de Q1×Q2). |
+| **Jalon C.1** ✅ | **pilotage-hebdo (§ 4.3)** | **~2h** | **✅ LIVRÉ le 2026-05-20 (chantier 26 jalon C.1) sur 4 commits atomiques `c36f2ca` (données) → `168920f` (composer §4.3) → `0b48633` (htmlFiche §4.3) → `e402694` (CSS double colonne).** Vocabulaire actualisé : `porteCible` (caduc depuis 23.f) renommé `ficheQCible`. Option C actée pour le clic colonne : voisine prédéclarée + bascule auto en mode dégradé honnête tant que la fiche cible n'est pas au catalogue. Cibles : gauche `CADRES_A_VENIR` (pas de voisine candidate sur Engagement & humain), droite `amelioration-continue` (active au C.2). Smoke test interactif Lætitia + tag de clôture `mvp-chantier-c1-livre` à poser au C.1.7. |
 | Jalon C.2 | amélioration-continue (§ 4.4) | 3h | Première vraie matière § 4.4 à câbler (déjà rédigée pour une cellule). |
 | Jalon C.3 | résistance-transformation (§ 4.4) | 3h | Mécanique ADKAR comme grille pédagogique de Q1. |
 | Jalon C.4 | cascade-objectifs (§ 4.4) | 3h | Famille Drucker fermée — terrain doctrinal le plus stable. |
@@ -409,4 +417,6 @@ Patron : `tests-accueil-unifie.html` + `tests-accueil-unifie-sentinelles.html` (
 - **2026-05-16 — v0.2 (fin de jalon A, retour Lætitia).** Trois arbitrages tranchés : (a) format source JavaScript figé retenu pour cohérence projet, (b) point d'extension vers `CM.Panier` *prévu* via `optionsRendu.avecActionsPanier` + délégué `onAjouterAuPanier` (inversion de dépendance préservée), (c) ordre de migration confirmé (pastèque d'abord).
 - **2026-05-16 — v0.3 (reprise séance, sous-chantier 26.h).** Constat éditorial sur la matrice pastèque : `nom` et `traduction` portés par la matrice étaient soit redondants avec `CM.Referentiel` (6 cellules), soit des dispositifs d'observation sans équivalent canonique (2 cellules). Trois doctrines posées : **D3 (§ 3.5)** — la matrice ne porte plus que `intention` + `ficheRef`, source unique de vérité = `CM.Referentiel`, dispositifs d'observation basculent en `CADRES_A_VENIR` ; **Doctrine du mot pastèque (§ 3.6)** — banni des libellés visibles utilisateur (niveau 1), conservé en référence érudite (niveau 2) et en identifiant technique (niveau 3) ; **Pied panier activé** dans les cards de fiche-question via `optionsRendu.avecActionsPanier=true` (sortie de l'attente MVP, hook préparé en v0.2). Le sous-chantier 26.h s'insère entre jalon B et C.1 et refond `_htmlCard` pour lire les attributs riches depuis le référentiel (icone, type, fiabilité, fréquence, maturité, cadres, panier) tout en conservant la signature pastèque (rang, axe, niveau, intention) en chrome autour de la card d'accueil canonique. Schémas § 3.2 et § 3.4 mis à jour : `nom` et `traduction` retirés.
 - **2026-05-16 — v0.4 (clôture sous-chantier 26.h).** Composition de la card de trio actée après 3 smoke tests Lætitia successifs (7 frictions traitées au total) : **(1)** chrome bleu de Prusse autour des cards (proposition initiale) écrasait visuellement la card d'accueil → retiré complètement ; **(2)** mot anglais *« Card »* francisé en *« Carte »* ; **(3)** bouton retour rendu visible (fond blanc franc + bordure bleu de Prusse + SVG flèche line) ; **(4)** composition finale F4 v2 — card d'accueil canonique pure + pied-info discret + zone Intention séparée par bordure pointillée ; **(5)** mise en avant `.tete` (bordure bleu) retirée à cause du conflit avec border-color inline du contour fiabilité — le signal *« par où commencer »* reste porté par le libellé du pied-info ; **(6)** `prioritaire=true` passé à `CM.Composants.htmlCarte` → contour coloré selon fiabilité (vert/orange/rouge), comme à l'accueil ; **(7)** uniformité des hauteurs résolue par grid 3×3 piloté par `.fiche-q-indicateurs` (`grid-auto-flow: column`, `display: contents` sur le wrapper). Section § 5 enrichie d'un bloc *« Composition d'une card de trio »* qui pose les 3 strates et la mécanique grid. Section § 6 marque le sous-chantier comme ✅ livré sur le tag `mvp-chantier-26h-livre`.
+
+- **2026-05-20 — v0.5 (jalon C.1 livré, en attente smoke test).** Migration de la fiche `pilotage-hebdo` (variante § 4.3) du mockup autonome vers le catalogue intégré. Quatre commits atomiques (`c36f2ca` → `e402694`) couvrant données + domaine + vue + CSS. Le module `CM.FicheQuestion.composer()` reconnaît la variante § 4.3 (pure fonction sans Q1/Q2, retourne `{ variante, colonnes, recommandation, crossLink, ecoles, citationPied, ... }`). Le module `htmlFiche()` produit une composition fidèle au mockup v3 du 07/05/2026 : filet niveau, bandeau d'attente, section *Ton vrai sujet* avec double colonne cliquable, recommandation, cross-link, écoles convoquées, citation patrimoniale en pied. **Trois doctrines documentées :** (i) vocabulaire `porteCible` (caduc depuis 23.f) renommé `ficheQCible` — schéma § 3.3 et mécanique d'interaction mis à jour ; (ii) option C actée pour le clic colonne — voisine prédéclarée par `ficheQCible`, le rendu détecte automatiquement si la voisine est au catalogue (lien actif) ou pas (mode dégradé honnête avec suffixe *« (fiche en cours de constitution) »*) ; (iii) anglicismes patrimoniaux dans `<span class="traduction">` pour Throughput / Lead time / Change failure rate (forme FR / EN attestée patrimoniale, cohérent avec la mémoire `feedback_champ_traduction_reserve_signatures.md` : ces termes sont des signatures patrimoniales canoniques). Doctrine B rétrospective appliquée aux em dashes du mockup d'origine (matière née avant 16/05). Smoke test interactif Lætitia reporté au C.1.7.
 
