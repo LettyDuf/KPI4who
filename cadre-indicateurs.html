@@ -8488,6 +8488,58 @@ CM.FicheQuestion = (function() {
       }),
 
       ecoles: '<em>Drucker, management par objectifs</em> (le corollaire pervers de <em>what\'s measured improves</em> : ce qui n\'est pas mesuré dérive sans qu\'on le voie) · <em>Toyota Way, Genchi Genbutsu et Andon</em> (Liker, Imai : aller voir sur place et signaler sans peur) · <em>Edmondson, sécurité psychologique</em> (l\'humain dit la vérité quand il est protégé) · <em>DORA / SPACE</em> (la performance se triangule entre satisfaction perçue, mesures objectives et signaux humains, jamais sur une seule dimension). Les écoles convergent sur l\'idée qu\'aucune dimension de mesure n\'est suffisante seule ; elles divergent sur quelle dimension est <em>première</em> : le vécu, l\'observable, ou la déclaration.'
+    }),
+
+    /* ═══ Fiche pilotage-hebdo (variante § 4.3 reformulation, chantier 26 jalon C.1) ═══
+       Matière portée du mockup-fiche-question-pilotage-hebdo.html (v3, 07/05/2026).
+       Doctrine B rétrospective pour les em dashes (matière née avant le 16/05).
+       Anglicismes patrimoniaux dans <span class="traduction"> pour les indicateurs nommés.
+       Cible droite : 'amelioration-continue' (fiche-question voisine, à migrer en C.2).
+       Cible gauche : 'CADRES_A_VENIR' (pas de fiche-question voisine candidate). */
+    'pilotage-hebdo': Object.freeze({
+      id: 'pilotage-hebdo',
+      variante: '§4.3',
+      niveau: 'operationnel',
+      question: 'Comment mesurer l\'occupation hebdomadaire de mon équipe ?',
+      bandeauAttente: 'Cette question a <strong>deux réponses voisines</strong>. Choisis la tienne, tu seras orienté·e vers les indicateurs adaptés.',
+      panel: 'Coach Agile : Scrum Guide, Kanban niveaux de vol (Anderson, Vacanti), DORA / SPACE',
+
+      sectionTitre: 'Ton vrai sujet',
+      introDoubleResponse: 'Reporting d\'occupation ou pilotage par le flux ? Choisis ce qui parle de ton vrai problème.',
+
+      colonnes: Object.freeze({
+        gauche: Object.freeze({
+          etiquette: 'Ce que tu demandes',
+          titre: 'Reporting d\'occupation',
+          description: 'Compter ce qui <strong>entre</strong> dans la semaine — heures, capacité brûlée, points consommés, taux de remplissage du sprint. Posture d\'audit interne, utile pour gérer la charge ou justifier l\'effort, peu actionnable pour décider de la suite.',
+          indicateurs: 'Capacité utilisée · vélocité par sprint · points engagés vs consommés · # tickets fermés · taux de remplissage',
+          destination: Object.freeze({
+            libelle: 'Engagement & humain',
+            ficheQCible: 'CADRES_A_VENIR'
+          })
+        }),
+        droite: Object.freeze({
+          etiquette: 'Ce que tu cherches peut-être',
+          titre: 'Pilotage par le flux',
+          description: 'Compter ce qui <strong>sort</strong> de la semaine — débit, délai bout à bout, prévisibilité, fréquence de mise en main des utilisateurs. Posture de pilotage à l\'extérieur, plus actionnable, alignée sur ce que voient tes parties prenantes.',
+          indicateurs: 'Débit / <span class=\"traduction\">Throughput</span> · Délai bout à bout / <span class=\"traduction\">Lead time</span> · taux d\'engagements tenus · WIP · <span class=\"traduction\">Change failure rate</span>',
+          destination: Object.freeze({
+            libelle: 'Flux & goulots',
+            ficheQCible: 'amelioration-continue'
+          })
+        })
+      }),
+
+      recommandation: 'Pour bien faire, mesurer la semaine par ce qui <strong>sort</strong> de l\'équipe — débit, délai bout à bout, prévisibilité — plutôt que par ce qui entre. Le pilotage par le flux change la conversation hebdomadaire : la salle parle de la valeur livrée et des blocages observés, pas du remplissage et du restant à faire. Le piège classique consiste à confondre <span class=\"anti-pattern\">mesure d\'occupation</span> et <em>pilotage</em>, ou à <span class=\"anti-pattern\">augmenter le WIP pour donner l\'impression d\'avancer</span> — la <span class=\"anti-pattern\">loi de Little</span> garantit que ces deux dérives allongent mécaniquement le lead time et masquent les vrais blocages.',
+
+      crossLink: Object.freeze({
+        ficheQ: 'pasteque',
+        libelle: 'Mes indicateurs reflètent-ils la réalité du terrain ?'
+      }),
+
+      ecoles: '<em>Scrum Guide</em> (le <em>Sprint Review</em> est centré sur l\'incrément livré et la valeur perçue, pas sur l\'occupation des sprinters) · <em>Kanban — niveaux de vol</em> (Anderson, Vacanti, Reinertsen — le pilotage hebdomadaire vit au niveau de vol opérationnel, autour du flux et de la loi de Little) · <em>DORA / SPACE</em> (les quatre mesures du delivery — fréquence de déploiement, lead time, change failure rate, MTTR — sont les capteurs hebdomadaires les mieux étudiés). Les écoles convergent sur l\'idée que le pilotage utile regarde l\'extérieur du système (ce que voient les utilisateurs et les parties prenantes), jamais l\'intérieur seul (le travail de l\'équipe pour elle-même).',
+
+      citationPied: 'Compter ce qui entre rassure ; compter ce qui sort éclaire.'
     })
 
   });
