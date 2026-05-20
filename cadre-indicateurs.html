@@ -8274,6 +8274,7 @@ CM.PanierImpression = (function() {
     line-height: 1.65;
     color: var(--texte-primaire);
   }
+  .fiche-q-reco p + p { margin-top: 0.7rem; }
   .fiche-q-reco .anti-pattern {
     background: var(--accent-fiche-q-trame);
     padding: 0 0.25em;
@@ -8312,6 +8313,8 @@ CM.PanierImpression = (function() {
     margin-bottom: 0.4rem;
   }
   .fiche-q-ecoles em { font-style: italic; }
+  .fiche-q-ecoles p { margin: 0; }
+  .fiche-q-ecoles p + p { margin-top: 0.5rem; }
 
   /* ─── Card de trio — composition F4 v3 (refonte 26.h.8c) ──────────────
      Architecture en grid 3×3 piloté par .fiche-q-indicateurs lui-même
@@ -8465,11 +8468,12 @@ CM.PanierImpression = (function() {
     line-height: var(--lh-tight);
   }
   .fiche-q-col-rep-desc {
-    font-size: 0.83rem;
+    font-size: 0.92rem;
     color: var(--texte-secondaire);
-    line-height: 1.55;
+    line-height: 1.65;
     margin: 0;
   }
+  .fiche-q-col-rep-desc + .fiche-q-col-rep-desc { margin-top: 0.5rem; }
 
   .fiche-q-col-rep-indicateurs {
     font-size: 0.8rem;
@@ -8906,7 +8910,9 @@ CM.FicheQuestion = (function() {
                 '<svg fill="none" height="13" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" width="13"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg>',
                 'Recommandation',
               '</div>',
-              '<p>', etat.recommandation, '</p>',
+              _normaliserParagraphes(etat.recommandation).map(function(p) {
+                return '<p>' + p + '</p>';
+              }).join(''),
             '</div>',
             '<div class="fiche-q-cross-link">Question liée : <a href="#fiche-q=', _esc(etat.crossLink.ficheQ), '">', _esc(etat.crossLink.libelle), '</a></div>',
           '</div>',
@@ -8914,7 +8920,9 @@ CM.FicheQuestion = (function() {
           /* Pied écoles + citation patrimoniale */
           '<div class="fiche-q-ecoles">',
             '<strong>Cette question s\'appuie sur</strong>',
-            '<span class="liste">', etat.ecoles, '</span>',
+            _normaliserParagraphes(etat.ecoles).map(function(p) {
+              return '<p>' + p + '</p>';
+            }).join(''),
           '</div>',
           blocCitation,
         '</div>',
@@ -8948,7 +8956,9 @@ CM.FicheQuestion = (function() {
       ouvrant,
         '<div class="fiche-q-col-rep-etiquette">', _esc(col.etiquette), '</div>',
         '<h4 class="fiche-q-col-rep-titre">', _esc(col.titre), '</h4>',
-        '<p class="fiche-q-col-rep-desc">', col.description, '</p>',
+        _normaliserParagraphes(col.description).map(function(p) {
+          return '<p class="fiche-q-col-rep-desc">' + p + '</p>';
+        }).join(''),
         '<div class="fiche-q-col-rep-indicateurs">',
           '<strong>Indicateurs</strong>',
           '<span class="liste">', col.indicateurs, '</span>',
@@ -8962,6 +8972,15 @@ CM.FicheQuestion = (function() {
      Pas d'exception : retourne booléen. */
   function _ficheQExisteAuCatalogue(id) {
     return CATALOGUE.hasOwnProperty(id);
+  }
+
+  /* _normaliserParagraphes — un champ texte d'une fiche §4.3 peut être
+     soit une chaîne unique, soit un tableau de paragraphes. Retourne
+     toujours un tableau, pour que le rendu itère uniformément. Permet
+     d'enrichir une fiche en multi-paragraphes sans rupture d'API. */
+  function _normaliserParagraphes(valeur) {
+    if (valeur == null) return [];
+    return Array.isArray(valeur) ? valeur : [valeur];
   }
 
   function _htmlQuestionCourte(num, q, choixId) {
