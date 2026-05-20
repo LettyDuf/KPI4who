@@ -8846,10 +8846,12 @@ CM.FicheQuestion = (function() {
     if (fiche.variante === '§4.6') {
       return _composerMeta(fiche, choixQ1, choixQ2);
     }
+    if (fiche.variante === '§4.4') {
+      return _composerStandard(fiche, choixQ1, choixQ2);
+    }
     if (fiche.variante === '§4.3') {
       return _composerReformulation(fiche);
     }
-    /* §4.4 viendra au jalon C.2. */
     throw new Error('[CM.FicheQuestion] variante non encore implémentée : ' + fiche.variante);
   }
 
@@ -8900,6 +8902,66 @@ CM.FicheQuestion = (function() {
      entre les deux colonnes et clique sur la colonne qui décrit son vrai
      sujet. La mécanique de redirection est portée par la vue (htmlFiche),
      pas par le domaine. */
+  /* Variante §4.4 — standard, trio par niveau (cf. doc § 3.2).
+     Q1 réordonne le trio actif en plaçant cardEnTete en card 1 ;
+     Q2 sélectionne le trio par niveau. Pure fonction, testable sans DOM.
+     Mécanique jumelle de _composerMeta : l'état renvoyé porte le même
+     champ `cards` au format { axe, niveau, contenu }, ce qui permet au
+     rendu de partager le même chemin que la variante §4.6. */
+  function _composerStandard(fiche, choixQ1, choixQ2) {
+    var optQ1 = _trouverOption(fiche.q1.options, choixQ1) || fiche.q1.options[0];
+    var optQ2 = _trouverOption(fiche.q2.options, choixQ2) || fiche.q2.options[0];
+
+    var niveau = optQ2.niveau;
+    var trioNiveau = fiche.trios[niveau];
+
+    /* Q1 → réordonne le trio pour mettre cardEnTete en card 1 */
+    var cardTete = optQ1.cardEnTete;
+    var cardsOrdonnees = [];
+    var tete = null;
+    for (var i = 0; i < trioNiveau.length; i++) {
+      if (trioNiveau[i].id === cardTete) tete = trioNiveau[i];
+      else cardsOrdonnees.push(trioNiveau[i]);
+    }
+    if (tete) cardsOrdonnees.unshift(tete);
+
+    /* Format des cards aligné sur _composerMeta : { axe, niveau, contenu } */
+    var cards = cardsOrdonnees.map(function(card) {
+      return {
+        axe: _trouverAxe(fiche.axes, card.id),
+        niveau: niveau,
+        contenu: { intention: card.intention, ficheRef: card.ficheRef }
+      };
+    });
+
+    return {
+      variante: '§4.4',
+      id: fiche.id,
+      question: fiche.question,
+      bandeauAttente: fiche.bandeauAttente,
+      titreSectionTrio: 'Trois indicateurs',
+      q1: fiche.q1,
+      q2: fiche.q2,
+      choixQ1: optQ1.id,
+      choixQ2: optQ2.id,
+      niveau: niveau,
+      cards: cards,
+      recommandation: fiche.recommandationParNiveau[niveau],
+      lienSortant: fiche.liensSortantsParNiveau[niveau],
+      crossLink: fiche.crossLink,
+      ecoles: fiche.ecoles
+    };
+  }
+
+  /* Retrouve l'objet axe { id, nom } d'un id. Fallback défensif si
+     l'axe est absent du bloc `axes` (ne devrait pas se produire). */
+  function _trouverAxe(axes, id) {
+    for (var i = 0; i < axes.length; i++) {
+      if (axes[i].id === id) return axes[i];
+    }
+    return { id: id, nom: id };
+  }
+
   function _composerReformulation(fiche) {
     return {
       variante:            '§4.3',
