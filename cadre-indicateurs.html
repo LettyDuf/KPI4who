@@ -8707,6 +8707,119 @@ CM.FicheQuestion = (function() {
       ]),
 
       citationPied: 'Compter ce qui entre rassure ; compter ce qui sort éclaire.'
+    }),
+
+    /* ═══ Fiche amelioration-continue (variante § 4.4 standard, chantier 26 jalon C.2) ═══
+       Matière portée du mockup-fiche-question-amelioration-continue.html, puis
+       rédigée au jalon C.2.b (20/05/2026) : 9 intentions + 3 recommandations
+       validées par Lætitia. Panel Lean (Toyota Way, Lean Six Sigma, TOC, Kata).
+       Trois trios distincts par niveau, sur trois axes stables vitesse / qualité
+       / capacité (cardEnTete pointe un id d'axe). Doctrine v0.6 : chaque intention
+       explique le pourquoi. Em dashes substitués (matière rédigée le 20/05).
+       Liens sortants en CADRES_A_VENIR : la fiche-cadre Lean n'existe pas encore
+       (cf. constat 26.h.coll.4). */
+    'amelioration-continue': Object.freeze({
+      id: 'amelioration-continue',
+      variante: '§4.4',
+      question: 'Par où démarrer une démarche d\'amélioration continue ?',
+      bandeauAttente: 'Deux questions courtes, <strong>deux minutes</strong>, tu repars avec trois indicateurs candidats adaptés à ton contexte.',
+      panel: 'Coach Lean : Toyota Way, Lean Six Sigma, Théorie des contraintes, Kata',
+
+      q1: Object.freeze({
+        libelle: 'D\'où vient le besoin ?',
+        options: Object.freeze([
+          Object.freeze({ id: 'delais',     libelle: 'Des délais imprévisibles',      cardEnTete: 'vitesse'  }),
+          Object.freeze({ id: 'defauts',    libelle: 'Des défauts qui se répètent',   cardEnTete: 'qualite'  }),
+          Object.freeze({ id: 'charge',     libelle: 'Une charge qui dérape',         cardEnTete: 'capacite' }),
+          Object.freeze({ id: 'visibilite', libelle: 'Un manque de visibilité',       cardEnTete: 'vitesse'  }),
+          Object.freeze({ id: 'goulot',     libelle: 'Une étape goulot connue',       cardEnTete: 'capacite' })
+        ])
+      }),
+
+      q2: Object.freeze({
+        libelle: 'Où agir ?',
+        options: Object.freeze([
+          Object.freeze({ id: 'equipe',       libelle: 'Une équipe pilote',     niveau: 'operationnel' }),
+          Object.freeze({ id: 'programme',    libelle: 'Un programme entier',   niveau: 'programme'    }),
+          Object.freeze({ id: 'organisation', libelle: 'Toute l\'organisation', niveau: 'strategique'  })
+        ])
+      }),
+
+      /* Trois axes stables, communs aux trois niveaux. Le rendu lit le nom
+         pour le pied-info de chaque card ; la mécanique Q1 réordonne par id. */
+      axes: Object.freeze([
+        Object.freeze({ id: 'vitesse',  nom: 'Vitesse'  }),
+        Object.freeze({ id: 'qualite',  nom: 'Qualité'  }),
+        Object.freeze({ id: 'capacite', nom: 'Capacité' })
+      ]),
+
+      /* Trois trios distincts. Chaque card : id d'axe + niveau + ficheRef
+         (source du nom canonique = CM.Referentiel, doctrine D3) + intention. */
+      trios: Object.freeze({
+        operationnel: Object.freeze([
+          Object.freeze({
+            id: 'vitesse', niveau: 'operationnel', ficheRef: 'o5',
+            intention: 'Le temps entre le moment où l\'équipe commence vraiment à travailler sur un élément et celui où il sort terminé. La plus grande partie de ce temps n\'est pas du travail actif : c\'est de l\'attente entre les étapes. Mesurer la durée de cycle met un chiffre sur cette attente invisible, et c\'est presque toujours là que se trouve le premier gisement d\'amélioration.'
+          }),
+          Object.freeze({
+            id: 'qualite', niveau: 'operationnel', ficheRef: 'lss-1',
+            intention: 'La part des livrables qui passent les contrôles sans retouche, du premier coup. Un taux de défauts compte les erreurs après coup ; le premier passage conforme regarde l\'autre bout, le travail réussi sans reprise. Il dit la qualité réelle du processus, et l\'amélioration continue cherche justement à faire bien dès la première fois plutôt qu\'à mieux corriger.'
+          }),
+          Object.freeze({
+            id: 'capacite', niveau: 'operationnel', ficheRef: 'o6',
+            intention: 'Le nombre d\'éléments terminés par période, à taille d\'item comparable. Là où une vélocité en points dépend de la façon dont on estime, le débit compte ce qui sort réellement. C\'est une base stable pour vérifier qu\'une amélioration a bien augmenté la capacité de l\'équipe, et non déplacé le problème ailleurs.'
+          })
+        ]),
+        programme: Object.freeze([
+          Object.freeze({
+            id: 'vitesse', niveau: 'programme', ficheRef: 'p9',
+            intention: 'La durée entre le cadrage d\'une initiative et son acceptation par le commanditaire, vue de l\'extérieur. Au niveau programme, le temps se perd surtout entre les équipes : dépendances, files d\'attente, arbitrages qui traînent. Le délai bout-en-bout agrège tout cela en un chiffre que le commanditaire ressent vraiment, et permet de vérifier qu\'une amélioration a fluidifié l\'ensemble plutôt qu\'un seul maillon.'
+          }),
+          Object.freeze({
+            id: 'qualite', niveau: 'programme', ficheRef: 'p7',
+            intention: 'La part des initiatives qui ont demandé des correctifs majeurs une fois en service. Une initiative acceptée n\'est pas encore une initiative réussie : le taux de reprise regarde ce qui se passe après, en usage réel. Il sépare un programme qui prévient les défauts d\'un programme qui les rattrape, et dit si la qualité tient dans la durée.'
+          }),
+          Object.freeze({
+            id: 'capacite', niveau: 'programme', ficheRef: 'p5',
+            intention: 'Le nombre d\'initiatives livrées en service par trimestre. Au niveau programme, on confond vite activité et livraison : beaucoup de chantiers ouverts ne signifie pas beaucoup de valeur arrivée. Le débit d\'initiatives compte ce qui atteint vraiment le service ; lu avec le délai bout-en-bout, il dit si le programme a gagné en capacité réelle ou seulement en agitation.'
+          })
+        ]),
+        strategique: Object.freeze([
+          Object.freeze({
+            id: 'vitesse', niveau: 'strategique', ficheRef: 's12',
+            intention: 'L\'écart entre la stratégie annoncée et la stratégie réellement exécutée, lue dans les budgets, les agendas et les arbitrages. Au niveau du comité de direction, une démarche d\'amélioration n\'a pas de délai au sens du flux d\'équipe ; son rythme réel se lit ici. Un écart qui se réduit montre que la transformation avance vraiment ; un écart qui reste large montre une intention déclarée mais pas encore vécue.'
+          }),
+          Object.freeze({
+            id: 'qualite', niveau: 'strategique', ficheRef: 's11',
+            intention: 'La somme de ce que coûtent les défauts : en interne le rebut, la retouche, l\'attente ; en externe les réclamations, les indemnités, les clients perdus. Au niveau de la direction, la qualité ne pèse dans une décision que chiffrée en euros. Ce montant unique justifie d\'investir dans la prévention plutôt que de payer sans cesse la réparation, et dit si la démarche d\'amélioration produit un retour mesurable.'
+          }),
+          Object.freeze({
+            id: 'capacite', niveau: 'strategique', ficheRef: 's6',
+            intention: 'Le niveau de préparation de l\'organisation à absorber du changement : charge de transformations déjà en cours, fatigue accumulée, soutien réel de l\'encadrement. Une démarche d\'amélioration continue est par nature du changement permanent ; si l\'organisation est déjà saturée, la prochaine initiative ne prendra pas, quelle que soit sa qualité. Cet indicateur dit combien de changement on peut encore encaisser, et évite de lancer une démarche vouée à l\'épuisement.'
+          })
+        ])
+      }),
+
+      recommandationParNiveau: Object.freeze({
+        operationnel: 'Pour bien démarrer, choisis une équipe volontaire et un seul indicateur du trio, celui qui colle au symptôme le plus criant. L\'amélioration continue se construit par cycles courts d\'observation et d\'ajustement, jamais par l\'<span class="anti-pattern">installation simultanée d\'un tableau de bord complet</span>. Le piège classique consiste à <span class="anti-pattern">instrumenter trois indicateurs avant d\'avoir compris le processus qu\'on mesure</span> : tu récoltes des chiffres, pas une compréhension.',
+        programme: 'Au niveau programme, résiste à l\'envie d\'améliorer chaque équipe séparément : le temps se perd surtout entre elles, dans les dépendances et les files d\'attente. Choisis l\'indicateur qui éclaire le passage de relais le plus douloureux, et traite-le comme un sujet commun. Le piège classique est l\'<span class="anti-pattern">optimisation locale</span>, où chaque équipe améliore son maillon pendant que le délai bout-en-bout, lui, ne bouge pas.',
+        strategique: 'Au niveau de la direction, une démarche d\'amélioration ne réussit pas parce qu\'elle est lancée, mais parce qu\'elle est tenue dans la durée. Ancre-la dans les objectifs stratégiques plutôt que d\'en faire un programme de plus, et cale son rythme sur la capacité réelle de l\'organisation à absorber le changement. Le piège classique est la <span class="anti-pattern">démarche annoncée en grande pompe puis abandonnée à la première priorité concurrente</span>, ou le fait de <span class="anti-pattern">lancer une transformation sur une organisation déjà épuisée</span>.'
+      }),
+
+      liensSortantsParNiveau: Object.freeze({
+        operationnel: Object.freeze({ ficheRef: 'CADRES_A_VENIR', libelle: 'Voir tous les indicateurs canoniques de l\'amélioration continue', mentionAbsent: '(fiche cadre en cours de constitution)' }),
+        programme:    Object.freeze({ ficheRef: 'CADRES_A_VENIR', libelle: 'Voir tous les indicateurs canoniques de l\'amélioration continue', mentionAbsent: '(fiche cadre en cours de constitution)' }),
+        strategique:  Object.freeze({ ficheRef: 'CADRES_A_VENIR', libelle: 'Voir tous les indicateurs canoniques de l\'amélioration continue', mentionAbsent: '(fiche cadre en cours de constitution)' })
+      }),
+
+      crossLink: Object.freeze({
+        ficheQ: 'pasteque',
+        libelle: 'Mes indicateurs reflètent-ils la réalité du terrain ?'
+      }),
+
+      ecoles: '<em>Toyota Way</em> (Liker, Imai) · <em>Lean Six Sigma</em> (Deming, Juran, Motorola) · <em>Théorie des contraintes</em> (Goldratt) · <em>Kata coaching</em> (Rother). Les écoles convergent sur l\'observation directe et la progression à petits pas ; elles divergent sur le point de départ : le terrain, la voix client, la contrainte, ou la condition cible.',
+
+      citationPied: 'Trois indicateurs valent mieux qu\'un tableau de bord, à condition d\'avoir compris le processus qu\'ils mesurent.'
     })
 
   });
