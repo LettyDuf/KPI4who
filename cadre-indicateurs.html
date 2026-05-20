@@ -8566,7 +8566,10 @@ CM.FicheQuestion = (function() {
     if (fiche.variante === '§4.6') {
       return _composerMeta(fiche, choixQ1, choixQ2);
     }
-    /* §4.4 et §4.3 viendront aux jalons C.x. */
+    if (fiche.variante === '§4.3') {
+      return _composerReformulation(fiche);
+    }
+    /* §4.4 viendra au jalon C.2. */
     throw new Error('[CM.FicheQuestion] variante non encore implémentée : ' + fiche.variante);
   }
 
@@ -8609,6 +8612,28 @@ CM.FicheQuestion = (function() {
       lienSortant: fiche.lienSortantPatrimonial,
       crossLink: fiche.crossLink,
       ecoles: fiche.ecoles
+    };
+  }
+
+  /* Variante §4.3 — reformulation, double colonne statique.
+     Pas de Q1/Q2 : la fiche est figée, le visiteur arbitre par juxtaposition
+     entre les deux colonnes et clique sur la colonne qui décrit son vrai
+     sujet. La mécanique de redirection est portée par la vue (htmlFiche),
+     pas par le domaine. */
+  function _composerReformulation(fiche) {
+    return {
+      variante:            '§4.3',
+      id:                  fiche.id,
+      niveau:              fiche.niveau,
+      question:            fiche.question,
+      bandeauAttente:      fiche.bandeauAttente,
+      sectionTitre:        fiche.sectionTitre,
+      introDoubleResponse: fiche.introDoubleResponse,
+      colonnes:            fiche.colonnes,
+      recommandation:      fiche.recommandation,
+      crossLink:           fiche.crossLink,
+      ecoles:              fiche.ecoles,
+      citationPied:        fiche.citationPied
     };
   }
 
