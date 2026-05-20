@@ -8382,6 +8382,149 @@ CM.PanierImpression = (function() {
     color: var(--texte-tertiaire);
     font-weight: 700;
   }
+
+  /* ─── Variante §4.3 — double colonne cliquable (chantier 26 jalon C.1.4) ──
+     La colonne est l'unité d'action : pas de bouton interne, pas de bandeau
+     d'orientation séparé (suppression actée en v3 du mockup, 07/05/2026).
+     Le libellé de destination en pied annonce la fiche-question voisine. */
+
+  .fiche-q-double-reponse {
+    background: var(--carte-fond);
+    border: 1px solid var(--bordure);
+    border-radius: 7px;
+    padding: 1.05rem 1.15rem;
+  }
+  .fiche-q-double-reponse-intro {
+    font-size: 0.86rem;
+    color: var(--texte-primaire);
+    font-weight: 500;
+    margin: 0 0 0.85rem;
+  }
+  .fiche-q-colonnes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+  @media (max-width: 720px) {
+    .fiche-q-colonnes { grid-template-columns: 1fr; }
+  }
+
+  /* Colonne entière cliquable.
+     - Active   : <a href="#fiche-q=..."> → cursor pointer + hover signifiant.
+     - Dégradée : <div aria-disabled="true"> → cursor default, fond légèrement
+       atténué, suffixe '(fiche en cours de constitution)' en pied. */
+  .fiche-q-col-rep {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    background: var(--carte-fond);
+    padding: 1rem 1.05rem;
+    border-radius: 6px;
+    border: 1px solid var(--bordure);
+    border-top: 3px solid var(--texte-tertiaire);
+    text-decoration: none;
+    color: inherit;
+    transition: border-top-width 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+  a.fiche-q-col-rep { cursor: pointer; }
+  a.fiche-q-col-rep:hover {
+    border-top-width: 5px;
+    box-shadow: 0 2px 8px rgba(29, 58, 95, 0.08);
+  }
+  a.fiche-q-col-rep:hover .fiche-q-col-rep-destination {
+    color: var(--accent-fiche-q);
+  }
+  .fiche-q-col-rep-gauche { border-top-color: #c79373; } /* --niv-tactique */
+  .fiche-q-col-rep-droite { border-top-color: #6fa89e; } /* --niv-equipe */
+
+  /* Mode dégradé honnête — cible CADRES_A_VENIR ou inconnue du catalogue */
+  .fiche-q-col-rep-en-attente {
+    background: rgba(28, 32, 51, 0.02);
+    cursor: default;
+    opacity: 0.92;
+  }
+  .fiche-q-col-rep-en-attente .fiche-q-col-rep-destination {
+    color: var(--texte-tertiaire);
+  }
+
+  .fiche-q-col-rep-etiquette {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--texte-tertiaire);
+    font-weight: 700;
+  }
+  .fiche-q-col-rep-gauche .fiche-q-col-rep-etiquette { color: #c79373; }
+  .fiche-q-col-rep-droite .fiche-q-col-rep-etiquette { color: #6fa89e; }
+
+  .fiche-q-col-rep-titre {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--texte-primaire);
+    margin: 0;
+    line-height: var(--lh-tight);
+  }
+  .fiche-q-col-rep-desc {
+    font-size: 0.83rem;
+    color: var(--texte-secondaire);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .fiche-q-col-rep-indicateurs {
+    font-size: 0.8rem;
+    color: var(--texte-primaire);
+    background: var(--carte-fond);
+    padding: 0.55rem 0.7rem;
+    border-radius: 4px;
+    border-left: 2px solid var(--bordure);
+    line-height: 1.55;
+  }
+  .fiche-q-col-rep-indicateurs strong {
+    display: block;
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--texte-tertiaire);
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  .fiche-q-col-rep-indicateurs .traduction {
+    font-style: italic;
+    color: var(--texte-secondaire);
+  }
+
+  /* Libellé de destination en pied — discret au repos, accent au hover. */
+  .fiche-q-col-rep-destination {
+    margin-top: auto;
+    padding-top: 0.55rem;
+    border-top: 1px dotted var(--bordure);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--texte-tertiaire);
+    transition: color 0.15s;
+  }
+  .fiche-q-col-rep-destination em {
+    font-style: normal;
+    font-weight: 700;
+  }
+  .fiche-q-col-rep-attente {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--texte-tertiaire);
+    font-size: 0.72rem;
+  }
+
+  /* Citation patrimoniale en pied de fiche-question §4.3 */
+  .fiche-q-citation-pied {
+    margin-top: 1.4rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--bordure);
+    text-align: center;
+    font-style: italic;
+    color: var(--texte-secondaire);
+    font-size: 0.85rem;
+  }
 </style>
 
 <script>
