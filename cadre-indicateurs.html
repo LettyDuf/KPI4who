@@ -8638,9 +8638,15 @@ CM.FicheQuestion = (function() {
     }),
 
     /* ═══ Fiche pilotage-hebdo (variante § 4.3 reformulation, chantier 26 jalon C.1) ═══
-       Matière portée du mockup-fiche-question-pilotage-hebdo.html (v3, 07/05/2026).
-       Doctrine B rétrospective pour les em dashes (matière née avant le 16/05).
-       Anglicismes patrimoniaux dans <span class="traduction"> pour les indicateurs nommés.
+       Matière portée du mockup-fiche-question-pilotage-hebdo.html (v3, 07/05/2026),
+       puis retravaillée au smoke test C.1 (20/05/2026) sur deux frictions de
+       Lætitia : « fiche difficile à lire » et « explications trop faibles ».
+       Panel UX convoqué : Krug / Tufte / Bringhurst ; fond : Reinertsen.
+       description, recommandation et ecoles sont des tableaux de paragraphes
+       (rendu aéré, cf. _normaliserParagraphes). Em dashes substitués par
+       fonction rhétorique : la matière ayant été retravaillée le 20/05,
+       la doctrine B rétrospective ne s'applique plus à cette fiche.
+       Anglicismes patrimoniaux dans <span class="traduction"> pour les indicateurs.
        Cible droite : 'amelioration-continue' (fiche-question voisine, à migrer en C.2).
        Cible gauche : 'CADRES_A_VENIR' (pas de fiche-question voisine candidate). */
     'pilotage-hebdo': Object.freeze({
@@ -8658,7 +8664,10 @@ CM.FicheQuestion = (function() {
         gauche: Object.freeze({
           etiquette: 'Ce que tu demandes',
           titre: 'Reporting d\'occupation',
-          description: 'Compter ce qui <strong>entre</strong> dans la semaine — heures, capacité brûlée, points consommés, taux de remplissage du sprint. Posture d\'audit interne, utile pour gérer la charge ou justifier l\'effort, peu actionnable pour décider de la suite.',
+          description: Object.freeze([
+            'Tu comptes ce qui <strong>entre</strong> dans la semaine : heures, capacité brûlée, points consommés, taux de remplissage du sprint.',
+            'Ces chiffres disent si l\'équipe est occupée, pas si le travail avance. Une équipe pleine à 100 % peut ne rien faire sortir, et un goulot reste invisible quand chacun est occupé pareil. Tu sais que personne ne chôme ; tu ne sais toujours pas où agir.'
+          ]),
           indicateurs: 'Capacité utilisée · vélocité par sprint · points engagés vs consommés · # tickets fermés · taux de remplissage',
           destination: Object.freeze({
             libelle: 'Engagement & humain',
@@ -8668,8 +8677,11 @@ CM.FicheQuestion = (function() {
         droite: Object.freeze({
           etiquette: 'Ce que tu cherches peut-être',
           titre: 'Pilotage par le flux',
-          description: 'Compter ce qui <strong>sort</strong> de la semaine — débit, délai bout à bout, prévisibilité, fréquence de mise en main des utilisateurs. Posture de pilotage à l\'extérieur, plus actionnable, alignée sur ce que voient tes parties prenantes.',
-          indicateurs: 'Débit / <span class=\"traduction\">Throughput</span> · Délai bout à bout / <span class=\"traduction\">Lead time</span> · taux d\'engagements tenus · WIP · <span class=\"traduction\">Change failure rate</span>',
+          description: Object.freeze([
+            'Tu comptes ce qui <strong>sort</strong> de la semaine : débit, délai bout à bout, prévisibilité, fréquence de mise en main des utilisateurs.',
+            'Ces chiffres montrent ce que voient tes parties prenantes et révèlent où le flux se bloque. Plus actionnables, parce qu\'un délai qui s\'allonge ou un débit qui chute désigne un problème précis, à un endroit précis.'
+          ]),
+          indicateurs: 'Débit / <span class="traduction">Throughput</span> · Délai bout à bout / <span class="traduction">Lead time</span> · taux d\'engagements tenus · WIP · <span class="traduction">Change failure rate</span>',
           destination: Object.freeze({
             libelle: 'Flux & goulots',
             ficheQCible: 'amelioration-continue'
@@ -8677,14 +8689,22 @@ CM.FicheQuestion = (function() {
         })
       }),
 
-      recommandation: 'Pour bien faire, mesurer la semaine par ce qui <strong>sort</strong> de l\'équipe — débit, délai bout à bout, prévisibilité — plutôt que par ce qui entre. Le pilotage par le flux change la conversation hebdomadaire : la salle parle de la valeur livrée et des blocages observés, pas du remplissage et du restant à faire. Le piège classique consiste à confondre <span class=\"anti-pattern\">mesure d\'occupation</span> et <em>pilotage</em>, ou à <span class=\"anti-pattern\">augmenter le WIP pour donner l\'impression d\'avancer</span> — la <span class=\"anti-pattern\">loi de Little</span> garantit que ces deux dérives allongent mécaniquement le lead time et masquent les vrais blocages.',
+      recommandation: Object.freeze([
+        'Mesure la semaine par ce qui <strong>sort</strong> de l\'équipe (débit, délai bout à bout, prévisibilité), plutôt que par ce qui entre. Une équipe occupée n\'est pas une équipe qui livre : chercher à remplir l\'agenda à 100 % sature le système, et un système saturé voit ses délais s\'allonger. Le pilotage par le flux change la conversation hebdomadaire : la salle parle de la valeur livrée et des blocages observés, pas du remplissage et du restant à faire.',
+        'Le piège classique consiste à confondre <span class="anti-pattern">mesure d\'occupation</span> et <em>pilotage</em>, ou à <span class="anti-pattern">augmenter le travail en cours pour donner l\'impression d\'avancer</span>. La loi de Little l\'explique : à débit constant, plus il y a de tâches commencées en parallèle, plus chacune met de temps à finir. Ces deux dérives allongent donc mécaniquement le délai de livraison et masquent les vrais blocages.'
+      ]),
 
       crossLink: Object.freeze({
         ficheQ: 'pasteque',
         libelle: 'Mes indicateurs reflètent-ils la réalité du terrain ?'
       }),
 
-      ecoles: '<em>Scrum Guide</em> (le <em>Sprint Review</em> est centré sur l\'incrément livré et la valeur perçue, pas sur l\'occupation des sprinters) · <em>Kanban — niveaux de vol</em> (Anderson, Vacanti, Reinertsen — le pilotage hebdomadaire vit au niveau de vol opérationnel, autour du flux et de la loi de Little) · <em>DORA / SPACE</em> (les quatre mesures du delivery — fréquence de déploiement, lead time, change failure rate, MTTR — sont les capteurs hebdomadaires les mieux étudiés). Les écoles convergent sur l\'idée que le pilotage utile regarde l\'extérieur du système (ce que voient les utilisateurs et les parties prenantes), jamais l\'intérieur seul (le travail de l\'équipe pour elle-même).',
+      ecoles: Object.freeze([
+        '<em>Scrum Guide</em> : le <em>Sprint Review</em> est centré sur l\'incrément livré et la valeur perçue, pas sur l\'occupation des sprinters.',
+        '<em>Kanban, niveaux de vol</em> (Anderson, Vacanti, Reinertsen) : le pilotage hebdomadaire vit au niveau de vol opérationnel, autour du flux et de la loi de Little.',
+        '<em>DORA / SPACE</em> : les quatre mesures du delivery (fréquence de déploiement, lead time, change failure rate, MTTR) sont les capteurs hebdomadaires les mieux étudiés.',
+        'Les écoles convergent sur l\'idée que le pilotage utile regarde l\'extérieur du système (ce que voient les utilisateurs et les parties prenantes), jamais l\'intérieur seul.'
+      ]),
 
       citationPied: 'Compter ce qui entre rassure ; compter ce qui sort éclaire.'
     })
