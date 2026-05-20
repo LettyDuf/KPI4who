@@ -8374,6 +8374,8 @@ CM.PanierImpression = (function() {
     border-radius: 10px;
     padding: 2rem 0.85rem;
     display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
     align-items: center;
     justify-content: center;
     text-align: center;
@@ -8384,6 +8386,14 @@ CM.PanierImpression = (function() {
     letter-spacing: 0.08em;
     color: var(--texte-tertiaire);
     font-weight: 700;
+  }
+  /* Nom provisoire d'un indicateur sans fiche de référentiel
+     (chantier 26.c3). Affiché au-dessus de la mention, plus lisible. */
+  .fiche-q-card-degrade-nom {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--texte-secondaire);
+    line-height: 1.35;
   }
 
   /* ─── Variante §4.3 — double colonne cliquable (chantier 26 jalon C.1.4) ──
@@ -8931,7 +8941,7 @@ CM.FicheQuestion = (function() {
       return {
         axe: _trouverAxe(fiche.axes, card.id),
         niveau: niveau,
-        contenu: { intention: card.intention, ficheRef: card.ficheRef }
+        contenu: { intention: card.intention, ficheRef: card.ficheRef, nom: card.nom }
       };
     });
 
@@ -9229,8 +9239,19 @@ CM.FicheQuestion = (function() {
     /* Corps : card d'accueil canonique pure OU mode dégradé */
     var corps;
     if (estDegrade) {
-      corps = '<div class="fiche-q-card-degrade"><div class="fiche-q-card-degrade-mention">Métrique en cours de constitution</div></div>';
-      /* F1 — pas de mise en avant .tete sur une case vide */
+      /* Cellule sans fiche de référentiel. Si le catalogue fournit un nom
+         provisoire (chantier 26.c3), on l'affiche : une card nommée
+         « en cours de constitution » est plus honnête et plus utile
+         qu'un encart muet. Sinon, repli sur la mention seule.
+         F1 : pas de mise en avant .tete sur une case vide. */
+      if (c.contenu.nom) {
+        corps = '<div class="fiche-q-card-degrade fiche-q-card-degrade-nommee">'
+              + '<div class="fiche-q-card-degrade-nom">' + _esc(c.contenu.nom) + '</div>'
+              + '<div class="fiche-q-card-degrade-mention">En cours de constitution</div>'
+              + '</div>';
+      } else {
+        corps = '<div class="fiche-q-card-degrade"><div class="fiche-q-card-degrade-mention">Métrique en cours de constitution</div></div>';
+      }
     } else if (CM.Referentiel && CM.Referentiel.chercher) {
       var fiche = CM.Referentiel.chercher(c.contenu.ficheRef);
       if (!fiche) {
