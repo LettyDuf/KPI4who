@@ -8830,6 +8830,125 @@ CM.FicheQuestion = (function() {
       ecoles: '<em>Toyota Way</em> (Liker, Imai) · <em>Lean Six Sigma</em> (Deming, Juran, Motorola) · <em>Théorie des contraintes</em> (Goldratt) · <em>Kata coaching</em> (Rother). Les écoles convergent sur l\'observation directe et la progression à petits pas ; elles divergent sur le point de départ : le terrain, la voix client, la contrainte, ou la condition cible.',
 
       citationPied: 'Trois indicateurs valent mieux qu\'un tableau de bord, à condition d\'avoir compris le processus qu\'ils mesurent.'
+    }),
+
+    /* === Fiche resistance-transformation (variante section 4.4 standard, chantier 26 jalon C.3) ===
+       Matiere portee du mockup-fiche-question-resistance-transformation.html, puis
+       redigee au jalon C.3 (20/05/2026) : 9 intentions + 3 recommandations validees
+       par Laetitia. Panel gestion du changement (Kotter, ADKAR/Prosci, Bridges, Lewin).
+       Trois axes stables mental / comportement / durabilite, cartographie des phases
+       ADKAR (cardEnTete pointe un id d'axe). Quatre cellules sans fiche de referentiel
+       (trio equipe + mental programme) : la gestion du changement est peu couverte hors
+       niveau strategique. Ces cellules portent un nom provisoire (champ nom) rendu par
+       _htmlCard depuis le commit a766b76. Doctrine v0.6 : chaque intention explique le
+       pourquoi. Aucun caractere IA-type (matiere redigee le 20/05). */
+    'resistance-transformation': Object.freeze({
+      id: 'resistance-transformation',
+      variante: '§4.4',
+      question: 'Pourquoi ma transformation résiste ?',
+      bandeauAttente: 'Deux questions courtes, <strong>deux minutes</strong>, tu repars avec trois indicateurs candidats, un par moment du changement.',
+      panel: 'Coach en gestion du changement : Kotter, ADKAR (Prosci), Bridges, Lewin',
+
+      q1: Object.freeze({
+        libelle: 'Où ça bloque, à ton intuition ?',
+        options: Object.freeze([
+          Object.freeze({ id: 'comprehension', libelle: 'Les gens ne comprennent pas pourquoi on change', cardEnTete: 'mental' }),
+          Object.freeze({ id: 'adhesion', libelle: 'Ils comprennent mais ils ne veulent pas', cardEnTete: 'mental' }),
+          Object.freeze({ id: 'savoir', libelle: 'Ils veulent mais ne savent pas comment faire', cardEnTete: 'comportement' }),
+          Object.freeze({ id: 'terrain', libelle: 'Ils savent mais le terrain les empêche', cardEnTete: 'comportement' }),
+          Object.freeze({ id: 'rechute', libelle: 'Au début ça marche, puis l\'ancien revient', cardEnTete: 'durabilite' })
+        ])
+      }),
+
+      q2: Object.freeze({
+        libelle: 'Où mesurer ?',
+        options: Object.freeze([
+          Object.freeze({ id: 'equipe',       libelle: 'Une équipe en transformation', niveau: 'operationnel' }),
+          Object.freeze({ id: 'programme',    libelle: 'Un programme entier',          niveau: 'programme'    }),
+          Object.freeze({ id: 'organisation', libelle: 'Toute l\'organisation',        niveau: 'strategique'  })
+        ])
+      }),
+
+      /* Trois axes stables. Cartographie ADKAR : mental = Awareness + Desire,
+         comportement = Knowledge + Ability, durabilite = Reinforcement. */
+      axes: Object.freeze([
+        Object.freeze({ id: 'mental',       nom: 'Mental'       }),
+        Object.freeze({ id: 'comportement', nom: 'Comportement' }),
+        Object.freeze({ id: 'durabilite',   nom: 'Durabilité'   })
+      ]),
+
+      /* Trois trios distincts. Chaque card : id d'axe + niveau + ficheRef
+         (doctrine D3) + intention. Les cellules CADRES_A_VENIR portent en
+         plus un nom provisoire (chantier 26.c3). */
+      trios: Object.freeze({
+        operationnel: Object.freeze([
+          Object.freeze({
+            id: 'mental', niveau: 'operationnel', ficheRef: 'CADRES_A_VENIR',
+            nom: 'Score de conscience et de désir',
+            intention: 'Un sondage court, quatre à six questions, posé à l\'équipe sur deux points : chacun comprend-il pourquoi on change, et chacun a-t-il envie d\'y aller. Ces deux ressorts sont les deux premières marches d\'ADKAR ; tant qu\'ils ne sont pas acquis, aucune formation ne prend. Lis la médiane par sous-groupe plutôt qu\'une moyenne globale, qui masquerait une poche de rejet. Quand le score reste bas, le bon geste est la conversation et l\'écoute, pas le plan de formation.'
+          }),
+          Object.freeze({
+            id: 'comportement', niveau: 'operationnel', ficheRef: 'CADRES_A_VENIR',
+            nom: 'Taux d\'adoption des nouveaux comportements',
+            intention: 'Compte les comportements vraiment observables : la revue effectivement tenue, le rituel respecté, le nouvel outil réellement ouvert. Le ratio est simple : occurrences observées sur occurrences attendues dans la période. L\'important est de mesurer les actes, pas les déclarations. Un changement de pratique se voit dans ce que les gens font sous contrainte de temps, pas dans ce qu\'ils disent en réunion. C\'est l\'étape Knowledge et Ability d\'ADKAR : savoir faire, et pouvoir le faire dans la vraie journée de travail.'
+          }),
+          Object.freeze({
+            id: 'durabilite', niveau: 'operationnel', ficheRef: 'CADRES_A_VENIR',
+            nom: 'Fréquence des régressions',
+            intention: 'Compte les retours à l\'ancienne façon de faire sur une période courte, une semaine par exemple. Ces rechutes arrivent surtout aux moments de tension : fin de sprint, urgence client, absence du responsable. C\'est le signal le plus fiable de l\'étape Reinforcement d\'ADKAR. Si les rituels, la reconnaissance et le suivi tiennent, la fréquence baisse d\'elle-même. Si elle remonte, le changement n\'est pas ancré et un simple coup de pression suffit à ramener l\'ancien.'
+          })
+        ]),
+        programme: Object.freeze([
+          Object.freeze({
+            id: 'mental', niveau: 'programme', ficheRef: 'CADRES_A_VENIR',
+            nom: 'Score d\'adhésion multi-équipes',
+            intention: 'Le même esprit que le score d\'équipe, mais posé à toutes les équipes du programme, en général chaque trimestre. Au niveau programme, l\'adhésion n\'est jamais homogène : une équipe peut être motrice et une autre franchement réfractaire, et la moyenne effacerait cette fracture. Regarde donc la dispersion entre équipes autant que le niveau global. Une poche de rejet dans une équipe pivot bloque toute une chaîne de dépendances, quel que soit l\'enthousiasme des autres.'
+          }),
+          Object.freeze({
+            id: 'comportement', niveau: 'programme', ficheRef: 'p6',
+            intention: 'Une équipe peut suivre une formation et cocher la nouvelle pratique sans la maîtriser vraiment. Ce taux regarde l\'autre bout : le résultat produit est-il conforme du premier coup. Au niveau programme, il dit si les nouvelles façons de faire sont passées de la connaissance affichée à la capacité réelle d\'exécution, les marches Knowledge et Ability d\'ADKAR. Un taux qui progresse signe une adoption qui tient sous la charge, pas seulement en salle de formation.'
+          }),
+          Object.freeze({
+            id: 'durabilite', niveau: 'programme', ficheRef: 'p7',
+            intention: 'La part des initiatives qui ont demandé des correctifs notables une fois en service. Pour une transformation, une reprise qui se répète raconte souvent la même histoire : sous la pression du go-live, les équipes sont revenues à leurs anciens réflexes, et le défaut est arrivé avec. C\'est un bon témoin de l\'étape Reinforcement au niveau programme. S\'il baisse dans la durée, le nouveau mode de travail a tenu après la mise en service ; s\'il reste haut, le changement se défait dès qu\'on cesse de le surveiller.'
+          })
+        ]),
+        strategique: Object.freeze([
+          Object.freeze({
+            id: 'mental', niveau: 'strategique', ficheRef: 's8',
+            intention: 'Le niveau de confiance des équipes envers la direction, l\'encadrement et leurs pairs, mesuré par enquête anonyme. C\'est la meilleure lecture de la matière première du désir de changement. Kotter le dit clairement : sans coalition de confiance, aucune transformation ne démarre. Une organisation où la confiance est basse entendra chaque annonce comme une menace de plus, quel que soit le soin mis dans la communication. Cet indicateur dit si le terrain est prêt à accueillir une transformation, ou s\'il faut d\'abord reconstruire le lien.'
+          }),
+          Object.freeze({
+            id: 'comportement', niveau: 'strategique', ficheRef: 's6',
+            intention: 'Le niveau de préparation de l\'organisation à porter un changement, mesuré sur les cinq dimensions ADKAR par une enquête structurée. Il dit combien de changement l\'organisation sait réellement absorber : a-t-elle les compétences, les relais, la bande passante. Une transformation ambitieuse lancée sur une organisation qui n\'a pas cette capacité ne se heurte pas à de la mauvaise volonté, mais à une incapacité réelle. C\'est un thermomètre de maturité collective, jamais une évaluation des personnes.'
+          }),
+          Object.freeze({
+            id: 'durabilite', niveau: 'strategique', ficheRef: 's7',
+            intention: 'La part des départs volontaires que l\'organisation aurait voulu retenir, lue sur un horizon long. Une transformation se juge aussi à qui reste. Quand un changement est mal vécu, les premiers à partir sont souvent les profils les plus mobiles, donc les plus précieux, et avec eux s\'en va la mémoire du métier. Une rotation qui monte après une transformation signe un renforcement raté : le changement a été imposé, pas ancré. Indicateur retardé, à lire comme une conséquence, pas comme une alerte précoce.'
+          })
+        ])
+      }),
+
+      recommandationParNiveau: Object.freeze({
+        operationnel: 'Pour bien faire, tiens les trois capteurs en parallèle dès le départ, sans attendre la fin du projet pour mesurer. La résistance n\'est pas un événement, c\'est un signal continu, et un blocage en amont, une faible conscience ou un faible désir, annule mécaniquement les gains de toute formation. Le piège classique consiste à confondre la <span class="anti-pattern">mesure de la communication</span> (nombre de courriels, présence aux ateliers) avec la mesure de la compréhension réelle, ou à prendre <span class="anti-pattern">le consensus apparent en fin de réunion</span> pour un signal d\'adoption.',
+        programme: 'Au niveau programme, résiste à l\'envie de piloter l\'adhésion à la seule moyenne. Cherche la dispersion : une équipe pivot réfractaire bloque toute une chaîne de dépendances. Présente les trois indicateurs au même rythme en revue de programme, sans reléguer l\'humain en annexe. Le piège classique consiste à <span class="anti-pattern">ne montrer au comité de pilotage que les indicateurs de livraison</span> et à traiter l\'adhésion comme un sujet mou, ce qui condamne le signal humain à n\'arriver qu\'après la crise.',
+        strategique: 'Au niveau de la direction, traite ces indicateurs comme un miroir pour le comité de direction, jamais comme un bilan contre les équipes. Avant de lancer une transformation, regarde la capacité d\'absorption et la confiance : si elles sont basses, reconstruis-les d\'abord plutôt que d\'ajouter de l\'ambition. Le piège classique consiste à <span class="anti-pattern">mesurer l\'adhésion une fois le projet déjà lancé</span>, trop tard pour agir, ou à <span class="anti-pattern">imposer le changement puis s\'étonner du départ des meilleurs</span>.'
+      }),
+
+      liensSortantsParNiveau: Object.freeze({
+        operationnel: Object.freeze({ ficheRef: 'CADRES_A_VENIR', libelle: 'Voir tous les indicateurs canoniques de la gestion du changement', mentionAbsent: '(fiche cadre en cours de constitution)' }),
+        programme:    Object.freeze({ ficheRef: 'CADRES_A_VENIR', libelle: 'Voir tous les indicateurs canoniques de la gestion du changement', mentionAbsent: '(fiche cadre en cours de constitution)' }),
+        strategique:  Object.freeze({ ficheRef: 'CADRES_A_VENIR', libelle: 'Voir tous les indicateurs canoniques de la gestion du changement', mentionAbsent: '(fiche cadre en cours de constitution)' })
+      }),
+
+      crossLink: Object.freeze({
+        ficheQ: 'pasteque',
+        libelle: 'Mes indicateurs reflètent-ils la réalité du terrain ?'
+      }),
+
+      ecoles: '<em>Leading Change</em> (Kotter, 1995) &middot; <em>ADKAR</em> (Prosci) &middot; <em>Managing Transitions</em> (Bridges, 1991) &middot; <em>Unfreeze, Change, Refreeze</em> (Lewin, 1947). Les écoles convergent sur un point : la résistance est légitime et porteuse d\'information. Elles divergent sur le point d\'attaque : la cognition (Kotter), l\'individu (ADKAR), la transition (Bridges), le système (Lewin).',
+
+      citationPied: 'La résistance n\'est pas un obstacle à contourner ; c\'est le signal que tu mesures à la mauvaise étape.'
     })
 
   });
