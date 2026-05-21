@@ -8909,12 +8909,14 @@ CM.FicheQuestion = (function() {
             intention: 'Le même esprit que le score d\'équipe, mais posé à toutes les équipes du programme, en général chaque trimestre. Au niveau programme, l\'adhésion n\'est jamais homogène : une équipe peut être motrice et une autre franchement réfractaire, et la moyenne effacerait cette fracture. Regarde donc la dispersion entre équipes autant que le niveau global. Une poche de rejet dans une équipe pivot bloque toute une chaîne de dépendances, quel que soit l\'enthousiasme des autres.'
           }),
           Object.freeze({
-            id: 'comportement', niveau: 'programme', ficheRef: 'p6',
-            intention: 'Une équipe peut suivre une formation et cocher la nouvelle pratique sans la maîtriser vraiment. Ce taux regarde l\'autre bout : le résultat produit est-il conforme du premier coup. Au niveau programme, il dit si les nouvelles façons de faire sont passées de la connaissance affichée à la capacité réelle d\'exécution, les marches Knowledge et Ability d\'ADKAR. Un taux qui progresse signe une adoption qui tient sous la charge, pas seulement en salle de formation.'
+            id: 'comportement', niveau: 'programme', ficheRef: 'CADRES_A_VENIR',
+            nom: 'Part des équipes ayant adopté la nouvelle pratique',
+            intention: 'Parmi les équipes que la transformation concerne, la part de celles qui pratiquent vraiment la nouvelle façon de faire, constatée sur le terrain et non déclarée en réunion. Là où le niveau équipe regarde si une équipe tient le nouveau geste, le niveau programme regarde s\'il s\'est diffusé : une transformation peut très bien marcher dans deux équipes pilotes et ne jamais atteindre les autres. Une couverture faible signale que le savoir-faire ne circule pas, les marches Knowledge et Ability d\'ADKAR restent locales. C\'est l\'indicateur qui dit si « ils savent faire » est vrai pour le programme entier ou seulement pour quelques-uns.'
           }),
           Object.freeze({
-            id: 'durabilite', niveau: 'programme', ficheRef: 'p7',
-            intention: 'La part des initiatives qui ont demandé des correctifs notables une fois en service. Pour une transformation, une reprise qui se répète raconte souvent la même histoire : sous la pression du go-live, les équipes sont revenues à leurs anciens réflexes, et le défaut est arrivé avec. C\'est un bon témoin de l\'étape Reinforcement au niveau programme. S\'il baisse dans la durée, le nouveau mode de travail a tenu après la mise en service ; s\'il reste haut, le changement se défait dès qu\'on cesse de le surveiller.'
+            id: 'durabilite', niveau: 'programme', ficheRef: 'CADRES_A_VENIR',
+            nom: 'Part des équipes retombées à l\'ancienne pratique',
+            intention: 'Parmi les équipes qui avaient adopté la nouvelle façon de faire, la part de celles qui y ont renoncé une fois la pression du projet retombée. Une transformation qui a vraiment pris garde sa couverture d\'adoption stable dans la durée ; une transformation imposée la voit s\'éroder, équipe après équipe, en silence. C\'est le signal de l\'étape Reinforcement d\'ADKAR à l\'échelle du programme : il dit si le changement tient quand plus personne ne le surveille, ou s\'il faut le reporter sans cesse.'
           })
         ]),
         strategique: Object.freeze([
