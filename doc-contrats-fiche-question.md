@@ -118,7 +118,7 @@ Le format source de référence est **JavaScript figé** (pas JSON) pour deux ra
 }
 ```
 
-**Doctrine D3.** Comme en § 4.6, une card de trio ne porte que `id` (l'axe), `niveau`, `ficheRef` et `intention`. Le nom canonique de la métrique vient de `CM.Referentiel.chercher(ficheRef)`. Tout `ficheRef` doit exister dans le référentiel ou expliciter `CADRES_A_VENIR`.
+**Doctrine D3.** Comme en § 4.6, une card de trio ne porte que `id` (l'axe), `niveau`, `ficheRef` et `intention` (plus, pour les seules cellules `CADRES_A_VENIR`, un `nom` provisoire facultatif, cf. § 3.5). Le nom canonique de la métrique vient de `CM.Referentiel.chercher(ficheRef)`. Tout `ficheRef` doit exister dans le référentiel ou expliciter `CADRES_A_VENIR`.
 
 **Les trois axes.** Le bloc `axes` définit trois rôles stables (`vitesse`, `qualite`, `capacite`) communs aux trois niveaux ; chaque trio a exactement une card par axe. C'est cette stabilité qui permet à `cardEnTete` (porté par les options Q1) de réordonner proprement le trio quel que soit le niveau actif. Le `nom` de l'axe alimente le pied-info de la card.
 
@@ -243,13 +243,15 @@ Le format source de référence est **JavaScript figé** (pas JSON) pour deux ra
 2. **La matrice ne porte que `ficheRef` + `intention` (+ option `mentionAbsent` pour les cellules dégradées).**
 3. **`ficheRef` doit pointer rigoureusement vers une métrique canonique du référentiel**, ou bien expliciter `CADRES_A_VENIR` quand la métrique n'existe pas encore. **Les dispositifs d'observation ne sont pas des métriques** — ils basculent en `CADRES_A_VENIR` jusqu'à ce que la métrique canonique correspondante soit créée dans `CM.Referentiel`.
 4. **Le rendu (`_htmlCard`) résout le nom + meta riche en interrogeant `CM.Referentiel.obtenir(ficheRef)`** quand `ficheRef !== 'CADRES_A_VENIR'`. Mode dégradé honnête sinon.
+5. **Exception du nom provisoire (chantier 26.c3).** Une cellule en `CADRES_A_VENIR` n'a, par définition, aucune fiche dans `CM.Referentiel` : il n'y a donc aucun nom canonique à dupliquer, et le point 1 ne s'applique pas. Une telle cellule **peut** porter un champ `nom` facultatif, nom provisoire de la métrique attendue, que le rendu affiche au-dessus de la mention *« En cours de constitution »*. Ce `nom` reste **interdit sur une cellule pourvue d'un vrai `ficheRef`** (il y dupliquerait le référentiel, ce que le point 1 proscrit). Le jour où la métrique entre dans `CM.Referentiel`, la cellule échange son `nom` provisoire contre le `ficheRef` réel.
 
 **Conséquence schéma — cellule de matrice § 4.6 :**
 
 ```js
 matrice[axe][niveau] = {
   intention: 'paragraphe rédigé pour la triangulation',
-  ficheRef:  'p5' | 'CADRES_A_VENIR'
+  ficheRef:  'p5' | 'CADRES_A_VENIR',
+  nom:       'nom provisoire'   // facultatif, uniquement si ficheRef === 'CADRES_A_VENIR'
 }
 ```
 
@@ -260,11 +262,12 @@ trios[niveau][i] = {
   id:        'identifiantLocal',
   niveau:    'equipe' | 'programme' | 'strategique',
   intention: 'paragraphe rédigé',
-  ficheRef:  'lss-1' | 'CADRES_A_VENIR'
+  ficheRef:  'lss-1' | 'CADRES_A_VENIR',
+  nom:       'nom provisoire'   // facultatif, uniquement si ficheRef === 'CADRES_A_VENIR'
 }
 ```
 
-Les champs `nom`, `traduction` qui figuraient dans les versions précédentes sont retirés. Cohérent avec la doctrine du *traducteur orthodoxe* (mémoire `project_doctrine_traducteur_orthodoxe.md`) : un module formule, il ne duplique pas.
+Les champs `nom` et `traduction` portés systématiquement par les versions précédentes sont retirés ; `nom` ne subsiste que comme champ facultatif des cellules `CADRES_A_VENIR` (point 5). Cohérent avec la doctrine du *traducteur orthodoxe* (mémoire `project_doctrine_traducteur_orthodoxe.md`) : un module formule, il ne duplique pas.
 
 ### 3.6 Doctrine du mot « pastèque » dans le produit
 
@@ -393,7 +396,7 @@ CM.FicheQuestion = (function() {
 | Jalon B (PoC) | pastèque (§ 4.6) | 3-4h | Fiche la plus mûre, mécanique méta atypique — bonne preuve de robustesse. |
 | **Jalon C.1** ✅ | **pilotage-hebdo (§ 4.3)** | **~2h** | **✅ LIVRÉ le 2026-05-20 (chantier 26 jalon C.1) sur 4 commits atomiques `c36f2ca` (données) → `168920f` (composer §4.3) → `0b48633` (htmlFiche §4.3) → `e402694` (CSS double colonne).** Vocabulaire actualisé : `porteCible` (caduc depuis 23.f) renommé `ficheQCible`. Option C actée pour le clic colonne : voisine prédéclarée + bascule auto en mode dégradé honnête tant que la fiche cible n'est pas au catalogue. Cibles : gauche `CADRES_A_VENIR` (pas de voisine candidate sur Engagement & humain), droite `amelioration-continue` (active au C.2). Smoke test interactif Lætitia + tag de clôture `mvp-chantier-c1-livre` à poser au C.1.7. |
 | **Jalon C.2** ✅ | **amélioration-continue (§ 4.4)** | **~4h** | **✅ LIVRÉ le 2026-05-20 (jalon C.2).** Cadrage éditorial (trois trios distincts sur trois axes stables vitesse / qualité / capacité), 9 intentions + 3 recommandations rédigées avec le panel Lean (Toyota Way, Lean Six Sigma, TOC, Kata), portage en 3 commits atomiques `e2ab39c` (données) → `01bc994` (composer §4.4) → `76dff14` (htmlFiche + factorisation `_htmlTrioParNiveau`). Doctrine v0.6 appliquée. Option 2 du trio organisation consignée comme fiche-question candidate post-MVP (backlog 26.c2.coll.1). Tag de clôture `mvp-chantier-c2-livre`. |
-| Jalon C.3 | résistance-transformation (§ 4.4) | 3h | Mécanique ADKAR comme grille pédagogique de Q1. |
+| **Jalon C.3** ✅ | **résistance-transformation (§ 4.4)** | **3h** | **✅ Portage livré le 2026-05-20 (jalon C.3).** 3 axes stables mental / comportement / durabilité (cartographie ADKAR : Awareness+Desire / Knowledge+Ability / Reinforcement). Matrice 9 cellules : 5 vraies fiches (`p6`, `p7` au programme ; `s8`, `s6`, `s7` au stratégique), 4 en `CADRES_A_VENIR` à nom provisoire (trio équipe + mental programme) faute de fiches de gestion du changement hors niveau stratégique. Nuance de doctrine D3 (§ 3.5, point 5) : `nom` provisoire admis sur les seules cellules `CADRES_A_VENIR`. 9 intentions + 3 recommandations, panel Kotter / ADKAR / Bridges / Lewin, doctrine v0.6. 2 commits code `a766b76` (rendu des cellules nommées) + `03487e6` (données), 41 assertions node vertes. Smoke test interactif et tag `mvp-chantier-c3-livre` à suivre. |
 | Jalon C.4 | cascade-objectifs (§ 4.4) | 3h | Famille Drucker fermée — terrain doctrinal le plus stable. |
 | **Sous-chantier 26.h** ✅ | **(refonte transverse)** | **~6h** | **Harmonisation des cards de trio avec la card d'accueil canonique. ✅ LIVRÉ le 16/05/2026 (séance reprise) sur 7 commits successifs `348d146` → `48c35e5`. Doctrine D3 (§ 3.5) + Doctrine du mot pastèque (§ 3.6) appliquées. Composition retenue (option F4 v2 après 3 smoke tests Lætitia) : card d'accueil canonique pure + pied-info discret (rang · axe · niveau) + zone Intention séparée. Aucun chrome coloré autour des cards. Uniformité des hauteurs via grid 3×3 (`grid-auto-flow: column`, `display: contents` sur le wrapper). Pied panier activé. Contour fiabilité (vert/orange/rouge) restauré comme à l'accueil. Bouton retour rendu visible (fond blanc franc + bordure bleu de Prusse). Tag de clôture : `mvp-chantier-26h-livre` sur `48c35e5`.** |
 
@@ -433,3 +436,4 @@ Patron : `tests-accueil-unifie.html` + `tests-accueil-unifie-sentinelles.html` (
 - **2026-05-20 — v0.6 (smoke test C.1, friction 1 — fluidité et profondeur).** Smoke test interactif Lætitia sur la fiche `pilotage-hebdo` intégrée. Deux frictions : (a) *« page difficile à lire, trop de lecture »* ; (b) *« explications trop faibles »* (la fiche affirme sans expliquer). Traitement : panel UX convoqué (Krug, Tufte, Bringhurst), trois mockups-preview produits puis un Hybride enrichi validé. **Schéma § 3.3 actualisé** : `description`, `recommandation`, `ecoles` acceptent une chaîne ou un tableau de paragraphes (helper `_normaliserParagraphes`, rendu `<p>` par entrée — rétro-compatible). **Doctrine éditoriale v0.6 posée** : la fiche explique le pourquoi, elle n'affirme pas — applicable aux fiches §4.4 des jalons C.2 à C.4. **Correction de balisage** : la loi de Little, principe explicatif, retirée du `<span class="anti-pattern">` où le mockup d'origine l'avait placée à tort, puis glosée. Rétroport en 4 commits atomiques : `c3523d9` (rendu multi-paragraphes JS + CSS), `4865a3a` (données enrichies), doc compagnon v0.6, État courant. Note : le module `CM.FicheQuestion` n'utilise pas d'espaces insécables (typographie française incomplète, aligné sur la pastèque) — dette consignée au backlog.
 - **2026-05-20 — v0.7 (jalon C.2 livré).** Migration de la fiche `amelioration-continue` (variante § 4.4 standard, trio par niveau). **Cadrage C.2.a** : trois trios distincts sur trois axes stables (vitesse / qualité / capacité), cibles validées par Lætitia — équipe `o5·lss-1·o6`, programme `p9·p7·p5`, organisation `s12·s11·s6` ; l'option 2 écartée du trio organisation (`s11·s6·s4`, angle coût / soutenabilité / ancrage) est consignée comme fiche-question candidate post-MVP (backlog 26.c2.coll.1). **Rédaction C.2.b** : 9 intentions + 3 recommandations, panel Lean, doctrine v0.6 (la fiche explique le pourquoi). **Portage C.2.c** en 3 commits : `e2ab39c` (données), `01bc994` (`composer()` étendu, `_composerStandard`), `76dff14` (`htmlFiche()` étendu, `_htmlMeta` généralisé en `_htmlTrioParNiveau` partagé §4.4/§4.6). **Schéma § 3.2 actualisé** pour refléter l'implémentation réelle (variante `'§4.4'`, pas de wrapper `blocs`, trios indexés `operationnel`/`programme`/`strategique`, bloc `axes`). Smoke test interactif Lætitia validé sans friction. Tag `mvp-chantier-c2-livre`.
 
+- **2026-05-20 — v0.8 (jalon C.3, portage livré).** Migration de la fiche `resistance-transformation` (variante § 4.4 standard, trio par niveau). **Cadrage C.3** : 3 axes stables mental / comportement / durabilité, cartographie des phases ADKAR (Awareness+Desire / Knowledge+Ability / Reinforcement), Q1 à 5 symptômes ADKAR. La cartographie du référentiel montre que la gestion du changement n'est couverte qu'au niveau stratégique : matrice à 5 vraies fiches (`p6`, `p7` au programme ; `s8`, `s6`, `s7` au stratégique) et **4 cellules `CADRES_A_VENIR`** (trio équipe + mental programme). **Nuance de doctrine D3 (§ 3.5, point 5)** : une cellule `CADRES_A_VENIR` peut porter un `nom` provisoire facultatif, faute de nom canonique à dupliquer ; le champ reste interdit sur une cellule pourvue d'un vrai `ficheRef`. **Rédaction** : 9 intentions + 3 recommandations, panel gestion du changement (Kotter / ADKAR / Bridges / Lewin), doctrine v0.6, validées par Lætitia. **Portage** en 2 commits code : `a766b76` (`_composerStandard` propage `card.nom`, `_htmlCard` rend une card nommée « en cours de constitution », CSS) puis `03487e6` (données). 41 assertions node vertes, non-régression § 4.4 et § 4.6 confirmée. Smoke test interactif et tag `mvp-chantier-c3-livre` à suivre.
