@@ -2401,20 +2401,24 @@
 
     <!-- Panneau dépliable de la cartouche question — peuplé en 23.d-3 (index inline des fiches-questions) -->
     <div id="panneau-cartouche-question" class="panneau-cartouche" data-cartouche-panneau="question" role="region" aria-label="Index des questions terrain" hidden>
+      <!-- Cablage vers les fiches-questions integrees (route #fiche-q=).
+           cascade-objectifs reste sur son mockup autonome tant que sa
+           migration (chantier 26 jalon C.4) n'est pas faite. Cablage
+           complet et retrait des mockups : jalon D. -->
       <ol class="liste-questions-inline" role="list">
-        <li><a href="mockup-fiche-question-pasteque.html">
+        <li><a href="#fiche-q=pasteque">
           <span class="emoji-q" aria-hidden="true">&#x1F349;</span>
           <span class="titre">Mes indicateurs refl&egrave;tent-ils la r&eacute;alit&eacute; du terrain&nbsp;?</span>
         </a></li>
-        <li><a href="mockup-fiche-question-pilotage-hebdo.html">
+        <li><a href="#fiche-q=pilotage-hebdo">
           <span class="emoji-q" aria-hidden="true">&#x1F4C5;</span>
           <span class="titre">Quoi mettre dans mon pilotage hebdomadaire&nbsp;?</span>
         </a></li>
-        <li><a href="mockup-fiche-question-amelioration-continue.html">
+        <li><a href="#fiche-q=amelioration-continue">
           <span class="emoji-q" aria-hidden="true">&#x1F504;</span>
           <span class="titre">Par o&ugrave; d&eacute;marrer une d&eacute;marche d'am&eacute;lioration continue&nbsp;?</span>
         </a></li>
-        <li><a href="mockup-fiche-question-resistance-transformation.html">
+        <li><a href="#fiche-q=resistance-transformation">
           <span class="emoji-q" aria-hidden="true">&#x1F6A7;</span>
           <span class="titre">Pourquoi ma transformation r&eacute;siste&nbsp;?</span>
         </a></li>
