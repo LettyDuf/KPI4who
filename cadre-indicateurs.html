@@ -3759,7 +3759,17 @@ CM.IndicateursMeta = (function() {
     'cg-3': { tags:['humain','risque'],          cadres:['change'] },
     'cg-4': { tags:['humain','alignement'],      cadres:['change'] },
     'cg-5': { tags:['humain'],                   cadres:['change'] },
-    'cg-6': { tags:['humain','risque'],          cadres:['change'] }
+    'cg-6': { tags:['humain','risque'],          cadres:['change'] },
+    /* Management par objectifs (cadre mbo, chantier 26) */
+    'mbo-1': { tags:['alignement'],              cadres:['mbo'] },
+    'mbo-2': { tags:['alignement','qualite'],    cadres:['mbo'] },
+    'mbo-3': { tags:['alignement','humain'],     cadres:['mbo'] },
+    'mbo-4': { tags:['alignement'],              cadres:['mbo'] },
+    'mbo-5': { tags:['alignement','qualite'],    cadres:['mbo'] },
+    'mbo-6': { tags:['alignement'],              cadres:['mbo'] },
+    'mbo-7': { tags:['alignement'],              cadres:['mbo'] },
+    'mbo-8': { tags:['alignement','qualite'],    cadres:['mbo'] },
+    'mbo-9': { tags:['alignement','risque'],     cadres:['mbo'] }
   };
 
   /* ── API publique ── */
@@ -4048,7 +4058,16 @@ CM._tagsThematiquesData = {
   'cg-3':    ['feedback', 'risque'],
   'cg-4':    ['engagement', 'confiance', 'alignement'],
   'cg-5':    ['transversalité', 'compétences'],
-  'cg-6':    ['risque', 'variabilité']
+  'cg-6':    ['risque', 'variabilité'],
+  'mbo-1':   ['alignement'],
+  'mbo-2':   ['feedback', 'alignement'],
+  'mbo-3':   ['cadence', 'feedback', 'autonomie'],
+  'mbo-4':   ['transversalité', 'alignement'],
+  'mbo-5':   ['transversalité', 'alignement'],
+  'mbo-6':   ['cadence', 'alignement'],
+  'mbo-7':   ['alignement'],
+  'mbo-8':   ['feedback', 'alignement'],
+  'mbo-9':   ['cadence', 'alignement']
 };
 /* CM.TAGS-THEMATIQUES-DATA:END */
 </script>
@@ -7124,6 +7143,123 @@ CM.Referentiel.ajouter([
     roles:['programme','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
   }
 ]);
+/* === Cadre Management par objectifs - 9 indicateurs (chantier 26, constat 26.c4.coll.1) ===
+   Indicateurs nommes par les cellules CADRES_A_VENIR de la fiche-question
+   cascade-objectifs (trios equipe, programme, organisation). Panel Coach
+   executif MBO orthodoxe : Drucker (1954, 1964), Locke et Latham (1968),
+   Humble (1972). Prefixe mbo-* (patron lss-* / cg-*). Rediges le 23/05/2026
+   au standard editorial 2026-04. Aucun caractere IA-type. */
+CM.Referentiel.ajouter([
+  {
+    id:'mbo-1', niveau:'operationnel', type:'ICP', icone:'🧭',
+    nom:'Part des objectifs de l\'équipe rattachés à la mission',
+    definition:'Sur les objectifs annuels de l\'équipe, part de ceux qui se rattachent explicitement à une phrase de la mission. Le test tient en une question, posée objectif par objectif : si on l\'atteint, en quoi sert-on la mission. C\'est un indicateur d\'<strong>output</strong> de la discipline de cascade, pas d\'<span class="term-def" data-def="Outcome : le résultat réellement obtenu, ici une équipe qui travaille alignée sur la raison d\'être. Le taux de rattachement en est une condition, pas une garantie.">outcome</span> : un objectif rattaché sur le papier peut rester mal compris. Drucker fait de ce lien la première exigence du <span class="term-def" data-def="MBO, Management by Objectives (Drucker, The Practice of Management, 1954) : discipline où chaque objectif descend de la mission et se définit dans un dialogue manager-collaborateur, par opposition à des objectifs imposés d\'en haut.">management par objectifs</span>.',
+    objectif:'Vérifier que les objectifs de l\'équipe descendent de la raison d\'être, et pas d\'une habitude ou d\'une commande de circonstance. Sous 70 %, la cascade est surtout cosmétique. Le geste attendu n\'est pas d\'ajouter des objectifs mais de reformuler ceux qui flottent, et de renoncer à ceux qui ne servent pas la mission. Drucker en fait une discipline de concentration : trop d\'objectifs non hiérarchisés est en soi un signe de cascade affaiblie.',
+    frequence:'À la définition des objectifs annuels, puis revue trimestrielle.',
+    exemple_ent:'Le responsable lit un taux de 55 % sur une équipe : près de la moitié des objectifs ne se rattachent à aucune phrase de mission. Lecture : l\'équipe travaille dur sans cap clair. Décision : reprendre la liste objectif par objectif avec l\'équipe, en couper et en reformuler, plutôt que d\'en ajouter.',
+    exemple_eq:'L\'équipe fait l\'exercice elle-même, en réunion : pour chaque objectif, elle formule à voix haute le lien à la mission. Un objectif pour lequel personne ne trouve le lien est un candidat au retrait. L\'indicateur sert la lucidité de l\'équipe sur son propre cap, il ne la note pas.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Rattachement cosmétique : relier après coup chaque objectif à la mission par un habillage de vocabulaire, sans rien changer au fond. Le taux monte, la cascade reste fictive.">rattachement cosmétique</span> a posteriori, <span class="term-def" data-def="Cascade unilatérale descendante : l\'objectif arrive déjà ficelé du haut et devient une injonction. Le lien à la mission existe mais le collaborateur ne l\'a pas construit, donc ne le porte pas.">cascade unilatérale descendante</span>, et usage du taux comme cible à maximiser, qui pousse au rattachement de façade. Vigilance Drucker : le lien à la mission n\'a de valeur que s\'il est compris par celui qui porte l\'objectif, pas seulement déclaré.',
+    alt:'Si l\'objectif est de vérifier l\'alignement non pas d\'une équipe sur la mission mais des équipes d\'un programme entre elles, préférer la <a href="#fiche=mbo-4">cohérence des objectifs d\'équipe avec les objectifs du programme</a>.',
+    roles:['chef-équipe','membre-équipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
+  },
+  {
+    id:'mbo-2', niveau:'operationnel', type:'ICP', icone:'✏️',
+    nom:'Clarté et mesurabilité des objectifs de l\'équipe',
+    definition:'Part des objectifs de l\'équipe qui sont à la fois formulés de façon précise et assortis d\'un capteur de mesure défini avant le démarrage. Les deux qualités vont ensemble : un objectif flou ne peut pas recevoir un bon capteur, et un capteur posé sur un objectif vague mesure autre chose que ce qu\'on visait. <span class="term-def" data-def="Théorie de la fixation des objectifs (Locke et Latham, 1968) : un objectif n\'engage durablement que s\'il est spécifique, mesurable et assorti d\'un retour fréquent. Un objectif vague produit moins d\'effort qu\'un objectif précis.">Locke et Latham</span> l\'ont montré : un objectif n\'engage vraiment que s\'il est spécifique et observable.',
+    objectif:'Mesurer si les objectifs de l\'équipe sont assez nets pour qu\'on sache, sans débattre, s\'ils sont tenus. Un objectif imprécis reste un vœu : faute d\'avoir fixé d\'avance ce qui dirait qu\'on avance, on en débattra en fin d\'année. Quand le taux est bas, le travail n\'est pas de chiffrer des cibles partout, c\'est de rendre chaque objectif observable et de choisir avec le collaborateur le capteur qui en témoigne.',
+    frequence:'À la définition des objectifs, puis revue trimestrielle.',
+    exemple_ent:'Le responsable constate que seuls 4 objectifs sur 10 ont un capteur défini d\'avance. Lecture : six objectifs se jugeront à dire d\'expert en fin d\'année, donc se discuteront. Décision : reprendre ces six avec l\'équipe pour les rendre observables, avant le prochain cycle.',
+    exemple_eq:'L\'équipe et le responsable choisissent ensemble, pour chaque objectif, le capteur qui en témoignera. Le capteur n\'a pas besoin d\'être parfait : c\'est un témoin partagé, pas une métrique de précision. L\'enjeu est que les deux parties sachent d\'avance ce qui dira que l\'objectif est atteint.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Capteur posé après coup : choisir l\'indicateur de mesure une fois l\'objectif déjà avancé, en sélectionnant celui qui flatte le résultat. Le capteur perd sa fonction de témoin honnête.">capteur posé après coup</span>, <span class="term-def" data-def="Faux précis : couvrir un objectif vague d\'un chiffre arbitraire pour cocher la case mesurable. La précision est apparente, l\'objectif reste flou.">faux précis</span> (un chiffre arbitraire ne rend pas un objectif clair), et chasse au taux qui multiplie les cibles chiffrées sans gagner en clarté. Vigilance Locke et Latham : la mesurabilité sert l\'engagement, pas le contrôle.',
+    alt:'Si l\'objectif est de vérifier que les capteurs sont compris et partagés entre plusieurs équipes d\'un programme, préférer la <a href="#fiche=mbo-5">lisibilité partagée des capteurs entre équipes</a>.',
+    roles:['chef-équipe','membre-équipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
+  },
+  {
+    id:'mbo-3', niveau:'operationnel', type:'ICC', icone:'💬',
+    nom:'Fréquence des points objectifs manager-collaborateur',
+    definition:'Nombre d\'occasions, sur le trimestre, où le responsable et chaque collaborateur revoient ensemble les objectifs, à la mise en place comme en cours de route. C\'est un indicateur de <strong>comportement</strong> : il mesure si une pratique managériale a lieu, pas un résultat. Drucker plaçait la barre au mensuel, <span class="term-def" data-def="Humble, Management by Objectives (1972) : opérationnalisation méthodologique du MBO de Drucker en un cycle structuré, avec une cadence de revue typiquement trimestrielle.">Humble</span> au trimestriel ; la régularité compte davantage que l\'écart exact.',
+    objectif:'Vérifier que l\'objectif reste un objet de dialogue vivant, et pas une formalité de début et de fin d\'année. Sous-cadence, l\'objectif se redécouvre trop tard ; sur-cadence, il se réduit à un reporting et perd sa fonction d\'échange. C\'est là que se joue le <span class="term-def" data-def="Self-control (Drucker) : dans le MBO, l\'objectif sert d\'abord au collaborateur pour se piloter lui-même, ajuster et signaler les obstacles. Il n\'est pas un instrument de surveillance par le manager.">self-control</span> de Drucker : l\'objectif sert au collaborateur pour se piloter, pas au manager pour le noter.',
+    frequence:'Mesure trimestrielle.',
+    exemple_ent:'Le responsable observe que les points objectifs n\'ont lieu qu\'en début et en fin d\'année. Lecture : entre les deux, chacun avance sans ajustement et les surprises s\'accumulent. Décision : instaurer un point court mensuel ou trimestriel, centré sur les obstacles et les ajustements, pas sur le contrôle.',
+    exemple_eq:'Le collaborateur et son responsable conviennent d\'un rythme de points et s\'y tiennent. Le point n\'est pas un examen : on y parle de ce qui bloque, de ce qui a changé, de ce qu\'il faut réviser. La fréquence se compte, mais c\'est la qualité de l\'échange qui fait l\'indicateur.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Point de contrôle déguisé : tenir le point objectif mais en faire un examen descendant. La fréquence est respectée, le dialogue de self-control n\'a pas lieu.">point de contrôle déguisé</span>, comptage de réunions pris pour preuve de dialogue, et indexation de la fréquence comme cible managériale, qui produit des points vides tenus pour cocher la case. Vigilance Drucker : un point objectif sert à aider le collaborateur à se piloter, pas à vérifier qu\'il obéit.',
+    alt:'Si l\'objectif est de suivre la cadence des revues d\'alignement entre les équipes d\'un programme, et non les points individuels, préférer la <a href="#fiche=mbo-6">cadence des revues d\'alignement inter-équipes</a>.',
+    roles:['chef-équipe','membre-équipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
+  },
+  {
+    id:'mbo-4', niveau:'programme', type:'ICP', icone:'🔗',
+    nom:'Cohérence des objectifs d\'équipe avec les objectifs du programme',
+    definition:'À l\'échelle du programme, part des objectifs d\'équipe qui se rattachent explicitement à un objectif du programme. Là où, au niveau équipe, on vérifie le lien à la mission, au niveau programme on vérifie que les équipes tirent dans la même direction. C\'est un indicateur d\'<strong>output</strong> de l\'alignement inter-équipes : un rattachement déclaré ne garantit pas une coordination réelle.',
+    objectif:'Détecter une cascade rompue à l\'étage intermédiaire : le programme a ses objectifs, les équipes ont les leurs, et les deux listes ne se parlent pas. Un taux faible annonce le risque concret de l\'<span class="term-def" data-def="Optimisation locale : chaque équipe atteint ses propres chiffres pendant que le programme, lui, n\'avance pas. Conséquence directe d\'objectifs d\'équipe non rattachés aux objectifs du programme.">optimisation locale</span>, où chaque équipe atteint ses chiffres pendant que le programme stagne.',
+    frequence:'À la définition des objectifs de programme, puis revue trimestrielle.',
+    exemple_ent:'La direction de programme constate que 40 % des objectifs d\'équipe ne se rattachent à aucun objectif de programme. Lecture : les équipes se sont fixé des objectifs en silo. Décision : organiser une revue d\'alignement où chaque équipe rattache ou révise ses objectifs au regard de ceux du programme.',
+    exemple_eq:'Une équipe vérifie que ses objectifs servent un objectif du programme, pas seulement son propre périmètre. Quand le lien manque, ce n\'est pas toujours l\'équipe qui a tort : l\'objectif de programme peut être lui-même flou. L\'indicateur ouvre la discussion, il ne désigne pas un coupable.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Rattachement administratif : relier les objectifs d\'équipe aux objectifs de programme dans un tableur, sans dialogue entre les équipes concernées. Le lien existe sur le papier, la coordination réelle non.">rattachement administratif</span> sans dialogue, objectif de programme trop flou pour qu\'un rattachement ait du sens, et usage du taux pour comparer les équipes entre elles. Vigilance : l\'alignement inter-équipes se construit en revue partagée, il ne se décrète pas dans un document.',
+    alt:'Si l\'objectif est de vérifier l\'alignement d\'une seule équipe sur la mission, préférer la <a href="#fiche=mbo-1">part des objectifs de l\'équipe rattachés à la mission</a>.',
+    roles:['programme','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
+  },
+  {
+    id:'mbo-5', niveau:'programme', type:'ICP', icone:'👓',
+    nom:'Lisibilité partagée des capteurs entre équipes',
+    definition:'Part des objectifs du programme dont le capteur de mesure est lisible par toutes les équipes concernées, et pas seulement par celle qui le produit. Au niveau équipe, un capteur peut rester interne ; au niveau programme, un capteur que les autres ne comprennent pas ne sert plus à coordonner. C\'est un indicateur d\'<strong>output</strong> de la qualité d\'instrumentation partagée du programme.',
+    objectif:'Vérifier que les équipes mesurent leur contribution avec des définitions communes. Si chaque équipe mesure à sa façon, les chiffres ne s\'additionnent pas et la revue de programme se transforme en débat de méthode au lieu d\'une discussion de fond. Une lisibilité faible annonce des revues où l\'on passe plus de temps à s\'accorder sur les chiffres qu\'à décider.',
+    frequence:'À la définition des objectifs de programme, puis revue trimestrielle.',
+    exemple_ent:'En revue de programme, deux équipes présentent un taux d\'avancement calculé différemment. Lecture : les capteurs ne sont pas partagés, les chiffres ne sont pas comparables. Décision : définir, pour les objectifs communs, un capteur unique et sa méthode de calcul, documentés et accessibles à toutes les équipes.',
+    exemple_eq:'Une équipe vérifie que son capteur est compréhensible par une équipe voisine sans explication orale. Si ce n\'est pas le cas, le capteur est à clarifier ou à aligner. La lisibilité partagée est un service rendu aux autres équipes, pas une contrainte administrative.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Capteur en dialecte local : chaque équipe garde sa propre définition de mesure, illisible pour les autres. Les chiffres du programme ne s\'agrègent plus.">capteur en dialecte local</span>, uniformisation excessive qui impose un capteur inadapté à certaines équipes, et lisibilité confondue avec mise en forme commune alors que c\'est la définition qui doit être partagée. Vigilance : un capteur partagé se négocie entre équipes, il ne se normalise pas d\'en haut sans leur accord.',
+    alt:'Si l\'objectif est de vérifier la clarté et la mesurabilité des objectifs au sein d\'une équipe, préférer la <a href="#fiche=mbo-2">clarté et mesurabilité des objectifs de l\'équipe</a>.',
+    roles:['programme','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
+  },
+  {
+    id:'mbo-6', niveau:'programme', type:'ICC', icone:'📆',
+    nom:'Cadence des revues d\'alignement inter-équipes',
+    definition:'Nombre d\'occasions, par trimestre, où les responsables d\'équipe et la direction de programme revoient ensemble l\'alignement des objectifs, et pas seulement l\'avancement des livrables. C\'est un indicateur de <strong>comportement</strong> collectif. La distinction est décisive : une revue de livraison regarde si le travail avance, une revue d\'alignement regarde s\'il avance encore dans la bonne direction.',
+    objectif:'Vérifier que le programme se donne des occasions formelles de corriger sa trajectoire. Sans cadence d\'alignement dédiée, la dérive ne se voit qu\'à la fin, quand les équipes ont déjà consommé un trimestre sur des objectifs devenus caducs. La bonne cadence permet de corriger avant que l\'écart ne coûte cher, sans transformer chaque semaine en comité.',
+    frequence:'Mesure trimestrielle.',
+    exemple_ent:'La direction de programme constate que les comités ne traitent que l\'avancement des livrables. Lecture : personne ne se demande si les objectifs sont encore les bons. Décision : ajouter à un comité sur deux un temps explicite de revue d\'alignement, distinct de la revue de livraison.',
+    exemple_eq:'Les responsables d\'équipe profitent de la revue d\'alignement pour signaler qu\'un objectif est devenu caduc ou qu\'une dépendance a changé. La revue n\'est pas un rapport d\'avancement : c\'est le moment où le programme accepte de réviser son cap. La cadence se compte, le contenu fait la valeur.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Revue d\'alignement absorbée par la livraison : le temps prévu pour l\'alignement est mangé par le suivi des livrables. La cadence est respectée sur le papier, l\'alignement n\'est jamais discuté.">revue d\'alignement absorbée par la livraison</span>, multiplication des comités prise pour de l\'alignement, et cadence tenue pour cocher la case sans pouvoir réel de réviser les objectifs. Vigilance : une revue d\'alignement n\'a de sens que si elle peut conclure à un changement d\'objectif.',
+    alt:'Si l\'objectif est de suivre la fréquence des points objectifs individuels entre un responsable et ses collaborateurs, préférer la <a href="#fiche=mbo-3">fréquence des points objectifs manager-collaborateur</a>.',
+    roles:['programme','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
+  },
+  {
+    id:'mbo-7', niveau:'strategique', type:'ICP', icone:'🎯',
+    nom:'Concentration des objectifs stratégiques sur la mission',
+    definition:'Mesure de la part des objectifs stratégiques annuels qui se rattachent explicitement à la mission de l\'entreprise, lue conjointement avec le <strong>nombre</strong> d\'objectifs stratégiques. C\'est le sommet de la cascade : si le lien se rompt ici, aucun étage en dessous ne peut le réparer. <span class="term-def" data-def="Managing for Results (Drucker, 1964) : Drucker y pose la concentration comme discipline cardinale, hiérarchiser les objectifs par leur contribution à la mission et renoncer au reste, plutôt que tout poursuivre à la fois.">Drucker, dans Managing for Results</span>, en fait une discipline de concentration.',
+    objectif:'Donner à la direction une lecture honnête de sa propre discipline d\'arbitrage. Un taux faible, ou une liste d\'objectifs stratégiques trop longue, signale que la direction n\'a pas tranché ce qui sert vraiment la raison d\'être. Le geste attendu n\'est pas d\'aligner les formulations après coup, c\'est de renoncer aux objectifs qui ne servent pas la mission.',
+    frequence:'Annuelle, à la définition des objectifs stratégiques.',
+    exemple_ent:'Le comité de direction pose 18 objectifs stratégiques pour l\'année, dont 7 sans lien clair à la mission. Lecture : l\'organisation va se disperser et tous les étages en dessous hériteront de cette dispersion. Décision : ramener la liste à un nombre tenable et trancher ce qui sert la mission, avant toute cascade.',
+    exemple_eq:'Au niveau de l\'équipe, cet indicateur ne descend pas comme une cible. Il se lit comme un contexte : si la stratégie elle-même est dispersée, une équipe ne pourra pas en tirer des objectifs clairs. L\'équipe peut légitimement faire remonter qu\'un objectif stratégique flou l\'empêche de cascader proprement.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Liste stratégique fourre-tout : empiler les objectifs stratégiques pour ne mécontenter personne. La concentration disparaît, la cascade descend une ambition impossible à tenir.">liste stratégique fourre-tout</span>, <span class="term-def" data-def="Alignement de façade : rattacher a posteriori chaque objectif à la mission par un habillage de vocabulaire, au lieu de renoncer pour de bon à ceux qui ne la servent pas.">alignement de façade</span>, et lecture du seul taux de rattachement en ignorant le nombre d\'objectifs. Vigilance Drucker : concentrer, c\'est renoncer ; un comité qui n\'élague jamais ne hiérarchise pas vraiment.',
+    alt:'Si l\'objectif est de vérifier la couverture des objectifs stratégiques par une mesure, et non leur concentration sur la mission, préférer la <a href="#fiche=mbo-8">couverture des objectifs stratégiques par un résultat clé mesurable</a>.',
+    roles:['direction'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
+  },
+  {
+    id:'mbo-8', niveau:'strategique', type:'ICP', icone:'📏',
+    nom:'Couverture des objectifs stratégiques par un résultat clé mesurable',
+    definition:'Part des objectifs stratégiques assortis d\'un résultat clé mesurable, défini au moment où l\'objectif est posé. Le résultat clé stratégique n\'a pas vocation à être suivi au quotidien : il sert de référence commune pour savoir, en fin de cycle, si l\'ambition a été tenue. C\'est un indicateur d\'<strong>output</strong> de la qualité de formulation de la stratégie.',
+    objectif:'Vérifier que l\'ambition stratégique est rendue observable avant d\'être cascadée. Au niveau de la direction, l\'imprécision a un coût particulier : un objectif stratégique flou se cascade en objectifs d\'équipe flous, et le défaut se propage à tous les étages en s\'amplifiant. Une couverture incomplète ici explique souvent pourquoi les équipes, plus bas, n\'arrivent pas à traduire la stratégie.',
+    frequence:'Annuelle, à la définition des objectifs stratégiques.',
+    exemple_ent:'Le comité de direction constate que 5 objectifs stratégiques sur 12 n\'ont pas de résultat clé mesurable. Lecture : un tiers de la stratégie se jugera à l\'appréciation, donc se discutera en fin d\'année. Décision : doter chaque objectif stratégique d\'au moins un résultat clé observable avant de lancer la cascade.',
+    exemple_eq:'Une équipe qui reçoit un objectif stratégique sans résultat clé mesurable a le droit de le signaler : elle ne peut pas traduire en objectifs d\'équipe ce qui n\'a pas été rendu net. L\'indicateur, lu de bas en haut, devient un signal honnête vers la direction.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Résultat clé décoratif : poser un résultat clé qui ne mesure pas vraiment l\'objectif, juste pour cocher la case mesurable. La couverture monte, l\'ambition reste floue.">résultat clé décoratif</span>, pilotage quotidien d\'un résultat clé stratégique conçu pour le bilan de cycle, et confusion entre couvrir l\'objectif d\'un chiffre et le rendre réellement observable. Vigilance : un résultat clé stratégique est une référence de fin de cycle, pas un tableau de bord opérationnel.',
+    alt:'Si l\'objectif est de vérifier la clarté et la mesurabilité des objectifs au niveau d\'une équipe, préférer la <a href="#fiche=mbo-2">clarté et mesurabilité des objectifs de l\'équipe</a>.',
+    roles:['direction'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
+  },
+  {
+    id:'mbo-9', niveau:'strategique', type:'ICC', icone:'🔁',
+    nom:'Régularité du réexamen stratégique des objectifs',
+    definition:'Nombre de revues, dans l\'année, où le comité de direction réexamine les objectifs stratégiques eux-mêmes, et pas seulement leur avancement. C\'est un indicateur de <strong>comportement</strong> de gouvernance : il mesure si la direction se donne des occasions formelles de reconnaître qu\'un objectif n\'est plus le bon.',
+    objectif:'Vérifier que la stratégie reste révisable en cours d\'année. Beaucoup d\'organisations fixent leurs objectifs en début d\'année et ne les rouvrent qu\'aux douze mois suivants ; entre-temps le contexte a bougé et une partie des objectifs est devenue fausse. Une cadence de réexamen, trimestrielle par exemple, permet de réviser l\'ambition en connaissance de cause plutôt que de la subir.',
+    frequence:'Mesure annuelle, sur le rythme des revues stratégiques.',
+    exemple_ent:'Le comité de direction n\'a pas rouvert ses objectifs stratégiques depuis onze mois. Lecture : la cascade fait descendre fidèlement jusqu\'au terrain des objectifs que plus personne n\'ose défendre. Décision : inscrire un réexamen stratégique trimestriel à l\'agenda du comité, distinct de la revue d\'avancement.',
+    exemple_eq:'Au niveau de l\'équipe, cet indicateur ne descend pas. Mais ses effets se ressentent : une équipe qui poursuit un objectif visiblement caduc paie l\'absence de réexamen en haut. Le signal légitime, de bas en haut, est de demander si l\'objectif tient encore.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Objectifs gravés pour l\'année : fixer les objectifs stratégiques en début d\'année et ne plus jamais les rouvrir. La cascade descend une ambition que le contexte a rendue fausse.">objectifs gravés pour l\'année</span>, réexamen confondu avec revue d\'avancement, et cadence tenue sans réel mandat de modifier les objectifs. Vigilance : un réexamen stratégique n\'a de sens que si le comité accepte d\'y abandonner un objectif devenu caduc.',
+    alt:'Si l\'objectif est de suivre la cadence des revues d\'alignement entre les équipes d\'un programme, préférer la <a href="#fiche=mbo-6">cadence des revues d\'alignement inter-équipes</a>.',
+    roles:['direction'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
+  }
+]);
+
 
 </script>
 <!-- CM.REFERENTIEL.DATA — END -->

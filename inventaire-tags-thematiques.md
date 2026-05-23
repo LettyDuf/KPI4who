@@ -284,6 +284,15 @@ Arbitrages finaux : tags sortants, tags à fusionner, vocabulaire final figé à
 | cg-4 | Adhésion multi-équipes |  |  | x |  |  |  |  |  |  |  | x |  | x |  |
 | cg-5 | Équipes ayant adopté | x |  |  |  |  | x |  |  |  |  |  |  |  |  |
 | cg-6 | Équipes retombées |  |  |  |  |  |  |  |  | x |  |  | x |  |  |
+| mbo-1 | Objectifs reliés à la mission |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
+| mbo-2 | Clarté et mesurabilité |  |  |  |  |  |  |  | x |  |  |  |  | x |  |
+| mbo-3 | Points objectifs |  |  |  |  |  |  | x | x |  | x |  |  |  |  |
+| mbo-4 | Cohérence objectifs programme | x |  |  |  |  |  |  |  |  |  |  |  | x |  |
+| mbo-5 | Lisibilité des capteurs | x |  |  |  |  |  |  |  |  |  |  |  | x |  |
+| mbo-6 | Revues d'alignement |  |  |  |  |  |  | x |  |  |  |  |  | x |  |
+| mbo-7 | Concentration stratégique |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
+| mbo-8 | Couverture résultat clé |  |  |  |  |  |  |  | x |  |  |  |  | x |  |
+| mbo-9 | Réexamen stratégique |  |  |  |  |  |  | x |  |  |  |  |  | x |  |
 
 **Note.** Le Temps 3 (analyse quantitative : taux d'usage, co-occurrences, orphelines, arbitrages sortie/fusion) s'appuie sur cette matrice pour figer le vocabulaire final (cible 10-12 tags). À produire dans la foulée, en §7.
 
