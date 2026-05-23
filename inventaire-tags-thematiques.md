@@ -278,6 +278,12 @@ Arbitrages finaux : tags sortants, tags à fusionner, vocabulaire final figé à
 | af-sc3 | CES |  |  |  |  |  |  |  | x |  |  |  |  |  | x |
 | af-sc4 | FCR service |  |  |  |  |  | x |  |  |  |  |  |  |  | x |
 | af-sc5 | Délai 1re réponse |  |  |  |  |  |  | x |  |  |  |  |  |  | x |
+| cg-1 | Conscience et désir |  |  | x |  |  |  |  |  |  |  | x |  |  |  |
+| cg-2 | Adoption des comportements |  |  | x |  |  | x |  |  |  |  |  |  |  |  |
+| cg-3 | Fréquence des régressions |  |  |  |  |  |  |  | x | x |  |  |  |  |  |
+| cg-4 | Adhésion multi-équipes |  |  | x |  |  |  |  |  |  |  | x |  | x |  |
+| cg-5 | Équipes ayant adopté | x |  |  |  |  | x |  |  |  |  |  |  |  |  |
+| cg-6 | Équipes retombées |  |  |  |  |  |  |  |  | x |  |  | x |  |  |
 
 **Note.** Le Temps 3 (analyse quantitative : taux d'usage, co-occurrences, orphelines, arbitrages sortie/fusion) s'appuie sur cette matrice pour figer le vocabulaire final (cible 10-12 tags). À produire dans la foulée, en §7.
 
