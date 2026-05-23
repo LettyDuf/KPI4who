@@ -3601,6 +3601,7 @@ CM.IndicateursMeta = (function() {
     space:     { label:'SPACE',                    icone:'🛰️', famille:'observabilite',   description:'SPACE Framework (Forsgren, Storey, DeMichelle, 2021). Productivité ingénierie multidimensionnelle\u00a0: Satisfaction · Performance · Activity · Communication · Efficiency.' },
     lean:      { label:'Lean / Six Sigma',         icone:'♻️', famille:'excellence-op',   description:'Flux, variabilité, réduction du gaspillage. Lead time, throughput.' },
     okr:       { label:'OKR',                      icone:'🎯', famille:'objectifs',       description:'Objectives and Key Results. Ambitions trimestrielles mesurables.' },
+    mbo:       { label:'Management par objectifs', icone:'📐', famille:'objectifs',       description:'Management By Objectives — Drucker (1954). Cascade descendante d\u2019objectifs, dialogue manager-collaborateur, self-control, alignement individuel\u202f\u2194\u202forganisationnel. Lien assumé à l\u2019évaluation individuelle (à la différence des OKR).' },
     scrum:     { label:'Scrum',                    icone:'🏉', famille:'empirisme-agile', description:'Pilotage itératif avec cadence fixe. Vélocité, qualité de sprint.' },
     kanban:    { label:'Kanban',                   icone:'🗂️', famille:'empirisme-agile', description:'Flux tiré, WIP, cycle time. Flux continu.' },
     safe:      { label:'SAFe',                     icone:'🏗️', famille:'empirisme-agile', description:'Scaled Agile Framework. Programme et portefeuille à l\u2019échelle.' },
@@ -3627,7 +3628,6 @@ CM.IndicateursMeta = (function() {
     { id:'cynefin', label:'Cynefin',                      icone:'🗺️', famille:'decision',        description:'Cadre de décision en contexte (Snowden)\u00a0: clair, compliqué, complexe, chaotique.' },
     { id:'wardley', label:'Wardley Maps',                 icone:'🧭', famille:'decision',        description:'Cartographie stratégique orientée valeur × maturité. Anticipation de l\u2019évolution.' },
     { id:'bsc',     label:'Balanced Scorecard',           icone:'⚖️',  famille:'objectifs',       description:'Kaplan & Norton (1996). Pilotage équilibré sur 4 perspectives\u00a0: financière, client, processus internes, apprentissage & croissance. Liens cause-effet, strategy map.' },
-    { id:'mbo',     label:'MBO (Drucker)',                icone:'📐',  famille:'objectifs',       description:'Management By Objectives — Drucker (1954). Cascade descendante d\u2019objectifs, dialogue manager-collaborateur, self-control, alignement individuel\u202f\u2194\u202forganisationnel. Lien assumé à l\u2019évaluation individuelle (à la différence des OKR).' }
   ];
 
   /* ── Mapping id → { tags, cadres } ──
@@ -4095,7 +4095,7 @@ CM.RequeteMetriques = (function() {
     type:            ['IGO', 'ICP', 'ICC', 'ORC', 'DORA', 'FLUX', 'II'],
     cadres:          ['dora', 'cd', 'space', 'lean', 'okr',
                       'scrum', 'kanban', 'safe', 'itil',
-                      'securite', 'cx', 'change', 'generique'],
+                      'securite', 'cx', 'change', 'mbo', 'generique'],
     tags:            ['valeur', 'qualite', 'flux', 'delais',
                       'humain', 'risque', 'alignement'],
     tagsThematiques: ['transversalité', 'prévisibilité', 'engagement',
