@@ -9016,41 +9016,41 @@ CM.FicheQuestion = (function() {
         operationnel: Object.freeze([
           Object.freeze({
             id: 'alignement', niveau: 'operationnel', ficheRef: 'CADRES_A_VENIR',
-            nom: 'Taux d\'objectifs reliés à la mission',
+            nom: 'Part des objectifs de l\'équipe rattachés à la mission',
             intention: 'Sur les objectifs annuels de l\'équipe, compte ceux qui se rattachent explicitement à une phrase de la mission. Le test tient en une question, posée objectif par objectif : si on l\'atteint, en quoi sert-on la mission. Drucker fait de ce lien la première exigence du MBO, et il en tire une seconde, la concentration : une équipe qui poursuit trop d\'objectifs à la fois n\'en a vraiment hiérarchisé aucun, et un objectif sans lien de mission est presque toujours un objectif de trop. Sous 70 %, la cascade est surtout cosmétique. Le bon geste n\'est alors pas d\'ajouter des objectifs, c\'est de reformuler ceux qui flottent et de renoncer à ceux qui ne servent pas la mission.'
           }),
           Object.freeze({
             id: 'precision', niveau: 'operationnel', ficheRef: 'CADRES_A_VENIR',
-            nom: 'Taux d\'objectifs spécifiques et mesurables',
+            nom: 'Clarté et mesurabilité des objectifs de l\'équipe',
             intention: 'Sur les objectifs de l\'équipe, compte ceux qui sont à la fois formulés de façon précise et assortis d\'un capteur pertinent, défini avant le démarrage. Les deux qualités vont ensemble : un objectif flou ne peut pas recevoir un bon capteur, et un capteur posé sur un objectif vague finit par mesurer autre chose que ce qu\'on visait. Locke et Latham l\'ont montré, un objectif n\'engage vraiment que s\'il est spécifique et observable. Un objectif imprécis reste un vœu : faute d\'avoir fixé d\'avance ce qui dirait qu\'on avance, on en débattra en fin d\'année. Quand le taux est bas, le travail n\'est pas de chiffrer des cibles partout, c\'est de rendre chaque objectif assez net pour qu\'on sache, sans discuter, s\'il est tenu.'
           }),
           Object.freeze({
             id: 'accompagnement', niveau: 'operationnel', ficheRef: 'CADRES_A_VENIR',
-            nom: 'Cadence de revue manager-collaborateur',
+            nom: 'Fréquence des points objectifs manager-collaborateur',
             intention: 'Compte les occasions de revue partagée des objectifs sur le trimestre, entre le responsable et chaque collaborateur, à la mise en place comme en cours de route. Drucker plaçait la barre au mensuel, Humble au trimestriel : la régularité compte davantage que l\'écart exact. Sous-cadence, l\'objectif devient une formalité qu\'on redécouvre en fin d\'année ; sur-cadence, il se réduit à un reporting et perd sa fonction de dialogue. Cet indicateur ne mesure pas un nombre de réunions, il mesure si le collaborateur a des occasions régulières d\'être aidé, de signaler un obstacle et d\'ajuster le tir. C\'est là que se joue le self-control de Drucker : l\'objectif sert d\'abord à se piloter soi-même, pas à être noté.'
           })
         ]),
         programme: Object.freeze([
           Object.freeze({
             id: 'alignement', niveau: 'programme', ficheRef: 'CADRES_A_VENIR',
-            nom: 'Taux d\'objectifs d\'équipe reliés à un objectif de programme',
+            nom: 'Cohérence des objectifs d\'équipe avec les objectifs du programme',
             intention: 'À l\'échelle du programme, l\'alignement ne se lit plus objectif par objectif mais équipe par équipe : la part des objectifs d\'équipe qui se rattachent explicitement à un objectif du programme. Là où le niveau équipe vérifie le lien à la mission, le niveau programme vérifie que les équipes tirent dans la même direction, et pas chacune vers sa propre cible locale. Un taux faible signale une cascade rompue à l\'étage intermédiaire : le programme a ses objectifs, les équipes ont les leurs, et les deux listes ne se parlent pas. Le risque concret porte un nom, l\'optimisation locale : chaque équipe atteint ses chiffres pendant que le programme, lui, n\'avance pas.'
           }),
           Object.freeze({
             id: 'precision', niveau: 'programme', ficheRef: 'CADRES_A_VENIR',
-            nom: 'Couverture des objectifs de programme par un capteur partagé',
+            nom: 'Lisibilité partagée des capteurs entre équipes',
             intention: 'La part des objectifs du programme formulés assez précisément pour porter un capteur commun, lisible par toutes les équipes concernées et pas seulement par celle qui le produit. Au niveau équipe, un capteur peut rester interne ; au niveau programme, un capteur que les autres ne comprennent pas ne sert plus à coordonner. L\'enjeu est la lisibilité partagée : si chaque équipe mesure sa contribution avec sa propre définition, les chiffres ne s\'additionnent pas et la revue de programme se transforme en débat de méthode plutôt qu\'en discussion de fond. Une couverture faible annonce des revues où l\'on passe plus de temps à s\'accorder sur les chiffres qu\'à décider quoi que ce soit.'
           }),
           Object.freeze({
             id: 'accompagnement', niveau: 'programme', ficheRef: 'CADRES_A_VENIR',
-            nom: 'Cadence de revue d\'alignement du programme',
+            nom: 'Cadence des revues d\'alignement inter-équipes',
             intention: 'Le nombre d\'occasions, par trimestre, où les responsables d\'équipe et la direction du programme revoient ensemble l\'alignement des objectifs, et pas seulement l\'avancement des livrables. La distinction est décisive : une revue de livraison regarde si le travail avance, une revue d\'alignement regarde s\'il avance encore dans la bonne direction. Sans cette cadence dédiée, la dérive d\'alignement ne se voit qu\'à la fin, quand les équipes ont déjà consommé un trimestre sur des objectifs devenus caducs. La bonne cadence est celle qui permet de corriger avant que l\'écart ne coûte cher, sans pour autant transformer chaque semaine en comité.'
           })
         ]),
         strategique: Object.freeze([
           Object.freeze({
             id: 'alignement', niveau: 'strategique', ficheRef: 'CADRES_A_VENIR',
-            nom: 'Taux d\'objectifs stratégiques reliés à la mission',
+            nom: 'Concentration des objectifs stratégiques sur la mission',
             intention: 'À l\'échelle de l\'organisation, la part des objectifs stratégiques annuels qui se rattachent explicitement à la mission de l\'entreprise, et non à une opportunité de circonstance. C\'est le sommet de la cascade : si le lien se rompt ici, aucun étage en dessous ne peut le réparer. Drucker, dans Managing for Results, en fait une discipline de concentration : hiérarchiser les objectifs par leur contribution à la mission plutôt que de tout poursuivre à la fois. Un taux faible, ou une liste d\'objectifs stratégiques trop longue, signale que la direction n\'a pas tranché ce qui sert vraiment la raison d\'être. Le geste attendu n\'est pas d\'aligner les formulations après coup, c\'est de renoncer aux objectifs qui ne la servent pas.'
           }),
           Object.freeze({
@@ -9060,7 +9060,7 @@ CM.FicheQuestion = (function() {
           }),
           Object.freeze({
             id: 'accompagnement', niveau: 'strategique', ficheRef: 'CADRES_A_VENIR',
-            nom: 'Cadence de revue stratégique des objectifs',
+            nom: 'Régularité du réexamen stratégique des objectifs',
             intention: 'Le nombre de revues, dans l\'année, où le comité de direction réexamine les objectifs stratégiques eux-mêmes, et pas seulement leur avancement. Beaucoup d\'organisations fixent leurs objectifs en début d\'année et ne les rouvrent qu\'aux douze mois suivants ; entre-temps le contexte a bougé et une partie des objectifs est devenue fausse. Une cadence de revue stratégique, trimestrielle par exemple, permet de réviser l\'ambition en connaissance de cause plutôt que de la subir. L\'indicateur ne mesure pas la fréquence des comités, il mesure si la direction se donne des occasions formelles de reconnaître qu\'un objectif n\'est plus le bon. Sans cette cadence, la cascade fait descendre fidèlement jusqu\'au terrain des objectifs que plus personne n\'ose défendre.'
           })
         ])
