@@ -33,12 +33,12 @@ function sonde() {
 
 | # | Lentilles actives | Compteur | nb_cartes | Premiers ids | Message vide |
 |---|---|---:|---:|---|---|
-| **I1** | (aucune) | `95 sur 95 indicateurs` | **95** | `s1` | — |
-| **I2** | Niveau · Programme | `12 sur 95 indicateurs` | **12** | `p1, p2, p3, p4, p5` | — |
-| **I3** | Cadre · DORA | `4 sur 95 indicateurs` | **4** | `o1, o2, o3, o4` | — |
-| **I4** | Niveau · Programme **et** Cadre · DORA | `0 sur 95 indicateurs` | **0** | (vide) | « Aucun indicateur ne combine ces lentilles. » |
+| **I1** | (aucune) | `104 sur 104 indicateurs` | **104** | `s1` | — |
+| **I2** | Niveau · Programme | `15 sur 104 indicateurs` | **15** | `p1, p2, p3, p4, p5` | — |
+| **I3** | Cadre · DORA | `4 sur 104 indicateurs` | **4** | `o1, o2, o3, o4` | — |
+| **I4** | Niveau · Programme **et** Cadre · DORA | `0 sur 104 indicateurs` | **0** | (vide) | « Aucun indicateur ne combine ces lentilles. » |
 | **I5** | Niveau · Programme (= I2) | (cf. I2) | (cf. I2) | `p1, p2, p3, p4, p5` — fiabilité décroissante validée : `fiable, fiable, fiable, precaution, precaution` | — |
-| **I6** | Niveau · Stratégique **et** Cadre · Scrum | `0 sur 95 indicateurs` | **0** | (vide) | « Aucun indicateur ne combine ces lentilles. » |
+| **I6** | Niveau · Stratégique **et** Cadre · Scrum | `0 sur 104 indicateurs` | **0** | (vide) | « Aucun indicateur ne combine ces lentilles. » |
 
 ---
 
@@ -126,3 +126,5 @@ node outils/lancer-tests-accueil-unifie.js
 Régénère les deux harnais et parse-check syntaxique. La validation comportementale reste manuelle dans Safari (doctrine zéro-dépendance, modules DOM-dépendants).
 
 - **23/05/2026 — mini-chantier gestion du changement (constat n°10).** Six fiches ajoutées au référentiel (cadre Gestion du changement) : `cg-1` à `cg-3` au niveau opérationnel, `cg-4` à `cg-6` au niveau programme. **I1** passe de 89 à 95 (total). **I2** passe de 9 à 12 (Niveau Programme, `cg-4/5/6` sont `programme`). I3, I4, I6 inchangés en valeur, dénominateur réactualisé à 95. **I5 inchangé** : les six fiches `cg-*` sont déclarées en fin de `CM.Referentiel` (dernier bloc `ajouter`), donc la tête du segment Programme reste `p1, p2, p3, p4, p5`. Évolution légitime du référentiel, pas une régression — cf. doctrine sentinelle rouge.
+
+- **23/05/2026 (suite) — volet MBO du mini-chantier (constat 26.c4.coll.1).** Neuf fiches ajoutées au référentiel (cadre Management par objectifs) : `mbo-1` à `mbo-3` opérationnel, `mbo-4` à `mbo-6` programme, `mbo-7` à `mbo-9` stratégique. **I1** 95 → 104 (total). **I2** 12 → 15 (Niveau Programme, `mbo-4/5/6` sont `programme`). I3, I4, I6 valeurs inchangées, dénominateur 104. **I5 inchangé** : les 9 fiches `mbo-*` sont déclarées en fin de `CM.Referentiel`, tête du segment Programme intacte. Évolution légitime, cf. doctrine sentinelle rouge.
