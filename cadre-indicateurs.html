@@ -8955,6 +8955,138 @@ CM.FicheQuestion = (function() {
       ecoles: '<em>Leading Change</em> (Kotter, 1995) &middot; <em>ADKAR</em> (Prosci) &middot; <em>Managing Transitions</em> (Bridges, 1991) &middot; <em>Unfreeze, Change, Refreeze</em> (Lewin, 1947). Les écoles convergent sur un point : la résistance est légitime et porteuse d\'information. Elles divergent sur le point d\'attaque : la cognition (Kotter), l\'individu (ADKAR), la transition (Bridges), le système (Lewin).',
 
       citationPied: 'La résistance n\'est pas un obstacle à contourner ; c\'est le signal que tu mesures à la mauvaise étape.'
+    }),
+
+    /* === Fiche cascade-objectifs (variante section 4.4 standard, chantier 26 jalon C.4) ===
+       Matiere portee du mockup-fiche-question-cascade-objectifs.html, puis
+       retravaillee au jalon C.4 (23/05/2026) avec Laetitia : Q1 enrichi a sept
+       maillons (ajouts : objectifs trop nombreux, objectifs flous, capteur
+       inadapte, absence d'accompagnement) et trio reformule. Panel Coach
+       executif MBO orthodoxe (Drucker, Locke et Latham, Humble). Trois axes
+       stables alignement / precision / accompagnement ; cardEnTete pointe un
+       id d'axe. Les neuf cellules sont sans fiche de referentiel : la
+       discipline de cascade MBO n'est cataloguee a aucun niveau (cadre MBO en
+       reserve dans CADRES_A_VENIR depuis le chantier 1.ter). Chaque cellule
+       porte un nom provisoire (champ nom) rendu par _htmlCard depuis a766b76 ;
+       un constat collateral est ouvert pour leur creation au referentiel.
+       Doctrine v0.8 : chaque intention explique le pourquoi. Aucun caractere
+       IA-type (matiere redigee le 23/05). */
+    'cascade-objectifs': Object.freeze({
+      id: 'cascade-objectifs',
+      variante: '§4.4',
+      question: 'Comment cascader des objectifs jusqu\'au terrain ?',
+      bandeauAttente: 'Deux questions courtes, <strong>deux minutes</strong>, tu repars avec trois indicateurs candidats, un par maillon de la cascade.',
+      panel: 'Coach exécutif en management par objectifs : Drucker, Locke et Latham, Humble',
+
+      q1: Object.freeze({
+        libelle: 'Quel maillon de la cascade construire en premier ?',
+        options: Object.freeze([
+          Object.freeze({ id: 'mission',     libelle: 'La mission n\'est pas claire ni partagée',                       cardEnTete: 'alignement'     }),
+          Object.freeze({ id: 'traduction',  libelle: 'La mission existe mais n\'est pas traduite en objectifs concrets', cardEnTete: 'alignement'     }),
+          Object.freeze({ id: 'nombre',      libelle: 'Les objectifs sont trop nombreux, rien n\'est priorisé',          cardEnTete: 'alignement'     }),
+          Object.freeze({ id: 'flou',        libelle: 'Les objectifs existent mais restent flous, pas assez précis',     cardEnTete: 'precision'      }),
+          Object.freeze({ id: 'capteur',     libelle: 'Les objectifs ont un capteur de mesure absent ou inadapté',       cardEnTete: 'precision'      }),
+          Object.freeze({ id: 'dialogue',    libelle: 'Les objectifs sont posés sans dialogue ni accompagnement',        cardEnTete: 'accompagnement' }),
+          Object.freeze({ id: 'suivi',       libelle: 'Les objectifs sont mesurés mais pas revus en cours d\'année',      cardEnTete: 'accompagnement' })
+        ])
+      }),
+
+      q2: Object.freeze({
+        libelle: 'Où agir ?',
+        options: Object.freeze([
+          Object.freeze({ id: 'equipe',       libelle: 'Une équipe',            niveau: 'operationnel' }),
+          Object.freeze({ id: 'programme',    libelle: 'Un programme entier',   niveau: 'programme'    }),
+          Object.freeze({ id: 'organisation', libelle: 'Toute l\'organisation', niveau: 'strategique'  })
+        ])
+      }),
+
+      /* Trois axes stables. alignement = l'objectif se rattache a la mission
+         et la liste reste concentree ; precision = l'objectif est clairement
+         formule et assorti du bon capteur ; accompagnement = l'objectif est
+         negocie, soutenu a sa mise en place, puis revu. */
+      axes: Object.freeze([
+        Object.freeze({ id: 'alignement',     nom: 'Alignement'     }),
+        Object.freeze({ id: 'precision',      nom: 'Précision'      }),
+        Object.freeze({ id: 'accompagnement', nom: 'Accompagnement' })
+      ]),
+
+      /* Trois trios distincts. Chaque card : id d'axe + niveau + ficheRef
+         (doctrine D3) + intention. Les neuf cellules sont CADRES_A_VENIR et
+         portent un nom provisoire (chantier 26.c4). */
+      trios: Object.freeze({
+        operationnel: Object.freeze([
+          Object.freeze({
+            id: 'alignement', niveau: 'operationnel', ficheRef: 'CADRES_A_VENIR',
+            nom: 'Taux d\'objectifs reliés à la mission',
+            intention: 'Sur les objectifs annuels de l\'équipe, compte ceux qui se rattachent explicitement à une phrase de la mission. Le test tient en une question, posée objectif par objectif : si on l\'atteint, en quoi sert-on la mission. Drucker fait de ce lien la première exigence du MBO, et il en tire une seconde, la concentration : une équipe qui poursuit trop d\'objectifs à la fois n\'en a vraiment hiérarchisé aucun, et un objectif sans lien de mission est presque toujours un objectif de trop. Sous 70 %, la cascade est surtout cosmétique. Le bon geste n\'est alors pas d\'ajouter des objectifs, c\'est de reformuler ceux qui flottent et de renoncer à ceux qui ne servent pas la mission.'
+          }),
+          Object.freeze({
+            id: 'precision', niveau: 'operationnel', ficheRef: 'CADRES_A_VENIR',
+            nom: 'Taux d\'objectifs spécifiques et mesurables',
+            intention: 'Sur les objectifs de l\'équipe, compte ceux qui sont à la fois formulés de façon précise et assortis d\'un capteur pertinent, défini avant le démarrage. Les deux qualités vont ensemble : un objectif flou ne peut pas recevoir un bon capteur, et un capteur posé sur un objectif vague finit par mesurer autre chose que ce qu\'on visait. Locke et Latham l\'ont montré, un objectif n\'engage vraiment que s\'il est spécifique et observable. Un objectif imprécis reste un vœu : faute d\'avoir fixé d\'avance ce qui dirait qu\'on avance, on en débattra en fin d\'année. Quand le taux est bas, le travail n\'est pas de chiffrer des cibles partout, c\'est de rendre chaque objectif assez net pour qu\'on sache, sans discuter, s\'il est tenu.'
+          }),
+          Object.freeze({
+            id: 'accompagnement', niveau: 'operationnel', ficheRef: 'CADRES_A_VENIR',
+            nom: 'Cadence de revue manager-collaborateur',
+            intention: 'Compte les occasions de revue partagée des objectifs sur le trimestre, entre le responsable et chaque collaborateur, à la mise en place comme en cours de route. Drucker plaçait la barre au mensuel, Humble au trimestriel : la régularité compte davantage que l\'écart exact. Sous-cadence, l\'objectif devient une formalité qu\'on redécouvre en fin d\'année ; sur-cadence, il se réduit à un reporting et perd sa fonction de dialogue. Cet indicateur ne mesure pas un nombre de réunions, il mesure si le collaborateur a des occasions régulières d\'être aidé, de signaler un obstacle et d\'ajuster le tir. C\'est là que se joue le self-control de Drucker : l\'objectif sert d\'abord à se piloter soi-même, pas à être noté.'
+          })
+        ]),
+        programme: Object.freeze([
+          Object.freeze({
+            id: 'alignement', niveau: 'programme', ficheRef: 'CADRES_A_VENIR',
+            nom: 'Taux d\'objectifs d\'équipe reliés à un objectif de programme',
+            intention: 'À l\'échelle du programme, l\'alignement ne se lit plus objectif par objectif mais équipe par équipe : la part des objectifs d\'équipe qui se rattachent explicitement à un objectif du programme. Là où le niveau équipe vérifie le lien à la mission, le niveau programme vérifie que les équipes tirent dans la même direction, et pas chacune vers sa propre cible locale. Un taux faible signale une cascade rompue à l\'étage intermédiaire : le programme a ses objectifs, les équipes ont les leurs, et les deux listes ne se parlent pas. Le risque concret porte un nom, l\'optimisation locale : chaque équipe atteint ses chiffres pendant que le programme, lui, n\'avance pas.'
+          }),
+          Object.freeze({
+            id: 'precision', niveau: 'programme', ficheRef: 'CADRES_A_VENIR',
+            nom: 'Couverture des objectifs de programme par un capteur partagé',
+            intention: 'La part des objectifs du programme formulés assez précisément pour porter un capteur commun, lisible par toutes les équipes concernées et pas seulement par celle qui le produit. Au niveau équipe, un capteur peut rester interne ; au niveau programme, un capteur que les autres ne comprennent pas ne sert plus à coordonner. L\'enjeu est la lisibilité partagée : si chaque équipe mesure sa contribution avec sa propre définition, les chiffres ne s\'additionnent pas et la revue de programme se transforme en débat de méthode plutôt qu\'en discussion de fond. Une couverture faible annonce des revues où l\'on passe plus de temps à s\'accorder sur les chiffres qu\'à décider quoi que ce soit.'
+          }),
+          Object.freeze({
+            id: 'accompagnement', niveau: 'programme', ficheRef: 'CADRES_A_VENIR',
+            nom: 'Cadence de revue d\'alignement du programme',
+            intention: 'Le nombre d\'occasions, par trimestre, où les responsables d\'équipe et la direction du programme revoient ensemble l\'alignement des objectifs, et pas seulement l\'avancement des livrables. La distinction est décisive : une revue de livraison regarde si le travail avance, une revue d\'alignement regarde s\'il avance encore dans la bonne direction. Sans cette cadence dédiée, la dérive d\'alignement ne se voit qu\'à la fin, quand les équipes ont déjà consommé un trimestre sur des objectifs devenus caducs. La bonne cadence est celle qui permet de corriger avant que l\'écart ne coûte cher, sans pour autant transformer chaque semaine en comité.'
+          })
+        ]),
+        strategique: Object.freeze([
+          Object.freeze({
+            id: 'alignement', niveau: 'strategique', ficheRef: 'CADRES_A_VENIR',
+            nom: 'Taux d\'objectifs stratégiques reliés à la mission',
+            intention: 'À l\'échelle de l\'organisation, la part des objectifs stratégiques annuels qui se rattachent explicitement à la mission de l\'entreprise, et non à une opportunité de circonstance. C\'est le sommet de la cascade : si le lien se rompt ici, aucun étage en dessous ne peut le réparer. Drucker, dans Managing for Results, en fait une discipline de concentration : hiérarchiser les objectifs par leur contribution à la mission plutôt que de tout poursuivre à la fois. Un taux faible, ou une liste d\'objectifs stratégiques trop longue, signale que la direction n\'a pas tranché ce qui sert vraiment la raison d\'être. Le geste attendu n\'est pas d\'aligner les formulations après coup, c\'est de renoncer aux objectifs qui ne la servent pas.'
+          }),
+          Object.freeze({
+            id: 'precision', niveau: 'strategique', ficheRef: 'CADRES_A_VENIR',
+            nom: 'Couverture des objectifs stratégiques par un résultat clé mesurable',
+            intention: 'La part des objectifs stratégiques formulés précisément et assortis d\'un résultat clé mesurable, défini au moment où l\'objectif est posé. Au niveau de la direction, l\'imprécision a un coût particulier : un objectif stratégique flou se cascade en objectifs d\'équipe flous, et le défaut se propage à tous les étages en s\'amplifiant. Le résultat clé stratégique n\'a pas vocation à être suivi au quotidien ; il sert de référence commune pour savoir, en fin de cycle, si l\'ambition a été tenue. Une couverture incomplète à ce niveau explique souvent pourquoi les équipes, plus bas, n\'arrivent pas à traduire la stratégie : on ne traduit pas ce qui n\'a jamais été rendu net et observable.'
+          }),
+          Object.freeze({
+            id: 'accompagnement', niveau: 'strategique', ficheRef: 'CADRES_A_VENIR',
+            nom: 'Cadence de revue stratégique des objectifs',
+            intention: 'Le nombre de revues, dans l\'année, où le comité de direction réexamine les objectifs stratégiques eux-mêmes, et pas seulement leur avancement. Beaucoup d\'organisations fixent leurs objectifs en début d\'année et ne les rouvrent qu\'aux douze mois suivants ; entre-temps le contexte a bougé et une partie des objectifs est devenue fausse. Une cadence de revue stratégique, trimestrielle par exemple, permet de réviser l\'ambition en connaissance de cause plutôt que de la subir. L\'indicateur ne mesure pas la fréquence des comités, il mesure si la direction se donne des occasions formelles de reconnaître qu\'un objectif n\'est plus le bon. Sans cette cadence, la cascade fait descendre fidèlement jusqu\'au terrain des objectifs que plus personne n\'ose défendre.'
+          })
+        ])
+      }),
+
+      recommandationParNiveau: Object.freeze({
+        operationnel: 'Pour bien faire, tiens les trois indicateurs ensemble dès le premier cycle, sans en privilégier un seul. Les trois maillons sont solidaires : un objectif sans lien à la mission dérive, un objectif imprécis reste un vœu, un objectif sans revue partagée se réduit à un reporting de fin d\'année. Drucker l\'écrit dès 1954, le MBO est une discipline de self-control par le dialogue, jamais une mécanique de notation. Le piège le plus courant est la <span class="anti-pattern">cascade unilatérale descendante</span>, où l\'objectif arrive déjà ficelé et devient une injonction que le collaborateur subit sans l\'avoir négocié. Le piège suivant est l\'<span class="anti-pattern">indexation de la rémunération variable sur l\'atteinte</span> : elle pousse à négocier des objectifs faciles plutôt qu\'utiles, et c\'est précisément ce travers qui a fait évoluer la pratique vers les OKR, avec un découplage explicite de l\'objectif et de l\'évaluation.',
+        programme: 'Au niveau programme, la priorité est de rendre l\'alignement visible entre les équipes. Présente les trois indicateurs au même rythme en revue de programme, et ne réduis pas la revue d\'alignement à une revue de livraison. Le piège classique consiste à <span class="anti-pattern">ne suivre que l\'avancement des livrables</span> en supposant que l\'alignement, lui, va de soi : il ne va jamais de soi dès qu\'il y a plus d\'une équipe. L\'autre piège est la <span class="anti-pattern">moyenne qui masque la dispersion</span> : un taux d\'alignement global rassurant peut cacher une équipe pivot complètement désalignée, et c\'est elle qui décidera du sort du programme. Lis les écarts entre équipes autant que le niveau d\'ensemble.',
+        strategique: 'Au niveau de la direction, traite ces indicateurs comme un miroir du comité de direction, pas comme un tableau de bord à exhiber. La première discipline est la concentration : une liste d\'objectifs stratégiques trop longue est en soi un signal de cascade affaiblie, parce qu\'on ne hiérarchise bien que ce qu\'on accepte d\'élaguer. Le piège classique est de <span class="anti-pattern">fixer les objectifs en début d\'année et ne plus les rouvrir</span>, ce qui fait descendre fidèlement jusqu\'au terrain une ambition devenue caduque. L\'autre piège est de <span class="anti-pattern">soigner la formulation de l\'alignement après coup</span>, en rattachant a posteriori chaque objectif à la mission par un habillage de vocabulaire, au lieu de renoncer pour de bon à ceux qui ne la servent pas.'
+      }),
+
+      liensSortantsParNiveau: Object.freeze({
+        operationnel: Object.freeze({ ficheRef: 'CADRES_A_VENIR', libelle: 'Voir la fiche cadre Management par objectifs (Drucker, Humble)', mentionAbsent: '(fiche cadre en cours de constitution)' }),
+        programme:    Object.freeze({ ficheRef: 'CADRES_A_VENIR', libelle: 'Voir la fiche cadre Management par objectifs (Drucker, Humble)', mentionAbsent: '(fiche cadre en cours de constitution)' }),
+        strategique:  Object.freeze({ ficheRef: 'CADRES_A_VENIR', libelle: 'Voir la fiche cadre Management par objectifs (Drucker, Humble)', mentionAbsent: '(fiche cadre en cours de constitution)' })
+      }),
+
+      crossLink: Object.freeze({
+        ficheQ: 'pasteque',
+        libelle: 'Mes indicateurs reflètent-ils la réalité du terrain ?'
+      }),
+
+      ecoles: '<em>The Practice of Management</em> (Drucker, 1954, fondateur du MBO, alignement vertical par le dialogue, self-control) &middot; <em>Managing for Results</em> (Drucker, 1964, concentrer les ressources sur les opportunités, hiérarchiser les objectifs par contribution) &middot; <em>Goal Setting Theory</em> (Locke &amp; Latham, 1968, théorie psychologique de la fixation des objectifs : engagement, spécificité, difficulté calibrée, retour fréquent) &middot; <em>Management by Objectives</em> (Humble, 1972, opérationnalisation méthodologique du cycle MBO). Les écoles convergent sur la cascade comme discipline d\'alignement. Elles divergent sur la place du dialogue, négocié pour Drucker et davantage prescrit pour Locke, sur la cadence, mensuelle chez Drucker tardif et trimestrielle chez Humble, et sur le couplage à la rémunération, déconseillé partout et pourtant pratiqué massivement.',
+
+      citationPied: 'La cascade vit par le dialogue, pas par l\'addition des objectifs.'
     })
 
   });
