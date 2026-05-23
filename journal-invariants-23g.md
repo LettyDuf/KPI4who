@@ -33,12 +33,12 @@ function sonde() {
 
 | # | Lentilles actives | Compteur | nb_cartes | Premiers ids | Message vide |
 |---|---|---:|---:|---|---|
-| **I1** | (aucune) | `89 sur 89 indicateurs` | **89** | `s1` | — |
-| **I2** | Niveau · Programme | `9 sur 89 indicateurs` | **9** | `p1, p2, p3, p4, p5` | — |
-| **I3** | Cadre · DORA | `4 sur 89 indicateurs` | **4** | `o1, o2, o3, o4` | — |
-| **I4** | Niveau · Programme **et** Cadre · DORA | `0 sur 89 indicateurs` | **0** | (vide) | « Aucun indicateur ne combine ces lentilles. » |
+| **I1** | (aucune) | `95 sur 95 indicateurs` | **95** | `s1` | — |
+| **I2** | Niveau · Programme | `12 sur 95 indicateurs` | **12** | `p1, p2, p3, p4, p5` | — |
+| **I3** | Cadre · DORA | `4 sur 95 indicateurs` | **4** | `o1, o2, o3, o4` | — |
+| **I4** | Niveau · Programme **et** Cadre · DORA | `0 sur 95 indicateurs` | **0** | (vide) | « Aucun indicateur ne combine ces lentilles. » |
 | **I5** | Niveau · Programme (= I2) | (cf. I2) | (cf. I2) | `p1, p2, p3, p4, p5` — fiabilité décroissante validée : `fiable, fiable, fiable, precaution, precaution` | — |
-| **I6** | Niveau · Stratégique **et** Cadre · Scrum | `0 sur 89 indicateurs` | **0** | (vide) | « Aucun indicateur ne combine ces lentilles. » |
+| **I6** | Niveau · Stratégique **et** Cadre · Scrum | `0 sur 95 indicateurs` | **0** | (vide) | « Aucun indicateur ne combine ces lentilles. » |
 
 ---
 
@@ -124,3 +124,5 @@ node outils/lancer-tests-accueil-unifie.js
 ```
 
 Régénère les deux harnais et parse-check syntaxique. La validation comportementale reste manuelle dans Safari (doctrine zéro-dépendance, modules DOM-dépendants).
+
+- **23/05/2026 — mini-chantier gestion du changement (constat n°10).** Six fiches ajoutées au référentiel (cadre Gestion du changement) : `cg-1` à `cg-3` au niveau opérationnel, `cg-4` à `cg-6` au niveau programme. **I1** passe de 89 à 95 (total). **I2** passe de 9 à 12 (Niveau Programme, `cg-4/5/6` sont `programme`). I3, I4, I6 inchangés en valeur, dénominateur réactualisé à 95. **I5 inchangé** : les six fiches `cg-*` sont déclarées en fin de `CM.Referentiel` (dernier bloc `ajouter`), donc la tête du segment Programme reste `p1, p2, p3, p4, p5`. Évolution légitime du référentiel, pas une régression — cf. doctrine sentinelle rouge.

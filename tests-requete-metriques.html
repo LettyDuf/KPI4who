@@ -207,7 +207,7 @@ CM.RequeteMetriques = (function() {
     type:            ['IGO', 'ICP', 'ICC', 'ORC', 'DORA', 'FLUX', 'II'],
     cadres:          ['dora', 'cd', 'space', 'lean', 'okr',
                       'scrum', 'kanban', 'safe', 'itil',
-                      'securite', 'generique'],
+                      'securite', 'cx', 'change', 'generique'],
     tags:            ['valeur', 'qualite', 'flux', 'delais',
                       'humain', 'risque', 'alignement'],
     tagsThematiques: ['transversalité', 'prévisibilité', 'engagement',
@@ -324,7 +324,7 @@ CM.RequeteMetriques = (function() {
     if (CLAUSES_ADMISES.indexOf(cle) !== -1) return;
     var sugg = suggestionClause(cle);
     var msg = "clause inconnue '" + cle + "'";
-    if (sugg) { msg += " (vouliez-vous dire '" + sugg + "' ?)"; }
+    if (sugg) { msg += " (voulais-tu dire '" + sugg + "' ?)"; }
     msg += ". Clauses admises : " + CLAUSES_ADMISES.join(', ') + ".";
     erreur(msg);
   }
