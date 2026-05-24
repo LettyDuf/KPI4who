@@ -1010,22 +1010,38 @@ Sur les quatre lots, 33 liens ont été posés sur 25 champs éditoriaux de 18 f
 **Prochaine action recommandée.** La première fiche-question est rédigée éditorialement (20.5 partiellement entamée). Trois pistes possibles pour la suite : (a) **clore la palette 20.1** en séance dédiée, préalable à la mise en mockup des fiches rédigées ; (b) **rédiger une seconde fiche-question candidate** d'un autre panel pour valider la portabilité de la doctrine du trio par niveau (ex : *Comment arbitrer entre les initiatives qui se présentent ?*, panel Terrain des autres cadres) ; (c) **créer les 4 fiches métriques manquantes** du référentiel pour rendre la première fiche-question entièrement vivante. Choix à arbitrer en ouverture de la prochaine séance.
 
 
-## 21. Vue *Lexique* — chantier à ouvrir *(📋 ouverte le 08/05/2026)*
+## 21. Vue *Lexique* : référentiel pédagogique *(📋 chantier ouvert le 24/05/2026)*
 
-**Origine.** Le 08/05/2026, lors de l'activation des stubs *Cascade stratégique* et *Maturité* dans le bandeau du haut, Lætitia demande la même chose pour *Lexique*. Constat code : aucune `vue-lexique` ni `_rendreLexique()` n'existe — c'est un stub orphelin partout (6 occurrences dans les bandeaux). Décision Lætitia : option (A) — laisser le stub jusqu'à un chantier dédié, plutôt qu'improviser une vue minimaliste.
+**Origine.** Le 08/05/2026, lors de l'activation des stubs *Cascade* et *Maturité* du bandeau, Lætitia demande la même chose pour *Lexique*. Constat code : aucune `vue-lexique` n'existe, le stub est orphelin (lignes 2369 et 2473, classe `stub`, `aria-disabled`, clic sans effet). Décision du 08/05 : option (A), laisser le stub jusqu'à un chantier dédié plutôt qu'improviser une liste alphabétique. Chantier resté en backlog jusqu'à son ouverture le 24/05/2026.
 
-**Pourquoi un chantier dédié.** Un lexique digne de ce nom mérite plus qu'une liste alphabétique improvisée :
-- **Source des termes** : extraire automatiquement les `<span class="term-def">` du fichier ? composer un référentiel séparé ? les deux ?
-- **Définitions** : les définitions actuelles vivent en attribut `data-def` des term-def ; sont-elles toutes rédigées avec la même rigueur ? un audit éditorial préalable s'impose.
-- **Recherche** : champ de recherche en tête, ancres de retour vers les fiches du référentiel qui mentionnent le terme.
-- **Doctrine visuelle** : posture du § 6 du cadre visuel à incarner sur cette page-type non encore couverte (« étape B³ — incarnation du lexique »).
-- **Connexion à la voie hybride** : la page sera-t-elle pure matière en blanc franc, ou aura-t-elle un cadre blanc intermédiaire comme la vue *Par ma question* ?
+**Ambition retenue : exhaustive.** Séance du 24/05/2026. Trois ambitions étaient sur la table (miroir des fiches / lexique curé / référentiel pédagogique). Option exhaustive retenue : le Lexique devient un référentiel pédagogique à part entière, chaque entrée enrichie (définition canonique, exemple concret, anti-pattern lié, renvois croisés), avec une incarnation visuelle complète.
 
-**Stub conservé en attendant.** L'entrée *Lexique* du bandeau reste en stub (opacité 0.45, cursor default, click sans effet) — non joignable.
+**État des lieux.** `cadre-indicateurs.html` contient environ 190 balises `term-def` pour 142 libellés distincts. 24 libellés ont des définitions divergentes d'une fiche à l'autre (Effet Goodhart 9 variantes, Gemba 6, Deming 4), parfois volontaires (contextualisation), parfois dérive. Quelques entrées ne sont pas des termes mais des fragments de citation. Une extraction automatique brute donnerait un lexique incohérent : un audit éditorial est nécessaire (jalon B).
 
-**Articulations.** Articulé avec chantier 19 (cadre visuel — étape B³ à ouvrir), chantier 1.bis (audit acronymes), et la doctrine `feedback_audit_acronymes_methode`. Pas de dépendance bloquante en amont, peut s'ouvrir dès qu'une séance s'y prête.
+**Arbitrages verrouillés le 24/05/2026.**
 
-**Prochaine action recommandée.** Aucune dans l'immédiat — le chantier reste en backlog tant que la priorité va aux remédiations de la voie hybride et au catalogue de questions fines (chantier 20).
+- *Source de vérité, « Source + garde-fou ».* Le Lexique devient la référence éditoriale ; les fiches gardent leur attribut `data-def` ; une sentinelle signale les divergences pour revue sans les empêcher. Raison : une partie des 24 divergences est volontaire, une source unique réinjectée les écraserait.
+- *Taxonomie, 4 catégories en structure plate.* Liste plate alphabétique comme ossature, catégorie en simple attribut (cadre / indicateur / concept / anti-pattern), pas d'arborescence. Recherche plein texte et filtre par catégorie. Les auteurs (Deming, Drucker) ne sont pas des entrées, ils se tissent dans les définitions de concept.
+
+**Architecture.** Patron hexagonal du projet, 5 couches : matière `lexique-source.md`, puis générateur `outils/generer-lexique.js`, puis zone balisée `CM.LEXIQUE-DATA`, puis module `CM.Lexique` (logique et rendu purs) avec `CM.VueLexique` (orchestrateur DOM), plus la sentinelle `outils/verifier-invariants-lexique.js`. Détail dans le document compagnon `doc-contrats-lexique.md` (v0.1 posée le 24/05/2026), référence du chantier à laquelle le code se conforme.
+
+**Plan de jalons.**
+
+| Jalon | Mandat | État |
+|---|---|---|
+| A | Cadrage : ouverture au backlog + doc compagnon v0.1 | ✅ livré le 24/05/2026 |
+| B | Audit et source éditoriale : résoudre les 24 divergences, écarter les non-termes, classer en 4 catégories, rédiger `lexique-source.md`. Découpé B.1 à B.4 par catégorie. Le jalon le plus lourd. | 🔴 à faire |
+| C | Enrichissement : exemple concret, anti-pattern lié, renvois croisés par entrée | 🔴 à faire |
+| D | Générateur, zone balisée, dérivation automatique de `mentionneeDans` | 🔴 à faire |
+| E | Module `CM.Lexique` et vue `CM.VueLexique`, activation du stub du bandeau sur les deux bandeaux | 🔴 à faire |
+| F | Incarnation visuelle, étape B³ : mockup-preview, arbitrage du traitement visuel, mise à jour de `doc-cadre-visuel.md` | 🔴 à faire |
+| G | Sentinelle `verifier-invariants-lexique.js`, harnais de tests, scénario de non-régression, smoke test | 🔴 à faire |
+
+Estimation grossière : 25 à 35 h sur 7 à 10 séances, à affiner après le jalon B qui révèlera le volume éditorial réel.
+
+**Articulations.** Articulé avec le chantier 19 (cadre visuel, étape B³ ouverte par le jalon F), le chantier 1.bis (audit acronymes) et la doctrine `feedback_audit_acronymes_methode`. Pas de dépendance bloquante en amont.
+
+**Prochaine action recommandée.** Jalon B : audit éditorial des 142 libellés. À ouvrir par une extraction outillée des `term-def`, puis une revue par catégorie avec Lætitia.
 
 
 ## 22. Harmonisation au tutoiement de l'ensemble de l'outil *(✅ livré le 09/05/2026)*
