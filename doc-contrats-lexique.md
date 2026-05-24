@@ -1,11 +1,12 @@
 # Contrats et architecture - vue Lexique (chantier 21)
 
-Document compagnon du chantier 21. Version v0.1, cadrage (jalon A), posée le 24/05/2026.
+Document compagnon du chantier 21. Version v0.2, posée le 24/05/2026 (cadrage du
+jalon A, affinée après le jalon B.0).
 
 Ce document est la reference du chantier. En cas d'ecart entre lui et le code,
 soit le code est corrige, soit le document est amende par une decision tracee
-au journal (section 9). v0.1 fixe le cadrage ; plusieurs points restent en
-arbitrage ouvert (section 8) et seront verrouilles au fil des jalons.
+au journal (section 9). Plusieurs points restent en arbitrage ouvert (section 8)
+et seront verrouilles au fil des jalons.
 
 
 ## 0. Objet
@@ -17,8 +18,9 @@ un referentiel pedagogique des termes employes dans l'outil.
 
 Le Lexique n'est pas un index. C'est une page-type a part entiere, qui enseigne
 le vocabulaire du pilotage de la performance : cadres, indicateurs, concepts,
-anti-patterns. Chaque entree porte une definition canonique, un exemple concret,
-l'anti-pattern associe quand il existe, et des renvois vers les termes voisins.
+anti-patterns, auteurs et figures. Chaque entree porte une definition canonique,
+un exemple concret, l'anti-pattern associe quand il existe, et des renvois vers
+les termes voisins.
 
 
 ## 1. Cadrage
@@ -57,22 +59,27 @@ complete. Chantier d'ampleur, decoupe en 7 jalons (section 7).
 Une extraction automatique brute produirait donc un lexique incoherent. Le
 jalon B (audit editorial) traite ce terrain.
 
-### 1.4 Arbitrages verrouilles le 24/05/2026
+### 1.4 Arbitrages verrouilles
 
-**Source de verite : « Source + garde-fou ».** Le Lexique devient la reference
-editoriale. Les fiches conservent leur attribut `data-def` actuel. Une sentinelle
-verifie la coherence et signale les divergences pour revue, sans les empecher.
-Raison du choix : une partie des 24 divergences est volontaire ; une source
-unique reinjectee dans les fiches ecraserait ces contextualisations. Le
-garde-fou laisse vivre la contextualisation et rend la derive visible.
+**Source de verite : « Source + garde-fou »** (24/05/2026). Le Lexique devient
+la reference editoriale. Les fiches conservent leur attribut `data-def` actuel.
+Une sentinelle verifie la coherence et signale les divergences pour revue, sans
+les empecher. Raison du choix : une partie des 24 divergences est volontaire ;
+une source unique reinjectee dans les fiches ecraserait ces contextualisations.
+Le garde-fou laisse vivre la contextualisation et rend la derive visible.
 
-**Taxonomie : 4 categories, structure plate.** La structure de stockage et de
-balayage est une liste plate, alphabetique : ajouter une entree est une ligne,
-sans decision de rangement, et la recherche directe est immediate. La categorie
-est un simple attribut sur chaque entree, pas une arborescence ; elle alimente
-un filtre pour la lecture thematique. Quatre valeurs : `cadre`, `indicateur`,
-`concept`, `anti-pattern`. Les auteurs (Deming, Drucker, Goldratt) ne sont pas
-des entrees : ils se tissent dans les definitions de concept.
+**Taxonomie : 5 categories, structure plate** (24/05/2026). La structure de
+stockage et de balayage est une liste plate, alphabetique : ajouter une entree
+est une ligne, sans decision de rangement, et la recherche directe est
+immediate. La categorie est un simple attribut sur chaque entree, pas une
+arborescence ; elle alimente un filtre pour la lecture thematique. Cinq
+valeurs : `cadre`, `indicateur`, `concept`, `anti-pattern`, `auteur`.
+
+La categorie `auteur` a ete ajoutee le 24/05/2026 apres le jalon B.0 (voir
+journal, section 9). Le cadrage initial excluait les auteurs. L'examen du
+contenu reel des infobulles d'auteurs a montre qu'elles portent une lecon
+pedagogique substantielle, pas une notice biographique : elles meritent une
+entree. Une entree `auteur` porte donc l'apport de la figure, pas sa biographie.
 
 
 ## 2. Modele de donnees d'une entree
@@ -84,8 +91,8 @@ patron `CM.FicheQuestion`). Champs :
 |---|---|---|---|
 | `id` | chaine kebab-case | oui | Identifiant technique, jamais affiche. Sert aux renvois et au deep-link. |
 | `terme` | chaine | oui | Libelle affiche. |
-| `categorie` | `cadre` \| `indicateur` \| `concept` \| `anti-pattern` | oui | Categorie unique. Alimente le filtre. |
-| `definition` | tableau de paragraphes | oui | Definition canonique. La reference editoriale du terme. |
+| `categorie` | `cadre` \| `indicateur` \| `concept` \| `anti-pattern` \| `auteur` | oui | Categorie unique. Alimente le filtre. |
+| `definition` | tableau de paragraphes | oui | Definition canonique. La reference editoriale du terme. Pour une entree `auteur`, porte l'apport de la figure. |
 | `exemple` | chaine (un paragraphe) | recommande | Exemple concret, de preference dans un contexte IT, produit ou DevOps. |
 | `antiPatternLie` | `id` | optionnel | Pour une entree `cadre`, `indicateur` ou `concept` : l'entree `anti-pattern` associee (le piege classique du terme). |
 | `renvois` | tableau d'`id` | optionnel | Termes voisins a consulter. |
@@ -208,7 +215,7 @@ la demande et en fin de jalon. Voir section 5.
 
 ## 4. Taxonomie et navigation
 
-### 4.1 Les quatre categories
+### 4.1 Les cinq categories
 
 - **`cadre`** : cadres et methodes. Balanced Scorecard, ADKAR, COSO ERM, Flow
   Framework, NIST CSF, MBO...
@@ -218,11 +225,18 @@ la demande et en fin de jalon. Voir section 5.
   Little...
 - **`anti-pattern`** : anti-patterns et pieges de mesure. Effet Goodhart,
   optimisation locale, scoring individuel, deploy theater...
+- **`auteur`** : auteurs et figures fondatrices. Deming, Drucker, Flyvbjerg,
+  Lencioni... Une entree `auteur` porte l'apport de la figure (sa lecon),
+  pas une notice biographique.
 
 La categorie `anti-pattern` est distincte a dessein : le backlog reclamait un
 « lexique central des anti-patterns », leur valeur pedagogique le justifie. Les
 entrees `anti-pattern` conservent le double signal visuel du projet (`term-def`
 violet plus surlignage ambre) la ou elles apparaissent dans les fiches.
+
+La categorie `auteur` est bornee au jalon B : seuls les auteurs deja porteurs
+d'une balise `term-def` recoivent une entree (8 figures). Ouvrir une entree
+pour tout auteur cite ailleurs serait un enrichissement ulterieur.
 
 ### 4.2 Navigation de la page
 
@@ -245,7 +259,7 @@ conformement a l'arbitrage « Source + garde-fou » et a la doctrine projet
   entree correspondante au Lexique (comparaison normalisee sur la casse et les
   accents). Aucun mot souligne orphelin.
 - I2 : les `id` du Lexique sont uniques.
-- I3 : chaque `categorie` appartient aux quatre valeurs admises.
+- I3 : chaque `categorie` appartient aux cinq valeurs admises.
 - I4 : chaque `renvois`, `antiPatternLie` et `ficheRef` pointe vers un `id`
   existant (entree du Lexique, ou fiche du referentiel pour `ficheRef`).
 - I5 : `antiPatternLie` pointe bien vers une entree de categorie `anti-pattern`.
@@ -282,8 +296,8 @@ est un arbitrage ouvert, a trancher sur mockup-preview au jalon F.
 
 | Jalon | Mandat | Etat |
 |---|---|---|
-| **A** | Cadrage. Ouverture au backlog, ce document compagnon v0.1. | en cours |
-| **B** | Audit et source editoriale. Extraire les `term-def`, resoudre les 24 divergences, ecarter les non-termes, classer en 4 categories, rediger `lexique-source.md`. Decoupe par categorie (B.1 a B.4). Le jalon le plus lourd. | a faire |
+| **A** | Cadrage. Ouverture au backlog, ce document compagnon. | livre le 24/05/2026 |
+| **B** | Audit et source editoriale. Extraire les `term-def`, resoudre les 24 divergences, ecarter les non-termes, classer en 5 categories, rediger `lexique-source.md`. Sous-jalon B.0 (inventaire) puis B.1 a B.5 (redaction par categorie). Le jalon le plus lourd. | en cours, B.0 livre le 24/05/2026 |
 | **C** | Enrichissement. Par entree : exemple concret, anti-pattern lie, renvois croises. Peut se mener categorie par categorie dans la foulee de B. | a faire |
 | **D** | Generateur et integration. `outils/generer-lexique.js`, zone balisee `CM.LEXIQUE-DATA`, derivation automatique de `mentionneeDans`. | a faire |
 | **E** | Module et vue. `CM.Lexique` (logique et rendu purs), `CM.VueLexique` (orchestrateur, recherche, filtres, routage hash), activation du stub du bandeau sur les deux bandeaux. | a faire |
@@ -315,8 +329,8 @@ A trancher au fil des jalons, puis verrouilles ici.
    entrees. A confirmer au jalon C.
 4. **Traitement visuel.** Matiere en blanc franc, ou cadre blanc intermediaire.
    Defere au mockup-preview du jalon F.
-5. **Perimetre exact.** 142 libelles, moins les non-termes, plus d'eventuelles
-   fusions. Volume estime entre 120 et 130 entrees. A figer au jalon B.
+5. **Perimetre exact.** 142 libelles, moins les fusions. Volume estime autour de
+   134 entrees, dont 8 entrees `auteur`. A figer au jalon B.
 
 
 ## 9. Journal du document
@@ -325,3 +339,10 @@ A trancher au fil des jalons, puis verrouilles ici.
   exhaustive, arbitrages « Source + garde-fou » et « 4 categories plates »
   verrouilles, architecture hexagonale en 5 couches posee, modele de donnees
   d'une entree, sentinelle a deux niveaux, plan de jalons A-G.
+- **v0.2, 24/05/2026.** Apres le jalon B.0 (inventaire des 142 libelles).
+  L'examen du contenu reel des infobulles d'auteurs a montre qu'elles portent
+  une lecon pedagogique, pas une notice biographique. Decision de Laetitia :
+  donner une fiche a chaque auteur. La taxonomie passe de 4 a 5 categories,
+  ajout de `auteur` (8 entrees, bornees aux auteurs deja porteurs d'un
+  `term-def`). Sections 0, 1.4, 2, 4.1, 5 (I3), 7, 8 actualisees. La redaction
+  par categorie passe de B.1-B.4 a B.1-B.5.

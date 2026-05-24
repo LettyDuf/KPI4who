@@ -1,18 +1,19 @@
 # Inventaire du Lexique - chantier 21, jalon B.0
 
 Document de travail. Classe les 142 libellés `term-def` de `cadre-indicateurs.html`
-dans les 4 catégories du Lexique, signale les non-termes, les fusions et les
-divergences. Sert à valider la classification avec Lætitia avant la rédaction
-des définitions canoniques (jalons B.1 à B.4).
+dans les 5 catégories du Lexique, signale les fusions et les divergences. Sert à
+valider la classification avec Lætitia avant la rédaction des définitions
+canoniques (jalons B.1 à B.5).
 
 Extraction : `outils/extraire-term-def.js`. Données brutes : `inventaire-term-def-brut.md`.
+Mis à jour le 24/05/2026 après la décision « une fiche par auteur » (5e catégorie).
 
 
 ## Synthèse chiffrée
 
 - 190 balises `term-def`, 142 libellés distincts, 24 libellés à définitions divergentes.
-- Répartition proposée : 20 cadres, 20 indicateurs, 43 concepts, 49 anti-patterns, 10 non-termes à écarter.
-- Après écart des non-termes et fusions, le Lexique compterait environ 124 entrées.
+- Répartition proposée : 20 cadres, 20 indicateurs, 43 concepts, 49 anti-patterns, 8 auteurs et figures. Plus 2 fragments à fusionner dans ADKAR.
+- Après fusions, le Lexique compterait environ 134 entrées.
 
 Légende : `(N)` occurrences ; `[div. N]` N définitions divergentes ; `[fusion]` à fusionner ; `[?]` classement à confirmer.
 
@@ -165,25 +166,25 @@ Légende : `(N)` occurrences ; `[div. N]` N définitions divergentes ; `[fusion]
 - usage en évaluation individuelle ou par équipe (1)
 
 
-## 5. Non-termes à écarter (10 libellés)
+## 5. Auteurs et figures (8 libellés)
 
-Ces libellés portent une balise `term-def` mais ne sont pas des termes de
-glossaire. Huit sont des noms d'auteurs ou d'organisations (la décision du
-24/05 exclut les auteurs des entrées : ils se tissent dans les définitions de
-concept). Deux sont des fragments à rattacher à une entrée existante.
+Cinquième catégorie, actée le 24/05/2026. Les infobulles posées sur des noms
+d'auteurs ne sont pas des notices biographiques : elles portent une leçon
+pédagogique. Ces noms deviennent donc des entrées à part entière, dont la
+définition porte l'apport de la figure.
 
-- Deming (4) [div. 4] : auteur. Les 4 définitions nourriront « règle des 94 % de Deming » et les concepts qualité.
-- Dixon (2) [div. 2] : auteur (Matthew Dixon).
-- Drucker, dans Managing for Results (1) : fragment de citation, pas un terme.
-- Flyvbjerg (1) : auteur (Bent Flyvbjerg).
-- Humble (1) : auteur (John W. Humble, MBO 1972).
-- Knowledge et Ability (1) : phases d'ADKAR, à rattacher à l'entrée ADKAR.
-- Lencioni (1) : auteur (Patrick Lencioni).
-- Locke et Latham (1) : auteurs (théorie de fixation des objectifs).
-- Reinforcement (1) : phase d'ADKAR, à rattacher à l'entrée ADKAR.
-- Standish Group (1) : organisation (rapport CHAOS).
+- Deming (4) [div. 4] : W. Edwards Deming. Les 4 infobulles déclinent la même leçon (94 % des problèmes sont systémiques) sur 4 contextes ; à réconcilier en une définition canonique.
+- Dixon (2) [div. 2] : Matthew Dixon, Effortless Experience.
+- Drucker (1) : libellé actuel « Drucker, dans Managing for Results », à nettoyer en « Drucker ».
+- Flyvbjerg (1) : Bent Flyvbjerg, dépassements des méga-projets.
+- Humble (1) : John W. Humble, opérationnalisation du MBO.
+- Lencioni (1) : Patrick Lencioni, les 5 dysfonctions d'une équipe.
+- Locke et Latham (1) : théorie de la fixation des objectifs.
+- Standish Group (1) : organisation, rapport CHAOS.
 
-Conséquence à arbitrer : voir l'arbitrage A1 ci-dessous (tension avec l'invariant I1 de la sentinelle).
+Deux libellés du lot « à écarter » initial ne sont pas des auteurs : « Knowledge
+et Ability » et « Reinforcement » sont des étapes du modèle ADKAR. Ils ne
+deviennent pas des entrées, ils fusionnent dans la fiche ADKAR (voir section 6).
 
 
 ## 6. Fusions proposées
@@ -196,13 +197,15 @@ Conséquence à arbitrer : voir l'arbitrage A1 ci-dessous (tension avec l'invari
 - **Famille outcome** : `outcome` est l'entrée pivot ; `outcome amont`, `outcome relationnel`, `outcome retardé`, `outcome-racine` sont pédagogiquement distincts. Proposition : les garder comme entrées propres reliées par renvois plutôt que les fondre. À confirmer.
 - **ADKAR** absorbe les fragments `Knowledge et Ability` et `Reinforcement`.
 
-Effet des fusions sur le compte : environ 124 entrées après écart des 10 non-termes et de 8 doublons de fusion.
+Effet des fusions : 8 libellés disparaissent en doublons (COSO ERM portefeuille,
+churn post-signature, batch size, effet Goodhart, Goodhart, flow items,
+Knowledge et Ability, Reinforcement). 142 moins 8, soit environ 134 entrées.
 
 
 ## 7. Divergences à résoudre (24 libellés)
 
 24 libellés portent plusieurs définitions selon la fiche. La résolution (choisir
-ou rédiger une définition canonique) se fait pendant les jalons B.1 à B.4.
+ou rédiger une définition canonique) se fait pendant les jalons B.1 à B.5.
 
 Cas lourds : `Effet Goodhart` (9), `Gemba` (6), `Goodhart` (4), `Deming` (4),
 `effet Goodhart` (3), `anti-patterns` (3), `KPI individuel` (3), `outcome` (3),
@@ -239,17 +242,14 @@ C1, C2 et C3 ne sont pas hors sujet : le jalon B reprend les `term-def` comme
 matière de base. La correction sera traitée dans le flux du jalon B.
 
 
-## 9. Arbitrages pour Lætitia
+## 9. Arbitrages
 
-- **A1 : sort des non-termes (tension avec la sentinelle).** L'invariant I1 du
-  doc compagnon exige que tout `term-def` du HTML ait une entrée au Lexique. Or
-  la décision « les auteurs ne sont pas des entrées » crée 10 libellés orphelins
-  (section 5). Trois issues : (a) retirer la balise `term-def` de ces 10
-  libellés dans le HTML ; (b) leur donner une entrée minimale au Lexique ;
-  (c) doter la sentinelle d'une liste d'exclusions explicite. Recommandation :
-  (a), parce qu'un nom d'auteur n'a pas vocation à porter une infobulle de
-  glossaire, et que cela garde l'invariant I1 strict.
-- **A2 : validation de la classification.** Les 142 libellés sont rangés en 4
+- **A1 : sort des noms d'auteurs. RÉSOLU le 24/05/2026.** Après examen du contenu
+  réel des infobulles d'auteurs (leçons pédagogiques, pas notices biographiques),
+  décision de Lætitia : donner une fiche à chaque auteur. Création d'une 5e
+  catégorie « Auteurs et figures », 8 entrées (section 5). L'invariant I1 de la
+  sentinelle tient désormais sans exclusion : chaque `term-def` a une entrée.
+- **A2 : validation de la classification.** Les 142 libellés sont rangés en 5
   catégories ci-dessus. Quelques classements sont discutables et méritent un
   regard : `bus factor` (concept ou indicateur), `temps d'attente` (concept ou
   indicateur), `Flow Metrics` et `tradition Six Sigma` (cadre ou concept),
@@ -262,6 +262,6 @@ matière de base. La correction sera traitée dans le flux du jalon B.
 
 ## 10. Prochain pas
 
-Après validation de la classification et des arbitrages A1 à A3 : ouvrir les
-jalons B.1 à B.4, une passe de rédaction par catégorie, pour produire
+Après validation de la classification et des arbitrages A2 et A3 : ouvrir les
+jalons B.1 à B.5, une passe de rédaction par catégorie, pour produire
 `lexique-source.md` (définitions canoniques, divergences résolues).
