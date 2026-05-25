@@ -2125,12 +2125,21 @@
       color: #94a3b8;
     }
 
-    /* Bouton « Tout reinitialiser » (E3). Affordance discrete posee entre le
-       bloc des chips et la cartouche compteur, alignee a droite. Sur le fond
-       bleu nuit, donc token sur-page. display:none quand masque pour ne pas
-       consommer le gap du conteneur flex. */
+    /* Ligne du compteur (E3) : la cartouche compteur occupe la largeur
+       disponible, le bouton « Tout reinitialiser » se pose a son extremite
+       droite, sur la meme ligne. Le bouton reste masque tant qu'aucune
+       lentille n'est active (pas de controle inerte). */
+    .accueil-unifie .ligne-compteur {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .accueil-unifie .ligne-compteur .cartouche {
+      flex: 1;
+      min-width: 0;
+    }
     .accueil-unifie .bouton-reinit {
-      align-self: flex-end;
+      flex-shrink: 0;
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
@@ -2476,21 +2485,27 @@
     <!-- Panneau-sélecteur — caché par défaut, peuplé par CM.AccueilUnifie au clic d'une chip -->
     <div class="selecteur" hidden data-axe="" role="region" aria-label="S&eacute;lecteur de valeurs"></div>
 
-    <!-- Bouton « Tout reinitialiser » : vide les 4 lentilles d'un coup. Masque
-         tant qu'aucune lentille n'est active (retour E3, test utilisateur n.1). -->
-    <button type="button" class="bouton-reinit" hidden>
-      <svg class="ic-reinit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-      Tout r&eacute;initialiser
-    </button>
+    <!-- Ligne du compteur : la cartouche compteur depliable et, a son
+         extremite droite, le bouton « Tout reinitialiser » des lentilles
+         (retour E3, test utilisateur n.1). Le bouton reste masque tant
+         qu'aucune lentille n'est active. -->
+    <div class="ligne-compteur">
 
-    <!-- Cartouche compteur — repliée par défaut, compteur en dur en 23.b -->
-    <button class="cartouche" type="button" data-cartouche="compteur" aria-expanded="false" aria-controls="panneau-cartouche-compteur">
-      <span class="cartouche-libelle">
-        <span><strong>75</strong> <span class="total">sur 75 indicateurs</span></span>
-        <span class="axes-actifs">Aucune lentille active &mdash; l'index complet attend.</span>
-      </span>
-      <span class="cartouche-chevron"><span class="libelle-action">Voir</span> &#x25BE;</span>
-    </button>
+      <!-- Cartouche compteur — repliée par défaut, compteur en dur en 23.b -->
+      <button class="cartouche" type="button" data-cartouche="compteur" aria-expanded="false" aria-controls="panneau-cartouche-compteur">
+        <span class="cartouche-libelle">
+          <span><strong>75</strong> <span class="total">sur 75 indicateurs</span></span>
+          <span class="axes-actifs">Aucune lentille active &mdash; l'index complet attend.</span>
+        </span>
+        <span class="cartouche-chevron"><span class="libelle-action">Voir</span> &#x25BE;</span>
+      </button>
+
+      <button type="button" class="bouton-reinit" hidden>
+        <svg class="ic-reinit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Tout r&eacute;initialiser
+      </button>
+
+    </div>
 
     <!-- Liste filtrée 2 colonnes — peuplée au chantier 23.e ; sert de panneau dépliable de la cartouche compteur (23.d-1) -->
     <div id="panneau-cartouche-compteur" class="liste-fiches" hidden role="region" aria-label="Liste filtr&eacute;e des indicateurs" data-cartouche-panneau="compteur"></div>
