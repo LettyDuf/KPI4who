@@ -2125,6 +2125,41 @@
       color: #94a3b8;
     }
 
+    /* Bouton « Tout reinitialiser » (E3). Affordance discrete posee entre le
+       bloc des chips et la cartouche compteur, alignee a droite. Sur le fond
+       bleu nuit, donc token sur-page. display:none quand masque pour ne pas
+       consommer le gap du conteneur flex. */
+    .accueil-unifie .bouton-reinit {
+      align-self: flex-end;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: transparent;
+      border: none;
+      padding: 0.2rem 0.35rem;
+      font-family: inherit;
+      font-size: 0.82rem;
+      color: var(--texte-2-sur-page);
+      cursor: pointer;
+      border-radius: 6px;
+      transition: var(--trans);
+    }
+    .accueil-unifie .bouton-reinit:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+    .accueil-unifie .bouton-reinit:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.6);
+      outline-offset: 2px;
+    }
+    .accueil-unifie .bouton-reinit[hidden] {
+      display: none;
+    }
+    .accueil-unifie .bouton-reinit .ic-reinit {
+      width: 0.9rem;
+      height: 0.9rem;
+    }
+
     /* Panneau-sélecteur — accordéon en place sous le bloc des chips (23.c-2) */
     .accueil-unifie .selecteur {
       background: white;
@@ -2440,6 +2475,13 @@
 
     <!-- Panneau-sélecteur — caché par défaut, peuplé par CM.AccueilUnifie au clic d'une chip -->
     <div class="selecteur" hidden data-axe="" role="region" aria-label="S&eacute;lecteur de valeurs"></div>
+
+    <!-- Bouton « Tout reinitialiser » : vide les 4 lentilles d'un coup. Masque
+         tant qu'aucune lentille n'est active (retour E3, test utilisateur n.1). -->
+    <button type="button" class="bouton-reinit" hidden>
+      <svg class="ic-reinit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+      Tout r&eacute;initialiser
+    </button>
 
     <!-- Cartouche compteur — repliée par défaut, compteur en dur en 23.b -->
     <button class="cartouche" type="button" data-cartouche="compteur" aria-expanded="false" aria-controls="panneau-cartouche-compteur">
@@ -5045,6 +5087,15 @@ CM.AccueilUnifie = (function() {
       return;
     }
 
+    /* Clic sur le bouton « Tout reinitialiser » : referme le panneau ouvert
+       s'il y en a un, puis vide les 4 lentilles. */
+    var btnReinit = e.target.closest('.bouton-reinit');
+    if (btnReinit && racine.contains(btnReinit)) {
+      _fermerPanneau(racine);
+      reinitialiserChips();
+      return;
+    }
+
     /* Clic à l'intérieur du panneau (mais pas sur un label) : ne pas fermer. */
     if (e.target.closest('.selecteur')) return;
 
@@ -5077,6 +5128,7 @@ CM.AccueilUnifie = (function() {
       _rafraichirToutesChips(racine);
       _rafraichirCompteur(racine, payload && payload.total);
       _rafraichirListeFiches(racine, payload && payload.fiches);
+      _rafraichirBoutonReinit(racine);
     });
 
     /* S'abonne aux changements de cartouches pour synchroniser l'apparence
@@ -5092,6 +5144,7 @@ CM.AccueilUnifie = (function() {
     _rafraichirToutesCartouches(racine);
     _rafraichirCompteur(racine);
     _rafraichirListeFiches(racine);
+    _rafraichirBoutonReinit(racine);
   }
 
   function init() {
@@ -5162,15 +5215,29 @@ CM.AccueilUnifie = (function() {
     appliquerFiltre();
   }
 
+  /* Vrai quand les 4 lentilles sont vides. Source unique de verite du
+     predicat, partagee par reinitialiserChips (court-circuit) et le
+     rafraichissement de visibilite du bouton « Tout reinitialiser ». */
+  function _aucuneLentilleActive() {
+    return etat.chips.probleme.length === 0 &&
+           etat.chips.cadre.length === 0 &&
+           etat.chips.niveau === null &&
+           etat.chips.maturite === null;
+  }
+
   function reinitialiserChips() {
-    var dejaVide = etat.chips.probleme.length === 0 &&
-                   etat.chips.cadre.length === 0 &&
-                   etat.chips.niveau === null &&
-                   etat.chips.maturite === null;
-    if (dejaVide) return;
+    if (_aucuneLentilleActive()) return;
     etat.chips = _etatParDefaut().chips;
     _persister();
     appliquerFiltre();
+  }
+
+  /* Affiche le bouton « Tout reinitialiser » des qu'une lentille est active,
+     le masque sinon. Branche sur surChangementFiltre et appele au montage. */
+  function _rafraichirBoutonReinit(racine) {
+    var btn = racine.querySelector('.bouton-reinit');
+    if (!btn) return;
+    btn.hidden = _aucuneLentilleActive();
   }
 
   function appliquerFiltre() {

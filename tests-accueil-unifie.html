@@ -958,6 +958,15 @@ CM.AccueilUnifie = (function() {
       return;
     }
 
+    /* Clic sur le bouton « Tout reinitialiser » : referme le panneau ouvert
+       s'il y en a un, puis vide les 4 lentilles. */
+    var btnReinit = e.target.closest('.bouton-reinit');
+    if (btnReinit && racine.contains(btnReinit)) {
+      _fermerPanneau(racine);
+      reinitialiserChips();
+      return;
+    }
+
     /* Clic à l'intérieur du panneau (mais pas sur un label) : ne pas fermer. */
     if (e.target.closest('.selecteur')) return;
 
@@ -990,6 +999,7 @@ CM.AccueilUnifie = (function() {
       _rafraichirToutesChips(racine);
       _rafraichirCompteur(racine, payload && payload.total);
       _rafraichirListeFiches(racine, payload && payload.fiches);
+      _rafraichirBoutonReinit(racine);
     });
 
     /* S'abonne aux changements de cartouches pour synchroniser l'apparence
@@ -1005,6 +1015,7 @@ CM.AccueilUnifie = (function() {
     _rafraichirToutesCartouches(racine);
     _rafraichirCompteur(racine);
     _rafraichirListeFiches(racine);
+    _rafraichirBoutonReinit(racine);
   }
 
   function init() {
@@ -1075,15 +1086,29 @@ CM.AccueilUnifie = (function() {
     appliquerFiltre();
   }
 
+  /* Vrai quand les 4 lentilles sont vides. Source unique de verite du
+     predicat, partagee par reinitialiserChips (court-circuit) et le
+     rafraichissement de visibilite du bouton « Tout reinitialiser ». */
+  function _aucuneLentilleActive() {
+    return etat.chips.probleme.length === 0 &&
+           etat.chips.cadre.length === 0 &&
+           etat.chips.niveau === null &&
+           etat.chips.maturite === null;
+  }
+
   function reinitialiserChips() {
-    var dejaVide = etat.chips.probleme.length === 0 &&
-                   etat.chips.cadre.length === 0 &&
-                   etat.chips.niveau === null &&
-                   etat.chips.maturite === null;
-    if (dejaVide) return;
+    if (_aucuneLentilleActive()) return;
     etat.chips = _etatParDefaut().chips;
     _persister();
     appliquerFiltre();
+  }
+
+  /* Affiche le bouton « Tout reinitialiser » des qu'une lentille est active,
+     le masque sinon. Branche sur surChangementFiltre et appele au montage. */
+  function _rafraichirBoutonReinit(racine) {
+    var btn = racine.querySelector('.bouton-reinit');
+    if (!btn) return;
+    btn.hidden = _aucuneLentilleActive();
   }
 
   function appliquerFiltre() {
