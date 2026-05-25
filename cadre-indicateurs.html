@@ -10758,14 +10758,14 @@ CM.App = (function() {
     var html = '';
 
     /* Legende des types */
-    html += '<div class="legende" role="list" aria-label="Legende des types d\'indicateurs">';
+    html += '<div class="legende" role="list" aria-label="Légende des types d\'indicateurs">';
     Object.keys(cfg.TYPES_LIBELLES).forEach(function(sigle) {
       html += '<div class="legende-item" role="listitem"><span class="legende-badge" style="background:' + cfg.TYPES_COULEURS[sigle] + '">' + sigle + '</span><span>' + cfg.TYPES_LIBELLES[sigle] + '</span></div>';
     });
     html += '</div>';
 
     html += '<div style="background:#e3f2fd;border-radius:10px;padding:0.85rem 1rem;font-size:0.84rem;margin-bottom:1.25rem;color:#01579b;line-height:1.5;">'
-      + '💡 La cascade montre comment les objectifs se declinent de la stratégie jusqu\'aux équipes. Cliquez sur un indicateur pour sa fiche complete.'
+      + '💡 La cascade montre comment les objectifs se déclinent de la stratégie jusqu\'aux équipes. Cliquez sur un indicateur pour voir sa fiche complète.'
       + '</div>';
 
     /* 4 niveaux */
