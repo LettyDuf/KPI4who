@@ -137,3 +137,15 @@ Option 1B retenue par Lætitia : ventiler les 26 retours dans le backlog existan
 2. Ventiler dans le backlog : enrichir les lignes RECOUPE, créer les lignes NOUVEAU.
 3. Trancher l'ordre d'implémentation. Trois pistes proposées, non tranchées : finir le chantier 21 (Vue Lexique) d'abord, prioriser la proposition de valeur de l'accueil, ou faire une passe de corrections rapides (accents, mot de la cascade, bouton réinitialiser, libellés opaques).
 4. Au moment de traiter les points concernés, localiser dans l'outil les éléments paraphrasés par le testeur : le libellé « domaine de développement », la phrase exacte de la cascade, le terme « CDD ».
+
+## Suivi des traitements
+
+Séance du 25/05/2026, passe de corrections rapides (troisième piste de la décision de cadrage). Cinq retours traités, smoke test interactif Lætitia validé :
+
+- **G2** traité, commit `d4f9716` (mot manquant et accents de la phrase de la *Cascade stratégique*).
+- **G1** partiellement traité, commits `d4f9716` et `84665ac` (poignée d'accents repérée en route : phrase de la cascade, libellés de branches). L'audit complet des accents de l'enveloppe d'interface reste à faire, consigné au backlog §1.quater (I.c).
+- **E3** traité, commit `39b330d` (bouton « Tout réinitialiser » des lentilles ajouté sur l'accueil).
+- **C2** traité, commit `fbd6faf` (« Une étape goulot connue » reformulée en « Un goulot d'étranglement identifié »).
+- **C3** traité, commit `acc2401` (badge « Domaine » retiré du tiroir ; idée de réactivation en axe « Secteur » consignée au backlog §4).
+
+Les 21 autres retours ne sont pas traités : ils restent à ventiler dans le backlog (option 1B), travail distinct de cette passe de corrections rapides.
