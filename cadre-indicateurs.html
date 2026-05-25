@@ -7883,17 +7883,6 @@ CM.Composants = (function() {
          + '</div>';
   }
 
-  // Domaine : badge coloré (optionnel, affiché si ind.domaine est défini dans CM.Domaine).
-  // Retourne '' si pas de domaine ou si CM.Domaine absent.
-  function rendreDomaine(ind) {
-    if (!(ind.domaine && CM.Domaine && CM.Domaine.DOMAINES && CM.Domaine.DOMAINES[ind.domaine])) return '';
-    var d = CM.Domaine.DOMAINES[ind.domaine];
-    return '<div class="fi-bloc-inline">'
-         +   '<h4>Domaine</h4>'
-         +   '<p><span style="display:inline-flex;align-items:center;gap:0.4rem;background:' + d.couleur + ';color:white;padding:0.25rem 0.75rem;border-radius:20px;font-size:var(--fs-sm);font-weight:600;">' + d.icone + ' ' + d.libelle + '</span></p>'
-         + '</div>';
-  }
-
   /* ── 9.D voie lente : zone d'ajout au tableau de bord (option B arbitrée 26/04/2026) ──
      Rend la zone qui vit en pied du tiroir de fiche : deux duo-cartes-statut
      basculables, suivies d'une zone-note conditionnelle (textarea + boutons).
@@ -8021,7 +8010,6 @@ CM.Composants = (function() {
          + rendreAlternative(vm.ind)
          + rendreContexteFiabilite(vm.fib)
          + rendreContexteMaturite(vm.mat)
-         + rendreDomaine(vm.ind)
          + CM.Gemba.htmlEncartFiche(vm.ind.type) /* Encart Terrain — triptyque contextualisé au type */
          + rendreVoieLente(vm.ind); /* 9.D voie lente — zone d'ajout au tableau de bord */
   }
