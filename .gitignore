@@ -22,3 +22,14 @@ Thumbs.db
 # PROMPT-REPRISE-SESSION.md est la version active (majuscules). Les patterns
 # ci-dessous attrapent d'anciens brouillons en minuscules si jamais il y en a.
 prompt-reprise-*.md
+
+# === Coulisses non publiées (chantier 24/06/2026) ===
+# Fichiers conserves sur le disque local mais retires du depot public
+# pour ne pas exposer le travail en cours et les arbitrages internes.
+backlog.md
+backlog-archive.md
+PROMPT-REPRISE-SESSION.md
+journal-invariants-23g.md
+scenario-non-regression.md
+test-utilisateur-1.md
+AUDIT-UNIFORMITE-PORTES.md
