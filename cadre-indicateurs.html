@@ -331,29 +331,6 @@
     ══════════════════════════════════════════════ */
     #app { display: none; min-height: 100vh; flex-direction: column; }
     #app.actif { display: flex; }
-    .en-tete {
-      /* Cachée 08/05/2026 — depuis la suppression du bandeau interne .onglets
-         (commit 63cf58b), .en-tete ne contient plus que le badge-contexte qui
-         n'est plus nécessaire (le contexte est désormais porté par le filet
-         de niveau et les portes elles-mêmes). Le vestige _afficherApp()
-         qui manipulait badge.textContent a été retiré (audit 02/07/2026) ;
-         le HTML du badge-contexte reste, en dette latente (cf. backlog). */
-      display: none;
-      background: var(--fond-2);
-      border-bottom: 1px solid var(--bordure);
-      padding: 0 1.75rem;
-      align-items: center; gap: 1.25rem;
-      height: 58px;
-      position: sticky; top: 0; z-index: 100;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    }
-    .logo { font-weight: 800; font-size: 0.92rem; color: var(--niv-1); letter-spacing: -0.3px; }
-    .badge-contexte {
-      padding: 0.28rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.78rem; font-weight: 700;
-      color: white; white-space: nowrap;
-    }
     .onglets { display: flex; gap: 0.2rem; margin-left: auto; }
     .onglet {
       padding: 0.38rem 0.95rem;
@@ -1523,7 +1500,6 @@
       .contenu { padding: 1rem; }
       .exemples-duo { grid-template-columns: 1fr; }
       .tiroir { width: 100%; }
-      .en-tete { padding: 0 1rem; }
     }
     @media (max-width: 520px) {
       /* Bascule en 1 colonne uniquement pour les très petits écrans (vrai mobile portrait).
@@ -2498,15 +2474,13 @@
       <a href="#" class="entree" data-entree="apropos" onclick="event.preventDefault();CM.Apropos.ouvrir();">&Agrave; propos</a>
     </nav>
   </header>
-  <header class="en-tete" role="banner">
-    <span id="badge-contexte" class="badge-contexte"></span>
-    <!-- Bug A résolu 08/05/2026 — bandeau interne .onglets retiré.
-         Toutes les fonctions sont accessibles depuis le bandeau du haut
-         (Mon tableau de bord, Cascade stratégique, Maturité). La vue
-         questionnaire, en sursis depuis la décision D1 du 02/05/2026, a été
-         retirée au chantier 25 (02/07/2026) : « Choisir mes indicateurs »
-         est porté par l'accueil unifié. -->
-  </header>
+  <!-- Bug A résolu 08/05/2026 — bandeau interne .onglets retiré.
+       Toutes les fonctions sont accessibles depuis le bandeau du haut
+       (Mon tableau de bord, Cascade stratégique, Maturité). La vue
+       questionnaire, en sursis depuis la décision D1 du 02/05/2026, et
+       l'en-tête .en-tete (badge-contexte, cachée depuis le 08/05/2026)
+       ont été retirées au chantier 25 (02/07/2026) : « Choisir mes
+       indicateurs » est porté par l'accueil unifié. -->
 
   <main class="contenu" role="main">
     <div class="vue active" id="vue-tableau-bord" role="tabpanel"><div id="contenu-tdb" class="tableau-bord"></div></div>
@@ -7358,49 +7332,9 @@ CM.Referentiel.ajouter([
 <!-- CM.REFERENTIEL.DATA — END -->
 
 
-<!-- ══ MODULE : CM.Domaine — Configuration des domaines et des roles d\'affichage ══ -->
-<script>
-CM.Domaine = (function() {
-  'use strict';
-
-  /* Config des 10 domaines specialises (niveau équipes) */
-  var DOMAINES = {
-    'dev':           { libelle:'Développement',       icone:'🏗', branche:'ti',       couleur:'#bf360c' },
-    'plateforme':    { libelle:'Plateforme & DevOps',  icone:'🚀', branche:'ti',       couleur:'#00695c' },
-    'ops-support':   { libelle:'Opérations & Support', icone:'🔧', branche:'ti',       couleur:'#0277bd' },
-    'sécurité':      { libelle:'Sécurité',             icone:'🛡', branche:'ti',       couleur:'#6a1b9a' },
-    'commercial':    { libelle:'Commercial',           icone:'📈', branche:'affaires', couleur:'#e65100' },
-    'marketing':     { libelle:'Marketing',            icone:'📣', branche:'affaires', couleur:'#c2185b' },
-    'finance':       { libelle:'Finance',              icone:'💰', branche:'affaires', couleur:'#1b5e20' },
-    'rh':            { libelle:'Ressources Humaines',  icone:'👥', branche:'affaires', couleur:'#01579b' },
-    'operations':    { libelle:'Opérations Métier',    icone:'🔩', branche:'affaires', couleur:'#37474f' },
-    'service-client':{ libelle:'Service Client',       icone:'🎯', branche:'affaires', couleur:'#f57c00' }
-  };
-
-  /* Labels des branches */
-  var BRANCHES = {
-    'ti':      { libelle:'Équipes TI',      couleur:'rgba(80,210,195,0.7)'  },
-    'affaires':{ libelle:'Équipes Affaires', couleur:'rgba(255,160,80,0.7)' }
-  };
-
-  /* Infos d\'affichage selon le contexte actuel */
-  function infoContexte(contexte) {
-    var cfg = CM.Config;
-    if (!contexte) return { libelle:'Accueil', icone:'🏛', couleur:'#1a237e' };
-    if (contexte.niveau === 'equipes' && contexte.domaine) {
-      var d = DOMAINES[contexte.domaine];
-      return d ? { libelle: d.libelle, icone: d.icone, couleur: d.couleur } : { libelle:'Equipes', icone:'⚙️', couleur:'#004d40' };
-    }
-    var niv = null;
-    for (var i = 0; i < cfg.NIVEAUX.length; i++) {
-      if (cfg.NIVEAUX[i].id === contexte.niveau) { niv = cfg.NIVEAUX[i]; break; }
-    }
-    return niv ? { libelle: niv.libelle, icone: niv.icone, couleur: niv.couleur } : { libelle:'', icone:'', couleur:'#1a237e' };
-  }
-
-  return { DOMAINES: DOMAINES, BRANCHES: BRANCHES, infoContexte: infoContexte };
-})();
-</script>
+<!-- Module CM.Domaine retiré au chantier 25 (02/07/2026) : aucun
+     consommateur (DOMAINES, BRANCHES, infoContexte sans appelant depuis le
+     retrait des portes au 23.f et du vestige _afficherApp). -->
 
 
 <!-- ══ MODULE : CM.DiagnosticProbleme — Matrice anti-micromanagement ══
@@ -10214,11 +10148,6 @@ CM.App = (function() {
     _cacherAccueils();
     document.getElementById('app').classList.add('actif');
     _activerOnglet('tableau-bord');
-    var badge = document.getElementById('badge-contexte');
-    if (badge) {
-      badge.textContent = 'Consultation';
-      badge.style.background = '';
-    }
     _rendreTableauDeBord();
     marquerEntreeBandeau('tableau-bord');
     try { window.scrollTo({ top: 0, behavior: 'instant' }); }
@@ -10230,19 +10159,13 @@ CM.App = (function() {
      directement depuis le bandeau (Cascade stratégique, Maturité). Pattern
      calqué sur ouvrirTableauBord — masque les vues de premier rang, active
      l'app, sélectionne l'onglet et déclenche le rendu correspondant.
-     Le tableau de bord garde sa fonction dédiée (ouvrirTableauBord) pour
-     préserver son badge 'Consultation' déjà câblé.
+     Le tableau de bord garde sa fonction dédiée (ouvrirTableauBord).
      Posée le 08/05/2026 — Lætitia : 'Cascade et Maturité prêtes, donne accès
      depuis le bandeau du haut'. */
   function ouvrirVueDuBandeau(idOnglet) {
     _masquerToutesVuesPremierRang();
     document.getElementById('app').classList.add('actif');
     _activerOnglet(idOnglet);
-    var badge = document.getElementById('badge-contexte');
-    if (badge) {
-      badge.textContent = 'Consultation';
-      badge.style.background = '';
-    }
     if (idOnglet === 'cascade')        _rendreCascade();
     else if (idOnglet === 'maturite')  _rendreMaturite();
     else if (idOnglet === 'tableau-bord') _rendreTableauDeBord();
