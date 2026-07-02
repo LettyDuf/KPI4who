@@ -1138,6 +1138,7 @@ CM.Referentiel.ajouter([
     exemple_ent:'Taux de complétion stable à 82 % sur 6 sprints. Signale une planification mature, ni trop ambitieuse ni trop conservative.',
     exemple_eq:'Un taux < 70 % signale une planification insuffisante ou des impediments récurrents. Un taux de 100 % peut indiquer des engagements trop prudents.',
     risque:'Peut encourager l\'équipe à ne planifier que des tâches certaines pour afficher un beau taux, au détriment de l\'ambition.',
+    alt:'Si l\'écart entre le dit et le fait porte sur les objectifs plutôt que sur le contenu du sprint, préférer les <a href="#fiche=o9">OKR d\'équipe</a>. Pour confronter l\'estimation déclarée à la production réelle, lire la <a href="#fiche=x1">vélocité</a> contre le <a href="#fiche=o6">débit d\'équipe</a>.',
     roles:['chef-équipe','membre-équipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant',
     branche:'ti', domaine:'dev'
   },
@@ -1448,7 +1449,7 @@ CM.Referentiel.ajouter([
     exemple_ent:'Score de 3,8/5 cette semaine, en baisse de 0,6 depuis 3 semaines. Signal d\'alerte traité en rétrospective.',
     exemple_eq:'Précieux pour le responsable d\'équipe comme signal d\'alerte précoce. Ne jamais utiliser pour évaluer individuellement.',
     risque:'Les équipes peuvent déclarer ce qu\'elles pensent que le manager veut entendre. Doit être strictement anonyme.',
-    alt:'Entretiens individuels · Rétrospectives structurées',
+    alt:'Si la question est « ose-t-on le dire ? » plutôt que « comment va-t-on ? », préférer la <a href="#fiche=x6">sécurité psychologique de l\'équipe</a>. Pour un signal RH annuel comparable entre équipes, l\'<a href="#fiche=af-r1">indice de recommandation employé</a>. Compléments qualitatifs : entretiens individuels, rétrospectives structurées.',
     roles:['chef-équipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant'
   },
   {
@@ -1491,7 +1492,7 @@ CM.Referentiel.ajouter([
     exemple_ent:'Sur une semaine, 80 tickets sortis : 56 ont été acceptés sans retouche en revue de code, 24 ont nécessité au moins une correction. FPY = 70 %. Lecture honnête : un livrable sur trois nécessite au moins une boucle de retouche. La prévention amont (clarté de la définition de fini, standards de revue partagée, exemples concrets) est probablement insuffisante. Levier prioritaire : améliorer la phase amont, pas durcir la revue (qui augmenterait le rejet sans réduire le coût).',
     exemple_eq:'Pour une équipe produit développant du logiciel, FPY se calcule sur l\'étape « revue de code » : nombre de pull-requests fusionnées sans modification demandée / nombre total de pull-requests soumises. Pour une équipe support, FPY se calcule sur les tickets résolus à la première intervention sans réouverture. Le calcul est <strong>local à l\'étape</strong> mesurée. Il n\'y a pas de « FPY d\'équipe », il y a un FPY par étape critique.',
     risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Définition de \'passe au premier coup\' négociée à la baisse pour gonfler la mesure. Effet Goodhart classique : on relâche les standards de revue plutôt que d\'améliorer la prévention amont.">relâchement des critères d\'acceptation</span>, comptage uniquement des étapes faciles en omettant les étapes complexes, usage <strong>descendant et accusatoire</strong> (« pourquoi votre FPY est bas ? »), agrégation en « note globale d\'équipe » qui dissout l\'analyse par étape. <span class="term-def" data-def="Principe de Goodhart : dès qu\'une mesure devient un objectif, elle cesse d\'être une bonne mesure. Cibler un FPY de 100 % pousse à éviter les sujets risqués plutôt qu\'à mieux les préparer.">Effet Goodhart</span> garanti si l\'on cible un FPY de 100 % : on n\'apprend plus, on évite. À lire avec le <a href="#fiche=o5">cycle time</a> pour vérifier qu\'un FPY haut n\'est pas obtenu au prix d\'un cycle long de pré-validation excessive.',
-    alt:'Si l\'objectif est de mesurer la <strong>conformité contractuelle</strong> d\'une livraison majeure côté commanditaire, ce n\'est pas le bon indicateur — préférer le <a href="#fiche=p6">taux d\'acceptation au premier passage</a> (niveau programme). Si l\'objectif est de mesurer la <strong>stabilité en production</strong> après déploiement, préférer le <a href="#fiche=o3">taux d\'échec des changements (DORA)</a>.',
+    alt:'Si l\'objectif est de mesurer la <strong>conformité contractuelle</strong> d\'une livraison majeure côté commanditaire, ce n\'est pas le bon indicateur — préférer le <a href="#fiche=p6">taux d\'acceptation au premier passage</a> (niveau programme). Si l\'objectif est de mesurer la <strong>stabilité en production</strong> après déploiement, préférer le <a href="#fiche=o3">taux d\'échec des changements (DORA)</a>. Si le doute porte sur ce que les utilisateurs vivent en production plutôt que sur le processus interne, préférer le <a href="#fiche=ti-d3">taux de défauts échappés</a>.',
     roles:['chef-équipe','membre-équipe'], prioritaire:true, fiabilite:'fiable', maturite_min:'debutant'
   }
 ]);
