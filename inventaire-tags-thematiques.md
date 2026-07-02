@@ -204,6 +204,8 @@ Arbitrages finaux : tags sortants, tags à fusionner, vocabulaire final figé à
 | s8 | Confiance organisationnelle |  |  | x |  |  |  |  |  |  |  | x |  |  |  |
 | s9 | Maturité cyber NIST |  |  |  |  |  | x |  |  | x |  |  |  |  |  |
 | s10 | Exposition concentration |  |  |  |  |  |  |  |  | x |  |  |  |  |  |
+| s11 | Coût de la non-qualité |  |  |  |  | x |  |  |  |  |  |  |  |  |  |
+| s12 | Écart de vérité stratégique |  |  |  |  |  |  |  |  |  |  | x |  | x |  |
 | t1 | ROI portefeuille |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
 | t2 | Lead time métier |  | x |  |  |  |  | x |  |  |  |  |  |  |  |
 | t3 | OKR trimestriels |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
@@ -219,6 +221,8 @@ Arbitrages finaux : tags sortants, tags à fusionner, vocabulaire final figé à
 | p5 | Throughput programme |  |  |  | x |  |  | x |  |  |  |  |  |  |  |
 | p6 | Acceptation 1er passage |  |  |  |  |  |  |  | x |  |  |  | x |  |  |
 | p7 | Reprise post-livraison |  |  |  |  | x |  |  | x |  |  |  |  |  |  |
+| p8 | Demandes de changement client |  |  |  |  |  |  |  | x |  |  |  | x |  |  |
+| p9 | Lead Time programme |  | x |  | x |  |  |  |  |  |  |  |  |  |  |
 | o1 | Fréquence déploiement |  |  |  |  |  |  | x |  |  | x |  |  |  |  |
 | o2 | Lead time for changes |  |  |  | x |  |  | x |  |  |  |  |  |  |  |
 | o3 | Change failure rate |  |  |  |  |  |  |  | x |  |  |  | x |  |  |
@@ -251,6 +255,7 @@ Arbitrages finaux : tags sortants, tags à fusionner, vocabulaire final figé à
 | x2 | Burndown |  | x |  |  |  |  | x |  |  |  |  |  |  |  |
 | x4 | Team health check |  |  | x |  |  |  |  |  |  |  | x |  |  |  |
 | x5 | Feature count |  |  |  |  |  |  | x |  |  |  |  |  |  |  |
+| lss-1 | Premier passage conforme |  |  |  |  | x |  |  |  |  |  |  | x |  |  |
 | af-c1 | Taux conversion |  |  |  |  |  |  |  | x |  |  |  |  |  | x |
 | af-c2 | Cycle vente |  |  |  | x |  |  | x |  |  |  |  |  |  |  |
 | af-c3 | LTV |  |  |  |  |  |  |  |  |  |  | x |  |  | x |
