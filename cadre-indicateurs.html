@@ -335,8 +335,9 @@
       /* Cachée 08/05/2026 — depuis la suppression du bandeau interne .onglets
          (commit 63cf58b), .en-tete ne contient plus que le badge-contexte qui
          n'est plus nécessaire (le contexte est désormais porté par le filet
-         de niveau et les portes elles-mêmes). On garde le HTML pour
-         compatibilité avec _afficherApp() qui manipule badge.textContent. */
+         de niveau et les portes elles-mêmes). Le vestige _afficherApp()
+         qui manipulait badge.textContent a été retiré (audit 02/07/2026) ;
+         le HTML du badge-contexte reste, en dette latente (cf. backlog). */
       display: none;
       background: var(--fond-2);
       border-bottom: 1px solid var(--bordure);
@@ -10071,7 +10072,6 @@ CM.App = (function() {
   'use strict';
 
   /* ─── Etat ─── */
-  var contexte  = null;  /* { niveau, branche, domaine } */
   var réponses  = {};
   var maturiteActive = 'debutant';
 
@@ -10137,14 +10137,12 @@ CM.App = (function() {
 
   /* ─── Navigation ─── */
   function retourAccueil() {
-    contexte = null;
     réponses = {};
     _montrerAccueil();
     document.getElementById('app').classList.remove('actif');
-    /* Réinitialiser l'onglet actif sur la vue d'entrée par défaut.
-       Aligné sur _afficherApp pour que la prochaine entrée dans l'app
-       parte du même état visuel cohérent (cf. décision Lætitia
-       26/04/2026 sur la vue d'entrée). */
+    /* Réinitialiser l'onglet actif sur la vue d'entrée par défaut, pour
+       que la prochaine entrée dans l'app parte du même état visuel
+       cohérent (cf. décision Lætitia 26/04/2026 sur la vue d'entrée). */
     _activerOnglet('questionnaire');
   }
 
@@ -10244,8 +10242,8 @@ CM.App = (function() {
   }
 
   /* ── Active à la fois l'onglet et la vue correspondante ──
-     Centralisé pour que les points d'entrée dans l'app (retourAccueil,
-     _afficherApp) ne dupliquent plus la boucle de marquage des onglets.
+     Centralisé pour que les points d'entrée dans l'app (retourAccueil)
+     ne dupliquent plus la boucle de marquage des onglets.
      Sélectionne l'onglet par son onclick (parsing simple mais robuste
      tant que la convention CM.App.changerVue('id', this) est respectée
      dans le HTML). */
@@ -10258,26 +10256,6 @@ CM.App = (function() {
          on bascule au moins la vue pour ne pas laisser l'app vide. */
       _basculerVue(idVue);
     }
-  }
-
-  function _afficherApp() {
-    _cacherAccueils();
-    document.getElementById('app').classList.add('actif');
-    /* Vue d'entrée par défaut : Choisir mes indicateurs.
-       Décision Lætitia 26/04/2026 (post-livraison 9.C). */
-    _activerOnglet('questionnaire');
-    /* Badge contexte */
-    var info = CM.Domaine.infoContexte(contexte);
-    var badge = document.getElementById('badge-contexte');
-    badge.textContent = info.icone + ' ' + info.libelle;
-    badge.style.background = info.couleur;
-  }
-
-  function _rendreTout() {
-    _rendreTableauDeBord();
-    _rendreCascade();
-    _rendreQuestionnaire();
-    _rendreMaturite();
   }
 
   /* ─── VUE 1 : Tableau de bord — Panier personnel ─── */
