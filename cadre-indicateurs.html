@@ -9979,15 +9979,15 @@ CM.VueFicheQuestion = (function() {
 
   function ouvrir(ficheId) {
     if (!conteneur) return;
+    var fiche;
     try {
-      CM.FicheQuestion.obtenir(ficheId); /* lève si id inconnu */
+      fiche = CM.FicheQuestion.obtenir(ficheId); /* lève si id inconnu */
     } catch (e) {
       console.error(e);
       return;
     }
     /* Première ouverture : choisir des défauts pédagogiques (1ère option de chaque Q). */
     if (etat.ficheId !== ficheId) {
-      var fiche = CM.FicheQuestion.obtenir(ficheId);
       if (fiche.q1 && fiche.q1.options) etat.choixQ1 = fiche.q1.options[0].id;
       if (fiche.q2 && fiche.q2.options) etat.choixQ2 = fiche.q2.options[0].id;
     }
