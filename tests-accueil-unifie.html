@@ -640,15 +640,6 @@ CM.AccueilUnifie = (function() {
     return id;
   }
 
-  function _libellesValeursActives(axe) {
-    var brut = etat.chips[axe];
-    if (axe === 'niveau' || axe === 'maturite') {
-      if (!brut) return [];
-      return [_libelleValeur(axe, brut)];
-    }
-    return brut.map(function(id) { return _libelleValeur(axe, id); });
-  }
-
   function _rafraichirChip(racine, axe) {
     var chip = racine.querySelector('.chip[data-axe="' + axe + '"]');
     if (!chip) return;
