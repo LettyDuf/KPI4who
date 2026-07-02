@@ -3709,6 +3709,7 @@ CM.IndicateursMeta = (function() {
     'x2': { tags:['delais','flux'],              cadres:['generique'] },
     'x4': { tags:['humain'],                     cadres:['generique'] },
     'x5': { tags:['flux','valeur'],              cadres:['generique'] },
+    'x6': { tags:['humain'],                     cadres:['generique'] },
 
     /* Équipes — Lean Six Sigma orthodoxe (qualité statistique de processus) */
     'lss-1': { tags:['qualite','flux'],          cadres:['lean'] },
@@ -4030,6 +4031,7 @@ CM._tagsThematiquesData = {
   'x2':      ['prévisibilité', 'cadence'],
   'x4':      ['engagement', 'confiance'],
   'x5':      ['cadence'],
+  'x6':      ['confiance'],
   'lss-1':   ['coûts cachés', 'variabilité'],
   'af-c1':   ['feedback', 'expérience client'],
   'af-c2':   ['goulots', 'cadence'],
@@ -6746,6 +6748,18 @@ CM.Referentiel.ajouter([
     risque:'Une équipe peut livrer 30 fonctionnalités inutiles et sembler très performante. Remplacer par des indicateurs d\'impact.',
     alt:'Débit · Indicateurs d\'impact (KII) · Résultats cles (ORC)',
     roles:['chef-équipe','portefeuille'], prioritaire:false, fiabilite:'risque', maturite_min:'debutant'
+  },
+  {
+    id:'x6', niveau:'operationnel', type:'ICC', icone:'🛡️',
+    nom:'Sécurité psychologique de l\'équipe (Psychological Safety)',
+    definition:'Mesure périodique et strictement anonyme du sentiment partagé qu\'on peut prendre un <span class="term-def" data-def="Risque interpersonnel : dire ou faire quelque chose qui expose face aux autres, comme signaler un problème, avouer une erreur, contester une décision ou poser une question naïve. La sécurité psychologique est la conviction partagée que ce risque ne sera pas puni. Concept formalisé par Amy Edmondson (The Fearless Organization).">risque interpersonnel</span> dans l\'équipe : signaler un problème, avouer une erreur, contester une décision, poser une question naïve, sans craindre l\'humiliation ni la sanction. Le questionnaire canonique d\'Amy Edmondson tient en sept affirmations notées sur une échelle d\'accord. Ce n\'est pas un score de bien-être : une équipe peut être heureuse et silencieuse. C\'est le capteur de ce qui ose se dire tout haut, condition de fiabilité de tous les autres indicateurs déclaratifs.',
+    objectif:'Donner à l\'équipe et à son responsable le baromètre de la parole libre. Le projet Aristote de Google a identifié la sécurité psychologique comme le premier facteur des équipes performantes, loin devant la composition ou l\'expérience. Une sécurité psychologique élevée rend les autres capteurs honnêtes : estimations, rétrospectives et sondages ne valent que ce que l\'équipe ose y dire. Sert à ouvrir une conversation d\'équipe, jamais à noter un manager ni à comparer des équipes.',
+    frequence:'Trimestrielle ou semestrielle, en dehors des périodes de crise',
+    exemple_ent:'L\'équipe affiche un taux de complétion de sprint impeccable et un moral déclaré correct, mais l\'indice révèle que deux affirmations chutent : « je peux signaler un problème sans risque » et « mes questions ne sont pas retenues contre moi ». Lecture : les chiffres flatteurs sont probablement filtrés à la source. Décision : le responsable travaille d\'abord sa manière d\'accueillir les mauvaises nouvelles, avant de chercher un problème de processus.',
+    exemple_eq:'Le questionnaire appartient à l\'équipe : résultats restitués en rétrospective, agrégés, jamais nominatifs. La mesure exige un minimum de confiance préexistante pour être honnête, c\'est pourquoi elle demande un peu de maturité : dans un climat très dégradé, commencer par des gestes concrets (post-mortems sans blâme, réaction exemplaire à la première mauvaise nouvelle), pas par un questionnaire.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Score rattaché à l\'évaluation : relier le résultat du questionnaire à l\'évaluation du responsable ou de l\'équipe. Les réponses deviennent coachées dès la deuxième passe et l\'indice mesure la prudence, plus la sécurité.">score rattaché à l\'évaluation</span>, <span class="term-def" data-def="Désanonymisation perçue : équipe trop petite, croisements de filtres, restitution maladroite. Même partielle ou simplement soupçonnée, elle détruit la franchise des réponses pour toutes les mesures suivantes.">désanonymisation perçue</span>, et <span class="term-def" data-def="Mesurer sans jamais agir : un questionnaire dont les résultats ne déclenchent aucune action visible enseigne que parler ne sert à rien, et aggrave ce qu\'il prétendait mesurer.">mesurer sans jamais agir</span>. Vigilance Westrum : la sécurité psychologique est une propriété du système managérial (la façon dont les mauvaises nouvelles sont accueillies), pas un trait de caractère des personnes.',
+    alt:'Si la question est « comment va l\'équipe ? » plutôt que « ose-t-on parler ? », préférer l\'<a href="#fiche=x4">indice de bien-être de l\'équipe</a>. À l\'échelle d\'un programme entier, préférer l\'<a href="#fiche=p11">indice de friction programme</a>. Pour un signal RH annuel comparable entre équipes, l\'<a href="#fiche=af-r1">indice de recommandation employé</a>.',
+    roles:['chef-équipe','membre-équipe'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
   }
 ]);
 </script>

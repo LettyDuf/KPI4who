@@ -257,6 +257,7 @@ Arbitrages finaux : tags sortants, tags à fusionner, vocabulaire final figé à
 | x2 | Burndown |  | x |  |  |  |  | x |  |  |  |  |  |  |  |
 | x4 | Team health check |  |  | x |  |  |  |  |  |  |  | x |  |  |  |
 | x5 | Feature count |  |  |  |  |  |  | x |  |  |  |  |  |  |  |
+| x6 | Sécurité psychologique |  |  |  |  |  |  |  |  |  |  | x |  |  |  |
 | lss-1 | Premier passage conforme |  |  |  |  | x |  |  |  |  |  |  | x |  |  |
 | af-c1 | Taux conversion |  |  |  |  |  |  |  | x |  |  |  |  |  | x |
 | af-c2 | Cycle vente |  |  |  | x |  |  | x |  |  |  |  |  |  |  |
