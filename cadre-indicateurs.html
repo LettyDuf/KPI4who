@@ -8047,8 +8047,14 @@ CM.Composants = (function() {
     document.getElementById('tiroir').setAttribute('aria-hidden', 'false');
     /* Reset scroll en haut */
     document.getElementById('tiroir').scrollTop = 0;
-    /* Synchro URL : la fiche courante est dans le hash (partage + favoris + Cmd+clic). */
-    CM.Hash.ecrireFicheId(id);
+    /* Synchro URL : la fiche courante est dans le hash (partage + favoris + Cmd+clic).
+       Cas particulier (audit 02/07/2026) : si une fiche-question (#fiche-q=...)
+       est affichée sous le tiroir, on ne touche pas au hash — sinon
+       rechargement et partage de l'URL perdraient la vue sous-jacente, et
+       la fermeture du tiroir laisserait une URL vide. */
+    if (!_hashPorteFicheQuestion()) {
+      CM.Hash.ecrireFicheId(id);
+    }
     setTimeout(function() { var b = document.querySelector('.btn-fermer'); if (b) b.focus(); }, 300);
   }
 
@@ -8056,8 +8062,18 @@ CM.Composants = (function() {
     document.getElementById('fond-tiroir').classList.remove('ouvert');
     document.getElementById('tiroir').classList.remove('ouvert');
     document.getElementById('tiroir').setAttribute('aria-hidden', 'true');
-    /* Synchro URL : plus de fiche affichée, le hash est nettoyé. */
-    CM.Hash.effacer();
+    /* Synchro URL : plus de fiche affichée, le hash est nettoyé — sauf si
+       une fiche-question reste affichée sous le tiroir (son hash a été
+       préservé à l'ouverture, cf. ouvrirTiroir). */
+    if (!_hashPorteFicheQuestion()) {
+      CM.Hash.effacer();
+    }
+  }
+
+  /* Vrai si le hash courant désigne une fiche-question (#fiche-q=...),
+     c'est-à-dire qu'une vue fiche-question est affichée sous le tiroir. */
+  function _hashPorteFicheQuestion() {
+    return location.hash.indexOf('#fiche-q=') === 0;
   }
 
   return { htmlCarte: htmlCarte, rendreFicheHtml: rendreFicheHtml, ouvrirTiroir: ouvrirTiroir, fermerTiroir: fermerTiroir };
