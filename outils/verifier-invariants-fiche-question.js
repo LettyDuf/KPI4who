@@ -15,6 +15,10 @@
  *   I4 - toute option Q1 d'une fiche §4.6 a un axeEnTete egal a un id d'axe.
  *   I5 - aucune fiche ne melange les structures de deux variantes, et chaque
  *        fiche porte la structure attendue par sa variante.
+ *   I6 - tout lien sortant (lienSortantPatrimonial, liensSortantsParNiveau)
+ *        portant un cadreRef reference un cadre de VOCAB.cadres, et ne
+ *        cumule pas cadreRef et ficheRef (garde-fou 28.gf.1, 02/07/2026 :
+ *        un cadreRef inconnu ferait lever executer() au clic).
  *
  * Patron : verifier-coherence-vocabulaire.js (verificateur node zero-dependance).
  * Exit codes : 0 succes, 1 invariant viole, 2 erreur d'extraction/E-S.
@@ -57,6 +61,20 @@ if (!fq || !ref) echec(2, 'CM.FicheQuestion ou CM.Referentiel absent apres evalu
 
 var VARIANTES = ['§4.3', '§4.4', '§4.6'];
 function refExiste(id) { try { return !!ref.chercher(id); } catch (e) { return false; } }
+
+/* VOCAB.cadres — extraction statique (meme source que le filtre executer). */
+var mVocab = html.match(/var VOCAB = \{[\s\S]*?cadres:\s*\[([^\]]+)\]/);
+if (!mVocab) echec(2, 'VOCAB.cadres introuvable dans le HTML');
+var cadresValides = (mVocab[1].match(/'([^']+)'/g) || []).map(function (c) { return c.slice(1, -1); });
+if (!cadresValides.length) echec(2, 'VOCAB.cadres vide apres extraction');
+
+function verifierLienSortant(fid, contexte, lien) {
+  if (!lien) return;
+  if (lien.cadreRef && lien.ficheRef)
+    ko(fid, 'I6', contexte + ' : cadreRef et ficheRef cumules (contrat : cadreRef prioritaire, exclusif)');
+  if (lien.cadreRef && cadresValides.indexOf(lien.cadreRef) < 0)
+    ko(fid, 'I6', contexte + ' : cadreRef inconnu "' + lien.cadreRef + '" (absent de VOCAB.cadres)');
+}
 
 var echecs = [];
 function ko(fid, inv, msg) { echecs.push('  [' + fid + '] ' + inv + ' : ' + msg); }
@@ -105,6 +123,12 @@ ids.forEach(function (fid) {
     if (f.trios || f.matrice) ko(fid, 'I5', 'fiche §4.3 portant trios ou matrice');
     if (!f.colonnes) ko(fid, 'I5', 'fiche §4.3 sans colonnes');
   }
+
+  /* I6 — liens sortants a cadreRef, communs aux variantes. */
+  verifierLienSortant(fid, 'lienSortantPatrimonial', f.lienSortantPatrimonial);
+  Object.keys(f.liensSortantsParNiveau || {}).forEach(function (niv) {
+    verifierLienSortant(fid, 'liensSortantsParNiveau.' + niv, f.liensSortantsParNiveau[niv]);
+  });
 });
 
 process.stdout.write('Invariants CM.FicheQuestion — ' + ids.length + ' fiches du catalogue (' + ids.join(', ') + ')\n\n');
@@ -113,7 +137,8 @@ if (echecs.length === 0) {
   process.stdout.write('  ✓ I2 ficheRef reel dans CM.Referentiel ou CADRES_A_VENIR\n');
   process.stdout.write('  ✓ I3 cardEnTete des options Q1 (§4.4)\n');
   process.stdout.write('  ✓ I4 axeEnTete des options Q1 (§4.6)\n');
-  process.stdout.write('  ✓ I5 structure coherente avec la variante\n\nTout est coherent.\n');
+  process.stdout.write('  ✓ I5 structure coherente avec la variante\n');
+  process.stdout.write('  ✓ I6 cadreRef des liens sortants dans VOCAB.cadres\n\nTout est coherent.\n');
   process.exit(0);
 } else {
   process.stdout.write('  ✗ ' + echecs.length + ' violation(s) :\n' + echecs.join('\n') + '\n');
