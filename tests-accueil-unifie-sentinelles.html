@@ -381,6 +381,7 @@ CM.IndicateursMeta = (function() {
     'p8': { tags:['alignement','humain','valeur'], cadres:['generique'] },
     'p9': { tags:['flux','delais'],              cadres:['lean','kanban'] },
     'p10': { tags:['delais','alignement'],       cadres:['safe'] },
+    'p11': { tags:['humain'],                    cadres:['generique'] },
 
     /* Équipes — DORA / livraison logicielle */
     'o1': { tags:['flux','delais'],              cadres:['dora'] },
@@ -918,7 +919,7 @@ CM.Referentiel.ajouter([
 </script>
 
 
-<!-- ══ DATA : Programme & Projet (p1–p10) ══ -->
+<!-- ══ DATA : Programme & Projet (p1–p11) ══ -->
 <script>
 CM.Referentiel.ajouter([
   {
@@ -1035,6 +1036,18 @@ CM.Referentiel.ajouter([
     exemple_eq:'Chaque équipe retrouve la même logique à son échelle avec le <a href="#fiche=ti-d2">taux de complétion de sprint</a>. La vigilance est identique : l\'écart entre promis et livré se comprend en rétrospective (dépendances, imprévus, capacité mal connue), il ne se reproche pas. Une équipe punie sur l\'écart apprend à promettre moins, pas à livrer plus.',
     risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Sac de sable (sandbagging) : promettre volontairement peu pour afficher un taux de réalisation flatteur. Le programme paraît prévisible mais sous-utilise sa capacité, et la feuille de route perd son ambition.">sac de sable</span> (promettre peu pour tout tenir), <span class="term-def" data-def="Requalification de la promesse : redéfinir après coup ce qui avait été engagé (périmètre réduit, élément discrètement retiré de la liste initiale) pour que le réalisé colle au promis. L\'indicateur devient un exercice d\'écriture et plus personne ne s\'y fie.">requalification de la promesse</span> (réécrire l\'engagé pour qu\'il colle au livré), et fixation d\'une cible de 100 % qui pousse mécaniquement au sac de sable (effet Goodhart). La sous-estimation des délais est par ailleurs un biais humain systématique, le biais de planification décrit par Kahneman et Tversky : l\'écart se corrige par la mesure de la capacité démontrée (l\'approche par les données de Vacanti), pas par la volonté ou la pression.',
     alt:'Si l\'objectif est de suivre l\'avancement calendaire du plan, préférer le <a href="#fiche=p1">taux d\'avancement des jalons</a>. Si l\'objectif est la ponctualité des livraisons à l\'échelle du portefeuille, préférer le <a href="#fiche=t5">taux de livraison dans les délais</a>. Si l\'objectif est l\'engagement d\'une seule équipe sur un sprint, préférer le <a href="#fiche=ti-d2">taux de complétion de sprint</a>.',
+    roles:['programme','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
+  },
+  {
+    id:'p11', niveau:'programme', type:'ICC', icone:'🚧',
+    nom:'Indice de friction programme',
+    definition:'Sondage court et strictement anonyme, posé chaque trimestre à toutes les équipes d\'un programme. Il cherche ce que les rapports officiels ne disent pas : les blocages restés sans réponse, les arbitrages incompris, les promesses non tenues entre équipes, les dépendances qui usent. C\'est un indicateur de <strong>perception</strong> agrégé, dans le même esprit que l\'<a href="#fiche=x4">indice de bien-être de l\'équipe</a> mais lu à l\'échelle du programme. Sa lecture clé est la <strong>dispersion</strong> entre équipes et la <strong>tendance</strong> d\'un trimestre à l\'autre, jamais le niveau absolu : un score isolé ne dit rien, une chute localisée dit beaucoup.',
+    objectif:'Donner à la direction de programme le signal humain qui n\'emprunte pas la voie hiérarchique. Dans un programme, la friction entre équipes (attentes d\'arbitrage, dépendances non résolues, charge de coordination) reste invisible dans les indicateurs de flux tant qu\'elle n\'a pas déjà coûté cher. Les travaux de Westrum sur les cultures organisationnelles le montrent : la qualité de la circulation de l\'information prédit la performance. L\'indice sert à repérer tôt où la coordination coince, pour agir sur la structure (interfaces entre équipes, clarté des arbitrages), pas sur les personnes.',
+    frequence:'Trimestrielle, à toutes les équipes du programme',
+    exemple_ent:'Le sondage du trimestre montre une friction stable partout, sauf deux équipes dont les scores chutent : précisément celles qui partagent une dépendance à un fournisseur interne récemment réorganisé. Les indicateurs de flux ne montrent encore rien. Décision : clarifier l\'interface avec ce fournisseur avant que le retard n\'apparaisse dans le délai bout-en-bout. Le sondage a acheté un trimestre d\'avance.',
+    exemple_eq:'Chaque équipe voit ses réponses agrégées avec celles des autres, sans identification possible. La condition de survie de l\'indicateur est la sécurité psychologique au sens d\'Edmondson : on ne dit la vérité que protégé. À la première conséquence négative pour une équipe qui a répondu franchement, les réponses deviennent diplomatiques et l\'indicateur meurt.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Transformer le sondage en outil de management : rattacher les réponses à l\'évaluation des équipes ou de leurs responsables. Les réponses deviennent coachées dès la deuxième passe et l\'indicateur ne mesure plus que la prudence.">transformer le sondage en outil de management</span>, <span class="term-def" data-def="Chasse au coupable : utiliser une chute de score pour chercher qui a mal répondu ou quelle équipe se plaint. La désanonymisation, même partielle ou seulement perçue, détruit la franchise des réponses pour tous les trimestres suivants.">chasse au coupable</span>, et <span class="term-def" data-def="Chiffrer le sentiment en cible : fixer un objectif de score de friction à atteindre. L\'indice devient une cible et cesse d\'être un capteur (effet Goodhart) : il pousse à l\'auto-censure plutôt qu\'à la résolution des blocages.">chiffrer le sentiment en cible</span>. La friction n\'est pas une faute : les travaux sur les topologies d\'équipes (Skelton et Pais) rappellent qu\'elle signale le plus souvent des interfaces mal conçues entre équipes, pas de la mauvaise volonté.',
+    alt:'Si l\'objectif est le climat d\'une seule équipe, préférer l\'<a href="#fiche=x4">indice de bien-être de l\'équipe</a>. Si l\'objectif est la confiance à l\'échelle de toute l\'organisation, préférer l\'<a href="#fiche=s8">indice de confiance organisationnelle</a>. Si l\'objectif est l\'adhésion des équipes pendant une transformation, préférer le <a href="#fiche=cg-4">score d\'adhésion multi-équipes</a>.',
     roles:['programme','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
   }
 ]);

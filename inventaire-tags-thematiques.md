@@ -224,6 +224,7 @@ Arbitrages finaux : tags sortants, tags à fusionner, vocabulaire final figé à
 | p8 | Demandes de changement client |  |  |  |  |  |  |  | x |  |  |  | x |  |  |
 | p9 | Lead Time programme |  | x |  | x |  |  |  |  |  |  |  |  |  |  |
 | p10 | Feuille de route engagée vs réalisée |  | x |  |  |  |  |  |  |  |  | x |  |  |  |
+| p11 | Indice de friction programme | x |  |  |  |  |  |  |  |  |  | x |  |  |  |
 | o1 | Fréquence déploiement |  |  |  |  |  |  | x |  |  | x |  |  |  |  |
 | o2 | Lead time for changes |  |  |  | x |  |  | x |  |  |  |  |  |  |  |
 | o3 | Change failure rate |  |  |  |  |  |  |  | x |  |  |  | x |  |  |
