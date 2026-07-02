@@ -10042,8 +10042,11 @@ CM.VueFicheQuestion = (function() {
     var btnRetour = t.closest ? t.closest('[data-fiche-q-retour]') : null;
     if (btnRetour) {
       ev.preventDefault();
-      /* Suppression du fragment hash pour revenir à l'accueil. */
-      history.pushState('', document.title, window.location.pathname + window.location.search);
+      /* Suppression du fragment hash pour revenir à l'accueil, via
+         l'adapter URL commun. replaceState et non pushState : doctrine
+         du module CM.Hash, ne pas polluer le bouton Précédent
+         (audit 02/07/2026, alignement sur la navigation du tiroir). */
+      CM.Hash.effacer();
       fermer();
     }
   }
