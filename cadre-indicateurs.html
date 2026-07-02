@@ -474,27 +474,8 @@
     .fleche-lien { text-align: center; padding: 0.4rem 0; font-size: 1.4rem; color: var(--texte-2); }
 
     /* ══════════════════════════════════════════════
-       QUESTIONNAIRE
+       CONSEIL PÉDAGOGIQUE (encart aphorisme)
     ══════════════════════════════════════════════ */
-    .questionnaire-enveloppe { max-width: 740px; background: var(--fond-2); border-radius: var(--rayon); padding: 2rem; box-shadow: var(--ombre); }
-    .questionnaire-intro { margin-bottom: 1.75rem; }
-    .questionnaire-intro h2 { font-size: 1.15rem; font-weight: 800; margin-bottom: 0.4rem; }
-    .questionnaire-intro p  { font-size: 0.86rem; color: var(--texte-2); line-height: 1.6; }
-    .barre-infos { display: flex; justify-content: space-between; font-size: 0.76rem; color: var(--texte-2); margin-bottom: 0.4rem; }
-    .barre-fond { height: 5px; background: var(--bordure); border-radius: 3px; overflow: hidden; }
-    .barre-remplie { height: 100%; border-radius: 3px; transition: width 0.4s ease; background: linear-gradient(90deg, var(--niv-1-moyen), var(--niv-2-moyen)); }
-    .barre-prog-enveloppe { margin-bottom: 2rem; }
-    .bloc-question { margin-bottom: 2rem; }
-    .q-numero { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.9px; color: var(--texte-2); font-weight: 800; }
-    .q-texte  { font-size: 1rem; font-weight: 700; margin: 0.45rem 0 0.9rem; }
-    .options-grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 0.55rem; }
-    .option-btn { padding: 0.75rem 0.9rem; border: 2px solid var(--bordure); border-radius: 10px; background: var(--fond); cursor: pointer; font-size: 0.86rem; text-align: left; transition: var(--trans); color: var(--texte); font-family: inherit; line-height: 1.3; }
-    .option-btn:hover { border-color: var(--niv-2-moyen); color: var(--niv-2); }
-    .option-btn.sel { border-color: var(--niv-2); background: var(--niv-2-clair); color: var(--niv-2); font-weight: 700; }
-    .option-sous { font-size: 0.75rem; color: var(--texte-2); margin-top: 0.22rem; }
-    .option-btn.sel .option-sous { color: var(--niv-2); opacity: 0.8; }
-    .resultat-zone { background: var(--fond); border-radius: var(--rayon); padding: 1.4rem; margin-top: 1.5rem; }
-    .resultat-titre { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.8px; color: var(--texte-2); font-weight: 800; margin-bottom: 1rem; }
     .conseil-zone { margin-top: 1.25rem; padding: 0.9rem 1rem; background: var(--fond-2); border-radius: 10px; border-left: 4px solid var(--niv-2); font-size: 0.85rem; line-height: 1.6; }
     /* Aération typographique : une idée par paragraphe. L'aphorisme final
        est isolé par un filet pointillé pour retrouver son rôle de chute
@@ -2520,19 +2501,16 @@
   <header class="en-tete" role="banner">
     <span id="badge-contexte" class="badge-contexte"></span>
     <!-- Bug A résolu 08/05/2026 — bandeau interne .onglets retiré.
-         Toutes les fonctions sont désormais accessibles depuis le bandeau du
-         haut (Mon tableau de bord, Cascade stratégique, Maturité). La vue
-         questionnaire (« Choisir mes indicateurs ») reste dans le DOM mais
-         sans onglet d'accès — elle est en sursis (décision D1 02/05/2026,
-         suppression prévue au chantier 10.3). _activerOnglet bascule en
-         fallback _basculerVue quand l'onglet est introuvable, donc l'app
-         continue de fonctionner. -->
+         Toutes les fonctions sont accessibles depuis le bandeau du haut
+         (Mon tableau de bord, Cascade stratégique, Maturité). La vue
+         questionnaire, en sursis depuis la décision D1 du 02/05/2026, a été
+         retirée au chantier 25 (02/07/2026) : « Choisir mes indicateurs »
+         est porté par l'accueil unifié. -->
   </header>
 
   <main class="contenu" role="main">
     <div class="vue active" id="vue-tableau-bord" role="tabpanel"><div id="contenu-tdb" class="tableau-bord"></div></div>
     <div class="vue" id="vue-cascade"       role="tabpanel"><div id="contenu-cascade"></div></div>
-    <div class="vue" id="vue-questionnaire" role="tabpanel"><div id="contenu-questionnaire"></div></div>
     <div class="vue" id="vue-maturite"      role="tabpanel"><div id="contenu-maturite"></div></div>
   </main>
 </div><!-- /app -->
@@ -10141,7 +10119,6 @@ CM.App = (function() {
   'use strict';
 
   /* ─── Etat ─── */
-  var réponses  = {};
   var maturiteActive = 'debutant';
 
   /* ─── Accueil unifié ─── */
@@ -10206,24 +10183,10 @@ CM.App = (function() {
 
   /* ─── Navigation ─── */
   function retourAccueil() {
-    réponses = {};
     _montrerAccueil();
     document.getElementById('app').classList.remove('actif');
-    /* Réinitialiser l'onglet actif sur la vue d'entrée par défaut, pour
-       que la prochaine entrée dans l'app parte du même état visuel
-       cohérent (cf. décision Lætitia 26/04/2026 sur la vue d'entrée). */
-    _activerOnglet('questionnaire');
-  }
-
-  function changerVue(id, btn) {
-    var onglets = document.querySelectorAll('.onglet');
-    for (var i = 0; i < onglets.length; i++) {
-      onglets[i].classList.remove('actif');
-      onglets[i].setAttribute('aria-selected', 'false');
-    }
-    btn.classList.add('actif');
-    btn.setAttribute('aria-selected', 'true');
-    _basculerVue(id);
+    /* Pas de réinitialisation d'onglet : chaque point d'entrée dans l'app
+       (ouvrirTableauBord, ouvrirVueDuBandeau) active explicitement sa vue. */
   }
 
   /* Exemple : CM.App.demanderRetourAccueil() — dispatcher du clic « Accueil » du bandeau.
@@ -10293,15 +10256,6 @@ CM.App = (function() {
     _rendreMaturite();
   }
 
-  function repondre(qId, optId) {
-    réponses[qId] = optId;
-    _rendreQuestionnaire();
-  }
-
-  function reinitQuestionnaire() {
-    réponses = {};
-    _rendreQuestionnaire();
-  }
 
   /* ─── Helpers internes ─── */
   function _basculerVue(id) {
@@ -10310,21 +10264,13 @@ CM.App = (function() {
     document.getElementById('vue-' + id).classList.add('active');
   }
 
-  /* ── Active à la fois l'onglet et la vue correspondante ──
-     Centralisé pour que les points d'entrée dans l'app (retourAccueil)
-     ne dupliquent plus la boucle de marquage des onglets.
-     Sélectionne l'onglet par son onclick (parsing simple mais robuste
-     tant que la convention CM.App.changerVue('id', this) est respectée
-     dans le HTML). */
+  /* ── Active la vue demandée ──
+     Depuis le retrait du bandeau interne .onglets (08/05/2026) puis de la
+     vue questionnaire (chantier 25, 02/07/2026), il n'y a plus d'onglet à
+     marquer : activer une vue = basculer la classe active. Le nom est
+     conservé pour la lisibilité des points d'entrée. */
   function _activerOnglet(idVue) {
-    var btn = document.querySelector(".onglet[onclick*=\"changerVue('" + idVue + "'\"]");
-    if (btn) {
-      changerVue(idVue, btn);
-    } else {
-      /* Fallback safe : si l'onglet est introuvable (HTML modifié),
-         on bascule au moins la vue pour ne pas laisser l'app vide. */
-      _basculerVue(idVue);
-    }
+    _basculerVue(idVue);
   }
 
   /* ─── VUE 1 : Tableau de bord — Panier personnel ─── */
@@ -10931,96 +10877,6 @@ CM.App = (function() {
     zone.innerHTML = html;
   }
 
-  /* ─── VUE 3 : Questionnaire ─── */
-  var QUESTIONS = [
-    {
-      id:'q1', num:'01',
-      texte:'Quel est votre objectif principal à piloter ?',
-      options:[
-        { id:'business',  lib:'📈 Résultats economiques',     desc:'Revenus, rentabilité, croissance' },
-        { id:'livraison', lib:'🚀 Vitesse de livraison',      desc:'Delais, frequence, flux de valeur' },
-        { id:'qualite',   lib:'🎯 Qualité & stabilite',       desc:'Defauts, incidents, fiabilité' },
-        { id:'humain',    lib:'👥 Comportements & engagement', desc:'Collaboration, pratiques, competences' }
-      ]
-    },
-    {
-      id:'q2', num:'02',
-      texte:'Quelle décision cherchez-vous à éclairer ?',
-      options:[
-        { id:'investir',  lib:'💰 Arbitrer les investissements', desc:'Prioriser entre initiatives' },
-        { id:'ameliorer', lib:'🔄 Améliorer en continu',         desc:'Identifier et reduire les gaspillages' },
-        { id:'aligner',   lib:'🎯 Aligner les équipes',           desc:'Coordonner vers un objectif commun' },
-        { id:'piloter',   lib:'📊 Piloter au quotidien',          desc:'Suivre la progression et reagir' }
-      ]
-    },
-    {
-      id:'q3', num:'03',
-      texte:'À quel niveau hiérarchique se situe votre décision ?',
-      options:[
-        { id:'strategique',  lib:'🏛 Strategique',  desc:'Direction, horizon 1 a 3 ans' },
-        { id:'tactique',     lib:'📊 Portefeuille', desc:'Arbitrage, horizon 3 a 12 mois' },
-        { id:'programme',    lib:'🗂 Programme',    desc:'Coordination, horizon 1 a 6 mois' },
-        { id:'operationnel', lib:'⚙️ Equipes',    desc:'Livraison, horizon hebdomadaire' }
-      ]
-    }
-  ];
-
-  function _rendreQuestionnaire() {
-    var zone = document.getElementById('contenu-questionnaire');
-    var repondues = Object.keys(réponses).length;
-    var total = QUESTIONS.length;
-    var pct = Math.round((repondues / total) * 100);
-    var html = '<div class="questionnaire-enveloppe">'
-      + '<div class="questionnaire-intro"><h2>Outil de selection des indicateurs</h2>'
-      + '<p>Repondez aux 3 questions pour identifier les 3 a 5 indicateurs les plus pertinents pour votre situation.</p></div>'
-      + '<div class="barre-prog-enveloppe" role="progressbar" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100">'
-      + '<div class="barre-infos"><span>' + repondues + ' / ' + total + ' questions repondues</span><span>' + pct + ' %</span></div>'
-      + '<div class="barre-fond"><div class="barre-remplie" style="width:' + pct + '%"></div></div></div>';
-
-    QUESTIONS.forEach(function(q) {
-      var rep = réponses[q.id];
-      html += '<div class="bloc-question"><div class="q-numero">Question ' + q.num + '</div>'
-        + '<div class="q-texte">' + q.texte + '</div>'
-        + '<div class="options-grille" role="group">';
-      q.options.forEach(function(opt) {
-        var sel = rep === opt.id;
-        html += '<button class="option-btn' + (sel ? ' sel' : '') + '"'
-          + ' onclick="CM.App.repondre(\'' + q.id + '\',\'' + opt.id + '\')"'
-          + ' role="radio" aria-checked="' + sel + '">'
-          + opt.lib + '<div class="option-sous">' + opt.desc + '</div></button>';
-      });
-      html += '</div></div>';
-    });
-
-    if (repondues === total) html += _rendreResultats();
-    html += '</div>';
-    zone.innerHTML = html;
-  }
-
-  function _rendreResultats() {
-    var obj    = réponses['q1'];
-    var niveau = réponses['q3'];
-
-    var candidats = CM.Referentiel.tous().filter(function(ind) {
-      if (ind.niveau !== niveau) return false;
-      if (obj === 'business'  && !['IGO','ICP','ORC'].includes(ind.type)) return false;
-      if (obj === 'livraison' && !['DORA','FLUX','ICP'].includes(ind.type)) return false;
-      if (obj === 'qualite'   && !['DORA','ICP','ICC'].includes(ind.type)) return false;
-      if (obj === 'humain'    && !['ICC','ORC'].includes(ind.type)) return false;
-      return true;
-    });
-    if (candidats.length === 0) candidats = CM.Referentiel.tous().filter(function(i) { return i.niveau === niveau; });
-    var recommandes = candidats;
-
-    var html = '<div class="resultat-zone"><div class="resultat-titre">✅ Vos indicateurs recommandes — ' + recommandes.length + ' au total</div>'
-      + '<div class="grille-cartes">';
-    recommandes.forEach(function(ind) { html += CM.Composants.htmlCarte(ind, '#1a237e', true, false); });
-    html += '</div>'
-      + CM.Config.conseilPedagogiquePour({ niveau: niveau, objectif: obj })
-      + '<button class="btn-principal" onclick="CM.App.reinitQuestionnaire()">Recommencer</button></div>';
-    return html;
-  }
-
   /* ─── VUE 4 : Maturite & Recommandations ─── */
   function _rendreMaturite() {
     var zone = document.getElementById('contenu-maturite');
@@ -11365,10 +11221,7 @@ CM.App = (function() {
   /* API publique */
   return {
     retourAccueil:        retourAccueil,
-    changerVue:           changerVue,
     changerMaturite:      changerMaturite,
-    repondre:             repondre,
-    reinitQuestionnaire:  reinitQuestionnaire,
     afficherAccueil:      afficherAccueil,
     ouvrirTableauBord:    ouvrirTableauBord,
     ouvrirVueDuBandeau:   ouvrirVueDuBandeau,
