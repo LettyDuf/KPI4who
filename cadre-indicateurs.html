@@ -10902,7 +10902,9 @@ CM.App = (function() {
     /* 4 niveaux */
     for (var i = 0; i < cfg.NIVEAUX.length; i++) {
       var niv = cfg.NIVEAUX[i];
-      var estMonNiv = contexte && contexte.niveau === niv.id;
+      /* Vestige contexte retiré (audit 02/07/2026) : il valait toujours
+         null, aucun niveau n'a jamais été marqué « mon niveau ». */
+      var estMonNiv = false;
       var contour = estMonNiv ? 'box-shadow:0 0 0 3px ' + niv.couleur + ',var(--ombre);' : '';
       var indsNiv = CM.Referentiel.tous().filter(function(ind) { return ind.niveau === niv.niveauData; });
 
@@ -11023,7 +11025,10 @@ CM.App = (function() {
   function _rendreMaturite() {
     var zone = document.getElementById('contenu-maturite');
     var cfg  = CM.Config;
-    var inds = CM.Referentiel.filtrerParContexte(contexte);
+    /* Vue ouverte par le bandeau, sans contexte (le vestige contexte,
+       retiré à l'audit 02/07/2026, valait toujours null) : tous les
+       indicateurs sont visibles, comportement inchangé. */
+    var inds = CM.Referentiel.filtrerParContexte(null);
     var ordMat = { debutant: 0, intermediaire: 1, avance: 2 };
     var mat = maturiteActive;
 
