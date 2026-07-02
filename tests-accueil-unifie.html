@@ -381,17 +381,28 @@ CM.AccueilUnifie = (function() {
     try {
       var charge = JSON.parse(brut);
       if (charge && charge.cartouches && charge.chips) {
-        /* Validation légère : on ne fait confiance qu'aux clés qu'on connaît. */
+        /* Validation stricte (audit 02/07/2026) : au-delà des clés, chaque
+           VALEUR restaurée doit exister dans le vocabulaire courant de son
+           axe. Une valeur inconnue (persistance forgée, ou périmée après un
+           renommage de tag ou de cadre entre deux versions de l'outil) est
+           écartée en silence ; sinon elle atteindrait
+           CM.RequeteMetriques.executer() qui lève au montage de l'accueil. */
         etat = {
           cartouches: {
             question: (charge.cartouches.question === 'ouvert') ? 'ouvert' : 'ferme',
             compteur: (charge.cartouches.compteur === 'ouvert') ? 'ouvert' : 'ferme'
           },
           chips: {
-            probleme: Array.isArray(charge.chips.probleme) ? charge.chips.probleme.slice() : [],
-            cadre:    Array.isArray(charge.chips.cadre)    ? charge.chips.cadre.slice()    : [],
-            niveau:   (typeof charge.chips.niveau   === 'string') ? charge.chips.niveau   : null,
-            maturite: (typeof charge.chips.maturite === 'string') ? charge.chips.maturite : null
+            probleme: Array.isArray(charge.chips.probleme)
+              ? charge.chips.probleme.filter(function(v) { return _estValeurConnue('probleme', v); })
+              : [],
+            cadre: Array.isArray(charge.chips.cadre)
+              ? charge.chips.cadre.filter(function(v) { return _estValeurConnue('cadre', v); })
+              : [],
+            niveau: (typeof charge.chips.niveau === 'string' && _estValeurConnue('niveau', charge.chips.niveau))
+              ? charge.chips.niveau : null,
+            maturite: (typeof charge.chips.maturite === 'string' && _estValeurConnue('maturite', charge.chips.maturite))
+              ? charge.chips.maturite : null
           }
         };
       }
@@ -469,6 +480,17 @@ CM.AccueilUnifie = (function() {
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  }
+
+  function _estValeurConnue(axe, id) {
+    /* Vrai si l'id figure dans le vocabulaire courant de l'axe (même source
+       de vérité que les sélecteurs de chips). Sert de garde-fou à la
+       restauration depuis la persistance locale. */
+    var valeurs = _valeursPourAxe(axe);
+    for (var i = 0; i < valeurs.length; i++) {
+      if (valeurs[i].id === id) { return true; }
+    }
+    return false;
   }
 
   function _valeursPourAxe(axe) {
