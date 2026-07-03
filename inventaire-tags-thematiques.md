@@ -208,6 +208,8 @@ Arbitrages finaux : tags sortants, tags à fusionner, vocabulaire final figé à
 | s12 | Écart de vérité stratégique |  |  |  |  |  |  |  |  |  |  | x |  | x |  |
 | s13 | Réallocation des ressources |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
 | s14 | Agenda dirigeant |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
+| s15 | Capture des incidents |  |  |  |  | x |  |  |  |  |  | x |  |  |  |
+| s16 | Intention de départ |  |  | x |  |  |  |  |  | x |  |  |  |  |  |
 | t1 | ROI portefeuille |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
 | t2 | Lead time métier |  | x |  |  |  |  | x |  |  |  |  |  |  |  |
 | t3 | OKR trimestriels |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
@@ -282,6 +284,7 @@ Arbitrages finaux : tags sortants, tags à fusionner, vocabulaire final figé à
 | af-r2 | Time to fill |  |  |  |  |  |  | x |  | x |  |  |  |  |  |
 | af-r3 | Turnover volontaire |  |  | x |  |  |  |  |  |  |  | x |  |  |  |
 | af-r4 | Complétion formations |  |  | x |  |  | x |  |  |  |  |  |  |  |  |
+| af-r5 | Micro-absentéisme |  |  | x |  | x |  |  |  |  |  |  |  |  |  |
 | af-op1 | OEE |  |  |  | x |  |  |  |  |  |  |  | x |  |  |
 | af-op2 | DPMO sigma |  |  |  |  |  |  |  | x |  |  |  | x |  |  |
 | af-op3 | On-time delivery |  | x |  |  |  |  |  |  |  |  |  |  |  | x |

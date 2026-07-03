@@ -3644,6 +3644,8 @@ CM.IndicateursMeta = (function() {
     's12':{ tags:['alignement','risque'],        cadres:['generique'] },
     's13': { tags:['valeur','alignement'],       cadres:['generique'] },
     's14': { tags:['alignement'],                cadres:['generique'] },
+    's15': { tags:['qualite','risque'],          cadres:['generique'] },
+    's16': { tags:['humain','risque'],           cadres:['generique'] },
 
     /* Portefeuille (ancien id "tactique") */
     't1': { tags:['valeur'],                     cadres:['generique'] },
@@ -3744,6 +3746,7 @@ CM.IndicateursMeta = (function() {
     'af-r2': { tags:['delais','flux'],           cadres:['generique'] },
     'af-r3': { tags:['humain','risque'],         cadres:['generique'] },
     'af-r4': { tags:['humain','qualite'],        cadres:['generique'] },
+    'af-r5': { tags:['humain','risque'],         cadres:['generique'] },
 
     /* Équipes — Opérations / Industrie */
     'af-op1': { tags:['flux','qualite'],         cadres:['lean'] },
@@ -3987,6 +3990,8 @@ CM._tagsThematiquesData = {
   's12':     ['confiance', 'alignement'],
   's13':     ['alignement'],
   's14':     ['alignement'],
+  's15':     ['coûts cachés', 'confiance'],
+  's16':     ['engagement', 'risque'],
   't1':      ['alignement'],
   't2':      ['prévisibilité', 'cadence'],
   't3':      ['alignement'],
@@ -4061,6 +4066,7 @@ CM._tagsThematiquesData = {
   'af-r2':   ['cadence', 'risque'],
   'af-r3':   ['engagement', 'confiance'],
   'af-r4':   ['engagement', 'compétences'],
+  'af-r5':   ['engagement', 'coûts cachés'],
   'af-op1':  ['goulots', 'variabilité'],
   'af-op2':  ['feedback', 'variabilité'],
   'af-op3':  ['prévisibilité', 'expérience client'],
@@ -5972,7 +5978,7 @@ CM.Theme.init();
 
 
 <!-- CM.REFERENTIEL.DATA — BEGIN (zone extractible par outils/construire-tests-accueil-unifie-sentinelles.js) -->
-<!-- ══ DATA : Indicateurs Stratégiques (s1–s14) ══ -->
+<!-- ══ DATA : Indicateurs Stratégiques (s1–s16) ══ -->
 <script>
 CM.Referentiel.ajouter([
   {
@@ -6137,6 +6143,30 @@ CM.Referentiel.ajouter([
     risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Théâtre d\'agenda : renommer les points de réunion existants en points stratégiques pour gonfler le ratio sans changer le contenu des discussions. Le classement doit se faire sur le contenu réel des échanges et les décisions produites, pas sur les intitulés.">théâtre d\'agenda</span>, et confondre temps passé et qualité de décision : trois heures qui tranchent valent mieux que trois jours qui commentent. Compléter la mesure du temps par le compte des décisions effectivement prises sur chaque priorité.',
     alt:'Pour confronter les priorités déclarées à l\'allocation d\'argent plutôt que de temps, préférer le <a href="#fiche=s13">taux de réallocation des ressources</a>. Pour la vue d\'ensemble des trois écarts (budget, agenda, perception des équipes), l\'<a href="#fiche=s12">écart de vérité stratégique</a>.',
     roles:['direction'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant'
+},
+  {
+    id:'s15', niveau:'strategique', type:'ICP', icone:'📡',
+    nom:'Taux de capture des incidents',
+    definition:'Rapport entre les incidents déclarés par les humains et les incidents détectés par une mesure indépendante : supervision et observabilité, revues a posteriori, audits. Le corpus fondateur vient de la santé : l\'inspection générale américaine (HHS OIG, 2012) a mesuré que les systèmes de signalement hospitaliers ne capturaient que 14 % des événements réels, établis indépendamment par revue de dossiers ; la Haute Autorité de santé française estime qu\'un événement indésirable grave sur dix est déclaré. Transposé au numérique : la part des incidents et anomalies détectés par l\'outillage qui ont aussi été déclarés, assumés et traités par les équipes dans les rapports officiels. C\'est la mesure la plus directe de l\'écart entre ce qui se passe et ce qui se dit.',
+    objectif:'Chiffrer l\'angle mort du reporting. Un taux de capture bas ne dit pas que les équipes mentent : il dit que le système (charge, peur, lourdeur du formulaire, absence de suite donnée) décourage la déclaration. L\'indicateur se lit en tendance et sert à travailler les causes de la sous-déclaration, jamais à traquer les non-déclarants. Sa force : il repose sur un dénominateur objectif, difficile à embellir sans truquer l\'outillage lui-même.',
+    frequence:'Semestrielle, par croisement déclarations / détection indépendante',
+    exemple_ent:'L\'observabilité a détecté 240 incidents de service sur le semestre ; 70 figurent dans les rapports et revues officiels, soit un taux de capture de 29 %. Lecture : les deux tiers de la réalité opérationnelle n\'atteignent jamais les instances de pilotage, qui décident sur un paysage embelli. Décision : simplifier la déclaration, garantir la réponse sans blâme, et suivre la remontée du taux.',
+    exemple_eq:'À l\'échelle d\'une équipe, le même esprit se pratique sans appareil : comparer en rétrospective ce qui a réellement perturbé le travail avec ce qui a été remonté. L\'écart nourrit la conversation sur ce qu\'on n\'ose pas ou ne pense pas à dire, en lien direct avec le <a href="#fiche=lss-2">taux de signalement volontaire</a>.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Capture de l\'audit : ajuster les seuils de détection ou exclure des catégories d\'incidents pour faire monter artificiellement le taux. Le dénominateur indépendant est toute la valeur de l\'indicateur ; qui le contrôle contrôle la vérité.">capture de l\'audit</span>, et <span class="term-def" data-def="Chasse aux non-déclarants : utiliser l\'écart pour identifier et sanctionner ceux qui n\'ont pas déclaré. La sous-déclaration est une propriété du système, pas une faute individuelle ; la sanction aggrave exactement ce qu\'on mesure.">chasse aux non-déclarants</span>. La transposition hors santé est une adaptation assumée : le protocole (quel dénominateur, quel périmètre) doit être défini et stable avant la première mesure.',
+    alt:'Pour le versant culturel du même phénomène (le système accueille-t-il les mauvaises nouvelles ?), préférer la <a href="#fiche=x7">culture générative de Westrum</a>. Pour le geste de signalement lui-même à l\'échelle d\'une équipe, le <a href="#fiche=lss-2">taux de signalement volontaire</a>.',
+    roles:['direction','portefeuille'], prioritaire:false, fiabilite:'fiable', maturite_min:'avance'
+  },
+  {
+    id:'s16', niveau:'strategique', type:'ICC', icone:'🧳',
+    nom:'Intention de départ (TIS-6)',
+    definition:'Échelle de six questions, anonyme et libre d\'accès, mesurant l\'intention des personnes de quitter l\'organisation (Bothma et Roodt, 2013, validée sur 2 429 salariés du secteur des technologies). Sa propriété rare : une validité prédictive démontrée, l\'échelle distingue les futurs partants des restants à quatre mois comme à quatre ans. C\'est le chaînon manquant entre les sondages de climat et les faits : le <a href="#fiche=s7">taux de rotation volontaire</a> mesure les départs une fois consommés, l\'intention de départ les annonce pendant qu\'il est encore temps d\'agir.',
+    objectif:'Donner à la direction un indicateur avancé du malaise, là où l\'attrition est un indicateur retardé. Un malaise qui ne se dit pas finit par se compter en démissions : mesurer l\'intention permet d\'intervenir sur les causes (charge, reconnaissance, perspectives, management) avant la lettre de départ. Se lit en tendance et en dispersion par population, jamais en score individuel.',
+    frequence:'Semestrielle, anonyme, agrégée par population',
+    exemple_ent:'Le tableau de bord RH est vert : rotation à 8 %, dans la norme du marché. Le sondage d\'intention montre pourtant qu\'un tiers des profils critiques d\'un domaine envisage sérieusement de partir. Lecture : l\'attrition de l\'an prochain est déjà écrite dans les réponses de cette année. Décision : plan de rétention ciblé sur ce domaine, avant les départs, pas après.',
+    exemple_eq:'À l\'échelle d\'une équipe, les six questions sont trop identifiantes pour rester anonymes : ne pas descendre sous une taille de population qui protège l\'anonymat. Le signal d\'équipe passe par la <a href="#fiche=x6">sécurité psychologique</a> et l\'<a href="#fiche=x4">indice de bien-être</a>, qui mesurent le climat sans désigner les partants.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Population trop fine : restituer l\'intention de départ sur des groupes si petits que les réponses deviennent identifiantes. La peur d\'être reconnu fausse les réponses suivantes et peut précipiter les départs qu\'on voulait prévenir.">population trop fine</span>, et <span class="term-def" data-def="Score de rétention cible : fixer un objectif d\'intention de départ aux managers. Les réponses deviennent un enjeu d\'évaluation, donc coachées, et l\'indicateur avance perd toute valeur prédictive (effet Goodhart).">score de rétention cible</span>. L\'échelle est auto-déclarative : dans un climat de défiance sévère, elle sous-mesure précisément ce qu\'elle vise.',
+    alt:'Pour les départs constatés plutôt qu\'anticipés, préférer le <a href="#fiche=s7">taux de rotation volontaire réfléchi</a>. Pour la trace factuelle du malaise avant même l\'intention, le <a href="#fiche=af-r5">micro-absentéisme</a>. Pour la confiance globale, l\'<a href="#fiche=s8">indice de confiance organisationnelle</a>.',
+    roles:['direction'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
   }
 ]);
 </script>
@@ -7049,7 +7079,7 @@ CM.Referentiel.ajouter([
 ]);
 </script>
 
-<!-- ══ DATA : Affaires — RH (af-r1 a af-r4) ══ -->
+<!-- ══ DATA : Affaires — RH (af-r1 a af-r5) ══ -->
 <script>
 CM.Referentiel.ajouter([
   {
@@ -7098,6 +7128,19 @@ CM.Referentiel.ajouter([
     exemple_eq:'Un faible taux de complétion est souvent le symptome d\'une charge opérationnelle qui ne laisse pas de place à l\'amélioration. Indicateur de sante organisationnelle.',
     risque:'Un taux élevé peut refleter des formations courtes et peu exigeantes plutôt qu\'un vrai investissement en competences.',
     roles:['chef-équipe','direction'], prioritaire:false, fiabilite:'precaution', maturite_min:'debutant',
+    branche:'affaires', domaine:'rh'
+},
+  {
+    id:'af-r5', niveau:'operationnel', type:'ICC', icone:'🌡️',
+    nom:'Micro-absentéisme (absences courtes répétées)',
+    definition:'Fréquence des absences courtes et non planifiées, distinguée de la durée totale d\'absence. Un même taux d\'absentéisme global masque deux réalités opposées : des arrêts longs (pathologies, accidents) et des arrêts courts répétés, dont la littérature de santé au travail fait un signal précoce de désengagement et de conditions de travail dégradées. Le corpus de référence français est celui de l\'Anact, qui traite l\'absentéisme comme un <span class="term-def" data-def="Doctrine Anact : l\'absentéisme n\'est pas un problème de personnes mais un révélateur des conditions de travail. Sa méthode impose une lecture agrégée (par unité, par période, par type d\'absence) suivie d\'un diagnostic des causes, jamais un scoring individuel.">révélateur des conditions de travail</span>. C\'est une trace factuelle du malaise, qui précède souvent les départs.',
+    objectif:'Détecter dans les faits ce que les sondages ne captent pas ou plus. Quand le climat se dégrade, la fréquence des absences courtes monte souvent avant que quiconque ne le formule : le corps parle avant les questionnaires. L\'indicateur se lit en tendance et en agrégé, par unité, et déclenche un diagnostic des causes, jamais une gestion des individus.',
+    frequence:'Mensuelle, en tendance agrégée par unité',
+    exemple_ent:'Le moral déclaré d\'un département est stable, mais la fréquence des absences d\'une journée y a doublé en deux trimestres, sans épidémie ni saisonnalité. Lecture : quelque chose s\'use qui ne se dit pas encore. Décision : diagnostic de conditions de travail sur ce périmètre (charge, arbitrages, management), avant que le signal ne devienne des démissions.',
+    exemple_eq:'Une équipe n\'exploite pas ce signal elle-même : les données sont RH et leur lecture exige l\'agrégation. En revanche, la conversation d\'équipe peut s\'appuyer sur les capteurs qui lui appartiennent : l\'<a href="#fiche=x4">indice de bien-être</a> et la <a href="#fiche=x6">sécurité psychologique</a>.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Scoring disciplinaire : transformer la fréquence d\'absence en score individuel avec seuils de sanction, sur le modèle du Bradford Factor (formule S² × D d\'origine incertaine, massivement critiquée). Dérive documentée : discrimination des personnes malades ou aidantes, incitation au présentéisme, destruction du signal collectif.">scoring disciplinaire (Bradford Factor)</span>, et <span class="term-def" data-def="Présentéisme induit : une pression sur l\'absence courte pousse les gens à venir malades ou épuisés. Le taux baisse, le malaise et les erreurs montent : l\'indicateur s\'améliore en aggravant ce qu\'il mesurait.">présentéisme induit</span>. La lecture est toujours collective et causale, jamais individuelle et punitive.',
+    alt:'Pour anticiper les départs plutôt que constater l\'usure, préférer l\'<a href="#fiche=s16">intention de départ</a>. Pour les départs consommés, le <a href="#fiche=s7">taux de rotation volontaire réfléchi</a>. Pour un signal RH annuel de recommandation, l\'<a href="#fiche=af-r1">indice de recommandation employé</a>.',
+    roles:['chef-équipe','direction'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire',
     branche:'affaires', domaine:'rh'
   }
 ]);
