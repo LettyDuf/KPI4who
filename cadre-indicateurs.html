@@ -9555,13 +9555,19 @@ CM.FicheQuestion = (function() {
     }
     if (tete) axesOrdonnes.unshift(tete);
 
-    /* Q2 → contenu de chaque card = matrice[axe][niveau] */
+    /* Q2 → contenu de chaque card = matrice[axe][niveau].
+       Surcharge par signal (contrat v2, doc compagnon 02/07/2026) : si la
+       cellule porte parSignal[choixQ1], ce contenu remplace la base — le
+       signal choisi appelle un capteur plus tranchant sur cet axe. Sinon
+       la cellule de base s'applique (héritage par défaut). */
     var niveau = optQ2.niveau;
     var contenuParCard = axesOrdonnes.map(function(axe) {
+      var base = fiche.matrice[axe.id][niveau];
+      var contenu = (base && base.parSignal && base.parSignal[optQ1.id]) || base;
       return {
         axe: axe,
         niveau: niveau,
-        contenu: fiche.matrice[axe.id][niveau]
+        contenu: contenu
       };
     });
 

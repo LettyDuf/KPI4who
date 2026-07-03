@@ -10,7 +10,9 @@
  * Invariants verifies :
  *   I1 - toute fiche declare une variante valide (§4.3, §4.4, §4.6).
  *   I2 - toute card de trio (§4.4) ou cellule de matrice (§4.6) a un ficheRef
- *        qui existe dans CM.Referentiel, soit pointe explicitement CADRES_A_VENIR.
+ *        qui existe dans CM.Referentiel, soit pointe explicitement CADRES_A_VENIR ;
+ *        les surcharges parSignal des cellules (contrat v2) sont verifiees
+ *        de meme, et leurs cles doivent etre des ids d'options Q1.
  *   I3 - toute option Q1 d'une fiche §4.4 a un cardEnTete egal a un id d'axe.
  *   I4 - toute option Q1 d'une fiche §4.6 a un axeEnTete egal a un id d'axe.
  *   I5 - aucune fiche ne melange les structures de deux variantes, et chaque
@@ -111,11 +113,21 @@ ids.forEach(function (fid) {
       if (axes6.indexOf(o.axeEnTete) < 0) ko(fid, 'I4', 'option Q1 "' + o.id + '" : axeEnTete inconnu "' + o.axeEnTete + '"');
     });
     var m = f.matrice || {};
+    var idsQ1 = (f.q1 && f.q1.options || []).map(function (o) { return o.id; });
     Object.keys(m).forEach(function (axe) {
       Object.keys(m[axe] || {}).forEach(function (niv) {
         var cell = m[axe][niv];
         if (cell && cell.ficheRef !== 'CADRES_A_VENIR' && !refExiste(cell.ficheRef))
           ko(fid, 'I2', 'matrice ' + axe + ' / ' + niv + ' : ficheRef inconnu "' + cell.ficheRef + '"');
+        /* Surcharges par signal (contrat v2, 02/07/2026) : memes exigences
+           que la cellule de base + cle = id d'option Q1 de la fiche. */
+        Object.keys(cell && cell.parSignal || {}).forEach(function (sig) {
+          if (idsQ1.indexOf(sig) < 0)
+            ko(fid, 'I2', 'matrice ' + axe + ' / ' + niv + ' : parSignal cle inconnue "' + sig + '" (pas une option Q1)');
+          var sur = cell.parSignal[sig];
+          if (sur && sur.ficheRef !== 'CADRES_A_VENIR' && !refExiste(sur.ficheRef))
+            ko(fid, 'I2', 'matrice ' + axe + ' / ' + niv + ' / parSignal.' + sig + ' : ficheRef inconnu "' + sur.ficheRef + '"');
+        });
       });
     });
   }
