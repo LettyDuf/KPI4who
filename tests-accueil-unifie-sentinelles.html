@@ -433,6 +433,8 @@ CM.IndicateursMeta = (function() {
     'x6': { tags:['humain'],                     cadres:['generique'] },
     'x7': { tags:['humain','alignement'],        cadres:['dora'] },
     'fl-1': { tags:['flux','alignement','valeur'], cadres:['flow'] },
+    'ebm-1': { tags:['valeur'],                  cadres:['ebm'] },
+    'ebm-2': { tags:['valeur','alignement'],     cadres:['ebm'] },
 
     /* Équipes — Lean Six Sigma orthodoxe (qualité statistique de processus) */
     'lss-1': { tags:['qualite','flux'],          cadres:['lean'] },
@@ -1593,6 +1595,36 @@ CM.Referentiel.ajouter([
     risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Requalification des tickets : renommer des corrections de défauts en fonctionnalités (ou l\'inverse) pour embellir la distribution. La mesure repose entièrement sur l\'honnêteté du typage à la source.">requalification des tickets</span>, <span class="term-def" data-def="Distribution-cible : fixer un pourcentage de fonctionnalités à atteindre. La distribution est un outil d\'arbitrage conscient, pas une cible : en faire un objectif pousse à la requalification (effet Goodhart).">distribution-cible</span>, et lecture punitive d\'une équipe dont le flux est dominé par les défauts, alors que cela signale le plus souvent une qualité qui se dégrade en amont du flux, pas une équipe fautive. Le corpus lui-même insiste : comprendre les compromis, pas noter les équipes.',
     alt:'Si l\'objectif est la vitesse du flux plutôt que sa composition, préférer le <a href="#fiche=o6">débit d\'équipe</a> et la <a href="#fiche=o5">durée de cycle</a>. À l\'échelle d\'un programme entier, préférer le <a href="#fiche=p9">délai bout-en-bout du programme</a>.',
     roles:['chef-équipe','programme'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
+  }
+]);
+</script>
+
+<!-- ══ DATA : Produit — Evidence-Based Management (ebm-1, ebm-2) ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'ebm-1', niveau:'operationnel', type:'II', icone:'👆',
+    nom:'Usage réel par fonctionnalité (Usage Index)',
+    definition:'Mesure de l\'utilisation effective du produit, fonctionnalité par fonctionnalité, confrontée aux attentes qui ont justifié leur construction. Mesure officielle de la <span class="term-def" data-def="Valeur actuelle (Current Value) : une des quatre aires clés du guide Evidence-Based Management de Scrum.org. Mesure la valeur que le produit livre aujourd\'hui à ses bénéficiaires ; l\'Usage Index y figure comme mesure d\'exemple, pour inférer si l\'usage réel correspond aux attentes.">valeur actuelle</span> du guide Evidence-Based Management (Scrum.org). Le backlog déclarait ces fonctionnalités précieuses ; la télémétrie d\'usage révèle celles que personne n\'ouvre. C\'est le capteur de l\'écart entre la valeur promise en priorisation et la valeur constatée en usage.',
+    objectif:'Fermer la boucle entre prioriser et vérifier. Une organisation qui mesure ses livraisons mais jamais leur usage pilote un output : elle sait ce qui sort, pas ce qui sert. L\'indicateur alimente les décisions de simplification (retirer ce qui ne sert pas), de retravail (comprendre pourquoi une fonctionnalité attendue déçoit) et de priorisation future (calibrer les promesses de valeur sur les usages constatés).',
+    frequence:'Continue par télémétrie, revue à chaque cadence de priorisation',
+    exemple_ent:'Sur les 24 fonctionnalités livrées dans l\'année, 7 concentrent 90 % de l\'usage et 9 n\'ont pratiquement jamais été ouvertes. Lecture : plus du tiers de la capacité de l\'année a produit de l\'inventaire, pas de la valeur. Décision : les hypothèses de valeur des 9 orphelines sont réexaminées en priorisation, et deux sont retirées du produit.',
+    exemple_eq:'L\'équipe regarde l\'usage de ce qu\'elle vient de livrer comme elle regarde ses tests : une fonctionnalité sans usage à 90 jours ouvre une conversation produit (mal conçue, mal située, mal expliquée, ou inutile ?). Le réflexe complète le <a href="#fiche=x5">compte de fonctionnalités livrées</a>, qui ne dit rien de leur utilité.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Usage de vanité : compter les ouvertures ou les clics plutôt qu\'un usage qui atteste la valeur (tâche accomplie, retour récurrent). Un écran traversé n\'est pas un besoin servi.">usage de vanité</span>, et <span class="term-def" data-def="Cible d\'usage : fixer un objectif d\'utilisation par fonctionnalité. L\'équipe optimise alors la capture d\'attention (notifications, détours d\'interface) plutôt que la valeur : effet Goodhart au détriment de l\'utilisateur.">cible d\'usage</span>. Le guide EBM le rappelle : chaque aire de valeur est une lentille parmi quatre, l\'usage seul ne dit ni la satisfaction ni la valeur économique.',
+    alt:'Pour l\'écart entre la valeur possible et la valeur livrée au niveau stratégique, préférer l\'<a href="#fiche=ebm-2">écart de satisfaction</a>. Pour la satisfaction exprimée plutôt que l\'usage constaté, l\'<a href="#fiche=s2">indice de recommandation client</a>.',
+    roles:['chef-équipe','programme'], prioritaire:false, fiabilite:'fiable', maturite_min:'intermediaire'
+  },
+  {
+    id:'ebm-2', niveau:'strategique', type:'IGO', icone:'🌗',
+    nom:'Écart de satisfaction (Unrealized Value)',
+    definition:'Écart entre l\'expérience que les bénéficiaires souhaitent et celle que le produit leur donne aujourd\'hui : la définition officielle de la <span class="term-def" data-def="Valeur non réalisée (Unrealized Value) : aire clé du guide Evidence-Based Management de Scrum.org, définie comme l\'écart de satisfaction entre le résultat souhaité par le bénéficiaire et son expérience actuelle. Mesures d\'exemple : part de marché atteignable, écart de satisfaction client et utilisateur.">valeur non réalisée</span> du guide Evidence-Based Management (Scrum.org). Là où la plupart des tableaux de bord mesurent ce qui a été fait, cette aire mesure ce qui reste à conquérir : le potentiel que l\'organisation revendique dans ses discours de croissance, confronté à une mesure honnête de l\'écart restant.',
+    objectif:'Donner au niveau stratégique un contrepoids aux chiffres de production. Un portefeuille peut livrer beaucoup (valeur actuelle en hausse) sans réduire l\'écart qui compte (valeur non réalisée stable) : les efforts partent alors vers ce qui est facile à livrer, pas vers ce qui manque aux bénéficiaires. L\'indicateur sert à arbitrer les investissements par le potentiel restant, pas par l\'aisance d\'exécution.',
+    frequence:'Semestrielle, en revue de stratégie produit',
+    exemple_ent:'Les revues affichent dix-huit mois de livraisons soutenues, mais l\'écart de satisfaction mesuré sur le segment prioritaire n\'a pas bougé. Lecture : on livre à côté du manque. Décision : le portefeuille rebascule vers les deux irritants majeurs du segment, quitte à livrer moins de nouveautés visibles.',
+    exemple_eq:'Une équipe touche cette aire par ricochet : quand ses <a href="#fiche=o9">OKR d\'équipe</a> sont formulés en résultats pour le bénéficiaire, chaque résultat clé devrait réduire un écart identifié, pas seulement produire un livrable. La question d\'équipe : quel manque du bénéficiaire cette itération a-t-elle réduit ?',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Potentiel de conte de fées : estimer la valeur non réalisée par des projections de marché invérifiables pour justifier n\'importe quel investissement. L\'écart doit être ancré dans une mesure auprès de bénéficiaires réels, pas dans une taille de marché théorique.">potentiel de conte de fées</span>, et lecture isolée : le guide EBM impose de croiser les quatre aires, une valeur non réalisée énorme ne justifie un investissement que si la capacité à innover suit. Mesure d\'estimation par nature : sa force est la conversation d\'arbitrage qu\'elle impose, pas la précision du chiffre.',
+    alt:'Pour la valeur effectivement constatée en usage, préférer l\'<a href="#fiche=ebm-1">usage réel par fonctionnalité</a>. Pour la satisfaction globale exprimée, l\'<a href="#fiche=s2">indice de recommandation client</a>. Pour vérifier que la stratégie finance bien la conquête annoncée, le <a href="#fiche=s13">taux de réallocation des ressources</a>.',
+    roles:['direction','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
   }
 ]);
 </script>
