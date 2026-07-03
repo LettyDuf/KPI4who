@@ -425,7 +425,7 @@ filtre = {
   branche?:          Array<BrancheId>,       // 'ti' | 'affaires' — pertinent uniquement sur les fiches niveau 'operationnel'
   domaine?:          Array<DomaineId>,       // 10 valeurs : 'dev', 'plateforme', 'ops-support', 'sécurité', 'commercial', 'marketing', 'finance', 'rh', 'operations', 'service-client'
   type?:             Array<TypeId>,          // 7 valeurs : 'IGO' | 'ICP' | 'ICC' | 'ORC' | 'DORA' | 'FLUX' | 'II' (terminologie française = KGI/KPI/KBI/OKR/DORA/Flux/KII)
-  cadres?:           Array<CadreId>,         // 14 valeurs : 'dora', 'cd', 'space', 'lean', 'okr', 'scrum', 'kanban', 'safe', 'itil', 'securite', 'cx', 'change', 'mbo', 'generique' (mise à jour 23/05/2026 — cf. journal §9)
+  cadres?:           Array<CadreId>,         // 15 valeurs : 'dora', 'cd', 'space', 'flow', 'lean', 'okr', 'scrum', 'kanban', 'safe', 'itil', 'securite', 'cx', 'change', 'mbo', 'generique' (mise à jour 02/07/2026 — cf. journal §9)
   tags?:             Array<TagId>,           // 7 valeurs : 'valeur', 'qualite', 'flux', 'delais', 'humain', 'risque', 'alignement'
   tagsThematiques?:  Array<TagThematiqueId>, // 14 valeurs verrouillées en §10.2
   fiabiliteMin?:     FiabiliteId,            // 'fiable' | 'precaution' | 'risque' — seuil ordinal (cf. ci-dessous)
@@ -493,6 +493,8 @@ Le module `CM.RequeteMetriques` compose donc deux sources de données ; il n'enr
 - Aucune modification des consommateurs (`CM.DiagnosticProbleme`, `CM.DiagnosticCadre`, `CM.Roles`) avant l'étape (c).
 
 ## 9. Journal du chantier *(archive — chantier 14 livré)*
+
+- **02/07/2026 — Cadre `flow` promu depuis `CADRES_A_VENIR`.** Flow Framework (Mik Kersten, *Project to Product*, 2018), famille `observabilite`. §10.3 passe à 15 valeurs de `CadreId`. Promotion motivée par la recherche indicateurs pastèque (fiche Distribution du flux, capteur factuel des priorités réelles). Patron de promotion identique au cadre `mbo` (23/05/2026).
 
 - **23/04/2026 fin de journée** — ouverture du chantier. Commit atomique `chore(chantier-14): ouverture — baseline + scénario régression + procédure rollback` embarquant (1) tag git `baseline-avant-hexagonal` sur `5655b03`, (2) `scenario-non-regression.md` posé, (3) ce doc compagnon, (4) backlog mis à jour avec chantier 14 actif / chantier 10 gelé, (5) mémoire `project_chantier_14_ouverture.md` posée. Prochaine étape : (a) inventaire du schéma d'étiquettes.
 - **24/04/2026 fin de journée — ouverture étape (b), tâche 1 tranchée.** Livraison du preview `preview-14b-seuils-paliers.html` (commit `21c76b2`). Arbitrage : **Option B retenue** — champ `reperes` optionnel sur les fiches à référentiel reconnu, structure flexible-normalisée, affichage collapsé par défaut. Décisions détaillées actées en §10.1 ci-dessus. Prochaines tâches de l'étape (b) : (2) arrêter le vocabulaire fermé des tags thématiques, (3) poser la signature `executer(filtre)`.
