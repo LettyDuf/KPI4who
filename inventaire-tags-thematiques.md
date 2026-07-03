@@ -206,6 +206,8 @@ Arbitrages finaux : tags sortants, tags à fusionner, vocabulaire final figé à
 | s10 | Exposition concentration |  |  |  |  |  |  |  |  | x |  |  |  |  |  |
 | s11 | Coût de la non-qualité |  |  |  |  | x |  |  |  |  |  |  |  |  |  |
 | s12 | Écart de vérité stratégique |  |  |  |  |  |  |  |  |  |  | x |  | x |  |
+| s13 | Réallocation des ressources |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
+| s14 | Agenda dirigeant |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
 | t1 | ROI portefeuille |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
 | t2 | Lead time métier |  | x |  |  |  |  | x |  |  |  |  |  |  |  |
 | t3 | OKR trimestriels |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
