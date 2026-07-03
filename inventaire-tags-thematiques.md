@@ -258,8 +258,10 @@ Arbitrages finaux : tags sortants, tags à fusionner, vocabulaire final figé à
 | x4 | Team health check |  |  | x |  |  |  |  |  |  |  | x |  |  |  |
 | x5 | Feature count |  |  |  |  |  |  | x |  |  |  |  |  |  |  |
 | x6 | Sécurité psychologique |  |  |  |  |  |  |  |  |  |  | x |  |  |  |
+| x7 | Culture générative Westrum | x |  |  |  |  |  |  |  |  |  | x |  |  |  |
 | lss-1 | Premier passage conforme |  |  |  |  | x |  |  |  |  |  |  | x |  |  |
 | fl-1 | Distribution du flux |  |  |  |  | x |  |  |  |  |  |  |  | x |  |
+| lss-2 | Signalement volontaire andon |  |  |  |  |  |  |  | x |  |  | x |  |  |  |
 | af-c1 | Taux conversion |  |  |  |  |  |  |  | x |  |  |  |  |  | x |
 | af-c2 | Cycle vente |  |  |  | x |  |  | x |  |  |  |  |  |  |  |
 | af-c3 | LTV |  |  |  |  |  |  |  |  |  |  | x |  |  | x |
