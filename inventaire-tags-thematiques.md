@@ -259,6 +259,7 @@ Arbitrages finaux : tags sortants, tags à fusionner, vocabulaire final figé à
 | x5 | Feature count |  |  |  |  |  |  | x |  |  |  |  |  |  |  |
 | x6 | Sécurité psychologique |  |  |  |  |  |  |  |  |  |  | x |  |  |  |
 | lss-1 | Premier passage conforme |  |  |  |  | x |  |  |  |  |  |  | x |  |  |
+| fl-1 | Distribution du flux |  |  |  |  | x |  |  |  |  |  |  |  | x |  |
 | af-c1 | Taux conversion |  |  |  |  |  |  |  | x |  |  |  |  |  | x |
 | af-c2 | Cycle vente |  |  |  | x |  |  | x |  |  |  |  |  |  |  |
 | af-c3 | LTV |  |  |  |  |  |  |  |  |  |  | x |  |  | x |

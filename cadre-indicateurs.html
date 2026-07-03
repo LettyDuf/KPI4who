@@ -3710,6 +3710,7 @@ CM.IndicateursMeta = (function() {
     'x4': { tags:['humain'],                     cadres:['generique'] },
     'x5': { tags:['flux','valeur'],              cadres:['generique'] },
     'x6': { tags:['humain'],                     cadres:['generique'] },
+    'fl-1': { tags:['flux','alignement','valeur'], cadres:['flow'] },
 
     /* Équipes — Lean Six Sigma orthodoxe (qualité statistique de processus) */
     'lss-1': { tags:['qualite','flux'],          cadres:['lean'] },
@@ -4033,6 +4034,7 @@ CM._tagsThematiquesData = {
   'x5':      ['cadence'],
   'x6':      ['confiance'],
   'lss-1':   ['coûts cachés', 'variabilité'],
+  'fl-1':    ['coûts cachés', 'alignement'],
   'af-c1':   ['feedback', 'expérience client'],
   'af-c2':   ['goulots', 'cadence'],
   'af-c3':   ['confiance', 'expérience client'],
@@ -6784,6 +6786,24 @@ CM.Referentiel.ajouter([
 ]);
 </script>
 
+
+<!-- ══ DATA : Équipes — Flow Framework (fl-1) ══ -->
+<script>
+CM.Referentiel.ajouter([
+  {
+    id:'fl-1', niveau:'operationnel', type:'FLUX', icone:'🌊',
+    nom:'Distribution du flux (Flow Distribution)',
+    definition:'Répartition, sur une période, du travail effectivement terminé entre les quatre types du <span class="term-def" data-def="Flow Framework : cadre de Mik Kersten (Project to Product, 2018) qui mesure le flux de valeur produit directement depuis les outils de delivery. Quatre types de travail exclusifs : fonctionnalités (valeur nouvelle), défauts (qualité), dette (architecture), risque (sécurité et conformité).">Flow Framework</span> : fonctionnalités, défauts, dette technique, risque. La mesure est tirée des outils de delivery (tickets réellement clos), pas des déclarations. C\'est un miroir factuel des priorités effectives : si la stratégie annonce « l\'innovation d\'abord » et que le flux mesuré montre une majorité de défauts, l\'arbitrage réel devient visible, opposable au discours.',
+    objectif:'Rendre les arbitrages réels visibles et discutables. Chaque type de travail sert un résultat différent : tout mettre sur les fonctionnalités accumule silencieusement dette et risque, tout mettre sur les défauts signale une qualité qui se dégrade en amont. L\'indicateur sert à décider consciemment la répartition de la période à venir, pas à juger celle de la période passée.',
+    frequence:'Mensuelle ou par itération, en revue de flux',
+    exemple_ent:'La direction produit annonce un trimestre « innovation ». La distribution mesurée montre 38 % de fonctionnalités, 41 % de défauts, 16 % de dette, 5 % de risque. Lecture : la moitié de la capacité part à rattraper la qualité, la promesse d\'innovation n\'est pas tenable sans traiter la source des défauts. Décision : un trimestre de stabilisation assumé, annoncé comme tel aux commanditaires.',
+    exemple_eq:'L\'équipe voit sa propre répartition et ses variations, sans cible imposée. La conversation utile est « cette répartition sert-elle ce qu\'on a promis ? », jamais « fais monter les fonctionnalités ». Un rééquilibrage se décide en planification, pas en requalifiant les tickets existants.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Requalification des tickets : renommer des corrections de défauts en fonctionnalités (ou l\'inverse) pour embellir la distribution. La mesure repose entièrement sur l\'honnêteté du typage à la source.">requalification des tickets</span>, <span class="term-def" data-def="Distribution-cible : fixer un pourcentage de fonctionnalités à atteindre. La distribution est un outil d\'arbitrage conscient, pas une cible : en faire un objectif pousse à la requalification (effet Goodhart).">distribution-cible</span>, et lecture punitive d\'une équipe dont le flux est dominé par les défauts, alors que cela signale le plus souvent une qualité qui se dégrade en amont du flux, pas une équipe fautive. Le corpus lui-même insiste : comprendre les compromis, pas noter les équipes.',
+    alt:'Si l\'objectif est la vitesse du flux plutôt que sa composition, préférer le <a href="#fiche=o6">débit d\'équipe</a> et la <a href="#fiche=o5">durée de cycle</a>. À l\'échelle d\'un programme entier, préférer le <a href="#fiche=p9">délai bout-en-bout du programme</a>.',
+    roles:['chef-équipe','programme'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
+  }
+]);
+</script>
 
 <!-- ══ DATA : Affaires — Commercial (af-c1 a af-c5) ══ -->
 <script>
