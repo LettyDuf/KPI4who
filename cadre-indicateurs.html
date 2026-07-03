@@ -3599,6 +3599,7 @@ CM.IndicateursMeta = (function() {
     okr:       { label:'OKR',                      icone:'🎯', famille:'objectifs',       description:'Objectives and Key Results. Ambitions trimestrielles mesurables.' },
     mbo:       { label:'Management par objectifs', icone:'📐', famille:'objectifs',       description:'Management By Objectives — Drucker (1954). Cascade descendante d\u2019objectifs, dialogue manager-collaborateur, self-control, alignement individuel\u202f\u2194\u202forganisationnel. Lien assumé à l\u2019évaluation individuelle (à la différence des OKR).' },
     scrum:     { label:'Scrum',                    icone:'🏉', famille:'empirisme-agile', description:'Pilotage itératif avec cadence fixe. Vélocité, qualité de sprint.' },
+    ebm:       { label:'Evidence-Based Management', icone:'🔬', famille:'empirisme-agile', description:'Evidence-Based Management — Scrum.org (guide EBM). Pilotage empirique par la valeur, en quatre aires clés\u00a0: valeur actuelle, valeur non réalisée, capacité à innover, délai de mise sur le marché. Chaque aire est une lentille\u00a0: aucune ne se lit seule.' },
     kanban:    { label:'Kanban',                   icone:'🗂️', famille:'empirisme-agile', description:'Flux tiré, WIP, cycle time. Flux continu.' },
     safe:      { label:'SAFe',                     icone:'🏗️', famille:'empirisme-agile', description:'Scaled Agile Framework. Programme et portefeuille à l\u2019échelle.' },
     cx:        { label:'Customer Experience (Reichheld / Dixon)', icone:'💬', famille:'experience',     description:'Customer Experience Management. Reichheld (NPS, The Ultimate Question, 1996/2003 ; eNPS pour les collaborateurs), Dixon (CES, The Effortless Experience, 2013), Hayes (CSAT). Mesure de la fidélité, de l’effort perçu et de la satisfaction du client.' },
@@ -3615,7 +3616,6 @@ CM.IndicateursMeta = (function() {
      Ajout/retrait = opération de data, pas de code. */
   var CADRES_A_VENIR = [
     { id:'xp',      label:'XP',                           icone:'⚡',  famille:'empirisme-agile', description:'Extreme Programming. Qualité de code, TDD, pair programming, refactoring continu.' },
-    { id:'ebm',     label:'EBM',                          icone:'🔬', famille:'empirisme-agile', description:'Evidence-Based Management (Scrum.org). Pilotage empirique de la valeur stratégique.' },
     { id:'toc',     label:'TOC (Théorie des contraintes)', icone:'⛓️', famille:'excellence-op',   description:'Theory of Constraints (Goldratt). Pilotage par le goulot d\u2019étranglement.' },
     { id:'queues',  label:'Théorie des files d\'attente',  icone:'🧮', famille:'excellence-op',   description:'Modélisation des flux arrivée/service. Utilisation, variabilité.' },
     { id:'hoshin',  label:'Hoshin Kanri',                 icone:'🧭', famille:'objectifs',       description:'Déploiement stratégique japonais. Catchball, X-matrix, alignement vertical.' },
@@ -4136,7 +4136,7 @@ CM.RequeteMetriques = (function() {
                       'operations', 'service-client'],
     type:            ['IGO', 'ICP', 'ICC', 'ORC', 'DORA', 'FLUX', 'II'],
     cadres:          ['dora', 'cd', 'space', 'flow', 'lean', 'okr',
-                      'scrum', 'kanban', 'safe', 'itil',
+                      'scrum', 'ebm', 'kanban', 'safe', 'itil',
                       'securite', 'cx', 'change', 'mbo', 'generique'],
     tags:            ['valeur', 'qualite', 'flux', 'delais',
                       'humain', 'risque', 'alignement'],
