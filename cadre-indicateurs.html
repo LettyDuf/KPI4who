@@ -9021,7 +9021,13 @@ CM.FicheQuestion = (function() {
         declaratif: Object.freeze({
           operationnel: Object.freeze({
                         intention: 'Comparer ce qui a été annoncé en début de sprint à ce qui a été effectivement livré et accepté en fin de sprint. Un écart qui se répète mérite d\'être compris, pas reproché. Les causes sont multiples : pression d\'une partie prenante influente, imprévus pris en cours de route, capacité réelle mal connue, périmètre mal cadré.',
-            ficheRef: 'ti-d2'
+            ficheRef: 'ti-d2',
+            parSignal: Object.freeze({
+              prioritesDecouple: Object.freeze({
+                intention: 'La part des résultats clés de l\'équipe qui décrivent un résultat observable pour un bénéficiaire, plutôt qu\'une activité interne. Quand les priorités nommées ne gouvernent pas les arbitrages, c\'est souvent qu\'elles n\'ont pas de capteur : un objectif sans mesure observable se plie à l\'urgence du moment. Vérifier les OKR de l\'équipe, c\'est vérifier que les priorités ont des dents.',
+                ficheRef: 'o9'
+              })
+            })
           }),
           programme: Object.freeze({
                         intention: 'Sur un horizon glissant (3-6 mois), comparer les promesses portées en revue de programme à ce qui a effectivement atterri en production ou en service. La feuille de route déclarative vit en réunions ; la feuille de route objective vit en journaux d\'exécution.',
@@ -9035,21 +9041,69 @@ CM.FicheQuestion = (function() {
         objectif: Object.freeze({
           operationnel: Object.freeze({
                         intention: 'Compter la part des items livrés acceptés sans retour de retravail (pas de retravail, pas de défaut remonté en revue). Mesure objective la plus directe d\'un écart entre conformité déclarée et conformité observée.',
-            ficheRef: 'lss-1'
+            ficheRef: 'lss-1',
+            parSignal: Object.freeze({
+              chiffresEcart: Object.freeze({
+                intention: 'Les défauts découverts en production par les utilisateurs, rapportés au volume livré. C\'est l\'écart lui-même : la qualité que les rapports internes déclarent, confrontée à celle que les utilisateurs vivent. Un tableau de bord vert avec des défauts qui s\'échappent dit précisément où le chiffre ment.',
+                ficheRef: 'ti-d3'
+              }),
+              malaise: Object.freeze({
+                intention: 'Le nombre de signalements volontaires de problèmes : blocages déclarés, alertes levées, arrêts demandés. La lecture est inversée : quand le malaise s\'installe, ce chiffre chute avant tous les autres. Compter la parole en actes révèle le silence qui s\'installe, ce que les sondages ne captent qu\'après coup.',
+                ficheRef: 'lss-2'
+              }),
+              prioritesDecouple: Object.freeze({
+                intention: 'La répartition réelle du travail terminé entre valeur nouvelle, défauts, dette et risque, tirée des outils. Les priorités effectives d\'une équipe ne sont pas dans son backlog priorisé : elles sont dans ce qui sort. Si le discours dit innovation et que le flux dit correction, l\'arbitrage réel est sous les yeux.',
+                ficheRef: 'fl-1'
+              })
+            })
           }),
           programme: Object.freeze({
                         intention: 'Délai bout à bout d\'une initiative cross-équipes, du moment où elle est inscrite au portfolio à sa release publique. Capteur objectif le plus tangible d\'un écart entre ambition affichée et capacité réelle de livrer.',
-            ficheRef: 'p9'
+            ficheRef: 'p9',
+            parSignal: Object.freeze({
+              chiffresEcart: Object.freeze({
+                intention: 'La part des initiatives qui ont demandé des correctifs majeurs une fois en service. Une initiative déclarée livrée n\'est pas encore une initiative réussie : le taux de reprise regarde ce qui se passe après le rapport de livraison, en usage réel. C\'est le fait qui confirme ou contredit les chiffres d\'avancement.',
+                ficheRef: 'p7'
+              }),
+              prioritesDecouple: Object.freeze({
+                intention: 'L\'écart entre le budget prévu et le budget réellement consommé, ligne par ligne. Les priorités d\'un programme se lisent dans où va son argent : une priorité affichée dont la ligne budgétaire fond au profit du reste n\'est pas une priorité, c\'est un affichage.',
+                ficheRef: 'p2'
+              })
+            })
           }),
           strategique: Object.freeze({
                         intention: 'Chiffrer ce que coûte chaque année le travail refait, les défauts livrés, les rappels client, la dette technique remboursée. La voix la plus tangible de l\'écart entre ce qu\'on dit livrer et ce qu\'on livre vraiment.',
-            ficheRef: 's11'
+            ficheRef: 's11',
+            parSignal: Object.freeze({
+              chiffresEcart: Object.freeze({
+                intention: 'Le rapport entre les incidents que les humains déclarent et ceux que la mesure indépendante détecte. En santé, les systèmes de signalement ne capturent qu\'une fraction des événements réels : ce ratio chiffre l\'angle mort du reporting de toute l\'organisation, avec un dénominateur difficile à embellir.',
+                ficheRef: 's15'
+              }),
+              malaise: Object.freeze({
+                intention: 'Le taux de départs volontaires, lu en tendance et par population. Le malaise qui ne trouve ni mesure ni parole finit par voter avec ses pieds : les démissions sont le fait accompli du malaise invisible. Un taux qui monte chez les profils qu\'on voulait garder date le moment où on a cessé d\'écouter.',
+                ficheRef: 's7'
+              }),
+              prioritesDecouple: Object.freeze({
+                intention: 'La part du budget réellement déplacée d\'une année sur l\'autre. La plupart des organisations reconduisent l\'essentiel de leurs allocations quelle que soit la stratégie annoncée : ce taux confronte le discours de transformation à l\'inertie des lignes budgétaires.',
+                ficheRef: 's13'
+              })
+            })
           })
         }),
         humain: Object.freeze({
           operationnel: Object.freeze({
                         intention: 'Quelques questions courtes, anonymes, posées à l\'équipe chaque semaine ou tous les quinze jours. Elles cherchent ce qu\'on n\'ose pas dire en réunion : si on a confiance dans sa hiérarchie, si on se sent libre de refuser ou de contester une décision qu\'on trouve incohérente ou dénuée de bon sens, si on donne du sens à son travail, dans quelle humeur on finit la semaine.',
-            ficheRef: 'x4'
+            ficheRef: 'x4',
+            parSignal: Object.freeze({
+              chiffresEcart: Object.freeze({
+                intention: 'Six affirmations anonymes sur la circulation de l\'information, dont celle-ci : les porteurs de mauvaises nouvelles ne sont pas punis. Quand les chiffres affichés divergent des faits observés, la cause est rarement technique : quelque part, dire la vérité coûte quelque chose. Ce sondage mesure ce coût.',
+                ficheRef: 'x7'
+              }),
+              prioritesDecouple: Object.freeze({
+                intention: 'Le sentiment partagé qu\'on peut contester une décision ou poser une question dérangeante sans risque. Des priorités officielles contournées en silence signalent que personne n\'ose nommer l\'écart en réunion : mesurer la sécurité psychologique dit si le désaccord peut s\'exprimer avant de se vivre en arbitrages cachés.',
+                ficheRef: 'x6'
+              })
+            })
           }),
           programme: Object.freeze({
                         intention: 'Quelques questions courtes, anonymes, posées chaque trimestre à toutes les équipes du programme. On y demande explicitement ce que les rapports officiels ne disent pas : les blocages restés sans réponse, les arbitrages incompris, les promesses non tenues entre équipes.',
@@ -9057,7 +9111,13 @@ CM.FicheQuestion = (function() {
           }),
           strategique: Object.freeze({
                         intention: 'Audit semestriel comparant la stratégie déclarée (priorités annoncées) aux ressources réellement allouées (budget, agenda, talents) et à la perception anonyme des équipes. Miroir lucide pour le board, jamais arme contre une fonction.',
-            ficheRef: 's12'
+            ficheRef: 's12',
+            parSignal: Object.freeze({
+              malaise: Object.freeze({
+                intention: 'Six questions anonymes qui mesurent l\'intention de partir, validées pour prédire les départs réels des mois à l\'avance. C\'est l\'indicateur avancé du malaise : quand il monte, l\'attrition de l\'an prochain est déjà écrite dans les réponses de cette année, et il est encore temps d\'agir sur les causes.',
+                ficheRef: 's16'
+              })
+            })
           })
         })
       }),
