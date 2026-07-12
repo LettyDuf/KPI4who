@@ -2,7 +2,7 @@
 
 *Source de vérité éditoriale des fiches-cadres. Le générateur `outils/generer-fiches-cadres.js` transforme ce fichier en zone balisée `CM.FICHE-CADRE-DATA` de `cadre-indicateurs.html`. Ne jamais éditer la zone générée à la main.*
 
-*Format d'une entrée : titre de niveau deux portant l'id, champs en marqueurs gras. Champs obligatoires : statut, origine, philosophie, panel, signatures (ids séparés par des virgules), lecture, antiPatterns, quandChoisir, allerPlusLoin. Le HTML léger est admis dans les champs éditoriaux (strong, span term-def, span traduction, a href interne). Schéma et contraintes : doc-contrats-fiche-cadre.md § 2 et § 3.*
+*Format d'une entrée : titre de niveau deux portant l'id, champs en marqueurs gras. Champs obligatoires : statut, origine, philosophie, panel, signatures (ids séparés par des virgules), lecture, antiPatterns, quandChoisir, quandSeMefier, allerPlusLoin. Le HTML léger est admis dans les champs éditoriaux (strong, span term-def, span traduction, a href interne). Schéma et contraintes : doc-contrats-fiche-cadre.md § 2 et § 3.*
 
 ## dora
 
@@ -22,7 +22,9 @@ Quatre mesures suffisent alors à caractériser un système de livraison : deux 
 
 **antiPatterns** : <span class="term-def" data-def="Comparaison inter-équipes : classer les équipes sur leurs métriques DORA alors que leurs contextes (legacy, criticité, dépendances) ne sont pas comparables. La recherche compare une équipe à elle-même dans le temps, jamais deux équipes entre elles.">comparaison inter-équipes</span>, <span class="term-def" data-def="Théâtre DORA : afficher les quatre métriques dans un tableau de bord sans changer aucune pratique de livraison. Les chiffres existent, le système qui les produit reste intact.">théâtre DORA</span>, et la poursuite du débit seul : optimiser fréquence et délai en fermant les yeux sur l'échec de changement et le rétablissement, c'est précisément la lecture partielle que le cadre existe pour empêcher.
 
-**quandChoisir** : Excellent partout où une équipe livre du logiciel en continu et veut objectiver sa progression : c'est le point d'entrée le plus solide et le plus économe. Déçoit hors du delivery : il ne dit rien de la valeur de ce qu'on livre (un train très fiable peut aller au mauvais endroit), rien du produit, rien des humains au-delà de la culture. Se complète nécessairement d'indicateurs de valeur et d'usage.
+**quandChoisir** : Excellent partout où une équipe livre du logiciel en continu et veut objectiver sa progression : c'est le point d'entrée le plus solide et le plus économe.
+
+**quandSeMefier** : Déçoit hors du delivery : il ne dit rien de la valeur de ce qu'on livre (un train très fiable peut aller au mauvais endroit), rien du produit, rien des humains au-delà de la culture. Se complète nécessairement d'indicateurs de valeur et d'usage.
 
 **allerPlusLoin** : Accelerate (Forsgren, Humble, Kim, 2018) ; les rapports annuels State of DevOps ; The DevOps Handbook (Kim, Humble, Debois, Willis).
 
@@ -44,7 +46,9 @@ Deux traits le distinguent de la cascade classique : l'ambition assumée, un bon
 
 **antiPatterns** : <span class="term-def" data-def="OKR-évaluation : lier l'atteinte des OKR à la prime ou à l'évaluation individuelle. La conséquence est mécanique : chacun négocie des objectifs qu'il sait déjà atteindre, l'ambition disparaît. Doerr en fait la première règle : découpler OKR et rémunération.">OKR-évaluation</span>, <span class="term-def" data-def="Cascade mécanique : découper les OKR du haut en sous-OKR imposés sans conversation. La lettre est parfaite, l'engagement est mort ; la moitié des OKR doit remonter du terrain.">cascade mécanique</span>, <span class="term-def" data-def="OKR-liste de courses : transformer les résultats clés en liste de tâches à livrer (sortir la fonctionnalité X) plutôt qu'en résultats mesurables (réduire le délai de Y %). On retombe dans le pilotage à l'output.">OKR-liste de courses</span>, et l'inflation : dix objectifs par trimestre, c'est zéro priorité.
 
-**quandChoisir** : Excellent quand l'organisation souffre de dispersion ou d'objectifs déconnectés de la stratégie, et qu'elle est prête à découpler objectifs et rémunération, condition non négociable. Déçoit dans les contextes de production stable où l'essentiel du travail est récurrent : les OKR mesurent le changement, pas le fonctionnement courant ; les indicateurs de flux et de qualité couvrent ce terrain-là.
+**quandChoisir** : Excellent quand l'organisation souffre de dispersion ou d'objectifs déconnectés de la stratégie, et qu'elle est prête à découpler objectifs et rémunération, condition non négociable.
+
+**quandSeMefier** : Déçoit dans les contextes de production stable où l'essentiel du travail est récurrent : les OKR mesurent le changement, pas le fonctionnement courant ; les indicateurs de flux et de qualité couvrent ce terrain-là.
 
 **allerPlusLoin** : Measure What Matters (Doerr, 2018) ; High Output Management (Grove, 1983) ; Radical Focus (Wodtke, 2016).
 
@@ -66,6 +70,8 @@ D'où une conviction de mesure : les indicateurs utiles regardent l'adhésion, l
 
 **antiPatterns** : <span class="term-def" data-def="Pilotage au déploiement : mesurer l'avancement technique (sites migrés, comptes créés, formations dispensées) et le prendre pour de l'adoption. Le projet est vert, le changement n'a pas eu lieu.">pilotage au déploiement</span>, <span class="term-def" data-def="Communication comptée comme conscience : compter les courriels envoyés et les réunions tenues comme preuve que les gens ont compris. La conscience se mesure côté récepteur, jamais côté émetteur.">communication comptée comme conscience</span>, <span class="term-def" data-def="Résistance pathologisée : traiter tout signal de résistance comme un problème de personnes à corriger. La résistance est une donnée de diagnostic ; la faire taire supprime le capteur, pas la cause.">résistance pathologisée</span>.
 
-**quandChoisir** : Indispensable dès qu'une transformation demande à des personnes de travailler autrement : nouvel outil, nouvelle organisation, nouvelle pratique. Déçoit comme cadre de pilotage permanent : ses indicateurs sont faits pour la traversée, pas pour le régime de croisière ; une fois le changement ancré, ils s'archivent, et les indicateurs de flux et de qualité reprennent la main.
+**quandChoisir** : Indispensable dès qu'une transformation demande à des personnes de travailler autrement : nouvel outil, nouvelle organisation, nouvelle pratique.
+
+**quandSeMefier** : Déçoit comme cadre de pilotage permanent : ses indicateurs sont faits pour la traversée, pas pour le régime de croisière ; une fois le changement ancré, ils s'archivent, et les indicateurs de flux et de qualité reprennent la main.
 
 **allerPlusLoin** : Leading Change (Kotter, 1995) ; Managing Transitions (Bridges, 1991) ; ADKAR (Hiatt, 2006).
