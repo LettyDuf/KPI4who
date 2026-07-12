@@ -311,6 +311,13 @@ Arbitrages finaux : tags sortants, tags à fusionner, vocabulaire final figé à
 | mbo-7 | Concentration stratégique |  |  |  |  |  |  |  |  |  |  |  |  | x |  |
 | mbo-8 | Couverture résultat clé |  |  |  |  |  |  |  | x |  |  |  |  | x |  |
 | mbo-9 | Réexamen stratégique |  |  |  |  |  |  | x |  |  |  |  |  | x |  |
+| gm-1 | Couverture du système de mesure | x |  |  |  |  |  |  |  |  |  |  |  | x |  |
+| gm-2 | Usage réel des indicateurs |  |  |  |  | x |  |  |  |  |  |  |  | x |  |
+| gm-3 | Revue du jeu d'indicateurs |  |  |  |  |  |  | x | x |  |  |  |  |  |  |
+| gm-4 | Fraîcheur des données |  | x |  |  |  |  |  | x |  |  |  |  |  |  |
+| gm-5 | Stabilité des définitions |  | x |  |  |  |  |  |  |  |  |  | x |  |  |
+| gm-6 | Coût de la mesure |  |  |  |  | x |  |  |  |  |  |  |  |  |  |
+| gm-7 | Corrections après dérive |  |  |  |  |  |  |  |  | x |  | x |  |  |  |
 
 **Note.** Le Temps 3 (analyse quantitative : taux d'usage, co-occurrences, orphelines, arbitrages sortie/fusion) s'appuie sur cette matrice pour figer le vocabulaire final (cible 10-12 tags). À produire dans la foulée, en §7.
 
