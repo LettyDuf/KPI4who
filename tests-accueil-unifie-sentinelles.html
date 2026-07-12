@@ -3405,24 +3405,24 @@ CM.AccueilUnifie = (function() {
     CM.AccueilUnifie.init();
 
     /* ═══════════════════════════════════════════════════════════════
-       Sentinelle I1 — Aucune lentille active : 89 fiches au total
+       Sentinelle I1 — Aucune lentille active : 117 fiches au total
        Référence : journal-invariants-23g.md, ligne I1
        ═══════════════════════════════════════════════════════════════ */
-    test('I1. Aucune lentille active : 89 indicateurs sur 89 (total absolu du référentiel)', function() {
+    test('I1. Aucune lentille active : 117 indicateurs sur 117 (total absolu du référentiel)', function() {
       reset();
       var total = CM.Referentiel.tous().length;
-      assertEqual(total, 89, 'total du référentiel = 89 fiches (figé à d03ccd0). Si rouge → mettre à jour I1 du journal et le test.');
+      assertEqual(total, 117, 'total du référentiel = 117 fiches (recapture du 02/07/2026, validée en Safari le 12/07/2026). Si rouge → mettre à jour I1 du journal et le test.');
       /* Filtre vide : doit retourner toutes les fiches. */
-      assertEqual(nbFiches({}), 89, 'CM.RequeteMetriques sans filtre = 89 fiches');
+      assertEqual(nbFiches({}), 117, 'CM.RequeteMetriques sans filtre = 117 fiches');
     });
 
     /* ═══════════════════════════════════════════════════════════════
-       Sentinelle I2 — Niveau Programme : 9 fiches, premiers ids p1-p5
+       Sentinelle I2 — Niveau Programme : 17 fiches, premiers ids p1-p5
        ═══════════════════════════════════════════════════════════════ */
-    test('I2. Niveau Programme : 9 indicateurs, premiers ids p1, p2, p3, p4, p5', function() {
+    test('I2. Niveau Programme : 17 indicateurs, premiers ids p1, p2, p3, p4, p5', function() {
       reset();
-      assertEqual(nbFiches({ niveau: ['programme'] }), 9,
-                  'Niveau Programme = 9 fiches (figé à d03ccd0)');
+      assertEqual(nbFiches({ niveau: ['programme'] }), 17,
+                  'Niveau Programme = 17 fiches (recapture du 02/07/2026)');
       /* Vérifie l'ordre canonique des 5 premières (cf. constat C2 du journal). */
       assertDeepEqual(premiersIds({ niveau: ['programme'] }, 5),
                       ['p1', 'p2', 'p3', 'p4', 'p5'],
@@ -3430,12 +3430,12 @@ CM.AccueilUnifie = (function() {
     });
 
     /* ═══════════════════════════════════════════════════════════════
-       Sentinelle I3 — Cadre DORA : 4 fiches, ids o1-o4
+       Sentinelle I3 — Cadre DORA : 5 fiches, les 4 keys en tête
        ═══════════════════════════════════════════════════════════════ */
-    test('I3. Cadre DORA : 4 indicateurs (les 4 keys), ids o1, o2, o3, o4', function() {
+    test('I3. Cadre DORA : 5 indicateurs (les 4 keys + Culture générative x7), premiers ids o1, o2, o3, o4', function() {
       reset();
-      assertEqual(nbFiches({ cadres: ['dora'] }), 4,
-                  'Cadre DORA = 4 fiches (les 4 keys, figé à d03ccd0)');
+      assertEqual(nbFiches({ cadres: ['dora'] }), 5,
+                  'Cadre DORA = 5 fiches (les 4 keys + x7 Culture générative, recapture du 02/07/2026)');
       assertDeepEqual(premiersIds({ cadres: ['dora'] }, 4),
                       ['o1', 'o2', 'o3', 'o4'],
                       'Les 4 keys dans l\'ordre Fréquence / Lead Time / Change Failure Rate / MTTR');
@@ -3486,20 +3486,20 @@ CM.AccueilUnifie = (function() {
        (chips → libellés → DOM), pas seulement via CM.RequeteMetriques.
        ═══════════════════════════════════════════════════════════════ */
 
-    test('A1. Compteur initial après init() : « 89 sur 89 indicateurs »', function() {
+    test('A1. Compteur initial après init() : « 117 sur 117 indicateurs »', function() {
       reset();
       CM.AccueilUnifie.appliquerFiltre();
       var n = lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle strong');
       var total = lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle .total');
-      assertEqual(n, '89', 'compteur initial = 89');
-      assertEqual(total, 'sur 89 indicateurs', 'total absolu = 89');
+      assertEqual(n, '117', 'compteur initial = 117');
+      assertEqual(total, 'sur 117 indicateurs', 'total absolu = 117');
     });
 
-    test('A2. Chip Niveau Programme : compteur passe à « 9 sur 89 »', function() {
+    test('A2. Chip Niveau Programme : compteur passe à « 17 sur 117 »', function() {
       reset();
       CM.AccueilUnifie.selectionnerChip('niveau', 'programme');
-      assertEqual(lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle strong'), '9', 'compteur = 9');
-      assertEqual(lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle .total'), 'sur 89 indicateurs', 'total inchangé');
+      assertEqual(lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle strong'), '17', 'compteur = 17');
+      assertEqual(lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle .total'), 'sur 117 indicateurs', 'total inchangé');
       assertEqual(lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle .axes-actifs'),
                   'Lentilles actives — Niveau.',
                   'libellé d\'axes actifs');
