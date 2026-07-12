@@ -20,7 +20,7 @@ var BEGIN  = '/* CM.FICHE-CADRE-DATA:BEGIN — généré par outils/generer-fich
 var END    = '/* CM.FICHE-CADRE-DATA:END */';
 
 var CHAMPS = ['statut', 'origine', 'philosophie', 'panel', 'signatures',
-              'lecture', 'antiPatterns', 'quandChoisir', 'allerPlusLoin'];
+              'lecture', 'antiPatterns', 'quandChoisir', 'quandSeMefier', 'allerPlusLoin'];
 var STATUTS = ['cadre', 'patrimonial'];
 var ID_VALIDE = /^[a-z0-9-]{1,20}$/;
 
@@ -98,8 +98,8 @@ entrees.forEach(function(e, i) {
     lignesJs.push('    ' + c + ': ' + jsString(e[c]) + ',');
   });
   lignesJs.push("    signatures: ['" + e.signatures.join("', '") + "'],");
-  ['lecture', 'antiPatterns', 'quandChoisir', 'allerPlusLoin'].forEach(function(c, k) {
-    lignesJs.push('    ' + c + ': ' + jsString(e[c]) + (k < 3 ? ',' : ''));
+  ['lecture', 'antiPatterns', 'quandChoisir', 'quandSeMefier', 'allerPlusLoin'].forEach(function(c, k) {
+    lignesJs.push('    ' + c + ': ' + jsString(e[c]) + (k < 4 ? ',' : ''));
   });
   lignesJs.push('  })' + (i < entrees.length - 1 ? ',' : ''));
 });
