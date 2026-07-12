@@ -90,12 +90,12 @@ CM.FicheCadre = {
 
 ## 6. Conventions visuelles
 
-`doc-cadre-visuel.md` fait foi. La fiche-cadre reprend la grammaire de la fiche d'indicateur (fond blanc franc, note pédagogique crème) ; la teinte et le fond de la **famille** (`FAMILLES{}`) signent l'en-tête, comme dans l'accordéon de l'ancienne porte cadre. Mockup d'en-tête à valider au jalon B (une seule décision visuelle attendue : la place de la famille).
+`doc-cadre-visuel.md` fait foi. La fiche-cadre reprend la grammaire de la fiche d'indicateur (fond blanc franc, note pédagogique crème) ; la teinte et le fond de la **famille** (`FAMILLES{}`) signent l'en-tête, comme dans l'accordéon de l'ancienne porte cadre. En-tête tranché au jalon B : variante 1, bandeau aux couleurs de la famille (fond doux + liseré teinte), corps de fiche sur blanc franc. Décision consignée au `doc-cadre-visuel.md`.
 
 ## 7. Jalons
 
 - **A — Contrats** : le présent document. ✅ 12/07/2026.
-- **B — Squelette** ✅ 12/07/2026 (`65ca53f` `e7b96fe` + mockup) : module `CM.FicheCadre`, route `#cadre=` (deep link + hashchange + délégation accueil filtré), générateur `outils/generer-fiches-cadres.js` + `fiche-cadre-source.md` (pilote DORA). Les validations du § 8 (signatures ⊂ META, statut, existence au référentiel) vivent dans le générateur strict, à la génération ; un vérificateur autonome pourra doubler au jalon E. Mockup d'en-tête à arbitrer (`mockup-entete-fiche-cadre.html`, variante 1 implémentée).
+- **B — Squelette** ✅ 12/07/2026 (`65ca53f` `e7b96fe` + mockup) : module `CM.FicheCadre`, route `#cadre=` (deep link + hashchange + délégation accueil filtré), générateur `outils/generer-fiches-cadres.js` + `fiche-cadre-source.md` (pilote DORA). Les validations du § 8 (signatures ⊂ META, statut, existence au référentiel) vivent dans le générateur strict, à la génération ; un vérificateur autonome pourra doubler au jalon E. En-tête arbitré : **variante 1** (bandeau famille), décision au `doc-cadre-visuel.md`.
 - **C — Lot pilote éditorial** : DORA, OKR, Gestion du changement rédigés, smoke test Lætitia, patron éditorial gelé.
 - **D — Industrialisation** : les 13 autres cadres par lots de 3-4, plus la patrimoniale triangulation (matière § du backlog 28). Tranchage 28.q1 et câblage des entrées de navigation.
 - **E — Clôture** : audit liens, invariants, backlog, tag.

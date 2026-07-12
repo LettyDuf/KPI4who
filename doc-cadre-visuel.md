@@ -282,3 +282,10 @@ Même séance : les cartouches « questions terrain » et « compteur » sont d�
 - **Pastille de type** à la place de l'emoji dans le sélecteur : sigle sur fond teinté, couleurs de `CM.Config.TYPES_COULEURS` en style inline (source unique, mêmes teintes que le chip de titre des cards et le panier). CSS `.pastille-type` scopé accueil.
 - **Ordre éditorial du sélecteur** : la chaîne IGO → ICP → ICC, l'impact (II) en contrepoint, puis les signatures de cadres (ORC, DORA, FLUX). Chip active en gris ardoise `#37474f` (teinte du badge II, neutre parmi les sept).
 - Option C écartée : découvrabilité faible et mécanique de filtre divergente des quatre autres axes. Option B en réserve : le récit repliable « Comprendre les familles » pourra rejoindre le Lexique (chantier 21) plutôt que l'accueil.
+
+
+## Décision du 12/07/2026 (séance 2, suite) — en-tête de la fiche-cadre (28.B)
+
+- **Variante 1 retenue par Lætitia** (`mockup-entete-fiche-cadre.html`) : bandeau aux couleurs de la famille, fond doux `FAMILLES[].fond` + liseré gauche 4 px dans la teinte `FAMILLES[].teinte`, icône du cadre, titre, nom de la famille en petites capitales teintées. La famille se lit comme un lieu : on est chez l'Observabilité, chez l'Empirisme agile.
+- Nuance à la doctrine « fond fiche » (blanc franc) : le bandeau d'en-tête est le seul élément teinté de la fiche-cadre, le corps reste sur fond blanc. Même logique que la note pédagogique crème : une zone sémantique signée, jamais un fond de fiche coloré.
+- Variante 2 (chip sobre) écartée. Une fiche patrimoniale (statut à part, sans famille) porte le libellé « Fiche patrimoniale » sur bandeau neutre `#eceff1` / `#455a64`.
