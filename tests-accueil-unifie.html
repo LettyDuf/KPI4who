@@ -1017,6 +1017,22 @@ CM.AccueilUnifie = (function() {
     if (racine.dataset.cmAccueilUnifieBranche === '1') return;
     racine.dataset.cmAccueilUnifieBranche = '1';
 
+    /* Bloc « Comment ça marche » de la mission (29.6, 12/07/2026).
+       Ouvert tant que le visiteur ne l'a pas replié une première fois ;
+       son repli est ensuite persisté (clé dédiée, hors CLE_PREFS : le
+       bloc appartient à la mission, pas à l'état des filtres). */
+    var cmt = racine.querySelector('#mission-cmt');
+    if (cmt) {
+      var etatCmt = (CM.Preferences && CM.Preferences.lire)
+        ? CM.Preferences.lire('mission-cmt-etat', null) : null;
+      cmt.open = (etatCmt !== 'ferme');
+      cmt.addEventListener('toggle', function() {
+        if (CM.Preferences && CM.Preferences.ecrire) {
+          try { CM.Preferences.ecrire('mission-cmt-etat', cmt.open ? 'ouvert' : 'ferme'); } catch (e) { /* silencieux */ }
+        }
+      });
+    }
+
     /* Capture les libellés d'origine des chips pour pouvoir les restaurer
        après désélection (la chip change d'innerHTML quand elle passe en
        mode actif). Une seule passe au boot. */

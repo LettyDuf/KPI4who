@@ -88,6 +88,15 @@
       --texte-sur-page:    #f5f6fa;
       --texte-2-sur-page:  #c1c5d4;
 
+      /* ── Tokens mission d'accueil (29.6, decision Laetitia 12/07/2026) ──
+         La phrase serif de la mission passe au bleu ciel sur le theme
+         hybride (mockup-accueil-mission-pleine-page.html valide) ; le
+         theme neutre clair recoit des equivalents lisibles sur fond clair. */
+      --mission-suite:     #9fd4ff;
+      --mission-cmt:       #FFD180;
+      --mission-pas-fond:  rgba(255, 255, 255, 0.07);
+      --mission-pas-bord:  rgba(255, 255, 255, 0.18);
+
       /* ── Tokens fiche-question (chantier 26, doctrine doc-cadre-visuel.md § 6.5) ──
          Bleu de Prusse #1d3a5f retenu décision 20.1 du 06/05/2026 après audit
          cross-niveaux. Registre marine institutionnel, ton calme et grave.
@@ -108,6 +117,10 @@
       --surface-nav:       #ffffff;
       --texte-sur-page:    #1a1a2e;
       --texte-2-sur-page:  #607d8b;
+      --mission-suite:     #1565c0;
+      --mission-cmt:       #b7791f;
+      --mission-pas-fond:  #ffffff;
+      --mission-pas-bord:  #d5dbe3;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -1865,9 +1878,66 @@
       font-weight: 400;
       font-size: 1.55rem;
       line-height: 1.3;
-      color: var(--texte-sur-page);
+      color: var(--mission-suite); /* bleu ciel, decision 12/07/2026 (29.6) */
       max-width: 720px;
       margin: 0 auto;
+    }
+
+    /* Mission visible (29.6, 12/07/2026) : phrase d'usage + mode d'emploi */
+    .accueil-unifie .page-entete .mission-utilitaire {
+      text-align: center;
+      color: var(--texte-2-sur-page);
+      font-size: 0.95rem;
+      line-height: 1.55;
+      max-width: 640px;
+      margin: 0.7rem auto 0;
+    }
+    .accueil-unifie .page-entete .mission-utilitaire strong {
+      color: var(--texte-sur-page);
+      font-weight: 600;
+    }
+    .accueil-unifie .page-entete .mission-cmt {
+      margin: 0.7rem 0 0;
+    }
+    .accueil-unifie .page-entete .mission-cmt summary {
+      list-style: none;
+      cursor: pointer;
+      text-align: center;
+      color: var(--mission-cmt);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .accueil-unifie .page-entete .mission-cmt summary::-webkit-details-marker { display: none; }
+    .accueil-unifie .page-entete .mission-cmt summary::after { content: ' \25BE'; }
+    .accueil-unifie .page-entete .mission-cmt[open] summary::after { content: ' \25B4'; }
+    .accueil-unifie .page-entete .mission-trois-pas {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      max-width: 860px;
+      margin: 0.9rem auto 0;
+      text-align: left;
+    }
+    .accueil-unifie .page-entete .mission-pas {
+      flex: 1;
+      background: var(--mission-pas-fond);
+      border: 1px solid var(--mission-pas-bord);
+      border-radius: 10px;
+      padding: 0.75rem 0.9rem;
+      color: var(--texte-2-sur-page);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+    .accueil-unifie .page-entete .mission-pas .num {
+      display: block;
+      color: var(--mission-cmt);
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+    .accueil-unifie .page-entete .mission-pas strong { color: var(--texte-sur-page); }
+    @media (max-width: 720px) {
+      .accueil-unifie .page-entete .mission-trois-pas { flex-direction: column; }
     }
 
     /* Cartouches cliquables (strates 3 et 6 du § 6.1) */
@@ -2380,6 +2450,21 @@
         <p class="verbes">Choisir <span class="sep">/</span> Comprendre <span class="sep">/</span> Expliquer</p>
         <p class="suite">les indicateurs pertinents, du terrain &agrave; la strat&eacute;gie.</p>
       </div>
+
+      <!-- Mission visible (29.6, 12/07/2026) : phrase d'usage permanente
+           + mode d'emploi repliable (ouvert tant que le visiteur ne l'a
+           pas replie une premiere fois ; etat persiste via CM.Preferences,
+           cle 'mission-cmt-etat', branchement dans CM.AccueilUnifie.init). -->
+      <p class="mission-utilitaire">Un guide pour choisir <strong>3 &agrave; 5 indicateurs</strong> adapt&eacute;s &agrave; ta r&eacute;alit&eacute;, comprendre ce qu'ils disent vraiment, et savoir l'<strong>expliquer &agrave; ton &eacute;quipe ou &agrave; ta direction</strong>.</p>
+      <details class="mission-cmt" id="mission-cmt">
+        <summary>Comment &ccedil;a marche</summary>
+        <div class="mission-trois-pas">
+          <div class="mission-pas"><span class="num">1 &middot; Choisis</span>Pars d'une <strong>question terrain</strong> ou filtre par niveau, probl&egrave;me, cadre.</div>
+          <div class="mission-pas"><span class="num">2 &middot; Comprends</span>Chaque fiche explique ce que l'indicateur <strong>dit vraiment</strong>, et ses pi&egrave;ges.</div>
+          <div class="mission-pas"><span class="num">3 &middot; Explique</span>Compose ton <strong>tableau de bord</strong> et partage-le avec ton &eacute;quipe.</div>
+        </div>
+      </details>
+
       <h2>Choisir mes indicateurs</h2>
     </div>
 
@@ -5115,6 +5200,22 @@ CM.AccueilUnifie = (function() {
     /* Idempotence : si déjà branché, ne pas re-attacher. */
     if (racine.dataset.cmAccueilUnifieBranche === '1') return;
     racine.dataset.cmAccueilUnifieBranche = '1';
+
+    /* Bloc « Comment ça marche » de la mission (29.6, 12/07/2026).
+       Ouvert tant que le visiteur ne l'a pas replié une première fois ;
+       son repli est ensuite persisté (clé dédiée, hors CLE_PREFS : le
+       bloc appartient à la mission, pas à l'état des filtres). */
+    var cmt = racine.querySelector('#mission-cmt');
+    if (cmt) {
+      var etatCmt = (CM.Preferences && CM.Preferences.lire)
+        ? CM.Preferences.lire('mission-cmt-etat', null) : null;
+      cmt.open = (etatCmt !== 'ferme');
+      cmt.addEventListener('toggle', function() {
+        if (CM.Preferences && CM.Preferences.ecrire) {
+          try { CM.Preferences.ecrire('mission-cmt-etat', cmt.open ? 'ouvert' : 'ferme'); } catch (e) { /* silencieux */ }
+        }
+      });
+    }
 
     /* Capture les libellés d'origine des chips pour pouvoir les restaurer
        après désélection (la chip change d'innerHTML quand elle passe en
