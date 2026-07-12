@@ -8693,6 +8693,45 @@ CM.PanierImpression = (function() {
     font-size: 0.82rem;
   }
 
+  /* Candidats supplementaires replies sous le trio (contrat 2026-07-12, backlog 29.5) */
+  .fiche-q-candidats {
+    margin-top: 0.9rem;
+    font-size: 0.88rem;
+  }
+  .fiche-q-candidats summary {
+    cursor: pointer;
+    color: var(--accent-fiche-q);
+    font-weight: 600;
+    font-size: 0.85rem;
+    list-style-position: inside;
+  }
+  .fiche-q-candidats summary:hover { text-decoration: underline; }
+  .fiche-q-candidats ul {
+    list-style: none;
+    margin: 0.6rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  .fiche-q-candidat {
+    padding-left: 0.9rem;
+    border-left: 2px solid var(--bordure);
+  }
+  .fiche-q-candidat a {
+    color: var(--accent-fiche-q);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .fiche-q-candidat a:hover { text-decoration: underline; }
+  .fiche-q-candidat-intention {
+    display: block;
+    color: var(--texte-secondaire);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    margin-top: 0.15rem;
+  }
+
   /* Note de fiabilite du trio (contrat 2026-07-12, backlog 29.2) */
   .fiche-q-note-fiabilite {
     margin-top: 1.2rem;
@@ -9836,6 +9875,7 @@ CM.FicheQuestion = (function() {
             '<div class="fiche-q-indicateurs">',
               etat.cards.map(function(c, i) { return _htmlCard(c, i, optionsRendu); }).join(''),
             '</div>',
+            _htmlCandidats(etat.candidats),
             _htmlNoteFiabilite(etat.noteFiabilite),
             _htmlLienSortant(etat.lienSortant),
           '</div>',
@@ -10084,6 +10124,33 @@ CM.FicheQuestion = (function() {
     return '<div class="fiche-q-card-wrapper">' + corps + piedInfo + zoneIntention + '</div>';
   }
 
+  function _htmlCandidats(candidats) {
+    /* Bloc repliable des candidats supplementaires (contrat 2026-07-12,
+       backlog 29.5). Le trio reste la recommandation : le bloc est ferme
+       a l'arrivee, lignes compactes nom (tiroir) + intention. Doctrine D3 :
+       le nom vient de CM.Referentiel, jamais duplique dans le catalogue. */
+    if (!candidats || !candidats.length) return '';
+    var lignes = [];
+    for (var i = 0; i < candidats.length; i++) {
+      var c = candidats[i];
+      var fiche = (CM.Referentiel && CM.Referentiel.chercher) ? CM.Referentiel.chercher(c.ficheRef) : null;
+      if (!fiche) continue; /* defensif : la sentinelle attrape ce cas en amont */
+      lignes.push(
+        '<li class="fiche-q-candidat">'
+        + '<a href="#" data-candidat-tiroir="' + _esc(c.ficheRef) + '">' + _esc(fiche.nom) + '</a>'
+        + '<span class="fiche-q-candidat-intention">' + c.intention + '</span>'
+        + '</li>'
+      );
+    }
+    if (!lignes.length) return '';
+    return [
+      '<details class="fiche-q-candidats">',
+        '<summary>Voir d\'autres candidats (', String(lignes.length), ')</summary>',
+        '<ul>', lignes.join(''), '</ul>',
+      '</details>'
+    ].join('');
+  }
+
   function _htmlNoteFiabilite(note) {
     /* Note de fiabilite du trio (contrat 2026-07-12, backlog 29.2).
        Champ optionnel : rien a expliquer, rien a rendre. Le contenu est
@@ -10297,6 +10364,15 @@ CM.VueFicheQuestion = (function() {
       if (champ === 'q1') etat.choixQ1 = val;
       else if (champ === 'q2') etat.choixQ2 = val;
       _rendre();
+      return;
+    }
+    /* Ligne candidat supplementaire : ouvre le tiroir de la fiche (29.5). */
+    var lienCandidat = t.closest ? t.closest('[data-candidat-tiroir]') : null;
+    if (lienCandidat) {
+      ev.preventDefault();
+      if (CM.Composants && CM.Composants.ouvrirTiroir) {
+        CM.Composants.ouvrirTiroir(lienCandidat.getAttribute('data-candidat-tiroir'));
+      }
       return;
     }
     /* Lien « Aller plus loin » vers l'accueil filtré par cadre (02/07/2026). */
