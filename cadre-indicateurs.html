@@ -9207,6 +9207,33 @@ CM.FicheQuestion = (function() {
         libelle: 'Par où démarrer une démarche d\'amélioration continue ?'
       }),
 
+      /* Candidats supplémentaires (contrat 12/07/2026, backlog 29.5) :
+         vivier éditorial par niveau, issu de la recherche du 02/07/2026
+         (recherche-indicateurs-pasteque.md). Le composeur retire
+         dynamiquement les ficheRef déjà affichés dans le trio courant. */
+      candidatsParNiveau: Object.freeze({
+        operationnel: Object.freeze([
+          Object.freeze({ ficheRef: 'ebm-1', intention: 'Le backlog déclarait ces fonctionnalités précieuses ; l\'usage réel montre celles qui servent vraiment, et celles que personne n\'ouvre.' }),
+          Object.freeze({ ficheRef: 'af-r5', intention: 'Les absences courtes répétées, lues en agrégé et jamais par personne : la trace factuelle d\'un malaise qui ne se dit pas encore.' }),
+          Object.freeze({ ficheRef: 'lss-2', intention: 'Compter la parole en actes : blocages déclarés, alertes levées. Un chiffre qui chute signale le silence qui s\'installe.' }),
+          Object.freeze({ ficheRef: 'fl-1', intention: 'La répartition réelle du travail terminé, tirée des outils : quand la stratégie dit innovation et que le flux montre des corrections, l\'écart est factuel.' }),
+          Object.freeze({ ficheRef: 'x7', intention: 'Six questions sur la circulation de l\'information : que devient, ici, le porteur de mauvaises nouvelles ?' }),
+          Object.freeze({ ficheRef: 'x6', intention: 'Le baromètre de la parole libre : ce que l\'équipe ose dire conditionne la fiabilité de tous les autres capteurs.' })
+        ]),
+        programme: Object.freeze([
+          Object.freeze({ ficheRef: 'p7', intention: 'Les livraisons annoncées finies qui reviennent en reprise : l\'écart entre le déclaré terminé et le réellement terminé.' }),
+          Object.freeze({ ficheRef: 'p2', intention: 'L\'écart entre le budget annoncé et le consommé réel, lu en tendance : un programme qui embellit ses chiffres se trahit d\'abord ici.' }),
+          Object.freeze({ ficheRef: 'p11', intention: 'Les frictions remontées par les équipes du programme : escalades, blocages, dépendances subies, la face cachée de la feuille de route.' })
+        ]),
+        strategique: Object.freeze([
+          Object.freeze({ ficheRef: 's14', intention: 'L\'agenda réel du comité de direction face aux priorités déclarées : on mesure la stratégie au temps qu\'on lui consacre.' }),
+          Object.freeze({ ficheRef: 'ebm-2', intention: 'L\'écart entre la satisfaction promise et la satisfaction constatée : la valeur annoncée au plan face au vécu du client.' }),
+          Object.freeze({ ficheRef: 's15', intention: 'Les incidents déclarés face aux incidents détectés par une mesure indépendante : combien de problèmes réels remontent vraiment.' }),
+          Object.freeze({ ficheRef: 's16', intention: 'Six questions anonymes qui prédisent les départs des mois à l\'avance : l\'indicateur avancé du malaise.' }),
+          Object.freeze({ ficheRef: 's7', intention: 'Les départs volontaires en tendance : le fait accompli du malaise invisible.' })
+        ])
+      }),
+
       ecoles: '<em>Drucker, management par objectifs</em> (le corollaire pervers de <em>what\'s measured improves</em> : ce qui n\'est pas mesuré dérive sans qu\'on le voie) · <em>Toyota Way, Genchi Genbutsu et Andon</em> (Liker, Imai : aller voir sur place et signaler sans peur) · <em>Edmondson, sécurité psychologique</em> (l\'humain dit la vérité quand il est protégé) · <em>DORA / SPACE</em> (la performance se triangule entre satisfaction perçue, mesures objectives et signaux humains, jamais sur une seule dimension). Les écoles convergent sur l\'idée qu\'aucune dimension de mesure n\'est suffisante seule ; elles divergent sur quelle dimension est <em>première</em> : le vécu, l\'observable, ou la déclaration.'
     }),
 
