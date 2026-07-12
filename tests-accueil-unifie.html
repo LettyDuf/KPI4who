@@ -1635,6 +1635,10 @@ CM.AccueilUnifie = (function() {
         cartouches: { question: 'ouvert', compteur: 'ouvert' },
         chips:      { probleme: [], cadre: ['lean'], niveau: null, maturite: null }
       });
+      /* Meme mecanique que le test 16 : init() est idempotent (flag sur la
+         racine), il faut retirer le flag pour que _restaurer() tourne. */
+      var racine = document.querySelector('.accueil-unifie');
+      delete racine.dataset.cmAccueilUnifieBranche;
       CM.AccueilUnifie.init();
       var chips = CM.AccueilUnifie.etatChips();
       assertDeepEqual(chips.cadre, ['lean'], 'les axes connus survivent');
