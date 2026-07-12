@@ -425,7 +425,7 @@ filtre = {
   branche?:          Array<BrancheId>,       // 'ti' | 'affaires' — pertinent uniquement sur les fiches niveau 'operationnel'
   domaine?:          Array<DomaineId>,       // 10 valeurs : 'dev', 'plateforme', 'ops-support', 'sécurité', 'commercial', 'marketing', 'finance', 'rh', 'operations', 'service-client'
   type?:             Array<TypeId>,          // 7 valeurs : 'IGO' | 'ICP' | 'ICC' | 'ORC' | 'DORA' | 'FLUX' | 'II' (terminologie française = KGI/KPI/KBI/OKR/DORA/Flux/KII)
-  cadres?:           Array<CadreId>,         // 16 valeurs : 'dora', 'cd', 'space', 'flow', 'lean', 'okr', 'scrum', 'ebm', 'kanban', 'safe', 'itil', 'securite', 'cx', 'change', 'mbo', 'generique' (mise à jour 02/07/2026 — cf. journal §9)
+  cadres?:           Array<CadreId>,         // 17 valeurs : 'dora', 'cd', 'space', 'flow', 'lean', 'okr', 'scrum', 'ebm', 'kanban', 'safe', 'itil', 'securite', 'cx', 'change', 'mbo', 'meta', 'generique' (mise à jour 12/07/2026 — cf. journal §9)
   tags?:             Array<TagId>,           // 7 valeurs : 'valeur', 'qualite', 'flux', 'delais', 'humain', 'risque', 'alignement'
   tagsThematiques?:  Array<TagThematiqueId>, // 14 valeurs verrouillées en §10.2
   fiabiliteMin?:     FiabiliteId,            // 'fiable' | 'precaution' | 'risque' — seuil ordinal (cf. ci-dessous)
@@ -493,6 +493,8 @@ Le module `CM.RequeteMetriques` compose donc deux sources de données ; il n'enr
 - Aucune modification des consommateurs (`CM.DiagnosticProbleme`, `CM.DiagnosticCadre`, `CM.Roles`) avant l'étape (c).
 
 ## 9. Journal du chantier *(archive — chantier 14 livré)*
+
+- **12/07/2026 — Cadre `meta` créé (chantier 29.4).** Gouvernance de la mesure, nouvelle famille `gouvernance-mesure` (précédent assumé des familles à cadre unique, patron `change`). Panel Drucker / Hubbard / Muller / Deming-Wheeler. §10.3 passe à 17 valeurs de `CadreId`. Porte 7 fiches `gm-*` (méta-indicateurs : couverture, usage, revue, fraîcheur, stabilité, coût, dérives Goodhart), qui rééquilibrent aussi les types IGO/II/ICC (volet a du 29.1).
 
 - **02/07/2026 (suite) — Cadre `ebm` promu depuis `CADRES_A_VENIR`.** Evidence-Based Management (guide officiel Scrum.org), famille `empirisme-agile`. §10.3 passe à 16 valeurs. Même patron, même séance que la promotion de `flow`.
 - **02/07/2026 — Cadre `flow` promu depuis `CADRES_A_VENIR`.** Flow Framework (Mik Kersten, *Project to Product*, 2018), famille `observabilite`. §10.3 passe à 15 valeurs de `CadreId`. Promotion motivée par la recherche indicateurs pastèque (fiche Distribution du flux, capteur factuel des priorités réelles). Patron de promotion identique au cadre `mbo` (23/05/2026).

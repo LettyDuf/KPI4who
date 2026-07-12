@@ -3673,12 +3673,13 @@ CM.IndicateursMeta = (function() {
     'risque-securite':  { label:'Risque & Sécurité',             teinte:'#c62828', fond:'#ffebee' },
     'decision':         { label:'Aide à la décision',           teinte:'#827717', fond:'#f5f5e6' },
     'conduite-du-changement': { label:'Conduite du changement', teinte:'#3949ab', fond:'#e8eaf6' },
+    'gouvernance-mesure': { label:'Gouvernance de la mesure',  teinte:'#00695c', fond:'#e0f2f1' },
     'universel':        { label:'Universel',                    teinte:'#78909c', fond:'transparent' }
   };
   var ORDRE_FAMILLES = [
     'empirisme-agile', 'excellence-op', 'observabilite',
     'objectifs', 'experience', 'itsm', 'risque-securite', 'decision',
-    'conduite-du-changement', 'universel'
+    'conduite-du-changement', 'gouvernance-mesure', 'universel'
   ];
 
   /* Catalogue des cadres méthodologiques.
@@ -3700,6 +3701,7 @@ CM.IndicateursMeta = (function() {
     itil:      { label:'ITIL',                     icone:'🛠️', famille:'itsm',            description:'IT Service Management. Incidents, changements, problèmes, disponibilité.' },
     securite:  { label:'Sécurité (NIST CSF / ISO 27035)', icone:'🔐', famille:'risque-securite', description:'NIST Cybersecurity Framework, ISO 27001/27035, OWASP, MITRE ATT&CK, FAIR. Détection, réponse, résilience face aux menaces.' },
     change:    { label:'Gestion du changement',    icone:'🦋', famille:'conduite-du-changement', description:'Conduite du changement. Lewin (1947, dégel, changement, regel), Kotter (Leading Change, 1995, 8 étapes), ADKAR / Prosci, Bridges (Managing Transitions, 1991). Mesure de l\'adhésion au changement, de l\'adoption des nouveaux comportements et de l\'ancrage dans la durée.' },
+    meta:      { label:'Gouvernance de la mesure', icone:'🧭', famille:'gouvernance-mesure', description:'Mesurer le système de mesure lui-même. Drucker (la mesure au service de la mission et de la décision), Hubbard (How to Measure Anything, 2007 : valeur de l\'information, coût de la mesure), Muller (The Tyranny of Metrics, 2018 : dérives et gaming), Deming et Wheeler (variation, signal et bruit). Indicateurs d\'indicateurs : couverture, usage réel, fraîcheur, coût, dérives.' },
     generique: { label:'Indicateur générique',     icone:'🧩', famille:'universel',       description:'Indicateurs non rattachés à un cadre signature. Bac à sable, équipe sans cadre installé. **Tag exclusif** : jamais combiné avec un autre cadre — un indicateur signature relève de son cadre, pas de generique.' }
   };
 
@@ -4235,7 +4237,7 @@ CM.RequeteMetriques = (function() {
     type:            ['IGO', 'ICP', 'ICC', 'ORC', 'DORA', 'FLUX', 'II'],
     cadres:          ['dora', 'cd', 'space', 'flow', 'lean', 'okr',
                       'scrum', 'ebm', 'kanban', 'safe', 'itil',
-                      'securite', 'cx', 'change', 'mbo', 'generique'],
+                      'securite', 'cx', 'change', 'mbo', 'meta', 'generique'],
     tags:            ['valeur', 'qualite', 'flux', 'delais',
                       'humain', 'risque', 'alignement'],
     tagsThematiques: ['transversalité', 'prévisibilité', 'engagement',
