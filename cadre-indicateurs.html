@@ -1419,7 +1419,7 @@
       box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
     }
     .panier-chip-fiab.f-fiable     .panier-chip-fiab-pastille { background: #2e7d32; }
-    .panier-chip-fiab.f-precaution .panier-chip-fiab-pastille { background: #e65100; }
+    .panier-chip-fiab.f-precaution .panier-chip-fiab-pastille { background: #2f5d33; } /* vert fonce : la pastille 7px doit rester visible (resemantisation 12/07/2026) */
     .panier-chip-fiab.f-risque     .panier-chip-fiab-pastille { background: #c62828; }
 
     /* Placeholder d'une colonne vide — affiché quand une des deux sections
@@ -1624,7 +1624,7 @@
       border-radius: 50%; margin-right: 1.5mm; vertical-align: middle;
     }
     #impression-onepager .imp-pastille.fiable     { background: #2e7d32; }
-    #impression-onepager .imp-pastille.precaution { background: #b7791f; }
+    #impression-onepager .imp-pastille.precaution { background: #2f5d33; }
     #impression-onepager .imp-pastille.risque     { background: #c62828; }
     #impression-onepager .imp-nom-ind {
       font-weight: 600; color: #1a1a2e;
@@ -2542,11 +2542,16 @@ CM.Config = (function() {
       desc:        'Metrique objective, peu susceptible d\'etre instrumentalisee. À privilégier en premier lieu.'
     },
     'precaution': {
-      label:       'À utiliser avec soin',
-      label_court: 'Precaution',
-      couleur:     '#e65100',
-      icone:       '⚠️',
-      desc:        'Utile dans le bon contexte, mais l\'interprétation est delicate. Toujours contextualiser.'
+      /* Resemantisation du 12/07/2026 (backlog 29.2, mockup-signal-fiabilite,
+         option B2 vert clair retenue par Laetitia) : le statut dit une mesure
+         positive a adopter sous conditions, pas une alerte. couleur = badge,
+         contour de card et fonds ; couleur_texte = texte du badge et lisere. */
+      label:         'Sous conditions',
+      label_court:   'Sous conditions',
+      couleur:       '#ddebd9',
+      couleur_texte: '#2f5d33',
+      icone:         '🤝',
+      desc:          'Mesure précieuse à mettre en place, fiable sous conditions : climat de confiance, lecture collective, jamais d\'évaluation individuelle.'
     },
     'risque': {
       label:       'Courant & risque',
@@ -7859,7 +7864,7 @@ CM.Composants = (function() {
       +   '<div style="flex:1;min-width:0">'
       +     '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.4rem;min-width:0">'
       +       '<div class="carte-type" style="color:' + c + '">' + ind.type + ' · ' + cfg.TYPES_LIBELLES[ind.type] + '</div>'
-      +       '<span class="badge-fiabilite" style="background:' + fib.couleur + '" title="' + fib.label + '">' + fib.icone + ' ' + fib.label_court + '</span>'
+      +       '<span class="badge-fiabilite" style="background:' + fib.couleur + ';color:' + (fib.couleur_texte || '#fff') + '" title="' + fib.label + '">' + fib.icone + ' ' + fib.label_court + '</span>'
       +     '</div>'
       +     '<div class="carte-nom">' + ind.nom + '</div>'
       +   '</div>'
@@ -8693,7 +8698,7 @@ CM.PanierImpression = (function() {
     margin-top: 1.2rem;
     padding: 0.85rem 1.1rem;
     background: #faf6ec; /* creme note pedagogique (doctrine fond fiche) */
-    border-left: 3px solid #e65100; /* couleur canonique precaution (cf. pastilles panier, section fiabilite) */
+    border-left: 3px solid #2f5d33; /* vert fonce de la resemantisation Sous conditions (12/07/2026) */
     border-radius: 4px;
     font-size: 0.88rem;
   }
@@ -11137,7 +11142,7 @@ CM.App = (function() {
     html += '<div class="legende-fiabilite">';
     Object.keys(cfg.FIABILITE).forEach(function(id) {
       var f = cfg.FIABILITE[id];
-      html += '<div class="fib-item"><span class="badge-fiabilite" style="background:' + f.couleur + ';font-size:0.62rem">' + f.icone + ' ' + f.label_court + '</span><span>' + f.label + '</span></div>';
+      html += '<div class="fib-item"><span class="badge-fiabilite" style="background:' + f.couleur + ';color:' + (f.couleur_texte || '#fff') + ';font-size:0.62rem">' + f.icone + ' ' + f.label_court + '</span><span>' + f.label + '</span></div>';
     });
     html += '</div>';
 
@@ -11147,8 +11152,8 @@ CM.App = (function() {
       html += '</div></div>';
     }
     if (precaution.length) {
-      html += '<div class="section-fiabilite"><div class="titre-fiabilite" style="color:#e65100"><span style="font-size:1.1rem">⚠️</span> À utiliser avec soin (' + precaution.length + ')</div><div class="grille-cartes">';
-      precaution.forEach(function(i) { html += CM.Composants.htmlCarte(i, '#e65100', false, false); });
+      html += '<div class="section-fiabilite"><div class="titre-fiabilite" style="color:#2f5d33"><span style="font-size:1.1rem">🤝</span> Sous conditions (' + precaution.length + ')</div><div class="grille-cartes">';
+      precaution.forEach(function(i) { html += CM.Composants.htmlCarte(i, '#2f5d33', false, false); });
       html += '</div></div>';
     }
     if (prochainNiv.length) {
