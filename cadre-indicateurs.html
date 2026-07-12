@@ -8688,6 +8688,29 @@ CM.PanierImpression = (function() {
     font-size: 0.82rem;
   }
 
+  /* Note de fiabilite du trio (contrat 2026-07-12, backlog 29.2) */
+  .fiche-q-note-fiabilite {
+    margin-top: 1.2rem;
+    padding: 0.85rem 1.1rem;
+    background: #faf6ec; /* creme note pedagogique (doctrine fond fiche) */
+    border-left: 3px solid #e65100; /* couleur canonique precaution (cf. pastilles panier, section fiabilite) */
+    border-radius: 4px;
+    font-size: 0.88rem;
+  }
+  .fiche-q-note-fiabilite .surtitre {
+    display: block;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--texte-tertiaire);
+    margin-bottom: 0.35rem;
+  }
+  .fiche-q-note-fiabilite p {
+    margin: 0;
+    color: var(--texte-secondaire);
+    line-height: 1.55;
+  }
+
   /* Bloc Recommandation */
   .fiche-q-reco {
     background: var(--reco-fond);
@@ -9642,6 +9665,7 @@ CM.FicheQuestion = (function() {
       choixQ2: optQ2.id,
       niveau: niveau,
       cards: contenuParCard,
+      noteFiabilite: fiche.noteFiabilite || null,
       recommandation: fiche.recommandationParNiveau[niveau],
       lienSortant: fiche.lienSortantPatrimonial,
       crossLink: fiche.crossLink,
@@ -9698,6 +9722,7 @@ CM.FicheQuestion = (function() {
       choixQ2: optQ2.id,
       niveau: niveau,
       cards: cards,
+      noteFiabilite: fiche.noteFiabilite || null,
       recommandation: fiche.recommandationParNiveau[niveau],
       lienSortant: fiche.liensSortantsParNiveau[niveau],
       crossLink: fiche.crossLink,
@@ -9782,6 +9807,7 @@ CM.FicheQuestion = (function() {
             '<div class="fiche-q-indicateurs">',
               etat.cards.map(function(c, i) { return _htmlCard(c, i, optionsRendu); }).join(''),
             '</div>',
+            _htmlNoteFiabilite(etat.noteFiabilite),
             _htmlLienSortant(etat.lienSortant),
           '</div>',
 
@@ -10027,6 +10053,20 @@ CM.FicheQuestion = (function() {
     ].join('');
 
     return '<div class="fiche-q-card-wrapper">' + corps + piedInfo + zoneIntention + '</div>';
+  }
+
+  function _htmlNoteFiabilite(note) {
+    /* Note de fiabilite du trio (contrat 2026-07-12, backlog 29.2).
+       Champ optionnel : rien a expliquer, rien a rendre. Le contenu est
+       de la matiere editoriale de confiance (catalogue), injectee telle
+       quelle comme les intentions et recommandations. */
+    if (!note) return '';
+    return [
+      '<div class="fiche-q-note-fiabilite">',
+        '<span class="surtitre">Lire la fiabilit\u00e9</span>',
+        '<p>', note, '</p>',
+      '</div>'
+    ].join('');
   }
 
   function _htmlLienSortant(lien) {
