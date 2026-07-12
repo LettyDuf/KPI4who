@@ -260,3 +260,16 @@ Décision (mockup-signal-fiabilite.html, option B2 vert clair retenue après tes
 - « Fiable » (vert plein) et « Courant & risque » (rouge) sont inchangés.
 
 Écarté : option C (signal en pied de card, jugée à la fois encore alarmiste et pas assez visible) ; option D (refonte en « exigence de lecture », trop transverse) ; bleu clair (collision avec la couleur d'identité et de navigation).
+
+## Décision du 12/07/2026 (suite) — mission visible sur l'accueil (29.6)
+
+Constat : la mission manifeste en deux étages (09/05/2026) donne le ton mais pas l'usage ; le visiteur ne sait pas ce que le site va faire pour lui (recoupe la famille valeur / parcours du test utilisateur n°1).
+
+Décision (mockups `mockup-mission-visible.html` puis `mockup-accueil-mission-pleine-page.html`, mix B+C variante 2 retenu) :
+
+- La phrase serif « les indicateurs pertinents, du terrain à la stratégie. » passe au bleu ciel `#9fd4ff` (token `--mission-suite`, équivalent `#1565c0` sur le thème neutre clair).
+- Une phrase d'usage permanente sous le manifeste : « Un guide pour choisir 3 à 5 indicateurs adaptés à ta réalité, comprendre ce qu'ils disent vraiment, et savoir l'expliquer à ton équipe ou à ta direction. » Le « 3 à 5 » est doctrinal, pas décoratif.
+- Un bloc « Comment ça marche » repliable (details natif) : trois pas qui reprennent les verbes du manifeste (Choisis / Comprends / Explique). Ouvert tant que le visiteur ne l'a pas replié une première fois, repli persisté (clé `mission-cmt-etat`), réouvrable à tout moment.
+- Écarté : tout-visible en permanence (trois strates redondantes avant le premier cartouche), ambre plein et crème doré pour la suite (le bleu ciel validé sur mockup pleine page).
+
+Même séance : les cartouches « questions terrain » et « compteur » sont désormais ouvertes à l'arrivée (29.7).
