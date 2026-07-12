@@ -9208,6 +9208,10 @@ CM.FicheQuestion = (function() {
                         intention: 'Comparer ce qui a été annoncé en début de sprint à ce qui a été effectivement livré et accepté en fin de sprint. Un écart qui se répète mérite d\'être compris, pas reproché. Les causes sont multiples : pression d\'une partie prenante influente, imprévus pris en cours de route, capacité réelle mal connue, périmètre mal cadré.',
             ficheRef: 'ti-d2',
             parSignal: Object.freeze({
+              malaise: Object.freeze({
+                intention: 'Un taux de complétion qui reste parfaitement vert pendant que le terrain souffre est lui-même un symptôme. Sous pression, une équipe apprend à protéger son chiffre : elle promet moins, découpe autrement, déclare fini ce qui tient à peine. Lire la stabilité du taux avec l\'équipe, pas contre elle : ce qu\'il coûte de le tenir dit ce que le chiffre ne dit pas.',
+                ficheRef: 'ti-d2'
+              }),
               prioritesDecouple: Object.freeze({
                 intention: 'La part des résultats clés de l\'équipe qui décrivent un résultat observable pour un bénéficiaire, plutôt qu\'une activité interne. Quand les priorités nommées ne gouvernent pas les arbitrages, c\'est souvent qu\'elles n\'ont pas de capteur : un objectif sans mesure observable se plie à l\'urgence du moment. Vérifier les OKR de l\'équipe, c\'est vérifier que les priorités ont des dents.',
                 ficheRef: 'o9'
@@ -9216,11 +9220,23 @@ CM.FicheQuestion = (function() {
           }),
           programme: Object.freeze({
                         intention: 'Sur un horizon glissant (3-6 mois), comparer les promesses portées en revue de programme à ce qui a effectivement atterri en production ou en service. La feuille de route déclarative vit en réunions ; la feuille de route objective vit en journaux d\'exécution.',
-            ficheRef: 'p10'
+            ficheRef: 'p10',
+            parSignal: Object.freeze({
+              malaise: Object.freeze({
+                intention: 'Une feuille de route tenue peut cacher son prix : heures supplémentaires silencieuses, coins arrondis, équipes qui s\'usent à préserver la promesse. Vert dehors, rouge dedans. Quand le malaise se vit sans se mesurer, demander ce que coûte chaque jalon tenu vaut mieux que célébrer sa tenue.',
+                ficheRef: 'p10'
+              })
+            })
           }),
           strategique: Object.freeze({
                         intention: 'Mesurer la part des Key Results déclarés qui décrivent un résultat utilisateur observable, plutôt qu\'une activité interne. Un OKR qui dit « lancer » au lieu de « faire adopter par X % » est une déclaration sans miroir.',
-            ficheRef: 's4'
+            ficheRef: 's4',
+            parSignal: Object.freeze({
+              malaise: Object.freeze({
+                intention: 'Regarder ce que les objectifs déclarés mesurent, et surtout ce qu\'ils ne mesurent jamais. Une organisation dont tous les résultats clés parlent de production et aucun de la santé de ceux qui la font montre où le regard de la direction ne se pose pas. Le malaise sans capteur n\'est pas une fatalité : c\'est un choix de mesure, révisable.',
+                ficheRef: 's4'
+              })
+            })
           })
         }),
         objectif: Object.freeze({
@@ -9246,6 +9262,10 @@ CM.FicheQuestion = (function() {
                         intention: 'Délai bout à bout d\'une initiative cross-équipes, du moment où elle est inscrite au portfolio à sa release publique. Capteur objectif le plus tangible d\'un écart entre ambition affichée et capacité réelle de livrer.',
             ficheRef: 'p9',
             parSignal: Object.freeze({
+              malaise: Object.freeze({
+                intention: 'Le fait objectif du malaise avant les mots : les absences courtes répétées, lues en agrégé sur les équipes du programme, jamais par personne. Quand le ressenti n\'a pas de canal, le corps prend le relais ; la courbe monte des mois avant les départs, pendant qu\'il est encore temps d\'agir sur les causes.',
+                ficheRef: 'af-r5'
+              }),
               chiffresEcart: Object.freeze({
                 intention: 'La part des initiatives qui ont demandé des correctifs majeurs une fois en service. Une initiative déclarée livrée n\'est pas encore une initiative réussie : le taux de reprise regarde ce qui se passe après le rapport de livraison, en usage réel. C\'est le fait qui confirme ou contredit les chiffres d\'avancement.',
                 ficheRef: 'p7'
