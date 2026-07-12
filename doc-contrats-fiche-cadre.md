@@ -11,7 +11,7 @@ Le chantier 28 livre une vue pédagogique par cadre méthodologique : le cadre r
 - **Périmètre éditorial : les 16 cadres de `CADRES{}`** (hors `generique`, voir § 1.1), cible validée par Lætitia. Séquencement : le patron éditorial est validé sur un lot pilote de 3 cadres (DORA, OKR, Gestion du changement — trois familles différentes) avant industrialisation des 13 autres.
 - **Fiches patrimoniales admises, statut à part** : la vue accepte des entrées hors `VOCAB.cadres` (première candidate : la triangulation, 26.h.coll.4). Une entrée patrimoniale porte `statut:'patrimonial'` : pas de filtre accueil associé, pas de chip cliquable qui y mène depuis les cards, la navigation s'y fait par liens éditoriaux.
 - **Entrées de navigation retenues** : (a) les chips de cadre déjà affichées sur les cards deviennent cliquables vers la fiche-cadre ; (b) le sélecteur de la chip *Cadre* de l'accueil reçoit un lien discret « comprendre ce cadre » par option. L'onglet des cadres existant n'est pas touché par ce chantier.
-- **Question ouverte (28.q1)** : les liens *Aller plus loin* des fiches-questions (`cadreRef`, option légère du 02/07/2026) basculent-ils de l'accueil filtré vers la fiche-cadre ? Recommandation : oui, avec l'accueil filtré accessible depuis la fiche-cadre elle-même (« voir ses N indicateurs »). À trancher par Lætitia avant le jalon D.
+- **28.q1 TRANCHÉE (Lætitia, 12/07/2026 séance 2) : oui.** Les liens *Aller plus loin* des fiches-questions (`cadreRef`, option légère du 02/07/2026) basculent de l'accueil filtré vers la fiche-cadre. L'accueil filtré reste accessible depuis la fiche-cadre (« voir ses N indicateurs »). Câblage au jalon D.
 
 ### 1.1 Cas `generique`
 
@@ -108,4 +108,5 @@ CM.FicheCadre = {
 
 ## Journal du document
 
-- **v0.1 — 12/07/2026 (séance 2).** Création. Décisions de cadrage Lætitia : 16 cadres (séquencés pilote puis lots), triangulation même vue statut à part, entrées navigation chips cards + sélecteur Cadre. Question ouverte 28.q1 (Aller plus loin). Rédigé avec Claude Fable 5 — arbitrage d'allocation : chantiers patronnés (Lexique B.2, ventilation test n°1) délégués à des séances Sonnet/Opus.
+- **v0.2 — 12/07/2026 (séance 2, suite).** 28.q1 tranchée par Lætitia : oui, *Aller plus loin* ouvre la fiche-cadre (câblage jalon D). Jalon B engagé.
+- **v0.1 — 12/07/2026 (séance 2).** Création. Décisions de cadrage Lætitia : 16 cadres (séquencés pilote puis lots), triangulation même vue statut à part, entrées navigation chips cards + sélecteur Cadre. 28.q1 tranchée le jour même : Aller plus loin ouvre la fiche-cadre. Rédigé avec Claude Fable 5 — arbitrage d'allocation : chantiers patronnés (Lexique B.2, ventilation test n°1) délégués à des séances Sonnet/Opus.
