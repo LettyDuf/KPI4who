@@ -95,7 +95,7 @@ CM.FicheCadre = {
 ## 7. Jalons
 
 - **A — Contrats** : le présent document. ✅ 12/07/2026.
-- **B — Squelette** : module `CM.FicheCadre` (API complète, catalogue à 1 entrée pilote DORA), route `#cadre=`, mockup d'en-tête, générateur Node + source markdown. Sentinelle : signatures ⊂ META du cadre.
+- **B — Squelette** ✅ 12/07/2026 (`65ca53f` `e7b96fe` + mockup) : module `CM.FicheCadre`, route `#cadre=` (deep link + hashchange + délégation accueil filtré), générateur `outils/generer-fiches-cadres.js` + `fiche-cadre-source.md` (pilote DORA). Les validations du § 8 (signatures ⊂ META, statut, existence au référentiel) vivent dans le générateur strict, à la génération ; un vérificateur autonome pourra doubler au jalon E. Mockup d'en-tête à arbitrer (`mockup-entete-fiche-cadre.html`, variante 1 implémentée).
 - **C — Lot pilote éditorial** : DORA, OKR, Gestion du changement rédigés, smoke test Lætitia, patron éditorial gelé.
 - **D — Industrialisation** : les 13 autres cadres par lots de 3-4, plus la patrimoniale triangulation (matière § du backlog 28). Tranchage 28.q1 et câblage des entrées de navigation.
 - **E — Clôture** : audit liens, invariants, backlog, tag.
@@ -108,5 +108,6 @@ CM.FicheCadre = {
 
 ## Journal du document
 
+- **v0.3 — 12/07/2026 (séance 2, suite).** Jalon B livré : module, route, générateur, CSS, mockup d'en-tête (2 variantes, arbitrage Lætitia attendu). Smoke test : ouvrir `#cadre=dora`.
 - **v0.2 — 12/07/2026 (séance 2, suite).** 28.q1 tranchée par Lætitia : oui, *Aller plus loin* ouvre la fiche-cadre (câblage jalon D). Jalon B engagé.
 - **v0.1 — 12/07/2026 (séance 2).** Création. Décisions de cadrage Lætitia : 16 cadres (séquencés pilote puis lots), triangulation même vue statut à part, entrées navigation chips cards + sélecteur Cadre. 28.q1 tranchée le jour même : Aller plus loin ouvre la fiche-cadre. Rédigé avec Claude Fable 5 — arbitrage d'allocation : chantiers patronnés (Lexique B.2, ventilation test n°1) délégués à des séances Sonnet/Opus.
