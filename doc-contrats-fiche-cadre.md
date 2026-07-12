@@ -31,7 +31,8 @@ Chaque entrée du catalogue porte les champs suivants. Langue et typographie : s
 | `signatures` | 2 à 5 `ficheRef` ordonnés éditorialement : les indicateurs canoniques | chaque `ficheRef` doit porter le tag du cadre dans `META` (sentinelle) |
 | `lecture` | Comment les signatures se lisent ensemble, jamais isolément | 1 paragraphe |
 | `antiPatterns` | 2 à 4 dérives du cadre lui-même (pas des indicateurs) | noms en `<span class="term-def">`, double signal si bloc vigilance |
-| `quandChoisir` | Contextes où le cadre excelle / où il déçoit | honnêteté d'abord : chaque cadre a un domaine de validité |
+| `quandChoisir` | Contextes où le cadre excelle | honnêteté d'abord : chaque cadre a un domaine de validité |
+| `quandSeMefier` | Contextes où le cadre déçoit, ses limites | pendant obligatoire de `quandChoisir` ; les deux versants se lisent séparés (rendu en deux encarts, § 6) |
 | `allerPlusLoin` | Œuvres sources, 1 à 3 références | titres seuls, pas de liens externes (outil hors-ligne) |
 
 **Séparation matière / source canonique (doctrine D3 transposée).** La fiche-cadre ne duplique ni `label`, ni `icone`, ni `famille`, ni `description` : ils restent dans `CADRES{}` et la vue les y lit. Les indicateurs non-signature tagués du cadre ne sont pas listés dans la donnée : la vue les dérive de `META` à l'exécution (« et N autres indicateurs », lien vers l'accueil filtré). Le catalogue ne porte que ce qui n'existe nulle part ailleurs.
@@ -92,6 +93,8 @@ CM.FicheCadre = {
 
 `doc-cadre-visuel.md` fait foi. La fiche-cadre reprend la grammaire de la fiche d'indicateur (fond blanc franc, note pédagogique crème) ; la teinte et le fond de la **famille** (`FAMILLES{}`) signent l'en-tête, comme dans l'accordéon de l'ancienne porte cadre. En-tête tranché au jalon B : variante 1, bandeau aux couleurs de la famille (fond doux + liseré teinte), corps de fiche sur blanc franc. Décision consignée au `doc-cadre-visuel.md`.
 
+Le couple `quandChoisir` / `quandSeMefier` se rend en **deux encarts distincts** (option C, smoke test pilote du 12/07/2026) : liseré et fond doux teal pour « Quand le choisir », ambre « attention douce » pour « Quand s'en méfier » (jamais l'orange alarmiste banni le 12/07/2026). Décision visuelle consignée au `doc-cadre-visuel.md`.
+
 ## 7. Jalons
 
 - **A — Contrats** : le présent document. ✅ 12/07/2026.
@@ -108,6 +111,7 @@ CM.FicheCadre = {
 
 ## Journal du document
 
+- **v0.4 — 12/07/2026 (smoke test pilote).** Retour Lætitia sur le rendu : le champ `quandChoisir` mélangeait les deux versants en un bloc. Scindé en deux champs, `quandChoisir` (le cadre excelle) et `quandSeMefier` (le cadre déçoit), rendus en deux encarts distincts (option C, liseré teal / ambre). Appliqué aux 3 pilotes avant industrialisation. § 2 (deux lignes) et § 6 (rendu) actualisés.
 - **v0.3 — 12/07/2026 (séance 2, suite).** Jalon B livré : module, route, générateur, CSS, mockup d'en-tête (2 variantes, arbitrage Lætitia attendu). Smoke test : ouvrir `#cadre=dora`.
 - **v0.2 — 12/07/2026 (séance 2, suite).** 28.q1 tranchée par Lætitia : oui, *Aller plus loin* ouvre la fiche-cadre (câblage jalon D). Jalon B engagé.
 - **v0.1 — 12/07/2026 (séance 2).** Création. Décisions de cadrage Lætitia : 16 cadres (séquencés pilote puis lots), triangulation même vue statut à part, entrées navigation chips cards + sélecteur Cadre. 28.q1 tranchée le jour même : Aller plus loin ouvre la fiche-cadre. Rédigé avec Claude Fable 5 — arbitrage d'allocation : chantiers patronnés (Lexique B.2, ventilation test n°1) délégués à des séances Sonnet/Opus.
