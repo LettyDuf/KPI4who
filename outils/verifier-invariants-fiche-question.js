@@ -21,6 +21,10 @@
  *        portant un cadreRef reference un cadre de VOCAB.cadres, et ne
  *        cumule pas cadreRef et ficheRef (garde-fou 28.gf.1, 02/07/2026 :
  *        un cadreRef inconnu ferait lever executer() au clic).
+ *   I7 - candidatsParNiveau (contrat 12/07/2026, backlog 29.5) : cles
+ *        limitees aux trois niveaux, chaque candidat porte un ficheRef
+ *        connu de CM.Referentiel (pas de CADRES_A_VENIR ici : une ligne
+ *        candidat sans fiche cliquable n'a pas de sens) et une intention.
  *
  * Patron : verifier-coherence-vocabulaire.js (verificateur node zero-dependance).
  * Exit codes : 0 succes, 1 invariant viole, 2 erreur d'extraction/E-S.
@@ -141,6 +145,19 @@ ids.forEach(function (fid) {
   Object.keys(f.liensSortantsParNiveau || {}).forEach(function (niv) {
     verifierLienSortant(fid, 'liensSortantsParNiveau.' + niv, f.liensSortantsParNiveau[niv]);
   });
+
+  /* I7 — candidats supplementaires (contrat 12/07/2026, backlog 29.5). */
+  var NIVEAUX_CANDIDATS = ['operationnel', 'programme', 'strategique'];
+  Object.keys(f.candidatsParNiveau || {}).forEach(function (niv) {
+    if (NIVEAUX_CANDIDATS.indexOf(niv) < 0)
+      ko(fid, 'I7', 'candidatsParNiveau : cle de niveau inconnue "' + niv + '"');
+    (f.candidatsParNiveau[niv] || []).forEach(function (cand, i) {
+      if (!cand.ficheRef || !refExiste(cand.ficheRef))
+        ko(fid, 'I7', 'candidatsParNiveau.' + niv + '[' + i + '] : ficheRef inconnu "' + (cand.ficheRef || '(absent)') + '"');
+      if (!cand.intention)
+        ko(fid, 'I7', 'candidatsParNiveau.' + niv + '[' + i + '] : intention manquante');
+    });
+  });
 });
 
 process.stdout.write('Invariants CM.FicheQuestion — ' + ids.length + ' fiches du catalogue (' + ids.join(', ') + ')\n\n');
@@ -150,7 +167,8 @@ if (echecs.length === 0) {
   process.stdout.write('  ✓ I3 cardEnTete des options Q1 (§4.4)\n');
   process.stdout.write('  ✓ I4 axeEnTete des options Q1 (§4.6)\n');
   process.stdout.write('  ✓ I5 structure coherente avec la variante\n');
-  process.stdout.write('  ✓ I6 cadreRef des liens sortants dans VOCAB.cadres\n\nTout est coherent.\n');
+  process.stdout.write('  ✓ I6 cadreRef des liens sortants dans VOCAB.cadres\n');
+  process.stdout.write('  ✓ I7 candidatsParNiveau : niveaux et ficheRef valides\n\nTout est coherent.\n');
   process.exit(0);
 } else {
   process.stdout.write('  ✗ ' + echecs.length + ' violation(s) :\n' + echecs.join('\n') + '\n');
