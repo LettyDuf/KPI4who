@@ -289,3 +289,11 @@ Même séance : les cartouches « questions terrain » et « compteur » sont d�
 - **Variante 1 retenue par Lætitia** (`mockup-entete-fiche-cadre.html`) : bandeau aux couleurs de la famille, fond doux `FAMILLES[].fond` + liseré gauche 4 px dans la teinte `FAMILLES[].teinte`, icône du cadre, titre, nom de la famille en petites capitales teintées. La famille se lit comme un lieu : on est chez l'Observabilité, chez l'Empirisme agile.
 - Nuance à la doctrine « fond fiche » (blanc franc) : le bandeau d'en-tête est le seul élément teinté de la fiche-cadre, le corps reste sur fond blanc. Même logique que la note pédagogique crème : une zone sémantique signée, jamais un fond de fiche coloré.
 - Variante 2 (chip sobre) écartée. Une fiche patrimoniale (statut à part, sans famille) porte le libellé « Fiche patrimoniale » sur bandeau neutre `#eceff1` / `#455a64`.
+
+
+## Décision du 12/07/2026 (séance 2, suite) — versants « choisir / se méfier » de la fiche-cadre (28.C)
+
+- **Retour smoke test pilote de Lætitia** : dans la fiche-cadre, le champ « Quand le choisir, quand s'en méfier » mélangeait les deux versants en un seul paragraphe, difficile à lire.
+- **Option C retenue** (`mockup-quand-choisir-mefier.html`) : deux encarts distincts, chacun à liseré gauche 3 px et fond doux. « Quand le choisir » en teal (`--niv-3-clair` / `--niv-3-moyen`, titre `--niv-3`) ; « Quand s'en méfier » en ambre douce (`--ambre-fond` / `--ambre-bord`, titre `--ambre-texte`).
+- **L'ambre est la couleur « attention douce » du projet, pas un signal d'alarme** : cohérent avec la resémantisation du 12/07 qui a banni l'orange alarmiste. La méfiance ici décrit un domaine de validité, jamais un danger.
+- Options A (amorces en gras) et B (sous-titres à puce) écartées : moins de séparation visuelle. Data scindée en deux champs `quandChoisir` / `quandSeMefier` (contrat § 2).

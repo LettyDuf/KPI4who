@@ -1410,6 +1410,16 @@
     .fiche-cadre .fc-section p { margin: 0 0 0.6rem; line-height: 1.6; }
     .fiche-cadre .fc-cards { display: flex; flex-direction: column; gap: 0.6rem; }
     .fiche-cadre .fc-tous { margin-top: 0.4rem; }
+    .fiche-cadre .fc-quand { border-radius: 0 8px 8px 0; padding: 0.7rem 0.9rem; margin-bottom: 0.6rem; }
+    .fiche-cadre .fc-quand:last-child { margin-bottom: 0; }
+    .fiche-cadre .fc-quand-choisir { background: var(--niv-3-clair); border-left: 3px solid var(--niv-3-moyen); }
+    .fiche-cadre .fc-quand-mefier { background: var(--ambre-fond); border-left: 3px solid var(--ambre-bord); }
+    .fiche-cadre .fc-quand-titre { display: flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 0.35rem; }
+    .fiche-cadre .fc-quand-choisir .fc-quand-titre { color: var(--niv-3); }
+    .fiche-cadre .fc-quand-mefier .fc-quand-titre { color: var(--ambre-texte); }
+    .fiche-cadre .fc-quand-ico { font-size: 0.9rem; line-height: 1; }
+    .fiche-cadre .fc-quand p { margin: 0 0 0.5rem; line-height: 1.6; }
+    .fiche-cadre .fc-quand p:last-child { margin-bottom: 0; }
     .fiche-cadre .fc-tous a { font-weight: 600; color: var(--niv-1); }
 
     .panier-chip-type {
@@ -8780,7 +8790,7 @@ var CATALOGUE_CADRES = Object.freeze({
       signatures: signatures,
       autresIndicateurs: { n: autres, cadreId: (e.statut === 'cadre' ? id : null) },
       lecture: e.lecture, antiPatterns: e.antiPatterns,
-      quandChoisir: e.quandChoisir, allerPlusLoin: e.allerPlusLoin
+      quandChoisir: e.quandChoisir, quandSeMefier: e.quandSeMefier, allerPlusLoin: e.allerPlusLoin
     };
   }
 
@@ -8797,6 +8807,31 @@ var CATALOGUE_CADRES = Object.freeze({
       return '<p>' + x.replace(/\n/g, ' ') + '</p>';
     }).join('');
     return '<div class="fc-section"><h3>' + titre + '</h3><div>' + paragraphes + '</div></div>';
+  }
+
+  /* Deux versants distincts (option C, smoke test pilote 12/07/2026) :
+     encart teal pour « Quand le choisir », ambre douce pour « Quand s'en
+     méfier ». Tolérant : un versant absent n'est pas rendu. */
+  function _htmlQuandChoisir(c) {
+    if (!c.quandChoisir && !c.quandSeMefier) return '';
+    function paras(x) {
+      return x.split('\n\n').map(function(y) {
+        return '<p>' + y.replace(/\n/g, ' ') + '</p>';
+      }).join('');
+    }
+    var h = ['<div class="fc-section"><h3>Quand le choisir, quand s\u2019en m\u00e9fier</h3>'];
+    if (c.quandChoisir) {
+      h.push('<div class="fc-quand fc-quand-choisir"><div class="fc-quand-titre">',
+             '<span class="fc-quand-ico" aria-hidden="true">\u2713</span>Quand le choisir</div>',
+             paras(c.quandChoisir), '</div>');
+    }
+    if (c.quandSeMefier) {
+      h.push('<div class="fc-quand fc-quand-mefier"><div class="fc-quand-titre">',
+             '<span class="fc-quand-ico" aria-hidden="true">\u2691</span>Quand s\u2019en m\u00e9fier</div>',
+             paras(c.quandSeMefier), '</div>');
+    }
+    h.push('</div>');
+    return h.join('');
   }
 
   function htmlFicheCadre(id) {
@@ -8830,7 +8865,7 @@ var CATALOGUE_CADRES = Object.freeze({
     }
     html.push(_sectionSi('Comment les lire ensemble', c.lecture));
     html.push(_sectionSi('Ses d\u00e9rives \u00e0 conna\u00eetre', c.antiPatterns));
-    html.push(_sectionSi('Quand le choisir, quand s\u2019en m\u00e9fier', c.quandChoisir));
+    html.push(_htmlQuandChoisir(c));
     html.push(_sectionSi('Aller plus loin', c.allerPlusLoin));
     if (c.autresIndicateurs.n > 0) {
       html.push('<p class="fc-tous"><a href="#" data-fiche-cadre-accueil="', c.autresIndicateurs.cadreId,
