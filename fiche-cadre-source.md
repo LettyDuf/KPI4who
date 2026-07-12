@@ -1,4 +1,4 @@
-# Source des fiches-cadres — chantier 28
+# Source des fiches-cadres (chantier 28)
 
 *Source de vérité éditoriale des fiches-cadres. Le générateur `outils/generer-fiches-cadres.js` transforme ce fichier en zone balisée `CM.FICHE-CADRE-DATA` de `cadre-indicateurs.html`. Ne jamais éditer la zone générée à la main.*
 
@@ -58,7 +58,7 @@ Deux traits le distinguent de la cascade classique : l'ambition assumée, un bon
 
 D'où une conviction de mesure : les indicateurs utiles regardent l'adhésion, l'adoption et l'ancrage, pas l'avancement du projet. Un déploiement à 100 % avec une adoption à 30 % est un échec qui se prend pour un succès. Et une conviction de lecture : la résistance n'est pas de la mauvaise volonté, c'est une information sur des obstacles réels qu'il faut entendre.
 
-**panel** : Lewin, Kotter, ADKAR / Prosci (Hiatt), Bridges — le panel des fiches cg-* du référentiel.
+**panel** : Lewin, Kotter, ADKAR / Prosci (Hiatt), Bridges : le panel des fiches cg-* du référentiel.
 
 **signatures** : cg-1, cg-2, cg-3, s6
 
