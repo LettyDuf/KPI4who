@@ -296,12 +296,13 @@ CM.IndicateursMeta = (function() {
     'risque-securite':  { label:'Risque & Sécurité',             teinte:'#c62828', fond:'#ffebee' },
     'decision':         { label:'Aide à la décision',           teinte:'#827717', fond:'#f5f5e6' },
     'conduite-du-changement': { label:'Conduite du changement', teinte:'#3949ab', fond:'#e8eaf6' },
+    'gouvernance-mesure': { label:'Gouvernance de la mesure',  teinte:'#00695c', fond:'#e0f2f1' },
     'universel':        { label:'Universel',                    teinte:'#78909c', fond:'transparent' }
   };
   var ORDRE_FAMILLES = [
     'empirisme-agile', 'excellence-op', 'observabilite',
     'objectifs', 'experience', 'itsm', 'risque-securite', 'decision',
-    'conduite-du-changement', 'universel'
+    'conduite-du-changement', 'gouvernance-mesure', 'universel'
   ];
 
   /* Catalogue des cadres méthodologiques.
@@ -323,6 +324,7 @@ CM.IndicateursMeta = (function() {
     itil:      { label:'ITIL',                     icone:'🛠️', famille:'itsm',            description:'IT Service Management. Incidents, changements, problèmes, disponibilité.' },
     securite:  { label:'Sécurité (NIST CSF / ISO 27035)', icone:'🔐', famille:'risque-securite', description:'NIST Cybersecurity Framework, ISO 27001/27035, OWASP, MITRE ATT&CK, FAIR. Détection, réponse, résilience face aux menaces.' },
     change:    { label:'Gestion du changement',    icone:'🦋', famille:'conduite-du-changement', description:'Conduite du changement. Lewin (1947, dégel, changement, regel), Kotter (Leading Change, 1995, 8 étapes), ADKAR / Prosci, Bridges (Managing Transitions, 1991). Mesure de l\'adhésion au changement, de l\'adoption des nouveaux comportements et de l\'ancrage dans la durée.' },
+    meta:      { label:'Gouvernance de la mesure', icone:'🧭', famille:'gouvernance-mesure', description:'Mesurer le système de mesure lui-même. Drucker (la mesure au service de la mission et de la décision), Hubbard (How to Measure Anything, 2007 : valeur de l\'information, coût de la mesure), Muller (The Tyranny of Metrics, 2018 : dérives et gaming), Deming et Wheeler (variation, signal et bruit). Indicateurs d\'indicateurs : couverture, usage réel, fraîcheur, coût, dérives.' },
     generique: { label:'Indicateur générique',     icone:'🧩', famille:'universel',       description:'Indicateurs non rattachés à un cadre signature. Bac à sable, équipe sans cadre installé. **Tag exclusif** : jamais combiné avec un autre cadre — un indicateur signature relève de son cadre, pas de generique.' }
   };
 
@@ -495,7 +497,15 @@ CM.IndicateursMeta = (function() {
     'mbo-6': { tags:['alignement'],              cadres:['mbo'] },
     'mbo-7': { tags:['alignement'],              cadres:['mbo'] },
     'mbo-8': { tags:['alignement','qualite'],    cadres:['mbo'] },
-    'mbo-9': { tags:['alignement','risque'],     cadres:['mbo'] }
+    'mbo-9': { tags:['alignement','risque'],     cadres:['mbo'] },
+    /* Gouvernance de la mesure (cadre meta, chantier 29.4) */
+    'gm-1':  { tags:['alignement'],              cadres:['meta'] },
+    'gm-2':  { tags:['alignement','valeur'],     cadres:['meta'] },
+    'gm-3':  { tags:['qualite','alignement'],    cadres:['meta'] },
+    'gm-4':  { tags:['qualite','delais'],        cadres:['meta'] },
+    'gm-5':  { tags:['qualite','risque'],        cadres:['meta'] },
+    'gm-6':  { tags:['valeur'],                  cadres:['meta'] },
+    'gm-7':  { tags:['risque'],                  cadres:['meta'] }
   };
 
   /* ── API publique ── */
@@ -2199,6 +2209,99 @@ CM.Referentiel.ajouter([
   }
 ]);
 
+/* === Cadre Gouvernance de la mesure - 7 indicateurs (chantier 29.4) ===
+   Meta-indicateurs : mesurer le systeme de mesure lui-meme. Panel Drucker
+   (la mesure au service de la mission et de la decision), Hubbard (How to
+   Measure Anything, 2007), Muller (The Tyranny of Metrics, 2018), Deming et
+   Wheeler (variation, signal et bruit). Prefixe gm-* (patron cg-* / mbo-*).
+   Rediges le 12/07/2026 au standard editorial 2026-04. Aucun caractere IA-type. */
+CM.Referentiel.ajouter([
+  {
+    id:'gm-1', niveau:'strategique', type:'IGO', icone:'🗺️',
+    nom:'Couverture du système de mesure',
+    definition:'Part des décisions récurrentes importantes de l\'organisation qui disposent d\'au moins un indicateur pertinent pour les éclairer. L\'exercice part des décisions, jamais des indicateurs : on liste les arbitrages qui reviennent, prioriser, investir, arrêter, recruter, puis on vérifie pour chacun si une mesure existe et si elle est réellement consultée. C\'est un indicateur d\'<strong>output</strong> du système de mesure, pas d\'<span class="term-def" data-def="Outcome : le résultat réellement obtenu, ici des décisions mieux éclairées. Une couverture élevée en est une condition, pas une garantie : un indicateur peut exister et être ignoré.">outcome</span>. Drucker en fait le test fondateur : on ne mesure pas ce qui est facile à compter, on mesure ce dont la mission a besoin pour décider.',
+    objectif:'Révéler les angles morts du pilotage : les décisions importantes prises à l\'intuition faute de mesure, et symétriquement les indicateurs qui n\'éclairent aucune décision. Hubbard pose la question dans le bon ordre : quelle décision cette mesure va-t-elle changer. Une couverture basse n\'appelle pas une avalanche de nouveaux tableaux de bord, elle appelle deux ou trois mesures ciblées sur les décisions les plus lourdes de conséquences.',
+    frequence:'Annuelle, ou à chaque révision du jeu d\'indicateurs.',
+    exemple_ent:'La direction cartographie ses douze décisions récurrentes majeures et constate que quatre d\'entre elles, dont les arrêts d\'initiative, ne s\'appuient sur aucune mesure : on arrête un projet à l\'usure politique, pas sur des faits. Décision : outiller en priorité ces quatre angles morts, avant d\'enrichir des tableaux de bord déjà pléthoriques ailleurs.',
+    exemple_eq:'À l\'échelle d\'une équipe, l\'exercice tient en une rétrospective : lister les cinq décisions que l\'équipe prend chaque mois, vérifier lesquelles s\'appuient sur un fait mesuré et lesquelles sur une impression. L\'équipe découvre souvent qu\'elle mesure beaucoup ce qu\'elle ne décide pas, et décide sans mesure là où ça compte.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Inventaire par les indicateurs : partir de la liste des mesures existantes et leur chercher des décisions a posteriori. L\'exercice devient une justification de l\'existant au lieu de révéler les angles morts.">inventaire par les indicateurs</span> plutôt que par les décisions, <span class="term-def" data-def="Couverture cosmétique : associer formellement un indicateur à chaque décision pour faire monter le taux, sans que personne ne le consulte au moment de décider. La case est cochée, l\'angle mort demeure.">couverture cosmétique</span>, et la tentation de viser 100 % : Hubbard rappelle que certaines décisions ne valent pas le coût de leur mesure. Vigilance Muller : tout ce qui compte n\'est pas mesurable, et une couverture totale serait elle-même un signe de dérive.',
+    alt:'Si la question n\'est pas de savoir si les décisions sont couvertes mais si le jeu d\'indicateurs existant est encore le bon, préférer la <a href="#fiche=gm-3">revue périodique du jeu d\'indicateurs</a>.',
+    roles:['direction','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
+  },
+  {
+    id:'gm-2', niveau:'programme', type:'II', icone:'🪞',
+    nom:'Taux d\'usage réel des indicateurs dans les décisions',
+    definition:'Part des indicateurs du programme qui ont réellement pesé dans au moins une décision sur la période. Le constat se fait a posteriori et sur pièces : comptes rendus de comités, arbitrages tracés, décisions de priorisation. Un indicateur affiché dans un tableau de bord mais jamais cité au moment de trancher compte pour zéro. C\'est un indicateur d\'<strong>impact</strong> : il ne mesure pas la production de chiffres, il mesure si les chiffres travaillent. Drucker le formule sans détour : un rapport que personne n\'utilise pour agir est un gaspillage, quelle que soit sa qualité.',
+    objectif:'Débusquer le <span class="term-def" data-def="Théâtre de la mesure : produire et présenter des indicateurs pour le rituel et la légitimité, sans qu\'aucune décision n\'en dépende. Le tableau de bord devient un décor.">théâtre de la mesure</span> : l\'énergie dépensée à produire des chiffres que personne n\'utilise. Un taux d\'usage bas est une invitation à élaguer, pas à mieux communiquer les chiffres existants. Chaque indicateur retiré rend les survivants plus lisibles et plus crédibles.',
+    frequence:'Semestrielle, sur un échantillon de décisions tracées.',
+    exemple_ent:'Le chef de programme relit six mois de comptes rendus de comité : sur les dix-huit indicateurs présentés chaque mois, cinq seulement ont été cités dans un arbitrage. Décision : proposer de retirer ou de mettre en sommeil les treize autres, et regarder ce que les décideurs réclament alors spontanément, ce qui révèle les mesures qui manquaient vraiment.',
+    exemple_eq:'L\'équipe fait le même exercice sur ses rituels : parmi les graphiques affichés en revue, lesquels ont changé une décision de sprint ce trimestre. Ceux qui n\'ont jamais rien changé sont candidats au retrait, sans procès : un indicateur peut avoir été utile hier et ne plus l\'être.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Usage déclaré : demander aux décideurs s\'ils utilisent les indicateurs au lieu de le constater sur les décisions tracées. Personne n\'avoue ignorer les chiffres, le taux déclaré est toujours flatteur.">usage déclaré</span> plutôt que constaté, <span class="term-def" data-def="Citation rituelle : mentionner l\'indicateur en réunion pour cocher la case sans qu\'il pèse sur la décision. L\'usage apparent monte, l\'impact réel reste nul.">citation rituelle</span>, et transformation du taux en cible, qui pousse à citer les chiffres pour les citer. Vigilance Hubbard : un indicateur peu consulté mais décisif une fois par an, un signal d\'alerte par exemple, vaut plus que dix chiffres regardés chaque jour par habitude.',
+    alt:'Si la question est de savoir si la mesure vaut ce qu\'elle coûte à produire, et non si elle est utilisée, préférer le <a href="#fiche=gm-6">coût de la mesure rapporté à la valeur de l\'information</a>.',
+    roles:['programme','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
+  },
+  {
+    id:'gm-3', niveau:'programme', type:'ICC', icone:'🔄',
+    nom:'Revue périodique du jeu d\'indicateurs',
+    definition:'Tenue effective, à cadence convenue, d\'un rituel court où le programme réexamine son jeu d\'indicateurs : lesquels garder, lesquels retirer, lesquels ajouter, lesquels redéfinir. On mesure un <strong>comportement</strong> : la revue a-t-elle eu lieu, a-t-elle produit au moins une décision sur le jeu lui-même. Un système de mesure est un produit comme un autre : sans entretien, il accumule des indicateurs morts et perd la confiance de ceux qui le lisent. Deming le rattache au cycle d\'amélioration : le plan de mesure fait partie de ce qu\'on améliore, pas seulement de ce qui sert à améliorer.',
+    objectif:'Empêcher la fossilisation du tableau de bord. Les indicateurs s\'ajoutent facilement et ne se retirent jamais d\'eux-mêmes : chacun a un parrain, aucun n\'a de date de péremption. La revue institutionnalise le droit de retirer. Le signe de santé n\'est pas la tenue de la réunion, c\'est qu\'il en sorte régulièrement des retraits : une revue qui ne retire jamais rien est une revue de façade.',
+    frequence:'Semestrielle ou annuelle, alignée sur les cycles de planification.',
+    exemple_ent:'Le portefeuille constate que son tableau de bord mensuel compte quarante-deux indicateurs, dont plusieurs créés pour des crises closes depuis deux ans. La revue annuelle en retire quinze, en redéfinit trois dont la définition avait dérivé, et n\'en ajoute que deux. Le tableau redevient lisible en une page.',
+    exemple_eq:'L\'équipe consacre une rétrospective par trimestre à ses propres mesures : ce vélocimètre nous sert-il encore, ce graphique de bugs raconte-t-il quelque chose. La question rituelle est simple : si cet indicateur disparaissait demain, qui s\'en apercevrait, et en quoi déciderait-on moins bien.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Revue additive : rituel tenu régulièrement mais qui ne fait qu\'ajouter des indicateurs sans jamais en retirer. Le jeu grossit à chaque revue et le tableau de bord devient illisible.">revue additive</span> qui ne retire jamais, <span class="term-def" data-def="Revue de conformité : tenir la réunion pour pouvoir dire qu\'elle a eu lieu, sans décision sur le jeu d\'indicateurs. Le comportement est coché, l\'entretien du système n\'a pas eu lieu.">revue de conformité</span>, et rotation excessive : redéfinir les mesures à chaque revue détruit les historiques et empêche de lire les tendances. Vigilance Wheeler : une série chronologique n\'apprend quelque chose qu\'avec de la profondeur, on ne retire pas un indicateur pour cause de mode.',
+    alt:'Si la question est de savoir quels indicateurs manquent, et non d\'entretenir l\'existant, préférer la <a href="#fiche=gm-1">couverture du système de mesure</a>.',
+    roles:['programme','portefeuille'], prioritaire:false, fiabilite:'fiable', maturite_min:'intermediaire'
+  },
+  {
+    id:'gm-4', niveau:'programme', type:'ICP', icone:'⏳',
+    nom:'Fraîcheur des données au moment de la décision',
+    definition:'Âge des données derrière chaque indicateur au moment où il est lu pour décider : temps écoulé entre le fait mesuré et sa disponibilité dans le tableau de bord. Se mesure factuellement, indicateur par indicateur, et se compare au rythme de la décision qu\'il éclaire. Un chiffre mensuel qui arrive avec six semaines de retard fait piloter dans le rétroviseur : la décision porte sur un état du monde qui n\'existe plus. C\'est un indicateur de <strong>résultat</strong> du système de mesure lui-même, factuel et peu falsifiable.',
+    objectif:'Aligner la fraîcheur de chaque mesure sur le tempo de la décision qu\'elle sert, ni plus ni moins. L\'enjeu n\'est pas le temps réel partout : une donnée annuelle suffit à une décision annuelle, et rafraîchir coûte. L\'enjeu est le décalage caché : décider chaque semaine sur des données du mois dernier, sans que personne n\'ait conscience du retard.',
+    frequence:'Mesurée en continu si l\'outillage le permet, revue au moins semestriellement.',
+    exemple_ent:'Le comité de pilotage découvre que son indicateur de satisfaction client, discuté chaque mois, agrège des enquêtes vieilles de dix semaines. Deux crises récentes n\'y figurent pas encore alors que le comité croit lire le présent. Décision : afficher l\'âge de la donnée à côté de chaque chiffre du tableau de bord, puis raccourcir la chaîne de collecte sur ce seul indicateur.',
+    exemple_eq:'L\'équipe s\'aperçoit que son graphique de flux est alimenté à la main le vendredi : le point du mardi discute des données de la semaine passée. Corriger la source pour l\'automatiser change la conversation du rituel sans changer l\'indicateur.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Course au temps réel : rafraîchir toutes les mesures au maximum parce que c\'est techniquement possible. Le coût explose et le bruit de courte période noie le signal que la décision cherchait.">course au temps réel</span> indiscriminée, <span class="term-def" data-def="Fraîcheur de façade : horodater le tableau de bord du jour alors que les données sous-jacentes datent. Le lecteur croit lire le présent, le retard devient invisible.">fraîcheur de façade</span>, et lecture au fil de l\'eau de données trop fraîches : Wheeler rappelle qu\'un point isolé récent n\'est pas une tendance, réagir à chaque frémissement crée l\'instabilité qu\'on croit corriger.',
+    alt:'Si le doute porte sur la constance des définitions plutôt que sur l\'âge des données, préférer la <a href="#fiche=gm-5">stabilité des définitions de mesure</a>.',
+    roles:['programme','chef-équipe'], prioritaire:false, fiabilite:'fiable', maturite_min:'intermediaire'
+  },
+  {
+    id:'gm-5', niveau:'strategique', type:'ICP', icone:'🧱',
+    nom:'Stabilité des définitions de mesure',
+    definition:'Nombre de changements de définition subis par les indicateurs du jeu de pilotage sur la période : périmètre recalculé, formule amendée, source changée, seuil déplacé. Se constate factuellement dans les dictionnaires de données et les notes de calcul, quand ils existent ; leur absence est déjà un résultat. Chaque redéfinition casse la série : le chiffre d\'après ne se compare plus au chiffre d\'avant, et les tendances deviennent des artefacts. Wheeler en fait un préalable : avant de lire la variation d\'une mesure, il faut que la mesure elle-même ne varie pas.',
+    objectif:'Protéger la capacité de l\'organisation à lire des tendances vraies. Une définition qui bouge sans trace transforme le pilotage en illusion : on célèbre une amélioration qui n\'est qu\'un changement de calcul, ou on s\'alarme d\'une dégradation née d\'un nouveau périmètre. L\'indicateur pousse deux disciplines : documenter chaque définition, et marquer chaque rupture de série sur les graphiques qui la traversent.',
+    frequence:'Annuelle, adossée à la revue du jeu d\'indicateurs.',
+    exemple_ent:'La direction constate que le taux de disponibilité affiché en comité a changé trois fois de mode de calcul en deux ans, à chaque fois sans annotation. La belle progression dont le comité se félicitait enjambe deux ruptures de série : personne ne sait plus ce qui s\'est réellement amélioré. Décision : geler les définitions du socle de pilotage et annoter rétroactivement les ruptures.',
+    exemple_eq:'L\'équipe remarque que sa définition de « terminé » a glissé au fil des sprints : les tests d\'intégration en faisaient partie, ils n\'en font plus. Sa vélocité a mécaniquement monté sans que rien n\'ait accéléré. Restaurer la définition, ou assumer la nouvelle et marquer la rupture, mais ne pas comparer les deux époques.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Redéfinition opportune : changer le mode de calcul d\'un indicateur au moment où il devient défavorable, ce qui remet le compteur à zéro. La série est cassée précisément quand elle devenait instructive.">redéfinition opportune</span> quand le chiffre déplaît, <span class="term-def" data-def="Rupture de série silencieuse : changer périmètre ou formule sans annoter les graphiques. Les lecteurs comparent des époques incomparables et en tirent des conclusions fausses en toute bonne foi.">rupture de série silencieuse</span>, et le gel absolu : refuser toute évolution de définition fige des mesures devenues fausses. La stabilité protège la comparabilité, elle n\'interdit pas de corriger, elle oblige à tracer.',
+    alt:'Si le doute porte sur l\'âge des données plutôt que sur la constance des définitions, préférer la <a href="#fiche=gm-4">fraîcheur des données au moment de la décision</a>.',
+    roles:['direction','portefeuille'], prioritaire:false, fiabilite:'fiable', maturite_min:'avance'
+  },
+  {
+    id:'gm-6', niveau:'strategique', type:'II', icone:'🪙',
+    nom:'Coût de la mesure rapporté à la valeur de l\'information',
+    definition:'Estimation, pour les mesures les plus lourdes du système de pilotage, du rapport entre ce qu\'elles coûtent et ce qu\'elles rapportent. Le coût se compte en temps de collecte, de fiabilisation, de mise en forme et de réunion. La valeur se juge à la Hubbard : qu\'est-ce que cette information peut changer dans une décision, et combien coûterait une erreur commise sans elle. C\'est un indicateur d\'<strong>impact</strong> assumé comme approximatif : l\'ordre de grandeur suffit, car les écarts constatés sont rarement subtils. On découvre des mesures coûteuses qui ne changent aucune décision, et des angles morts qu\'une mesure bon marché suffirait à couvrir.',
+    objectif:'Traiter la mesure comme un investissement et non comme un dû. Muller documente le coût caché des métriques : le temps que les soignants, enseignants ou ingénieurs passent à renseigner des indicateurs est pris sur le métier lui-même. L\'indicateur donne un langage pour arbitrer : cette mesure vaut-elle les journées qu\'elle consomme. Hubbard ajoute le versant positif : les informations les plus précieuses sont souvent les moins chères à obtenir, quelques mesures grossières là où on ne savait rien.',
+    frequence:'Annuelle, sur les cinq à dix mesures les plus coûteuses du système.',
+    exemple_ent:'La direction estime que la consolidation mensuelle d\'un indicateur composite de performance mobilise douze jours-personnes par mois, alors qu\'aucune décision tracée ne s\'y réfère depuis un an. À l\'inverse, personne ne sait combien coûte un incident de production, information estimable en deux jours d\'analyse. Décision : suspendre le composite un trimestre à titre d\'essai et financer l\'estimation manquante.',
+    exemple_eq:'L\'équipe chiffre le temps passé chaque sprint à mettre à jour un rapport demandé par une partie prenante qui ne le lit plus. Une conversation de dix minutes avec elle libère une demi-journée par sprint.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Précision illusoire : chiffrer coûts et valeur au centime près alors que les deux sont des estimations. La fausse précision sert à clore le débat au lieu de l\'éclairer ; l\'ordre de grandeur honnête vaut mieux.">précision illusoire</span> des estimations, <span class="term-def" data-def="Comptabilité à charge : ne compter que le coût visible de la mesure sans estimer la valeur de l\'information, ce qui condamne mécaniquement toute mesure. L\'exercice devient un prétexte pour ne plus rien mesurer.">comptabilité à charge</span> qui oublie la valeur, et l\'angle mort inverse : la mesure de ce ratio a elle-même un coût, le réserver aux mesures lourdes. Vigilance Drucker : la question n\'est jamais « combien coûte cette mesure » seule, mais « quelle décision meilleure permet-elle ».',
+    alt:'Si la question est de savoir si les indicateurs sont utilisés, avant de savoir ce qu\'ils coûtent, préférer le <a href="#fiche=gm-2">taux d\'usage réel des indicateurs dans les décisions</a>.',
+    roles:['direction','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
+  },
+  {
+    id:'gm-7', niveau:'strategique', type:'ICC', icone:'🧹',
+    nom:'Indicateurs corrigés ou retirés après dérive constatée',
+    definition:'Nombre d\'indicateurs que l\'organisation a corrigés, encadrés ou retirés sur la période après avoir constaté qu\'ils produisaient des comportements pervers. On compte des actes tracés : un indicateur retiré, une cible supprimée, un indicateur d\'équilibre ajouté en contrepoids, une note de vigilance publiée. C\'est un indicateur de <strong>comportement</strong> paradoxal en apparence : un compte à zéro n\'est pas une bonne nouvelle. La <span class="term-def" data-def="Loi de Goodhart : quand une mesure devient une cible, elle cesse d\'être une bonne mesure. Les acteurs optimisent le chiffre plutôt que la réalité qu\'il était censé refléter.">loi de Goodhart</span> étant universelle, une organisation qui ne détecte jamais de dérive ne les voit simplement pas.',
+    objectif:'Installer la vigilance Goodhart comme un comportement organisationnel régulier, pas comme un savoir théorique. Muller montre que les dérives de mesure prospèrent là où critiquer un indicateur officiel est un acte de courage. Compter les corrections revient à mesurer si le système s\'autorise à se corriger : chaque retrait assumé apprend quelque chose et rend le jeu d\'indicateurs plus digne de confiance.',
+    frequence:'Annuelle, adossée à la revue du jeu d\'indicateurs.',
+    exemple_ent:'Sur l\'année, l\'organisation a encadré deux indicateurs : le délai de réponse du support, que les agents avaient appris à satisfaire en clôturant les billets trop tôt, a reçu un contrepoids de réouverture ; un taux de couverture de tests devenu cible a été retiré des objectifs individuels. Deux corrections tracées, deux leçons documentées : le système apprend.',
+    exemple_eq:'En rétrospective, l\'équipe examine ses propres mesures avec la question rituelle : laquelle de nos métriques sommes-nous en train de satisfaire au détriment du travail réel. La vélocité gonflée par des découpages opportuns est le cas d\'école ; la nommer sans blâme est déjà la moitié de la correction.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Chasse aux sorcières : transformer la détection d\'une dérive en recherche de coupables. Les dérives de Goodhart sont des réponses rationnelles aux incitations posées ; punir ceux qui s\'y adaptent enterre les suivantes.">chasse aux sorcières</span> sur les dérives constatées, <span class="term-def" data-def="Correction quota : viser un nombre de corrections par an parce que l\'indicateur existe. On retire des mesures saines pour nourrir le compteur, la vigilance devient elle-même un chiffre gamé.">correction quota</span>, et l\'ironie de second ordre : ce compteur est lui-même soumis à Goodhart, il se lit comme un signal de maturité, jamais comme une cible. Vigilance Deming : la dérive vient du système d\'incitations, pas des personnes ; la correction porte sur l\'indicateur et son usage, pas sur ceux qui l\'ont subi.',
+    alt:'Si la question est d\'entretenir le jeu d\'indicateurs dans son ensemble, dérives comprises, la <a href="#fiche=gm-3">revue périodique du jeu d\'indicateurs</a> est le rituel qui porte naturellement ce comptage.',
+    roles:['direction','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
+  }
+]);
+
 
 </script>
 <!-- CM.REFERENTIEL.DATA — END -->
@@ -2222,7 +2325,7 @@ CM.RequeteMetriques = (function() {
     type:            ['IGO', 'ICP', 'ICC', 'ORC', 'DORA', 'FLUX', 'II'],
     cadres:          ['dora', 'cd', 'space', 'flow', 'lean', 'okr',
                       'scrum', 'ebm', 'kanban', 'safe', 'itil',
-                      'securite', 'cx', 'change', 'mbo', 'generique'],
+                      'securite', 'cx', 'change', 'mbo', 'meta', 'generique'],
     tags:            ['valeur', 'qualite', 'flux', 'delais',
                       'humain', 'risque', 'alignement'],
     tagsThematiques: ['transversalité', 'prévisibilité', 'engagement',
@@ -3433,24 +3536,24 @@ CM.AccueilUnifie = (function() {
     CM.AccueilUnifie.init();
 
     /* ═══════════════════════════════════════════════════════════════
-       Sentinelle I1 — Aucune lentille active : 117 fiches au total
+       Sentinelle I1 — Aucune lentille active : 124 fiches au total
        Référence : journal-invariants-23g.md, ligne I1
        ═══════════════════════════════════════════════════════════════ */
-    test('I1. Aucune lentille active : 117 indicateurs sur 117 (total absolu du référentiel)', function() {
+    test('I1. Aucune lentille active : 124 indicateurs sur 124 (total absolu du référentiel)', function() {
       reset();
       var total = CM.Referentiel.tous().length;
-      assertEqual(total, 117, 'total du référentiel = 117 fiches (recapture du 02/07/2026, validée en Safari le 12/07/2026). Si rouge → mettre à jour I1 du journal et le test.');
+      assertEqual(total, 124, 'total du référentiel = 124 fiches (recapture du 12/07/2026, cadre meta gm-1 a gm-7, chantier 29.4). Si rouge → mettre à jour I1 du journal et le test.');
       /* Filtre vide : doit retourner toutes les fiches. */
-      assertEqual(nbFiches({}), 117, 'CM.RequeteMetriques sans filtre = 117 fiches');
+      assertEqual(nbFiches({}), 124, 'CM.RequeteMetriques sans filtre = 124 fiches');
     });
 
     /* ═══════════════════════════════════════════════════════════════
-       Sentinelle I2 — Niveau Programme : 17 fiches, premiers ids p1-p5
+       Sentinelle I2 — Niveau Programme : 20 fiches, premiers ids p1-p5
        ═══════════════════════════════════════════════════════════════ */
-    test('I2. Niveau Programme : 17 indicateurs, premiers ids p1, p2, p3, p4, p5', function() {
+    test('I2. Niveau Programme : 20 indicateurs, premiers ids p1, p2, p3, p4, p5', function() {
       reset();
-      assertEqual(nbFiches({ niveau: ['programme'] }), 17,
-                  'Niveau Programme = 17 fiches (recapture du 02/07/2026)');
+      assertEqual(nbFiches({ niveau: ['programme'] }), 20,
+                  'Niveau Programme = 20 fiches (recapture du 12/07/2026, gm-2, gm-3, gm-4)');
       /* Vérifie l'ordre canonique des 5 premières (cf. constat C2 du journal). */
       assertDeepEqual(premiersIds({ niveau: ['programme'] }, 5),
                       ['p1', 'p2', 'p3', 'p4', 'p5'],
@@ -3514,20 +3617,20 @@ CM.AccueilUnifie = (function() {
        (chips → libellés → DOM), pas seulement via CM.RequeteMetriques.
        ═══════════════════════════════════════════════════════════════ */
 
-    test('A1. Compteur initial après init() : « 117 sur 117 indicateurs »', function() {
+    test('A1. Compteur initial après init() : « 124 sur 124 indicateurs »', function() {
       reset();
       CM.AccueilUnifie.appliquerFiltre();
       var n = lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle strong');
       var total = lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle .total');
-      assertEqual(n, '117', 'compteur initial = 117');
-      assertEqual(total, 'sur 117 indicateurs', 'total absolu = 117');
+      assertEqual(n, '124', 'compteur initial = 124');
+      assertEqual(total, 'sur 124 indicateurs', 'total absolu = 124');
     });
 
-    test('A2. Chip Niveau Programme : compteur passe à « 17 sur 117 »', function() {
+    test('A2. Chip Niveau Programme : compteur passe à « 20 sur 124 »', function() {
       reset();
       CM.AccueilUnifie.selectionnerChip('niveau', 'programme');
-      assertEqual(lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle strong'), '17', 'compteur = 17');
-      assertEqual(lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle .total'), 'sur 117 indicateurs', 'total inchangé');
+      assertEqual(lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle strong'), '20', 'compteur = 20');
+      assertEqual(lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle .total'), 'sur 124 indicateurs', 'total inchangé');
       assertEqual(lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle .axes-actifs'),
                   'Lentilles actives — Niveau.',
                   'libellé d\'axes actifs');
