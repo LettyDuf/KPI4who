@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Mockup 29.1(b) — Taxonomie des types visible et filtrable</title>
+<style>
+  :root {
+    --niv-1: #1a237e; --niv-1-clair: #e8eaf6; --niv-1-moyen: #3949ab;
+    --texte-sur-surface: #1c2033; --texte-2-sur-surface: #5b6378;
+    --chip-fond: #ffffff; --chip-bord: rgba(255,255,255,0.45); --chip-actif: #e8eaf6;
+    --texte-2-sur-page: #c1c5d4; --trans: 0.22s ease;
+    --page-bg: linear-gradient(145deg, #0d1b4f 0%, #1a237e 55%, #283593 100%);
+    --ambre: #FFD180; --bordure: #e0e4eb;
+  }
+  body { font-family: -apple-system, "Segoe UI", sans-serif; margin: 0; background: #f5f6fa; color: #1c2033; }
+  .bandeau-mockup { background: #fff8e7; border-bottom: 1px solid #f3e3b8; padding: 0.8rem 1.4rem; font-size: 0.9rem; color: #6b4a00; }
+  .bandeau-mockup strong { color: #b7791f; }
+  section.option { margin: 2rem auto; max-width: 880px; background: white; border: 1px solid var(--bordure); border-radius: 14px; overflow: hidden; box-shadow: 0 2px 12px rgba(26,35,126,0.08); }
+  .option-titre { padding: 1rem 1.4rem; border-bottom: 1px solid var(--bordure); }
+  .option-titre h2 { margin: 0 0 0.3rem; font-size: 1.05rem; color: var(--niv-1); }
+  .option-titre p { margin: 0; font-size: 0.86rem; color: #5b6378; line-height: 1.5; }
+  .zone-page { background: var(--page-bg); padding: 1.4rem; display: flex; flex-direction: column; gap: 0.8rem; }
+  .axes { display: flex; flex-wrap: wrap; gap: 0.55rem; justify-content: center; }
+  .chip { background: var(--chip-fond); color: var(--texte-sur-surface); border: 1px solid var(--chip-bord); border-radius: 999px; padding: 0.45rem 1rem; font-size: 0.88rem; font-weight: 500; cursor: pointer; transition: var(--trans); }
+  .chip.actif { background: var(--chip-actif); border-color: transparent; font-weight: 600; }
+  .chip.ouverte { box-shadow: 0 0 0 2px rgba(26,35,126,0.30); border-color: var(--niv-1); background: white; }
+  .chip .check { color: var(--niv-1); font-weight: 700; margin-right: 0.15rem; }
+  .chip[data-axe="type"].actif { color: #37474f; }
+  .selecteur { background: white; border: 1px solid var(--niv-1); border-radius: 12px; padding: 0.85rem 1rem; box-shadow: 0 1px 6px rgba(26,35,126,0.08); }
+  .selecteur-entete { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.55rem; }
+  .selecteur-entete strong { font-size: 0.92rem; }
+  .selecteur-entete em { font-style: normal; font-size: 0.72rem; color: var(--texte-2-sur-surface); background: #eef1f6; padding: 0.1rem 0.45rem; border-radius: 4px; }
+  .selecteur-options { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+  .selecteur-options label { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.7rem; border: 1px solid #cbd0e0; border-radius: 6px; font-size: 0.82rem; background: #f9fafc; cursor: pointer; transition: var(--trans); }
+  .selecteur-options label:hover { border-color: var(--niv-1); background: white; }
+  .selecteur-options label.coche { border-color: var(--niv-1); background: var(--niv-1-clair); color: var(--niv-1); font-weight: 600; }
+  .corps { display: flex; flex-direction: column; gap: 0.1rem; line-height: 1.3; }
+  .corps .titre { font-weight: 600; }
+  .corps .sous-titre { font-size: 0.72rem; color: var(--texte-2-sur-surface); font-weight: 400; }
+  .pastille-type { font-size: 0.62rem; font-weight: 700; padding: 0.16rem 0.4rem; border-radius: 4px; letter-spacing: 0.5px; line-height: 1; flex-shrink: 0; }
+  .t-IGO  { background: #e8eaf6; color: #1a237e; } .t-ICP  { background: #e3f2fd; color: #1565c0; }
+  .t-ICC  { background: #e0f2f1; color: #00695c; } .t-ORC  { background: #f3e5f5; color: #6a1b9a; }
+  .t-DORA { background: #ffe0d6; color: #bf360c; } .t-FLUX { background: #fff3e0; color: #e65100; }
+  .t-II   { background: #eceff1; color: #37474f; }
+  .note-peda { background: #fffaf0; border: 1px solid #f3e3b8; border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.84rem; line-height: 1.55; color: #4a3f2a; }
+  .note-peda summary { cursor: pointer; font-weight: 600; color: #b7791f; font-size: 0.86rem; }
+  .note-peda p { margin: 0.55rem 0 0; }
+  .compteur { text-align: center; color: var(--texte-2-sur-page); font-size: 0.85rem; }
+  .compteur strong { color: white; }
+  .legende-sous { margin: 0.3rem 0 0; text-align: center; font-size: 0.75rem; color: var(--texte-2-sur-page); font-style: italic; }
+  .carte-demo { background: white; border-radius: 12px; border: 1px solid var(--bordure); padding: 0.8rem 0.95rem; max-width: 380px; margin: 0 auto; }
+  .carte-type { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.4px; }
+  .carte-type.cliquable { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 2px; }
+  .carte-nom { font-weight: 700; font-size: 0.95rem; margin-top: 0.15rem; }
+  .carte-def { font-size: 0.8rem; color: #5b6378; margin-top: 0.35rem; line-height: 1.45; }
+</style>
+</head>
+<body>
+
+<div class="bandeau-mockup"><strong>Mockup 29.1(b)</strong> — rendre la taxonomie des types d'indicateurs visible et filtrable. Trois options, du plus sobre au plus pédagogique. Le type est déjà affiché sur chaque card (« ICP · Indicateur Clé de Performance ») : ce qui manque est le filtre et le récit. Les glissières et cases sont décoratives ici, seule la composition compte.</div>
+
+<!-- ═══════════ OPTION A ═══════════ -->
+<section class="option">
+  <div class="option-titre">
+    <h2>Option A — Cinquième chip « Type », sélecteur glosé</h2>
+    <p>Une chip de plus dans la rangée (multi-sélection, comme Problème et Cadre). Toute la pédagogie tient dans le sélecteur : chaque type porte sa pastille couleur, son nom complet et une question d'une ligne qui dit ce qu'il raconte. Pas d'autre ajout à l'accueil.</p>
+  </div>
+  <div class="zone-page">
+    <div class="axes">
+      <button class="chip">Probl&egrave;me</button>
+      <button class="chip">Cadre</button>
+      <button class="chip">Niveau</button>
+      <button class="chip">Maturit&eacute;</button>
+      <button class="chip ouverte" data-axe="type">Type</button>
+    </div>
+    <div class="selecteur">
+      <div class="selecteur-entete"><strong>Type d'indicateur</strong> <em>plusieurs choix possibles</em></div>
+      <div class="selecteur-options">
+        <label><span class="pastille-type t-IGO">IGO</span><span class="corps"><span class="titre">Objectif global (KGI)</span><span class="sous-titre">Le cap est-il atteint&nbsp;? Le r&eacute;sultat final.</span></span></label>
+        <label class="coche"><span class="pastille-type t-ICP">ICP</span><span class="corps"><span class="titre">Performance (KPI)</span><span class="sous-titre">Sommes-nous en route&nbsp;? Le r&eacute;sultat d'un processus.</span></span></label>
+        <label><span class="pastille-type t-ICC">ICC</span><span class="corps"><span class="titre">Comportement (KBI)</span><span class="sous-titre">Faisons-nous les bons gestes&nbsp;? Ce qui pr&eacute;c&egrave;de le r&eacute;sultat.</span></span></label>
+        <label><span class="pastille-type t-II">II</span><span class="corps"><span class="titre">Impact (KII)</span><span class="sous-titre">Qu'est-ce que &ccedil;a change vraiment, au-del&agrave; du livrable&nbsp;?</span></span></label>
+        <label><span class="pastille-type t-ORC">ORC</span><span class="corps"><span class="titre">Objectifs &amp; R&eacute;sultats Cl&eacute;s (OKR)</span><span class="sous-titre">L'ambition et ses r&eacute;sultats cl&eacute;s.</span></span></label>
+        <label><span class="pastille-type t-DORA">DORA</span><span class="corps"><span class="titre">Performance DevOps</span><span class="sous-titre">Les quatre mesures signature du delivery.</span></span></label>
+        <label><span class="pastille-type t-FLUX">FLUX</span><span class="corps"><span class="titre">Flux &amp; Throughput (Lean)</span><span class="sous-titre">Ce qui traverse le syst&egrave;me, et &agrave; quelle vitesse.</span></span></label>
+      </div>
+    </div>
+    <div class="compteur"><strong>59</strong> sur 124 indicateurs</div>
+  </div>
+</section>
+
+<!-- ═══════════ OPTION B ═══════════ -->
+<section class="option">
+  <div class="option-titre">
+    <h2>Option B — Chip « Type » + récit repliable « Quatre familles »</h2>
+    <p>La m&ecirc;me chip qu'en A, avec un s&eacute;lecteur plus sobre (pastille + nom, sans glose), et le r&eacute;cit port&eacute; par un bloc repliable au pied du s&eacute;lecteur, dans le style de la note p&eacute;dagogique cr&egrave;me. Le bloc raconte la cha&icirc;ne IGO &rarr; ICP &rarr; ICC et l'impact en contrepoint, puis situe DORA, FLUX et ORC comme signatures de cadres.</p>
+  </div>
+  <div class="zone-page">
+    <div class="axes">
+      <button class="chip">Probl&egrave;me</button>
+      <button class="chip">Cadre</button>
+      <button class="chip">Niveau</button>
+      <button class="chip">Maturit&eacute;</button>
+      <button class="chip ouverte" data-axe="type">Type</button>
+    </div>
+    <div class="selecteur">
+      <div class="selecteur-entete"><strong>Type d'indicateur</strong> <em>plusieurs choix possibles</em></div>
+      <div class="selecteur-options">
+        <label><span class="pastille-type t-IGO">IGO</span> Objectif global</label>
+        <label class="coche"><span class="pastille-type t-ICP">ICP</span> Performance</label>
+        <label><span class="pastille-type t-ICC">ICC</span> Comportement</label>
+        <label><span class="pastille-type t-II">II</span> Impact</label>
+        <label><span class="pastille-type t-ORC">ORC</span> OKR</label>
+        <label><span class="pastille-type t-DORA">DORA</span> DevOps</label>
+        <label><span class="pastille-type t-FLUX">FLUX</span> Flux</label>
+      </div>
+      <details class="note-peda" style="margin-top:0.7rem" open>
+        <summary>Comprendre les familles d'indicateurs</summary>
+        <p>Un <strong>objectif global</strong> (IGO) dit si le cap est atteint. Un indicateur de <strong>performance</strong> (ICP) dit si on est en route. Un indicateur de <strong>comportement</strong> (ICC) regarde plus t&ocirc;t encore&nbsp;: les gestes qui produisent le r&eacute;sultat.</p>
+        <p>L'indicateur d'<strong>impact</strong> (II) fait le contrepoint&nbsp;: il mesure ce qui a chang&eacute; pour de vrai, au-del&agrave; de ce qui a &eacute;t&eacute; livr&eacute;.</p>
+        <p><strong>DORA</strong>, <strong>FLUX</strong> et <strong>ORC</strong> ne sont pas un &eacute;tage de plus&nbsp;: ce sont les signatures de cadres pr&eacute;cis, DevOps, Lean et OKR.</p>
+      </details>
+    </div>
+    <div class="compteur"><strong>59</strong> sur 124 indicateurs</div>
+  </div>
+</section>
+
+<!-- ═══════════ OPTION C ═══════════ -->
+<section class="option">
+  <div class="option-titre">
+    <h2>Option C — Pas de chip : le type devient cliquable sur les cards</h2>
+    <p>Z&eacute;ro bruit ajout&eacute; &agrave; la rang&eacute;e de chips. Le libell&eacute; de type d&eacute;j&agrave; pr&eacute;sent en t&ecirc;te de chaque card devient cliquable (soulign&eacute; pointill&eacute;)&nbsp;: un clic filtre la liste sur ce type, et le filtre appara&icirc;t dans le compteur. La p&eacute;dagogie tient dans un survol (tooltip d'une ligne). Co&ucirc;t&nbsp;: d&eacute;couvrabilit&eacute; faible, le visiteur peut ne jamais le trouver, et une m&eacute;canique de filtre divergente des quatre autres axes.</p>
+  </div>
+  <div class="zone-page">
+    <div class="axes">
+      <button class="chip">Probl&egrave;me</button>
+      <button class="chip">Cadre</button>
+      <button class="chip">Niveau</button>
+      <button class="chip">Maturit&eacute;</button>
+    </div>
+    <div class="carte-demo">
+      <div class="carte-type cliquable" style="color:#1565c0" title="Indicateur Clé de Performance : le résultat mesurable d'un processus. Cliquer pour ne voir que les ICP.">ICP &middot; Indicateur Cl&eacute; de Performance (KPI)</div>
+      <div class="carte-nom">Fra&icirc;cheur des donn&eacute;es au moment de la d&eacute;cision</div>
+      <div class="carte-def">&Acirc;ge des donn&eacute;es derri&egrave;re chaque indicateur au moment o&ugrave; il est lu pour d&eacute;cider...</div>
+    </div>
+    <div class="compteur"><strong>59</strong> sur 124 indicateurs &mdash; filtr&eacute; sur ICP <span style="text-decoration:underline;cursor:pointer">retirer</span></div>
+    <p class="legende-sous">La rang&eacute;e de chips reste &agrave; quatre. Le filtre type vit sur les cards et dans le compteur.</p>
+  </div>
+</section>
+
+</body>
+</html>
