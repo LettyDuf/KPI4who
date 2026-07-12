@@ -3896,7 +3896,11 @@ CM.IndicateursMeta = (function() {
     'gm-4':  { tags:['qualite','delais'],        cadres:['meta'] },
     'gm-5':  { tags:['qualite','risque'],        cadres:['meta'] },
     'gm-6':  { tags:['valeur'],                  cadres:['meta'] },
-    'gm-7':  { tags:['risque'],                  cadres:['meta'] }
+    'gm-7':  { tags:['risque'],                  cadres:['meta'] },
+    /* Enrichissement 29.1a (IGO / II / ORC hors strategique) */
+    'p12': { tags:['valeur','alignement'],       cadres:['generique'] },
+    't8':  { tags:['valeur','alignement'],       cadres:['generique'] },
+    'x8':  { tags:['valeur'],                    cadres:['generique'] }
   };
 
   /* ── API publique ── */
@@ -7790,6 +7794,51 @@ CM.Referentiel.ajouter([
     risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Chasse aux sorcières : transformer la détection d\'une dérive en recherche de coupables. Les dérives de Goodhart sont des réponses rationnelles aux incitations posées ; punir ceux qui s\'y adaptent enterre les suivantes.">chasse aux sorcières</span> sur les dérives constatées, <span class="term-def" data-def="Correction quota : viser un nombre de corrections par an parce que l\'indicateur existe. On retire des mesures saines pour nourrir le compteur, la vigilance devient elle-même un chiffre gamé.">correction quota</span>, et l\'ironie de second ordre : ce compteur est lui-même soumis à Goodhart, il se lit comme un signal de maturité, jamais comme une cible. Vigilance Deming : la dérive vient du système d\'incitations, pas des personnes ; la correction porte sur l\'indicateur et son usage, pas sur ceux qui l\'ont subi.',
     alt:'Si la question est d\'entretenir le jeu d\'indicateurs dans son ensemble, dérives comprises, la <a href="#fiche=gm-3">revue périodique du jeu d\'indicateurs</a> est le rituel qui porte naturellement ce comptage.',
     roles:['direction','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
+  }
+]);
+
+/* === Enrichissement 29.1a - lot A : trois IGO hors strategique ===
+   Doctrine validee par Laetitia le 12/07/2026 : chaque etage a son objectif
+   final qui decoule de la mission (filiation Drucker / MBO), la pyramide
+   reste pointue (peu d'IGO, beaucoup d'ICP). Panels : Ward & Daniel
+   (benefits management), MSP / PMI ; Cagan, Croll & Yoskovitz, Ellis
+   (produit). Rediges le 12/07/2026 au standard editorial 2026-04. */
+CM.Referentiel.ajouter([
+  {
+    id:'p12', niveau:'programme', type:'IGO', icone:'🏁',
+    nom:'Bénéfices réalisés du programme',
+    definition:'Part des bénéfices attendus du programme, inscrits à son dossier de justification, qui sont <strong>effectivement constatés</strong> : économies mesurées, revenus additionnels encaissés, gains de délai ou de qualité vérifiés sur le terrain. C\'est l\'objectif final du programme, son <strong>outcome</strong> : tout le reste, jalons tenus, livrables produits, budget respecté, n\'est que de l\'<span class="term-def" data-def="Output : ce que le programme produit (livrables, fonctionnalités, jalons). Nécessaire mais insuffisant : un programme peut tout livrer et ne produire aucun bénéfice réel.">output</span>. La discipline vient du <span class="term-def" data-def="Benefits management (Ward et Daniel, MSP) : discipline qui suit chaque bénéfice attendu du dossier de justification jusqu\'à sa constatation réelle, avec un propriétaire nommé par bénéfice.">benefits management</span> : chaque bénéfice a un propriétaire, une mesure de départ et une date de constatation.',
+    objectif:'Rappeler au programme sa raison d\'être : on ne l\'a pas lancé pour livrer des lots, mais pour produire des effets. Le suivi force trois gestes sains : chiffrer les bénéfices au lancement (sinon rien ne sera constatable), nommer un propriétaire par bénéfice, et mesurer avant de transformer pour disposer d\'un point de comparaison. Un programme dont personne ne peut dire les bénéfices constatés est un programme qu\'on pilote à l\'activité.',
+    frequence:'Trimestrielle, puis aux jalons de constatation prévus au dossier.',
+    exemple_ent:'Le comité de pilotage lit : programme à 80 % de livraison, bénéfices constatés à 15 %. La modernisation de l\'outil de service client est déployée, mais le temps de traitement, bénéfice chiffré au dossier, n\'a pas bougé. Décision : suspendre le lot suivant et comprendre pourquoi le bénéfice ne se matérialise pas, plutôt que continuer à livrer.',
+    exemple_eq:'Chaque équipe du programme connaît le bénéfice auquel son travail contribue, et la mesure qui le constatera. En revue, la question n\'est pas seulement « le lot est-il livré » mais « la mesure du bénéfice a-t-elle commencé à bouger ». Cela redonne du sens au travail et éclaire les arbitrages locaux.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Bénéfices d\'affichage : chiffrer généreusement les bénéfices au dossier pour obtenir le financement, sans mesure de départ ni propriétaire. Ils deviennent invérifiables, donc réputés atteints.">bénéfices d\'affichage</span> jamais constatables, <span class="term-def" data-def="Double comptage : attribuer le même gain à plusieurs programmes ou initiatives. La somme des bénéfices déclarés dépasse l\'amélioration réelle de l\'organisation.">double comptage</span> entre programmes, et constatation trop précoce : beaucoup de bénéfices ne se matérialisent qu\'après la clôture, les exiger trop tôt pousse à les inventer. Vigilance Ward et Daniel : un bénéfice sans propriétaire nommé n\'est pas un bénéfice, c\'est un espoir.',
+    alt:'Si l\'enjeu est de constater les bénéfices une fois le programme clos, quand plus personne n\'en répond, préférer les <a href="#fiche=t9">bénéfices constatés après clôture</a> au niveau portefeuille.',
+    roles:['programme','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
+  },
+  {
+    id:'t8', niveau:'tactique', type:'IGO', icone:'⚖️',
+    nom:'Valeur livrée du portefeuille rapportée aux engagements',
+    definition:'Rapport, à l\'échelle du portefeuille, entre la valeur effectivement livrée sur la période et la valeur promise lors des arbitrages d\'investissement. La valeur se compte dans l\'unité choisie par la gouvernance, bénéfices chiffrés, revenus, économies, et se constate, elle ne se déclare pas. C\'est l\'objectif final du portefeuille, son <strong>outcome</strong> : le portefeuille n\'existe pas pour consommer son budget, il existe pour convertir un investissement en valeur. Le taux de consommation budgétaire, souvent suivi à sa place, est un simple <span class="term-def" data-def="Output : ici, l\'argent dépensé et les initiatives lancées. Un portefeuille peut consommer 100 % de son budget et livrer une fraction de la valeur promise.">output</span>.',
+    objectif:'Donner à la gouvernance du portefeuille une boussole de résultat plutôt qu\'une boussole de dépense. L\'écart entre promis et livré est l\'information de pilotage la plus utile : un portefeuille qui promet 100 et livre 40 de façon récurrente a un problème de sélection (promesses gonflées pour obtenir les arbitrages) ou d\'exécution, et dans les deux cas la réponse n\'est pas de lancer plus d\'initiatives, mais d\'en financer moins et de les finir.',
+    frequence:'Semestrielle ou annuelle, au rythme des cycles d\'arbitrage.',
+    exemple_ent:'La direction constate que sur trois cycles, le portefeuille numérique livre entre 35 et 45 % de la valeur promise, avec un budget consommé à 98 %. Lecture : le processus d\'arbitrage récompense les promesses optimistes. Décision : exiger des mesures de départ vérifiables au dossier et réduire le nombre d\'initiatives simultanées, plutôt que resserrer le contrôle des dépenses.',
+    exemple_eq:'Effet indirect mais réel pour les équipes : un portefeuille piloté à la valeur livrée finance moins d\'initiatives à la fois, donc moins de multitâche et des priorités plus stables. L\'équipe peut citer cet indicateur quand on lui demande de commencer une énième initiative : commencer moins, finir plus.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Pilotage à la consommation : suivre le budget dépensé comme preuve d\'avancement. Dépenser n\'est pas livrer de la valeur ; l\'indicateur monte mécaniquement avec le temps qui passe.">pilotage à la consommation</span> budgétaire, <span class="term-def" data-def="Promesses recalibrées a posteriori : réviser discrètement la valeur promise à la baisse en cours de cycle pour que le ratio final paraisse honorable. La mémoire des engagements initiaux doit rester intacte.">promesses recalibrées a posteriori</span>, et l\'unité de valeur fourre-tout où chaque initiative invente sa propre monnaie, ce qui rend la somme dépourvue de sens. Vigilance Drucker : la concentration prime, un portefeuille qui promet moins et livre ce qu\'il promet vaut mieux qu\'un portefeuille ambitieux sur le papier.',
+    alt:'Si la question est de savoir si un programme donné produit ses effets, et non si le portefeuille tient ses promesses d\'ensemble, préférer les <a href="#fiche=p12">bénéfices réalisés du programme</a>.',
+    roles:['portefeuille','direction'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
+  },
+  {
+    id:'x8', niveau:'operationnel', type:'IGO', icone:'🌟',
+    nom:'Étoile polaire de l\'équipe produit (North Star)',
+    definition:'Mesure unique qui capte la <strong>valeur réellement reçue par l\'utilisateur</strong> à chaque usage du produit, choisie par l\'équipe comme son objectif final. Des exemples classiques : les messages envoyés pour une messagerie, les nuits réservées pour une plateforme d\'hébergement, les rapports générés pour un outil d\'analyse. Une bonne <span class="term-def" data-def="North Star Metric (école produit : Ellis, Croll et Yoskovitz, Cagan) : la mesure unique qui relie la valeur utilisateur à la croissance du produit. Si elle monte, le produit rend service et l\'activité suit.">étoile polaire</span> a trois propriétés : elle exprime la valeur du point de vue de l\'utilisateur, elle est actionnable par l\'équipe, et l\'activité économique suit quand elle monte. C\'est l\'<strong>outcome</strong> de l\'équipe produit ; la vélocité et le nombre de fonctionnalités livrées n\'en sont que les outputs.',
+    objectif:'Donner à l\'équipe un cap unique qui tranche les débats de priorisation : entre deux options, laquelle fait le plus progresser l\'étoile polaire. Elle protège aussi l\'équipe du pilotage à la roadmap, où livrer la liste prévue devient une fin en soi. Une équipe qui connaît son étoile polaire peut dire non à une demande qui ne la sert pas, ou du moins ouvrir la conversation au bon niveau.',
+    frequence:'Hebdomadaire ou mensuelle, en continu sur la vie du produit.',
+    exemple_ent:'La direction produit demande à chaque équipe de nommer son étoile polaire et de montrer sa tendance. Une équipe très occupée dont l\'étoile stagne depuis deux trimestres devient un sujet de conversation stratégique : le problème n\'est pas l\'effort, c\'est la direction de l\'effort.',
+    exemple_eq:'En priorisation, l\'équipe compare deux initiatives par leur effet attendu sur l\'étoile polaire, hypothèses chiffrées à l\'appui. Après livraison, elle vérifie l\'effet réel : c\'est son apprentissage produit. L\'étoile polaire remplace avantageusement la question « a-t-on livré ce qui était prévu » par « ce qu\'on a livré a-t-il servi ».',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Étoile de vanité : choisir une mesure qui monte toute seule (inscriptions cumulées, pages vues) sans dire la valeur reçue. Elle flatte, elle n\'oriente pas.">étoile de vanité</span>, <span class="term-def" data-def="Étoile imposée d\'en haut : une North Star choisie par la direction sans l\'équipe devient une cible de plus à satisfaire, pas une boussole. L\'équipe doit pouvoir se reconnaître dans la valeur qu\'elle mesure.">étoile imposée d\'en haut</span>, et le culte de la mesure unique : l\'étoile polaire oriente mais ne suffit pas, elle se lit avec des mesures de garde, qualité, rétention, sinon on la fait monter en dégradant le reste. Vigilance Goodhart explicite chez tous les auteurs du panel.',
+    alt:'Si l\'organisation pilote déjà par la valeur selon Evidence-Based Management, l\'<a href="#fiche=ebm-1">usage réel par fonctionnalité</a> offre un capteur voisin, plus granulaire et moins totalisant.',
+    roles:['chef-équipe','membre-équipe'], prioritaire:false, fiabilite:'fiable', maturite_min:'intermediaire'
   }
 ]);
 
