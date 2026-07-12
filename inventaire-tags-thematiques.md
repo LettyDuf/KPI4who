@@ -318,6 +318,14 @@ Arbitrages finaux : tags sortants, tags à fusionner, vocabulaire final figé à
 | gm-5 | Stabilité des définitions |  | x |  |  |  |  |  |  |  |  |  | x |  |  |
 | gm-6 | Coût de la mesure |  |  |  |  | x |  |  |  |  |  |  |  |  |  |
 | gm-7 | Corrections après dérive |  |  |  |  |  |  |  |  | x |  | x |  |  |  |
+| p12 | Bénéfices réalisés du programme |  |  |  |  |  |  |  | x |  |  |  |  | x |  |
+| t8 | Valeur portefeuille vs engagée |  | x |  |  |  |  |  |  |  |  |  |  | x |  |
+| x8 | Étoile polaire produit |  |  | x |  |  |  |  | x |  | x |  |  |  |  |
+| t9 | Bénéfices après clôture |  |  |  |  | x |  |  | x |  |  |  |  |  |  |
+| p13 | Comportement utilisateur durable |  |  | x |  |  |  |  | x |  |  |  |  |  | x |
+| s17 | Empreinte du numérique |  |  |  |  | x |  |  |  | x |  |  |  |  |  |
+| p14 | OKR de programme relié | x |  |  |  |  |  |  |  |  |  |  |  | x |  |
+| s18 | Santé du système OKR |  |  |  |  |  |  | x |  |  |  | x |  | x |  |
 
 **Note.** Le Temps 3 (analyse quantitative : taux d'usage, co-occurrences, orphelines, arbitrages sortie/fusion) s'appuie sur cette matrice pour figer le vocabulaire final (cible 10-12 tags). À produire dans la foulée, en §7.
 
