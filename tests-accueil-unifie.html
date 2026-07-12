@@ -254,6 +254,26 @@
     tagsThematiquesDe:  function(id) { return []; }
   };
 
+  /* ─── Stub CM.DiagnosticProbleme ───────────────────────────────────
+     Vocabulaire des niveaux et des problèmes. Requis depuis l'audit du
+     02/07/2026 : _restaurer() valide chaque valeur persistée contre le
+     vocabulaire courant de son axe (_estValeurConnue), et l'axe niveau
+     s'appuie sur CM.DiagnosticProbleme.niveauxTous(). Sans ce stub, la
+     garde renvoie une liste vide et toute restauration de niveau est
+     rejetée (échec du test 16 observé le 12/07/2026).
+     ─────────────────────────────────────────────────────────────── */
+  CM.DiagnosticProbleme = {
+    niveauxTous: function() {
+      return [
+        { id: 'operationnel', label: 'Équipe',       sous: '', icone: '' },
+        { id: 'programme',    label: 'Programme',    sous: '', icone: '' },
+        { id: 'tactique',     label: 'Portefeuille', sous: '', icone: '' },
+        { id: 'strategique',  label: 'Entreprise',   sous: '', icone: '' }
+      ];
+    },
+    tousLesProblemes: function() { return []; }
+  };
+
   /* ─── Stub CM.Composants ───────────────────────────────────────────
      htmlCarte : version repérable mais non fonctionnelle. Les tests
      vérifient le nombre de cartes produites et leurs ids, pas le
