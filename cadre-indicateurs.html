@@ -2676,11 +2676,14 @@ CM.Config = (function() {
     'precaution': {
       /* Resemantisation du 12/07/2026 (backlog 29.2, mockup-signal-fiabilite,
          option B2 vert clair retenue par Laetitia) : le statut dit une mesure
-         positive a adopter sous conditions, pas une alerte. couleur = badge,
-         contour de card et fonds ; couleur_texte = texte du badge et lisere. */
+         positive a adopter sous conditions, pas une alerte. couleur = badge et
+         fonds ; couleur_bord = contour de card, fonce d'un cran (cran 1, 12/07)
+         pour se distinguer du gris neutre sans rejoindre le vert Fiable ;
+         couleur_texte = texte du badge et lisere. */
       label:         'Sous conditions',
       label_court:   'Sous conditions',
       couleur:       '#ddebd9',
+      couleur_bord:  '#b7d3ab',
       couleur_texte: '#2f5d33',
       icone:         '🤝',
       desc:          'Mesure précieuse à mettre en place, fiable sous conditions : climat de confiance, lecture collective, jamais d\'évaluation individuelle.'
@@ -8330,7 +8333,7 @@ CM.Composants = (function() {
     // Option A — une seule semantique par zone visuelle : la bordure communique la FIABILITE uniquement.
     // Le TYPE est déjà porte par l'icone (fond colore) et le chip de titre. Evite la collision chromatique
     // ex. FLUX (#e65100) qui etait identique a la couleur "precaution".
-    var bord = fib.couleur;
+    var bord = fib.couleur_bord || fib.couleur;
     // Apercu de la definition : texte PUR tronque proprement.
     // Le HTML enrichi (strong, term-def) reste dans la fiche detaillee.
     // Evite le bug de DOM casse par coupure au milieu d'une balise.

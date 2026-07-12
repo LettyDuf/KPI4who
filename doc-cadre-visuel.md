@@ -255,6 +255,7 @@ Origine : smoke test de Lætitia sur la pastèque (backlog 29.2). Le signal oran
 Décision (mockup-signal-fiabilite.html, option B2 vert clair retenue après test de collision avec la card « Fiable ») :
 
 - Le statut se nomme désormais « Sous conditions » (icône 🤝). Il dit une mesure positive à adopter dans de bonnes conditions, pas une alerte.
+- **Contour de card foncé d'un cran le 12/07/2026 (séance 2)** : le badge et les fonds gardent `#ddebd9`, mais le contour de card passe à `#b7d3ab` (`couleur_bord`), une sauge douce qui se distingue du gris neutre `#e0e4eb` sans rejoindre le vert saturé de « Fiable » `#2e7d32` (`mockup-contour-sous-conditions.html`, cran 1). Le contour et le badge sont désormais découplés dans `FIABILITE.precaution`.
 - Badge vert clair `#ddebd9`, texte vert profond `#2f5d33`, contour de card assorti au badge (demande explicite de Lætitia).
 - Les pastilles compactes (panier, one-pager) et le liseré de la note « Lire la fiabilité » utilisent le vert profond `#2f5d33`, la teinte claire n'étant pas lisible à 7 px.
 - « Fiable » (vert plein) et « Courant & risque » (rouge) sont inchangés.
