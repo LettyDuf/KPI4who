@@ -273,3 +273,12 @@ Décision (mockups `mockup-mission-visible.html` puis `mockup-accueil-mission-pl
 - Écarté : tout-visible en permanence (trois strates redondantes avant le premier cartouche), ambre plein et crème doré pour la suite (le bleu ciel validé sur mockup pleine page).
 
 Même séance : les cartouches « questions terrain » et « compteur » sont désormais ouvertes à l'arrivée (29.7).
+
+## Décision du 12/07/2026 (séance 2) — chip Type et taxonomie visible (29.1b, option A)
+
+- **Contexte.** Retour du smoke test 12/07 (item 29.1) : la taxonomie des types d'indicateurs (ICP, ICC, IGO, II, ORC, DORA, FLUX) est affichée sur chaque card mais rien ne la raconte ni ne permet de filtrer dessus. Trois options comparées dans `mockup-taxonomie-types.html` (A chip glosée, B chip + récit repliable, C type cliquable sur les cards).
+- **Décision Lætitia : option A.** Cinquième chip *Type* en fin de rangée, multi-sélection (marqueurs carrés, comme Problème et Cadre). Toute la pédagogie tient dans le sélecteur : variante α (titre + sous-titre), une question d'une ligne par type (« Le cap est-il atteint ? », « Faisons-nous les bons gestes ? »...).
+- **Double acronyme français / anglais** (demande Lætitia) : chaque titre porte les deux sigles (« Performance · ICP / KPI »), car les deux jeux circulent selon les organisations. Le sigle français reste la clé technique du référentiel (`type:'ICP'`), l'anglais est un affichage.
+- **Pastille de type** à la place de l'emoji dans le sélecteur : sigle sur fond teinté, couleurs de `CM.Config.TYPES_COULEURS` en style inline (source unique, mêmes teintes que le chip de titre des cards et le panier). CSS `.pastille-type` scopé accueil.
+- **Ordre éditorial du sélecteur** : la chaîne IGO → ICP → ICC, l'impact (II) en contrepoint, puis les signatures de cadres (ORC, DORA, FLUX). Chip active en gris ardoise `#37474f` (teinte du badge II, neutre parmi les sept).
+- Option C écartée : découvrabilité faible et mécanique de filtre divergente des quatre autres axes. Option B en réserve : le récit repliable « Comprendre les familles » pourra rejoindre le Lexique (chantier 21) plutôt que l'accueil.
