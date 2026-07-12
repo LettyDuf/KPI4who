@@ -247,3 +247,16 @@ Décisions structurantes :
 - 06/05/2026 (audit visuel) — § 6.5 révisée après production d'un mockup cross-niveaux dédié (`mockup-palette-fiche-question-niveaux.html`, commit `b3d99fb`). Constat de Lætitia à l'œil : B vert profond se confondait avec **deux** niveaux (équipe + programme, deux teintes vertes), D bleu de Prusse ne se confond qu'avec **un** seul (stratégique). Bascule décidée et exécutée le même jour : **D bleu de Prusse `#1d3a5f` adoptée comme signature fiche-question, B vert profond `#1f5945` rétrogradée en réserve documentée**. La doctrine du filet de sécurité posée le matin (« si bascule, conserver les autres tokens — seul l'accent change ») a joué à la lettre : un seul commit token, aucune modification d'autre token. Décision 20.1 close en deux temps.
 - 08/05/2026 (chantier 23.a, ouverture refonte radicale accueil) — § 6.1 *Accueil* réécrit en *Accueil unifié Choisir mes indicateurs* (commit `f5d5b66`). L'ancienne doctrine *4 cartes égales sans pyramide* du 05/05/2026 est remplacée par la doctrine v7 actée à l'issue de 7 itérations de mockup-preview convergées (`8589834`). Architecture verticale en 7 strates, mécanique chips accordéon, format de fiche-card unique, Mintzberg sort du visible, *« l'accueil est l'outil »*.
 - 08/05/2026 (chantier 23.a, suite) — § 6.3 *Lentille Par mes 4 axes* neutralisée (commit `9f39aad`) : la lentille comme page séparée disparaît, sa mécanique V3 chips cumulables (D2 du 04/05/2026, commit `31f7c1b`) survit comme cœur de l'accueil unifié. § 6.4 *Ce que le § 6 ne dit pas* actualisé (commit `60bc923`) : les 3 portes Par mon problème / Par mon cadre / Par mon niveau sortent du périmètre étape B (elles meurent comme pages séparées). Périmètre étape B clarifié : 3 pages-types (accueil unifié, fiche d'indicateur, fiche-question).
+
+## Décision du 12/07/2026 — resémantisation du statut « précaution »
+
+Origine : smoke test de Lætitia sur la pastèque (backlog 29.2). Le signal orange « ⚠️ Precaution », multiplié par trois cards, installait « tout est douteux » avant toute lecture ; le signal visuel va plus vite que le texte.
+
+Décision (mockup-signal-fiabilite.html, option B2 vert clair retenue après test de collision avec la card « Fiable ») :
+
+- Le statut se nomme désormais « Sous conditions » (icône 🤝). Il dit une mesure positive à adopter dans de bonnes conditions, pas une alerte.
+- Badge vert clair `#ddebd9`, texte vert profond `#2f5d33`, contour de card assorti au badge (demande explicite de Lætitia).
+- Les pastilles compactes (panier, one-pager) et le liseré de la note « Lire la fiabilité » utilisent le vert profond `#2f5d33`, la teinte claire n'étant pas lisible à 7 px.
+- « Fiable » (vert plein) et « Courant & risque » (rouge) sont inchangés.
+
+Écarté : option C (signal en pied de card, jugée à la fois encore alarmiste et pas assez visible) ; option D (refonte en « exigence de lecture », trop transverse) ; bleu clair (collision avec la couleur d'identité et de navigation).
