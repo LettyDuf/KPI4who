@@ -505,7 +505,16 @@ CM.IndicateursMeta = (function() {
     'gm-4':  { tags:['qualite','delais'],        cadres:['meta'] },
     'gm-5':  { tags:['qualite','risque'],        cadres:['meta'] },
     'gm-6':  { tags:['valeur'],                  cadres:['meta'] },
-    'gm-7':  { tags:['risque'],                  cadres:['meta'] }
+    'gm-7':  { tags:['risque'],                  cadres:['meta'] },
+    /* Enrichissement 29.1a (IGO / II / ORC hors strategique) */
+    'p12': { tags:['valeur','alignement'],       cadres:['generique'] },
+    't8':  { tags:['valeur','alignement'],       cadres:['generique'] },
+    'x8':  { tags:['valeur'],                    cadres:['generique'] },
+    't9':  { tags:['valeur'],                    cadres:['generique'] },
+    'p13': { tags:['valeur','humain'],           cadres:['generique'] },
+    's17': { tags:['risque','valeur'],           cadres:['generique'] },
+    'p14': { tags:['alignement'],                cadres:['okr'] },
+    's18': { tags:['alignement','risque'],       cadres:['okr'] }
   };
 
   /* ── API publique ── */
@@ -2302,6 +2311,127 @@ CM.Referentiel.ajouter([
   }
 ]);
 
+/* === Enrichissement 29.1a - lot A : trois IGO hors strategique ===
+   Doctrine validee par Laetitia le 12/07/2026 : chaque etage a son objectif
+   final qui decoule de la mission (filiation Drucker / MBO), la pyramide
+   reste pointue (peu d'IGO, beaucoup d'ICP). Panels : Ward & Daniel
+   (benefits management), MSP / PMI ; Cagan, Croll & Yoskovitz, Ellis
+   (produit). Rediges le 12/07/2026 au standard editorial 2026-04. */
+CM.Referentiel.ajouter([
+  {
+    id:'p12', niveau:'programme', type:'IGO', icone:'🏁',
+    nom:'Bénéfices réalisés du programme',
+    definition:'Part des bénéfices attendus du programme, inscrits à son dossier de justification, qui sont <strong>effectivement constatés</strong> : économies mesurées, revenus additionnels encaissés, gains de délai ou de qualité vérifiés sur le terrain. C\'est l\'objectif final du programme, son <strong>outcome</strong> : tout le reste, jalons tenus, livrables produits, budget respecté, n\'est que de l\'<span class="term-def" data-def="Output : ce que le programme produit (livrables, fonctionnalités, jalons). Nécessaire mais insuffisant : un programme peut tout livrer et ne produire aucun bénéfice réel.">output</span>. La discipline vient du <span class="term-def" data-def="Benefits management (Ward et Daniel, MSP) : discipline qui suit chaque bénéfice attendu du dossier de justification jusqu\'à sa constatation réelle, avec un propriétaire nommé par bénéfice.">benefits management</span> : chaque bénéfice a un propriétaire, une mesure de départ et une date de constatation.',
+    objectif:'Rappeler au programme sa raison d\'être : on ne l\'a pas lancé pour livrer des lots, mais pour produire des effets. Le suivi force trois gestes sains : chiffrer les bénéfices au lancement (sinon rien ne sera constatable), nommer un propriétaire par bénéfice, et mesurer avant de transformer pour disposer d\'un point de comparaison. Un programme dont personne ne peut dire les bénéfices constatés est un programme qu\'on pilote à l\'activité.',
+    frequence:'Trimestrielle, puis aux jalons de constatation prévus au dossier.',
+    exemple_ent:'Le comité de pilotage lit : programme à 80 % de livraison, bénéfices constatés à 15 %. La modernisation de l\'outil de service client est déployée, mais le temps de traitement, bénéfice chiffré au dossier, n\'a pas bougé. Décision : suspendre le lot suivant et comprendre pourquoi le bénéfice ne se matérialise pas, plutôt que continuer à livrer.',
+    exemple_eq:'Chaque équipe du programme connaît le bénéfice auquel son travail contribue, et la mesure qui le constatera. En revue, la question n\'est pas seulement « le lot est-il livré » mais « la mesure du bénéfice a-t-elle commencé à bouger ». Cela redonne du sens au travail et éclaire les arbitrages locaux.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Bénéfices d\'affichage : chiffrer généreusement les bénéfices au dossier pour obtenir le financement, sans mesure de départ ni propriétaire. Ils deviennent invérifiables, donc réputés atteints.">bénéfices d\'affichage</span> jamais constatables, <span class="term-def" data-def="Double comptage : attribuer le même gain à plusieurs programmes ou initiatives. La somme des bénéfices déclarés dépasse l\'amélioration réelle de l\'organisation.">double comptage</span> entre programmes, et constatation trop précoce : beaucoup de bénéfices ne se matérialisent qu\'après la clôture, les exiger trop tôt pousse à les inventer. Vigilance Ward et Daniel : un bénéfice sans propriétaire nommé n\'est pas un bénéfice, c\'est un espoir.',
+    alt:'Si l\'enjeu est de constater les bénéfices une fois le programme clos, quand plus personne n\'en répond, préférer les <a href="#fiche=t9">bénéfices constatés après clôture</a> au niveau portefeuille.',
+    roles:['programme','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
+  },
+  {
+    id:'t8', niveau:'tactique', type:'IGO', icone:'⚖️',
+    nom:'Valeur livrée du portefeuille rapportée aux engagements',
+    definition:'Rapport, à l\'échelle du portefeuille, entre la valeur effectivement livrée sur la période et la valeur promise lors des arbitrages d\'investissement. La valeur se compte dans l\'unité choisie par la gouvernance, bénéfices chiffrés, revenus, économies, et se constate, elle ne se déclare pas. C\'est l\'objectif final du portefeuille, son <strong>outcome</strong> : le portefeuille n\'existe pas pour consommer son budget, il existe pour convertir un investissement en valeur. Le taux de consommation budgétaire, souvent suivi à sa place, est un simple <span class="term-def" data-def="Output : ici, l\'argent dépensé et les initiatives lancées. Un portefeuille peut consommer 100 % de son budget et livrer une fraction de la valeur promise.">output</span>.',
+    objectif:'Donner à la gouvernance du portefeuille une boussole de résultat plutôt qu\'une boussole de dépense. L\'écart entre promis et livré est l\'information de pilotage la plus utile : un portefeuille qui promet 100 et livre 40 de façon récurrente a un problème de sélection (promesses gonflées pour obtenir les arbitrages) ou d\'exécution, et dans les deux cas la réponse n\'est pas de lancer plus d\'initiatives, mais d\'en financer moins et de les finir.',
+    frequence:'Semestrielle ou annuelle, au rythme des cycles d\'arbitrage.',
+    exemple_ent:'La direction constate que sur trois cycles, le portefeuille numérique livre entre 35 et 45 % de la valeur promise, avec un budget consommé à 98 %. Lecture : le processus d\'arbitrage récompense les promesses optimistes. Décision : exiger des mesures de départ vérifiables au dossier et réduire le nombre d\'initiatives simultanées, plutôt que resserrer le contrôle des dépenses.',
+    exemple_eq:'Effet indirect mais réel pour les équipes : un portefeuille piloté à la valeur livrée finance moins d\'initiatives à la fois, donc moins de multitâche et des priorités plus stables. L\'équipe peut citer cet indicateur quand on lui demande de commencer une énième initiative : commencer moins, finir plus.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Pilotage à la consommation : suivre le budget dépensé comme preuve d\'avancement. Dépenser n\'est pas livrer de la valeur ; l\'indicateur monte mécaniquement avec le temps qui passe.">pilotage à la consommation</span> budgétaire, <span class="term-def" data-def="Promesses recalibrées a posteriori : réviser discrètement la valeur promise à la baisse en cours de cycle pour que le ratio final paraisse honorable. La mémoire des engagements initiaux doit rester intacte.">promesses recalibrées a posteriori</span>, et l\'unité de valeur fourre-tout où chaque initiative invente sa propre monnaie, ce qui rend la somme dépourvue de sens. Vigilance Drucker : la concentration prime, un portefeuille qui promet moins et livre ce qu\'il promet vaut mieux qu\'un portefeuille ambitieux sur le papier.',
+    alt:'Si la question est de savoir si un programme donné produit ses effets, et non si le portefeuille tient ses promesses d\'ensemble, préférer les <a href="#fiche=p12">bénéfices réalisés du programme</a>.',
+    roles:['portefeuille','direction'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
+  },
+  {
+    id:'x8', niveau:'operationnel', type:'IGO', icone:'🌟',
+    nom:'Étoile polaire de l\'équipe produit (North Star)',
+    definition:'Mesure unique qui capte la <strong>valeur réellement reçue par l\'utilisateur</strong> à chaque usage du produit, choisie par l\'équipe comme son objectif final. Des exemples classiques : les messages envoyés pour une messagerie, les nuits réservées pour une plateforme d\'hébergement, les rapports générés pour un outil d\'analyse. Une bonne <span class="term-def" data-def="North Star Metric (école produit : Ellis, Croll et Yoskovitz, Cagan) : la mesure unique qui relie la valeur utilisateur à la croissance du produit. Si elle monte, le produit rend service et l\'activité suit.">étoile polaire</span> a trois propriétés : elle exprime la valeur du point de vue de l\'utilisateur, elle est actionnable par l\'équipe, et l\'activité économique suit quand elle monte. C\'est l\'<strong>outcome</strong> de l\'équipe produit ; la vélocité et le nombre de fonctionnalités livrées n\'en sont que les outputs.',
+    objectif:'Donner à l\'équipe un cap unique qui tranche les débats de priorisation : entre deux options, laquelle fait le plus progresser l\'étoile polaire. Elle protège aussi l\'équipe du pilotage à la roadmap, où livrer la liste prévue devient une fin en soi. Une équipe qui connaît son étoile polaire peut dire non à une demande qui ne la sert pas, ou du moins ouvrir la conversation au bon niveau.',
+    frequence:'Hebdomadaire ou mensuelle, en continu sur la vie du produit.',
+    exemple_ent:'La direction produit demande à chaque équipe de nommer son étoile polaire et de montrer sa tendance. Une équipe très occupée dont l\'étoile stagne depuis deux trimestres devient un sujet de conversation stratégique : le problème n\'est pas l\'effort, c\'est la direction de l\'effort.',
+    exemple_eq:'En priorisation, l\'équipe compare deux initiatives par leur effet attendu sur l\'étoile polaire, hypothèses chiffrées à l\'appui. Après livraison, elle vérifie l\'effet réel : c\'est son apprentissage produit. L\'étoile polaire remplace avantageusement la question « a-t-on livré ce qui était prévu » par « ce qu\'on a livré a-t-il servi ».',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Étoile de vanité : choisir une mesure qui monte toute seule (inscriptions cumulées, pages vues) sans dire la valeur reçue. Elle flatte, elle n\'oriente pas.">étoile de vanité</span>, <span class="term-def" data-def="Étoile imposée d\'en haut : une North Star choisie par la direction sans l\'équipe devient une cible de plus à satisfaire, pas une boussole. L\'équipe doit pouvoir se reconnaître dans la valeur qu\'elle mesure.">étoile imposée d\'en haut</span>, et le culte de la mesure unique : l\'étoile polaire oriente mais ne suffit pas, elle se lit avec des mesures de garde, qualité, rétention, sinon on la fait monter en dégradant le reste. Vigilance Goodhart explicite chez tous les auteurs du panel.',
+    alt:'Si l\'organisation pilote déjà par la valeur selon Evidence-Based Management, l\'<a href="#fiche=ebm-1">usage réel par fonctionnalité</a> offre un capteur voisin, plus granulaire et moins totalisant.',
+    roles:['chef-équipe','membre-équipe'], prioritaire:false, fiabilite:'fiable', maturite_min:'intermediaire'
+  }
+]);
+
+/* === Enrichissement 29.1a - lot B : trois indicateurs d'impact (II) ===
+   L'impact se constate apres coup et hors du perimetre de production :
+   c'est ce qui a change pour de vrai. Panels : Ward & Daniel, Adzic
+   (impact mapping), Seiden (Outcomes over Output) ; Green Software
+   Foundation / GreenOps pour s17. Rediges le 12/07/2026 au standard 2026-04. */
+CM.Referentiel.ajouter([
+  {
+    id:'t9', niveau:'tactique', type:'II', icone:'🌾',
+    nom:'Bénéfices constatés après clôture',
+    definition:'Bénéfices mesurés six à dix-huit mois <strong>après la clôture</strong> des programmes et projets, quand les équipes sont dissoutes et que plus personne n\'a intérêt à embellir le bilan. C\'est la mesure d\'<strong>impact</strong> la plus honnête du portefeuille : la plupart des effets réels, adoption installée, économies récurrentes, comportements changés, ne se matérialisent qu\'après la fin des travaux, précisément là où le suivi s\'arrête d\'habitude. La discipline suppose qu\'un propriétaire de bénéfice survive au projet : c\'est le cœur du <span class="term-def" data-def="Benefits management (Ward et Daniel, MSP) : le suivi des bénéfices ne s\'arrête pas à la clôture du projet ; un propriétaire nommé répond de chaque bénéfice jusqu\'à sa constatation, parfois des années après.">benefits management</span>.',
+    objectif:'Fermer la boucle d\'apprentissage du portefeuille : sans constatation après clôture, l\'organisation ne sait jamais si ses investissements produisent ce qu\'ils promettaient, et le processus d\'arbitrage récompense indéfiniment les promesses plutôt que les résultats. Quelques constatations honnêtes recalibrent durablement les dossiers de justification : les promesses deviennent plus sobres et plus crédibles.',
+    frequence:'Campagne annuelle sur les clôtures de 6 à 18 mois.',
+    exemple_ent:'La revue annuelle constate que sur huit projets clos l\'an passé, trois ont produit les bénéfices promis, deux en ont produit la moitié, trois aucun de mesurable. Décision : ce ne sont pas les équipes qu\'on interroge, ce sont les dossiers d\'arbitrage qui avaient promis, et les critères de sélection qui les avaient crus.',
+    exemple_eq:'Peu visible de l\'équipe au quotidien, mais structurant : savoir que les bénéfices seront constatés après coup change la manière dont un chef de projet chiffre son dossier, et protège les équipes des promesses intenables faites en leur nom.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Amnésie de clôture : dissoudre l\'équipe, archiver le dossier et ne plus jamais mesurer. Le portefeuille ne connaît que des réussites, puisque personne ne vérifie.">amnésie de clôture</span>, <span class="term-def" data-def="Attribution héroïque : attribuer au projet clos une amélioration due à d\'autres facteurs (marché, saisonnalité, autre initiative). La mesure d\'impact exige un point de comparaison honnête.">attribution héroïque</span> des améliorations ambiantes, et l\'usage punitif : si la constatation sert à blâmer rétroactivement les chefs de projet, les prochains dossiers seront invérifiables à dessein. Vigilance Adzic : l\'impact se cartographie avant de se mesurer, un projet lancé sans hypothèse d\'impact explicite ne pourra jamais être constaté.',
+    alt:'Si l\'enjeu est de suivre les bénéfices pendant la vie du programme, avec une équipe encore là pour agir, préférer les <a href="#fiche=p12">bénéfices réalisés du programme</a>.',
+    roles:['portefeuille','direction'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
+  },
+  {
+    id:'p13', niveau:'programme', type:'II', icone:'🌊',
+    nom:'Changement de comportement utilisateur durable',
+    definition:'Part des utilisateurs dont le comportement visé par le programme, nouvelle pratique, nouveau canal, nouvel usage, est toujours observé <strong>plusieurs mois après</strong> le déploiement, une fois l\'accompagnement retiré et l\'effet de nouveauté dissipé. C\'est un indicateur d\'<strong>impact</strong> au sens strict de Seiden : un <span class="term-def" data-def="Outcome (Seiden, Outcomes over Output) : un changement de comportement humain qui crée de la valeur. Ni le livrable (output), ni le résultat financier lointain (impact global) : le comportement observable entre les deux.">outcome</span> est un changement de comportement humain qui crée de la valeur, pas un livrable déployé. On mesure des actes observés dans la durée, jamais des intentions déclarées ni des pics de lancement.',
+    objectif:'Empêcher le programme de confondre déploiement et adoption. Le pic d\'usage des premières semaines ne dit rien : il mesure la curiosité et la pression de l\'accompagnement. La seule question qui compte est la tenue dans le temps, car c\'est elle qui matérialise les bénéfices promis. Un comportement qui retombe signale que le programme a livré un outil sans changer le système de travail qui l\'entoure.',
+    frequence:'Mensuelle, sur une fenêtre glissante de trois à six mois après chaque vague de déploiement.',
+    exemple_ent:'Six mois après le déploiement du nouveau portail fournisseurs, 82 % des commandes passaient encore par l\'ancien circuit courriel. Le programme avait célébré 95 % de comptes créés au lancement. Décision : le solde du budget bascule de la fonctionnalité vers la simplification du parcours et la suppression progressive de l\'ancien circuit.',
+    exemple_eq:'L\'équipe choisit un ou deux comportements cibles observables dans les données d\'usage, et les suit sur la durée plutôt que de célébrer les métriques de lancement. La question rituelle en revue : que font les utilisateurs quand personne ne les accompagne plus.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Métrique de lancement : mesurer l\'adoption au pic des premières semaines, gonflé par la curiosité et l\'accompagnement, puis cesser de mesurer. La retombée reste invisible.">métrique de lancement</span>, <span class="term-def" data-def="Adoption captive : rendre l\'ancien chemin impossible et compter le passage forcé comme une adoption. Le comportement est mécanique, la valeur et l\'adhésion restent inconnues ; le rejet se déplace ailleurs.">adoption captive</span>, et la confusion avec la simple connexion : ouvrir l\'outil n\'est pas adopter le comportement. Vigilance Seiden : formuler le comportement cible avant de déployer, sinon on mesurera ce que l\'outil sait compter plutôt que ce que le programme voulait changer.',
+    alt:'À l\'échelle d\'une seule équipe et d\'un changement de pratique interne, le <a href="#fiche=cg-2">taux d\'adoption des nouveaux comportements</a> couvre le même ressort avec l\'outillage de la gestion du changement.',
+    roles:['programme','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
+  },
+  {
+    id:'s17', niveau:'strategique', type:'II', icone:'🌍',
+    nom:'Empreinte du numérique',
+    definition:'Mesure agrégée de l\'impact environnemental du système d\'information et des services numériques de l\'organisation : émissions de gaz à effet de serre des infrastructures et des terminaux, consommation énergétique des centres de données et du nuage, cycle de vie du matériel. Les référentiels du <span class="term-def" data-def="GreenOps / Green Software Foundation : mouvement et référentiels (dont le Software Carbon Intensity, SCI) qui outillent la mesure et la réduction de l\'empreinte environnementale du logiciel et des infrastructures.">numérique responsable</span> en font un indicateur calculable, imparfait mais comparable d\'une période à l\'autre à méthodologie constante. C\'est un indicateur d\'<strong>impact</strong> : il mesure un effet du numérique sur le monde, au-delà de toute performance interne.',
+    objectif:'Donner à la direction une vue de l\'externalité environnementale de sa stratégie numérique, au moment où la réglementation et les parties prenantes la réclament. L\'indicateur arbitre concrètement : prolonger la durée de vie des postes de travail, souvent le premier gisement, choisir les régions de nuage sobres en carbone, éteindre les environnements dormants, dimensionner au besoin réel plutôt qu\'au pic théorique.',
+    frequence:'Annuelle, alignée sur le reporting extra-financier ; suivi trimestriel des postes les plus dynamiques (nuage).',
+    exemple_ent:'Le bilan révèle que 60 % de l\'empreinte vient de la fabrication des terminaux, pas des centres de données que la direction soupçonnait. Décision : politique de prolongation de la durée de vie des postes de 3 à 5 ans et filière de reconditionnement, avant tout chantier d\'optimisation des serveurs.',
+    exemple_eq:'Une équipe plateforme suit la consommation de ses environnements et découvre que les environnements de test tournent la nuit et le week-end pour rien. L\'extinction automatique hors des heures ouvrées réduit la facture et l\'empreinte sans toucher au service.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Écoblanchiment (greenwashing) : communiquer une réduction d\'empreinte obtenue par changement de méthodologie, achat de compensations douteuses ou externalisation de l\'impact chez un fournisseur. Le chiffre baisse, l\'impact réel non.">écoblanchiment</span> méthodologique, <span class="term-def" data-def="Périmètre à géométrie variable : exclure du calcul les postes défavorables (fabrication des terminaux, sous-traitance, IA) pour afficher une trajectoire flatteuse. La comparabilité exige un périmètre stable et documenté.">périmètre à géométrie variable</span>, et la précision illusoire : les facteurs d\'émission sont des estimations, l\'ordre de grandeur et la tendance comptent plus que la décimale. La méthodologie et le périmètre se documentent comme une définition de mesure au sens de la <a href="#fiche=gm-5">stabilité des définitions de mesure</a>.',
+    alt:'Cet indicateur ne dit rien de la performance économique du numérique : il se lit en regard des indicateurs de valeur, jamais à leur place, sous peine de n\'être qu\'un vernis de conformité.',
+    roles:['direction','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
+  }
+]);
+
+/* === Enrichissement 29.1a - lot C : deux ORC (OKR) ===
+   L'etage programme manquait a la chaine OKR (strategique s4, portefeuille t3,
+   equipe o9) et rien ne mesurait la sante du systeme OKR lui-meme. Panel :
+   Doerr (Measure What Matters), Grove (High Output Management), Wodtke
+   (Radical Focus). Rediges le 12/07/2026 au standard editorial 2026-04. */
+CM.Referentiel.ajouter([
+  {
+    id:'p14', niveau:'programme', type:'ORC', icone:'🔗',
+    nom:'OKR de programme relié à l\'OKR stratégique',
+    definition:'Objectif trimestriel du programme dont le lien à un objectif stratégique est <strong>explicite et vérifiable</strong> : chaque résultat clé du programme contribue de façon nommée à un résultat clé du niveau supérieur. La mécanique vient de Grove et Doerr : les <span class="term-def" data-def="OKR (Objectives and Key Results, Grove puis Doerr) : un objectif qualitatif inspirant et 3 à 5 résultats clés mesurables. La cascade se construit par dialogue entre niveaux, pas par découpage mécanique descendant.">OKR</span> se relient par conversation entre les niveaux, le programme propose sa contribution, la stratégie la confirme, et non par découpage imposé d\'en haut. La fiche mesure la discipline du lien, pas l\'ambition de l\'objectif.',
+    objectif:'Fermer l\'anti-pattern du programme qui s\'invente un OKR local déconnecté : un objectif motivant en interne mais que rien ne rattache à la stratégie, si bien que le programme peut réussir tous ses trimestres pendant que l\'organisation échoue. Le lien explicite donne aussi le droit inverse, précieux : quand la stratégie pivote, le programme voit immédiatement lesquels de ses résultats clés tombent.',
+    frequence:'Au cadencement OKR, trimestriel le plus souvent.',
+    exemple_ent:'La revue trimestrielle parcourt les OKR des cinq programmes : quatre tracent leur contribution à un résultat clé stratégique, le cinquième affiche un objectif d\'excellence technique auto-proclamé. La conversation n\'est pas de le supprimer mais de le relier : à quelle promesse stratégique cette excellence contribue-t-elle, et sinon, pourquoi ce programme existe-t-il.',
+    exemple_eq:'Les équipes du programme héritent d\'un cap lisible : chaque OKR d\'équipe peut citer le résultat clé de programme qu\'il sert, qui cite lui-même son parent stratégique. Trois questions en cascade suffisent à un développeur pour relier son travail du jour à la stratégie, c\'est le self-control de Drucker rendu praticable.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Cascade mécanique : découper l\'OKR stratégique en sous-OKR imposés, sans conversation. La lettre du lien est parfaite, l\'engagement est mort ; Grove et Doerr insistent : la moitié des OKR doit remonter du terrain.">cascade mécanique</span> descendante, <span class="term-def" data-def="Rattachement cosmétique : relier après coup l\'OKR local à n\'importe quel objectif stratégique par un habillage de vocabulaire. Le lien existe sur le papier, aucune décision ne s\'y réfère.">rattachement cosmétique</span>, et la confusion OKR-évaluation : dès que l\'atteinte conditionne la prime, les objectifs se sabotent à la baisse. Vigilance Doerr : les OKR ne sont pas un outil d\'évaluation individuelle, c\'est la condition de leur sincérité.',
+    alt:'Pour l\'ancrage des objectifs d\'équipe dans la mission, hors mécanique OKR, la <a href="#fiche=mbo-1">part des objectifs de l\'équipe rattachés à la mission</a> porte la même exigence dans la grammaire du management par objectifs.',
+    roles:['programme','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
+  },
+  {
+    id:'s18', niveau:'strategique', type:'ORC', icone:'🌡️',
+    nom:'Santé du système OKR (taux d\'atteinte cible)',
+    definition:'Distribution des scores d\'atteinte des résultats clés de l\'organisation en fin de cycle, lue comme un diagnostic du <strong>système OKR lui-même</strong>. La zone saine selon Doerr se situe autour de 60 à 70 % d\'atteinte moyenne : c\'est le signe que les objectifs sont ambitieux et pris au sérieux. Un taux proche de 100 % ne dit pas que tout va bien, il dit que l\'organisation ne s\'étire plus : les objectifs sont négociés pour être atteints. Un taux effondré dit l\'inverse : des ambitions déconnectées de la capacité réelle. C\'est un méta-indicateur : il ne mesure pas la performance, il mesure la sincérité du dispositif d\'objectifs.',
+    objectif:'Protéger ce qui fait la valeur des OKR : l\'ambition sincère. Sans ce thermomètre, le système dérive naturellement vers le confort, chacun apprend à promettre ce qu\'il sait déjà faire, et les OKR deviennent un rituel de reporting. La lecture se fait en distribution, jamais en moyenne seule : une moyenne à 65 % peut cacher une moitié d\'équipes à 100 % et une moitié en échec, deux pathologies opposées qui appellent des réponses différentes.',
+    frequence:'À chaque fin de cycle OKR, en revue de direction.',
+    exemple_ent:'Trois cycles de suite, l\'organisation atteint 95 % de ses résultats clés et s\'en félicite. La direction, outillée de ce thermomètre, lit le signal inverse : plus personne ne vise haut. Elle réintroduit la distinction entre objectifs engagés (attendus à 100 %) et objectifs ambitieux (sains à 60-70 %), et demande à chaque niveau au moins un objectif du second type.',
+    exemple_eq:'L\'équipe scorant ses résultats clés en fin de cycle sait que 70 % sur un objectif ambitieux est un bon score, pas un échec à justifier. Cela change la qualité de la rétrospective : on discute de ce qu\'on a appris en visant haut, pas de comment habiller le chiffre.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Sandbagging : négocier des objectifs volontairement modestes pour garantir leur atteinte. Le taux monte, l\'ambition meurt ; c\'est la dérive que ce thermomètre existe pour détecter.">sandbagging</span> généralisé, <span class="term-def" data-def="Cible de taux : transformer la zone saine (60-70 %) en objectif à atteindre. Les scores se calibrent pour tomber dans la zone, le thermomètre est gamé à son tour ; il se lit, il ne se pilote pas.">cible de taux</span>, et le mélange des régimes : agréger objectifs engagés et objectifs ambitieux dans le même taux rend la lecture indéchiffrable. Vigilance Goodhart au carré : ce méta-indicateur est lui-même une mesure, la <a href="#fiche=gm-7">vigilance sur les dérives</a> s\'applique à lui aussi.',
+    alt:'Si la question est la qualité du lien entre les étages d\'OKR plutôt que la santé du scoring, préférer l\'<a href="#fiche=p14">OKR de programme relié à l\'OKR stratégique</a>.',
+    roles:['direction','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
+  }
+]);
+
 
 </script>
 <!-- CM.REFERENTIEL.DATA — END -->
@@ -2607,7 +2737,7 @@ CM.AccueilUnifie = (function() {
        indicateurs. L'etat persiste ensuite ses replis via Preferences. */
     return {
       cartouches: { question: 'ouvert', compteur: 'ouvert' },
-      chips:      { probleme: [], cadre: [], niveau: null, maturite: null }
+      chips:      { probleme: [], cadre: [], niveau: null, maturite: null, type: [] }
     };
   }
 
@@ -2639,7 +2769,8 @@ CM.AccueilUnifie = (function() {
       probleme: etat.chips.probleme.slice(),
       cadre:    etat.chips.cadre.slice(),
       niveau:   etat.chips.niveau,
-      maturite: etat.chips.maturite
+      maturite: etat.chips.maturite,
+      type:     etat.chips.type.slice()
     };
   }
 
@@ -2677,7 +2808,12 @@ CM.AccueilUnifie = (function() {
             niveau: (typeof charge.chips.niveau === 'string' && _estValeurConnue('niveau', charge.chips.niveau))
               ? charge.chips.niveau : null,
             maturite: (typeof charge.chips.maturite === 'string' && _estValeurConnue('maturite', charge.chips.maturite))
-              ? charge.chips.maturite : null
+              ? charge.chips.maturite : null,
+            /* Retrocompatibilite 29.1b : une persistance ecrite avant la
+               chip Type n'a pas de cle type — on repart d'un tableau vide. */
+            type: Array.isArray(charge.chips.type)
+              ? charge.chips.type.filter(function(v) { return _estValeurConnue('type', v); })
+              : []
           }
         };
       }
@@ -2743,7 +2879,8 @@ CM.AccueilUnifie = (function() {
     probleme: { titre: 'Problème', mode: 'multi-sélection' },
     cadre:    { titre: 'Cadre',         mode: 'multi-sélection' },
     niveau:   { titre: 'Niveau',        mode: 'mono-sélection' },
-    maturite: { titre: 'Maturité', mode: 'mono-sélection' }
+    maturite: { titre: 'Maturité', mode: 'mono-sélection' },
+    type:     { titre: "Type d'indicateur", mode: 'multi-sélection' }
   };
 
   function _echappe(s) {
@@ -2808,6 +2945,39 @@ CM.AccueilUnifie = (function() {
         };
       });
     }
+    if (axe === 'type') {
+      /* Option A retenue par Laetitia 12/07/2026 (mockup-taxonomie-types.html,
+         chantier 29.1 volet b) : toute la pedagogie tient dans le selecteur.
+         Ordre editorial : la chaine IGO -> ICP -> ICC, l'impact en contrepoint,
+         puis les signatures de cadres (ORC, DORA, FLUX). Double acronyme
+         francais / anglais car les deux jeux de sigles circulent selon les
+         organisations. Pastille coloree (TYPES_COULEURS) au lieu d'emoji. */
+      var TYPES_ORDRE = ['IGO', 'ICP', 'ICC', 'II', 'ORC', 'DORA', 'FLUX'];
+      var TYPES_SELECTEUR = {
+        IGO:  { label: 'Objectif global · IGO / KGI',
+                sous:  'Le cap est-il atteint\u00a0? Le résultat final.' },
+        ICP:  { label: 'Performance · ICP / KPI',
+                sous:  'Sommes-nous en route\u00a0? Le résultat d\'un processus.' },
+        ICC:  { label: 'Comportement · ICC / KBI',
+                sous:  'Faisons-nous les bons gestes\u00a0? Ce qui précède le résultat.' },
+        II:   { label: 'Impact · II / KII',
+                sous:  'Qu\'est-ce que ça change vraiment, au-delà du livrable\u00a0?' },
+        ORC:  { label: 'Objectifs & Résultats Clés · ORC / OKR',
+                sous:  'L\'ambition et ses résultats clés.' },
+        DORA: { label: 'Performance DevOps · DORA',
+                sous:  'Les quatre mesures signature du delivery.' },
+        FLUX: { label: 'Flux & Throughput · FLUX',
+                sous:  'Ce qui traverse le système, et à quelle vitesse.' }
+      };
+      return TYPES_ORDRE.map(function(t) {
+        return {
+          id:       t,
+          label:    TYPES_SELECTEUR[t].label,
+          sous:     TYPES_SELECTEUR[t].sous,
+          pastille: t
+        };
+      });
+    }
     if (axe === 'maturite') {
       /* Emojis de CM.Config.MATURITE (🌱 pousse, 🌿 feuille, 🌳 arbre).
          On garde nos libellés courts (Débutant / Intermédiaire / Avancé)
@@ -2853,6 +3023,13 @@ CM.AccueilUnifie = (function() {
       var iconeHTML = v.icone
         ? '<span class="icone" aria-hidden="true">' + v.icone + '</span> '
         : '';
+      if (v.pastille) {
+        /* Pastille de type coloree (29.1b) — couleurs de CM.Config.TYPES_COULEURS,
+           memes teintes que le chip de titre des cards et le panier. */
+        var cType = (CM.Config && CM.Config.TYPES_COULEURS && CM.Config.TYPES_COULEURS[v.pastille]) || '#546e7a';
+        iconeHTML = '<span class="pastille-type" aria-hidden="true" style="background:' + cType + '18;color:' + cType + '">'
+                  + _echappe(v.pastille) + '</span> ';
+      }
       if (v.sous) {
         /* Variante α — corps en colonne avec titre + sous-titre.
            Le sous-titre vient des sources de vérité internes (CM.Config,
@@ -2944,7 +3121,7 @@ CM.AccueilUnifie = (function() {
   }
 
   function _rafraichirToutesChips(racine) {
-    var axes = ['probleme', 'cadre', 'niveau', 'maturite'];
+    var axes = ['probleme', 'cadre', 'niveau', 'maturite', 'type'];
     for (var i = 0; i < axes.length; i++) {
       _rafraichirChip(racine, axes[i]);
     }
@@ -2979,6 +3156,9 @@ CM.AccueilUnifie = (function() {
     if (etat.chips.cadre.length > 0) {
       filtre.cadres = etat.chips.cadre.slice();
     }
+    if (etat.chips.type.length > 0) {
+      filtre.type = etat.chips.type.slice();
+    }
     return filtre;
   }
 
@@ -2991,6 +3171,7 @@ CM.AccueilUnifie = (function() {
     if (etat.chips.cadre.length > 0)    actifs.push('Cadre');
     if (etat.chips.niveau)              actifs.push('Niveau');
     if (etat.chips.maturite)            actifs.push('Maturité');
+    if (etat.chips.type.length > 0)     actifs.push('Type');
 
     if (actifs.length === 0) {
       return "Aucune lentille active — l'index complet attend.";
@@ -3406,7 +3587,8 @@ CM.AccueilUnifie = (function() {
     return etat.chips.probleme.length === 0 &&
            etat.chips.cadre.length === 0 &&
            etat.chips.niveau === null &&
-           etat.chips.maturite === null;
+           etat.chips.maturite === null &&
+           etat.chips.type.length === 0;
   }
 
   function reinitialiserChips() {
@@ -3540,24 +3722,24 @@ CM.AccueilUnifie = (function() {
     CM.AccueilUnifie.init();
 
     /* ═══════════════════════════════════════════════════════════════
-       Sentinelle I1 — Aucune lentille active : 124 fiches au total
+       Sentinelle I1 — Aucune lentille active : 132 fiches au total
        Référence : journal-invariants-23g.md, ligne I1
        ═══════════════════════════════════════════════════════════════ */
-    test('I1. Aucune lentille active : 124 indicateurs sur 124 (total absolu du référentiel)', function() {
+    test('I1. Aucune lentille active : 132 indicateurs sur 132 (total absolu du référentiel)', function() {
       reset();
       var total = CM.Referentiel.tous().length;
-      assertEqual(total, 124, 'total du référentiel = 124 fiches (recapture du 12/07/2026, cadre meta gm-1 a gm-7, chantier 29.4). Si rouge → mettre à jour I1 du journal et le test.');
+      assertEqual(total, 132, 'total du référentiel = 132 fiches (recapture du 12/07/2026, lots 29.1a p12-p14/t8-t9/x8/s17-s18). Si rouge → mettre à jour I1 du journal et le test.');
       /* Filtre vide : doit retourner toutes les fiches. */
-      assertEqual(nbFiches({}), 124, 'CM.RequeteMetriques sans filtre = 124 fiches');
+      assertEqual(nbFiches({}), 132, 'CM.RequeteMetriques sans filtre = 132 fiches');
     });
 
     /* ═══════════════════════════════════════════════════════════════
-       Sentinelle I2 — Niveau Programme : 20 fiches, premiers ids p1-p5
+       Sentinelle I2 — Niveau Programme : 23 fiches, premiers ids p1-p5
        ═══════════════════════════════════════════════════════════════ */
-    test('I2. Niveau Programme : 20 indicateurs, premiers ids p1, p2, p3, p4, p5', function() {
+    test('I2. Niveau Programme : 23 indicateurs, premiers ids p1, p2, p3, p4, p5', function() {
       reset();
-      assertEqual(nbFiches({ niveau: ['programme'] }), 20,
-                  'Niveau Programme = 20 fiches (recapture du 12/07/2026, gm-2, gm-3, gm-4)');
+      assertEqual(nbFiches({ niveau: ['programme'] }), 23,
+                  'Niveau Programme = 23 fiches (recapture du 12/07/2026, gm-2/3/4 puis p12/p13/p14)');
       /* Vérifie l'ordre canonique des 5 premières (cf. constat C2 du journal). */
       assertDeepEqual(premiersIds({ niveau: ['programme'] }, 5),
                       ['p1', 'p2', 'p3', 'p4', 'p5'],
@@ -3621,20 +3803,20 @@ CM.AccueilUnifie = (function() {
        (chips → libellés → DOM), pas seulement via CM.RequeteMetriques.
        ═══════════════════════════════════════════════════════════════ */
 
-    test('A1. Compteur initial après init() : « 124 sur 124 indicateurs »', function() {
+    test('A1. Compteur initial après init() : « 132 sur 132 indicateurs »', function() {
       reset();
       CM.AccueilUnifie.appliquerFiltre();
       var n = lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle strong');
       var total = lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle .total');
-      assertEqual(n, '124', 'compteur initial = 124');
-      assertEqual(total, 'sur 124 indicateurs', 'total absolu = 124');
+      assertEqual(n, '132', 'compteur initial = 132');
+      assertEqual(total, 'sur 132 indicateurs', 'total absolu = 132');
     });
 
-    test('A2. Chip Niveau Programme : compteur passe à « 20 sur 124 »', function() {
+    test('A2. Chip Niveau Programme : compteur passe à « 23 sur 132 »', function() {
       reset();
       CM.AccueilUnifie.selectionnerChip('niveau', 'programme');
-      assertEqual(lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle strong'), '20', 'compteur = 20');
-      assertEqual(lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle .total'), 'sur 124 indicateurs', 'total inchangé');
+      assertEqual(lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle strong'), '23', 'compteur = 23');
+      assertEqual(lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle .total'), 'sur 132 indicateurs', 'total inchangé');
       assertEqual(lire('.cartouche[data-cartouche="compteur"] .cartouche-libelle .axes-actifs'),
                   'Lentilles actives — Niveau.',
                   'libellé d\'axes actifs');
