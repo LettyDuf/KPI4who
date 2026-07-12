@@ -9671,6 +9671,7 @@ CM.FicheQuestion = (function() {
       choixQ2: optQ2.id,
       niveau: niveau,
       cards: contenuParCard,
+      candidats: _candidatsPourNiveau(fiche, niveau, contenuParCard),
       noteFiabilite: fiche.noteFiabilite || null,
       recommandation: fiche.recommandationParNiveau[niveau],
       lienSortant: fiche.lienSortantPatrimonial,
@@ -9728,12 +9729,34 @@ CM.FicheQuestion = (function() {
       choixQ2: optQ2.id,
       niveau: niveau,
       cards: cards,
+      candidats: _candidatsPourNiveau(fiche, niveau, cards),
       noteFiabilite: fiche.noteFiabilite || null,
       recommandation: fiche.recommandationParNiveau[niveau],
       lienSortant: fiche.liensSortantsParNiveau[niveau],
       crossLink: fiche.crossLink,
       ecoles: fiche.ecoles
     };
+  }
+
+  /* Candidats supplémentaires du niveau actif (contrat 2026-07-12,
+     backlog 29.5). Source éditoriale candidatsParNiveau, filtrée des
+     ficheRef déjà affichés dans le trio courant : avec les surcharges
+     par signal, un même ficheRef peut être card sous un signal et
+     candidat sous un autre. Pure fonction, testable sans DOM. */
+  function _candidatsPourNiveau(fiche, niveau, cards) {
+    var pool = (fiche.candidatsParNiveau && fiche.candidatsParNiveau[niveau]) || [];
+    if (!pool.length) return [];
+    var affiches = {};
+    for (var i = 0; i < cards.length; i++) {
+      if (cards[i].contenu && cards[i].contenu.ficheRef) {
+        affiches[cards[i].contenu.ficheRef] = true;
+      }
+    }
+    var resultat = [];
+    for (var j = 0; j < pool.length; j++) {
+      if (!affiches[pool[j].ficheRef]) resultat.push(pool[j]);
+    }
+    return resultat;
   }
 
   /* Retrouve l'objet axe { id, nom } d'un id. Fallback défensif si
