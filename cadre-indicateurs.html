@@ -2307,6 +2307,10 @@
     /* État vide de la liste filtrée — combinaison de lentilles sans correspondance.
        Voix française, ton bienveillant. Le grid-column 1 / -1 force le
        paragraphe à occuper toute la largeur de la grille 2 colonnes. */
+    .accueil-unifie .liste-fiches .conseil-zone {
+      grid-column: 1 / -1; /* pleine largeur sous la grille de cards (25.reste.1) */
+      margin-top: 0.4rem;
+    }
     .accueil-unifie .liste-fiches-vide {
       grid-column: 1 / -1;
       text-align: center;
@@ -5072,6 +5076,15 @@ CM.AccueilUnifie = (function() {
        reste donc à false partout. */
     for (var j = 0; j < fiches.length; j++) {
       html += CM.Composants.htmlCarte(fiches[j], null, true, false);
+    }
+
+    /* Conseil pédagogique en pied de liste quand la lentille Niveau est
+       active (arbitrage 25.reste.1, 12/07/2026 : réemploi de la chaîne
+       orpheline depuis le retrait des portes en 23.f). C'est le moment
+       où l'utilisateur fait face à la liste d'un niveau et doit trancher ;
+       la façade CM.Config.conseilPedagogiquePour retrouve son consommateur. */
+    if (etat.chips.niveau && CM.Config && CM.Config.conseilPedagogiquePour) {
+      html += CM.Config.conseilPedagogiquePour({ niveau: etat.chips.niveau });
     }
     conteneur.innerHTML = html;
   }
