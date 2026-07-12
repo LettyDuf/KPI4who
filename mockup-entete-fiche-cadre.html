@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Mockup 28.B — En-tête de la fiche-cadre</title>
+<style>
+  body { font-family: -apple-system, "Segoe UI", sans-serif; margin: 0; background: #f5f6fa; color: #1c2033; }
+  .bandeau-mockup { background: #fff8e7; border-bottom: 1px solid #f3e3b8; padding: 0.8rem 1.4rem; font-size: 0.9rem; color: #6b4a00; }
+  .bandeau-mockup strong { color: #b7791f; }
+  section { max-width: 620px; margin: 2rem auto; background: white; border: 1px solid #e0e4eb; border-radius: 14px; padding: 1.2rem 1.4rem; box-shadow: 0 2px 12px rgba(26,35,126,0.08); }
+  section > h2 { font-size: 1rem; color: #1a237e; margin: 0 0 0.2rem; }
+  section > p.note { font-size: 0.84rem; color: #5b6378; margin: 0 0 1rem; line-height: 1.5; }
+  .fc-icone { font-size: 1.9rem; line-height: 1; }
+  .fc-titre { font-weight: 700; font-size: 1.15rem; }
+  .fc-famille { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.03em; }
+  .corps-simule { font-size: 0.85rem; color: #5b6378; line-height: 1.6; }
+  /* Variante 1 — bandeau plein aux couleurs de la famille + liseré */
+  .v1 { display: flex; align-items: center; gap: 0.8rem; padding: 0.9rem 1.1rem; border-radius: 10px; margin-bottom: 1rem; background: #e0f4f6; border-left: 4px solid #00838f; }
+  .v1 .fc-famille { color: #00838f; }
+  /* Variante 2 — en-tête blanc, la famille en chip teintée */
+  .v2 { display: flex; align-items: center; gap: 0.8rem; padding: 0.9rem 0; border-bottom: 2px solid #00838f; margin-bottom: 1rem; }
+  .v2 .chip-famille { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 999px; background: #e0f4f6; color: #00838f; margin-top: 0.25rem; }
+</style>
+</head>
+<body>
+<div class="bandeau-mockup"><strong>Mockup 28.B</strong> — une seule décision : comment la famille (Observabilité du delivery, teinte canonique) signe-t-elle l'en-tête de la fiche-cadre au tiroir ? Exemple sur DORA.</div>
+
+<section>
+  <h2>Variante 1 — Bandeau aux couleurs de la famille</h2>
+  <p class="note">Fond doux de la famille + liseré gauche dans sa teinte. La famille se lit comme un lieu : on est chez l'Observabilité. C'est la variante actuellement implémentée.</p>
+  <div class="v1">
+    <div class="fc-icone">🚀</div>
+    <div>
+      <div class="fc-titre">DORA / DevOps</div>
+      <div class="fc-famille">Observabilité du delivery</div>
+    </div>
+  </div>
+  <p class="corps-simule">D'où vient ce cadre — Né du programme de recherche State of DevOps (2014-2019) mené par Nicole Forsgren, Jez Humble et Gene Kim...</p>
+</section>
+
+<section>
+  <h2>Variante 2 — En-tête sobre, famille en chip</h2>
+  <p class="note">Fond blanc (doctrine « fond fiche » stricte), la famille portée par une chip teintée et un filet de soulignement. Plus proche de la grammaire de la fiche d'indicateur.</p>
+  <div class="v2">
+    <div class="fc-icone">🚀</div>
+    <div>
+      <div class="fc-titre">DORA / DevOps</div>
+      <span class="chip-famille">Observabilité du delivery</span>
+    </div>
+  </div>
+  <p class="corps-simule">D'où vient ce cadre — Né du programme de recherche State of DevOps (2014-2019) mené par Nicole Forsgren, Jez Humble et Gene Kim...</p>
+</section>
+</body>
+</html>
