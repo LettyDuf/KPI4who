@@ -3900,7 +3900,10 @@ CM.IndicateursMeta = (function() {
     /* Enrichissement 29.1a (IGO / II / ORC hors strategique) */
     'p12': { tags:['valeur','alignement'],       cadres:['generique'] },
     't8':  { tags:['valeur','alignement'],       cadres:['generique'] },
-    'x8':  { tags:['valeur'],                    cadres:['generique'] }
+    'x8':  { tags:['valeur'],                    cadres:['generique'] },
+    't9':  { tags:['valeur'],                    cadres:['generique'] },
+    'p13': { tags:['valeur','humain'],           cadres:['generique'] },
+    's17': { tags:['risque','valeur'],           cadres:['generique'] }
   };
 
   /* ── API publique ── */
@@ -7839,6 +7842,50 @@ CM.Referentiel.ajouter([
     risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Étoile de vanité : choisir une mesure qui monte toute seule (inscriptions cumulées, pages vues) sans dire la valeur reçue. Elle flatte, elle n\'oriente pas.">étoile de vanité</span>, <span class="term-def" data-def="Étoile imposée d\'en haut : une North Star choisie par la direction sans l\'équipe devient une cible de plus à satisfaire, pas une boussole. L\'équipe doit pouvoir se reconnaître dans la valeur qu\'elle mesure.">étoile imposée d\'en haut</span>, et le culte de la mesure unique : l\'étoile polaire oriente mais ne suffit pas, elle se lit avec des mesures de garde, qualité, rétention, sinon on la fait monter en dégradant le reste. Vigilance Goodhart explicite chez tous les auteurs du panel.',
     alt:'Si l\'organisation pilote déjà par la valeur selon Evidence-Based Management, l\'<a href="#fiche=ebm-1">usage réel par fonctionnalité</a> offre un capteur voisin, plus granulaire et moins totalisant.',
     roles:['chef-équipe','membre-équipe'], prioritaire:false, fiabilite:'fiable', maturite_min:'intermediaire'
+  }
+]);
+
+/* === Enrichissement 29.1a - lot B : trois indicateurs d'impact (II) ===
+   L'impact se constate apres coup et hors du perimetre de production :
+   c'est ce qui a change pour de vrai. Panels : Ward & Daniel, Adzic
+   (impact mapping), Seiden (Outcomes over Output) ; Green Software
+   Foundation / GreenOps pour s17. Rediges le 12/07/2026 au standard 2026-04. */
+CM.Referentiel.ajouter([
+  {
+    id:'t9', niveau:'tactique', type:'II', icone:'🌾',
+    nom:'Bénéfices constatés après clôture',
+    definition:'Bénéfices mesurés six à dix-huit mois <strong>après la clôture</strong> des programmes et projets, quand les équipes sont dissoutes et que plus personne n\'a intérêt à embellir le bilan. C\'est la mesure d\'<strong>impact</strong> la plus honnête du portefeuille : la plupart des effets réels, adoption installée, économies récurrentes, comportements changés, ne se matérialisent qu\'après la fin des travaux, précisément là où le suivi s\'arrête d\'habitude. La discipline suppose qu\'un propriétaire de bénéfice survive au projet : c\'est le cœur du <span class="term-def" data-def="Benefits management (Ward et Daniel, MSP) : le suivi des bénéfices ne s\'arrête pas à la clôture du projet ; un propriétaire nommé répond de chaque bénéfice jusqu\'à sa constatation, parfois des années après.">benefits management</span>.',
+    objectif:'Fermer la boucle d\'apprentissage du portefeuille : sans constatation après clôture, l\'organisation ne sait jamais si ses investissements produisent ce qu\'ils promettaient, et le processus d\'arbitrage récompense indéfiniment les promesses plutôt que les résultats. Quelques constatations honnêtes recalibrent durablement les dossiers de justification : les promesses deviennent plus sobres et plus crédibles.',
+    frequence:'Campagne annuelle sur les clôtures de 6 à 18 mois.',
+    exemple_ent:'La revue annuelle constate que sur huit projets clos l\'an passé, trois ont produit les bénéfices promis, deux en ont produit la moitié, trois aucun de mesurable. Décision : ce ne sont pas les équipes qu\'on interroge, ce sont les dossiers d\'arbitrage qui avaient promis, et les critères de sélection qui les avaient crus.',
+    exemple_eq:'Peu visible de l\'équipe au quotidien, mais structurant : savoir que les bénéfices seront constatés après coup change la manière dont un chef de projet chiffre son dossier, et protège les équipes des promesses intenables faites en leur nom.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Amnésie de clôture : dissoudre l\'équipe, archiver le dossier et ne plus jamais mesurer. Le portefeuille ne connaît que des réussites, puisque personne ne vérifie.">amnésie de clôture</span>, <span class="term-def" data-def="Attribution héroïque : attribuer au projet clos une amélioration due à d\'autres facteurs (marché, saisonnalité, autre initiative). La mesure d\'impact exige un point de comparaison honnête.">attribution héroïque</span> des améliorations ambiantes, et l\'usage punitif : si la constatation sert à blâmer rétroactivement les chefs de projet, les prochains dossiers seront invérifiables à dessein. Vigilance Adzic : l\'impact se cartographie avant de se mesurer, un projet lancé sans hypothèse d\'impact explicite ne pourra jamais être constaté.',
+    alt:'Si l\'enjeu est de suivre les bénéfices pendant la vie du programme, avec une équipe encore là pour agir, préférer les <a href="#fiche=p12">bénéfices réalisés du programme</a>.',
+    roles:['portefeuille','direction'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
+  },
+  {
+    id:'p13', niveau:'programme', type:'II', icone:'🌊',
+    nom:'Changement de comportement utilisateur durable',
+    definition:'Part des utilisateurs dont le comportement visé par le programme, nouvelle pratique, nouveau canal, nouvel usage, est toujours observé <strong>plusieurs mois après</strong> le déploiement, une fois l\'accompagnement retiré et l\'effet de nouveauté dissipé. C\'est un indicateur d\'<strong>impact</strong> au sens strict de Seiden : un <span class="term-def" data-def="Outcome (Seiden, Outcomes over Output) : un changement de comportement humain qui crée de la valeur. Ni le livrable (output), ni le résultat financier lointain (impact global) : le comportement observable entre les deux.">outcome</span> est un changement de comportement humain qui crée de la valeur, pas un livrable déployé. On mesure des actes observés dans la durée, jamais des intentions déclarées ni des pics de lancement.',
+    objectif:'Empêcher le programme de confondre déploiement et adoption. Le pic d\'usage des premières semaines ne dit rien : il mesure la curiosité et la pression de l\'accompagnement. La seule question qui compte est la tenue dans le temps, car c\'est elle qui matérialise les bénéfices promis. Un comportement qui retombe signale que le programme a livré un outil sans changer le système de travail qui l\'entoure.',
+    frequence:'Mensuelle, sur une fenêtre glissante de trois à six mois après chaque vague de déploiement.',
+    exemple_ent:'Six mois après le déploiement du nouveau portail fournisseurs, 82 % des commandes passaient encore par l\'ancien circuit courriel. Le programme avait célébré 95 % de comptes créés au lancement. Décision : le solde du budget bascule de la fonctionnalité vers la simplification du parcours et la suppression progressive de l\'ancien circuit.',
+    exemple_eq:'L\'équipe choisit un ou deux comportements cibles observables dans les données d\'usage, et les suit sur la durée plutôt que de célébrer les métriques de lancement. La question rituelle en revue : que font les utilisateurs quand personne ne les accompagne plus.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Métrique de lancement : mesurer l\'adoption au pic des premières semaines, gonflé par la curiosité et l\'accompagnement, puis cesser de mesurer. La retombée reste invisible.">métrique de lancement</span>, <span class="term-def" data-def="Adoption captive : rendre l\'ancien chemin impossible et compter le passage forcé comme une adoption. Le comportement est mécanique, la valeur et l\'adhésion restent inconnues ; le rejet se déplace ailleurs.">adoption captive</span>, et la confusion avec la simple connexion : ouvrir l\'outil n\'est pas adopter le comportement. Vigilance Seiden : formuler le comportement cible avant de déployer, sinon on mesurera ce que l\'outil sait compter plutôt que ce que le programme voulait changer.',
+    alt:'À l\'échelle d\'une seule équipe et d\'un changement de pratique interne, le <a href="#fiche=cg-2">taux d\'adoption des nouveaux comportements</a> couvre le même ressort avec l\'outillage de la gestion du changement.',
+    roles:['programme','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'intermediaire'
+  },
+  {
+    id:'s17', niveau:'strategique', type:'II', icone:'🌍',
+    nom:'Empreinte du numérique',
+    definition:'Mesure agrégée de l\'impact environnemental du système d\'information et des services numériques de l\'organisation : émissions de gaz à effet de serre des infrastructures et des terminaux, consommation énergétique des centres de données et du nuage, cycle de vie du matériel. Les référentiels du <span class="term-def" data-def="GreenOps / Green Software Foundation : mouvement et référentiels (dont le Software Carbon Intensity, SCI) qui outillent la mesure et la réduction de l\'empreinte environnementale du logiciel et des infrastructures.">numérique responsable</span> en font un indicateur calculable, imparfait mais comparable d\'une période à l\'autre à méthodologie constante. C\'est un indicateur d\'<strong>impact</strong> : il mesure un effet du numérique sur le monde, au-delà de toute performance interne.',
+    objectif:'Donner à la direction une vue de l\'externalité environnementale de sa stratégie numérique, au moment où la réglementation et les parties prenantes la réclament. L\'indicateur arbitre concrètement : prolonger la durée de vie des postes de travail, souvent le premier gisement, choisir les régions de nuage sobres en carbone, éteindre les environnements dormants, dimensionner au besoin réel plutôt qu\'au pic théorique.',
+    frequence:'Annuelle, alignée sur le reporting extra-financier ; suivi trimestriel des postes les plus dynamiques (nuage).',
+    exemple_ent:'Le bilan révèle que 60 % de l\'empreinte vient de la fabrication des terminaux, pas des centres de données que la direction soupçonnait. Décision : politique de prolongation de la durée de vie des postes de 3 à 5 ans et filière de reconditionnement, avant tout chantier d\'optimisation des serveurs.',
+    exemple_eq:'Une équipe plateforme suit la consommation de ses environnements et découvre que les environnements de test tournent la nuit et le week-end pour rien. L\'extinction automatique hors des heures ouvrées réduit la facture et l\'empreinte sans toucher au service.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Écoblanchiment (greenwashing) : communiquer une réduction d\'empreinte obtenue par changement de méthodologie, achat de compensations douteuses ou externalisation de l\'impact chez un fournisseur. Le chiffre baisse, l\'impact réel non.">écoblanchiment</span> méthodologique, <span class="term-def" data-def="Périmètre à géométrie variable : exclure du calcul les postes défavorables (fabrication des terminaux, sous-traitance, IA) pour afficher une trajectoire flatteuse. La comparabilité exige un périmètre stable et documenté.">périmètre à géométrie variable</span>, et la précision illusoire : les facteurs d\'émission sont des estimations, l\'ordre de grandeur et la tendance comptent plus que la décimale. La méthodologie et le périmètre se documentent comme une définition de mesure au sens de la <a href="#fiche=gm-5">stabilité des définitions de mesure</a>.',
+    alt:'Cet indicateur ne dit rien de la performance économique du numérique : il se lit en regard des indicateurs de valeur, jamais à leur place, sous peine de n\'être qu\'un vernis de conformité.',
+    roles:['direction','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
   }
 ]);
 
