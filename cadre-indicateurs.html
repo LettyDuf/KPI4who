@@ -3903,7 +3903,9 @@ CM.IndicateursMeta = (function() {
     'x8':  { tags:['valeur'],                    cadres:['generique'] },
     't9':  { tags:['valeur'],                    cadres:['generique'] },
     'p13': { tags:['valeur','humain'],           cadres:['generique'] },
-    's17': { tags:['risque','valeur'],           cadres:['generique'] }
+    's17': { tags:['risque','valeur'],           cadres:['generique'] },
+    'p14': { tags:['alignement'],                cadres:['okr'] },
+    's18': { tags:['alignement','risque'],       cadres:['okr'] }
   };
 
   /* ── API publique ── */
@@ -7885,6 +7887,38 @@ CM.Referentiel.ajouter([
     exemple_eq:'Une équipe plateforme suit la consommation de ses environnements et découvre que les environnements de test tournent la nuit et le week-end pour rien. L\'extinction automatique hors des heures ouvrées réduit la facture et l\'empreinte sans toucher au service.',
     risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Écoblanchiment (greenwashing) : communiquer une réduction d\'empreinte obtenue par changement de méthodologie, achat de compensations douteuses ou externalisation de l\'impact chez un fournisseur. Le chiffre baisse, l\'impact réel non.">écoblanchiment</span> méthodologique, <span class="term-def" data-def="Périmètre à géométrie variable : exclure du calcul les postes défavorables (fabrication des terminaux, sous-traitance, IA) pour afficher une trajectoire flatteuse. La comparabilité exige un périmètre stable et documenté.">périmètre à géométrie variable</span>, et la précision illusoire : les facteurs d\'émission sont des estimations, l\'ordre de grandeur et la tendance comptent plus que la décimale. La méthodologie et le périmètre se documentent comme une définition de mesure au sens de la <a href="#fiche=gm-5">stabilité des définitions de mesure</a>.',
     alt:'Cet indicateur ne dit rien de la performance économique du numérique : il se lit en regard des indicateurs de valeur, jamais à leur place, sous peine de n\'être qu\'un vernis de conformité.',
+    roles:['direction','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
+  }
+]);
+
+/* === Enrichissement 29.1a - lot C : deux ORC (OKR) ===
+   L'etage programme manquait a la chaine OKR (strategique s4, portefeuille t3,
+   equipe o9) et rien ne mesurait la sante du systeme OKR lui-meme. Panel :
+   Doerr (Measure What Matters), Grove (High Output Management), Wodtke
+   (Radical Focus). Rediges le 12/07/2026 au standard editorial 2026-04. */
+CM.Referentiel.ajouter([
+  {
+    id:'p14', niveau:'programme', type:'ORC', icone:'🔗',
+    nom:'OKR de programme relié à l\'OKR stratégique',
+    definition:'Objectif trimestriel du programme dont le lien à un objectif stratégique est <strong>explicite et vérifiable</strong> : chaque résultat clé du programme contribue de façon nommée à un résultat clé du niveau supérieur. La mécanique vient de Grove et Doerr : les <span class="term-def" data-def="OKR (Objectives and Key Results, Grove puis Doerr) : un objectif qualitatif inspirant et 3 à 5 résultats clés mesurables. La cascade se construit par dialogue entre niveaux, pas par découpage mécanique descendant.">OKR</span> se relient par conversation entre les niveaux, le programme propose sa contribution, la stratégie la confirme, et non par découpage imposé d\'en haut. La fiche mesure la discipline du lien, pas l\'ambition de l\'objectif.',
+    objectif:'Fermer l\'anti-pattern du programme qui s\'invente un OKR local déconnecté : un objectif motivant en interne mais que rien ne rattache à la stratégie, si bien que le programme peut réussir tous ses trimestres pendant que l\'organisation échoue. Le lien explicite donne aussi le droit inverse, précieux : quand la stratégie pivote, le programme voit immédiatement lesquels de ses résultats clés tombent.',
+    frequence:'Au cadencement OKR, trimestriel le plus souvent.',
+    exemple_ent:'La revue trimestrielle parcourt les OKR des cinq programmes : quatre tracent leur contribution à un résultat clé stratégique, le cinquième affiche un objectif d\'excellence technique auto-proclamé. La conversation n\'est pas de le supprimer mais de le relier : à quelle promesse stratégique cette excellence contribue-t-elle, et sinon, pourquoi ce programme existe-t-il.',
+    exemple_eq:'Les équipes du programme héritent d\'un cap lisible : chaque OKR d\'équipe peut citer le résultat clé de programme qu\'il sert, qui cite lui-même son parent stratégique. Trois questions en cascade suffisent à un développeur pour relier son travail du jour à la stratégie, c\'est le self-control de Drucker rendu praticable.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Cascade mécanique : découper l\'OKR stratégique en sous-OKR imposés, sans conversation. La lettre du lien est parfaite, l\'engagement est mort ; Grove et Doerr insistent : la moitié des OKR doit remonter du terrain.">cascade mécanique</span> descendante, <span class="term-def" data-def="Rattachement cosmétique : relier après coup l\'OKR local à n\'importe quel objectif stratégique par un habillage de vocabulaire. Le lien existe sur le papier, aucune décision ne s\'y réfère.">rattachement cosmétique</span>, et la confusion OKR-évaluation : dès que l\'atteinte conditionne la prime, les objectifs se sabotent à la baisse. Vigilance Doerr : les OKR ne sont pas un outil d\'évaluation individuelle, c\'est la condition de leur sincérité.',
+    alt:'Pour l\'ancrage des objectifs d\'équipe dans la mission, hors mécanique OKR, la <a href="#fiche=mbo-1">part des objectifs de l\'équipe rattachés à la mission</a> porte la même exigence dans la grammaire du management par objectifs.',
+    roles:['programme','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
+  },
+  {
+    id:'s18', niveau:'strategique', type:'ORC', icone:'🌡️',
+    nom:'Santé du système OKR (taux d\'atteinte cible)',
+    definition:'Distribution des scores d\'atteinte des résultats clés de l\'organisation en fin de cycle, lue comme un diagnostic du <strong>système OKR lui-même</strong>. La zone saine selon Doerr se situe autour de 60 à 70 % d\'atteinte moyenne : c\'est le signe que les objectifs sont ambitieux et pris au sérieux. Un taux proche de 100 % ne dit pas que tout va bien, il dit que l\'organisation ne s\'étire plus : les objectifs sont négociés pour être atteints. Un taux effondré dit l\'inverse : des ambitions déconnectées de la capacité réelle. C\'est un méta-indicateur : il ne mesure pas la performance, il mesure la sincérité du dispositif d\'objectifs.',
+    objectif:'Protéger ce qui fait la valeur des OKR : l\'ambition sincère. Sans ce thermomètre, le système dérive naturellement vers le confort, chacun apprend à promettre ce qu\'il sait déjà faire, et les OKR deviennent un rituel de reporting. La lecture se fait en distribution, jamais en moyenne seule : une moyenne à 65 % peut cacher une moitié d\'équipes à 100 % et une moitié en échec, deux pathologies opposées qui appellent des réponses différentes.',
+    frequence:'À chaque fin de cycle OKR, en revue de direction.',
+    exemple_ent:'Trois cycles de suite, l\'organisation atteint 95 % de ses résultats clés et s\'en félicite. La direction, outillée de ce thermomètre, lit le signal inverse : plus personne ne vise haut. Elle réintroduit la distinction entre objectifs engagés (attendus à 100 %) et objectifs ambitieux (sains à 60-70 %), et demande à chaque niveau au moins un objectif du second type.',
+    exemple_eq:'L\'équipe scorant ses résultats clés en fin de cycle sait que 70 % sur un objectif ambitieux est un bon score, pas un échec à justifier. Cela change la qualité de la rétrospective : on discute de ce qu\'on a appris en visant haut, pas de comment habiller le chiffre.',
+    risque:'Anti-patterns à surveiller : <span class="term-def" data-def="Sandbagging : négocier des objectifs volontairement modestes pour garantir leur atteinte. Le taux monte, l\'ambition meurt ; c\'est la dérive que ce thermomètre existe pour détecter.">sandbagging</span> généralisé, <span class="term-def" data-def="Cible de taux : transformer la zone saine (60-70 %) en objectif à atteindre. Les scores se calibrent pour tomber dans la zone, le thermomètre est gamé à son tour ; il se lit, il ne se pilote pas.">cible de taux</span>, et le mélange des régimes : agréger objectifs engagés et objectifs ambitieux dans le même taux rend la lecture indéchiffrable. Vigilance Goodhart au carré : ce méta-indicateur est lui-même une mesure, la <a href="#fiche=gm-7">vigilance sur les dérives</a> s\'applique à lui aussi.',
+    alt:'Si la question est la qualité du lien entre les étages d\'OKR plutôt que la santé du scoring, préférer l\'<a href="#fiche=p14">OKR de programme relié à l\'OKR stratégique</a>.',
     roles:['direction','portefeuille'], prioritaire:false, fiabilite:'precaution', maturite_min:'avance'
   }
 ]);
