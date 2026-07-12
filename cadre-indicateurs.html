@@ -1393,6 +1393,25 @@
        Couleurs dérivées de CM.Config.TYPES_COULEURS (version claircie
        pour le fond, couleur d'origine pour le texte). Le libellé long
        est exposé en tooltip. */
+    /* ── Fiche-cadre (chantier 28, jalon B) — rendu au tiroir ── */
+    .fiche-cadre { color: var(--texte-primaire); }
+    .fiche-cadre .fc-entete {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 0.9rem 1.1rem; border-radius: 10px; margin-bottom: 1.1rem;
+    }
+    .fiche-cadre .fc-icone { font-size: 1.9rem; line-height: 1; }
+    .fiche-cadre .fc-titre { font-weight: 700; font-size: 1.15rem; }
+    .fiche-cadre .fc-famille { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.03em; }
+    .fiche-cadre .fc-section { margin-bottom: 1.05rem; }
+    .fiche-cadre .fc-section h3 {
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--texte-secondaire); margin: 0 0 0.4rem;
+    }
+    .fiche-cadre .fc-section p { margin: 0 0 0.6rem; line-height: 1.6; }
+    .fiche-cadre .fc-cards { display: flex; flex-direction: column; gap: 0.6rem; }
+    .fiche-cadre .fc-tous { margin-top: 0.4rem; }
+    .fiche-cadre .fc-tous a { font-weight: 600; color: var(--niv-1); }
+
     .panier-chip-type {
       font-size: 0.66rem; font-weight: 700;
       padding: 0.16rem 0.45rem; border-radius: 4px;
@@ -3089,9 +3108,30 @@ CM.Hash = (function() {
     }
   }
 
+  /* ── Route #cadre= (chantier 28, jalon B) ──
+     Même regex stricte, même doctrine replaceState. Un seul fragment à la
+     fois : une fiche-cadre et une fiche d'indicateur ne coexistent pas
+     dans l'URL, le tiroir n'affiche qu'un contenu. */
+  var PREFIX_CADRE = '#cadre=';
+
+  function lireCadreId() {
+    if (location.hash.indexOf(PREFIX_CADRE) !== 0) return null;
+    var id = location.hash.slice(PREFIX_CADRE.length);
+    return ID_VALIDE.test(id) ? id : null;
+  }
+
+  function ecrireCadreId(id) {
+    if (!id || !ID_VALIDE.test(id)) return;
+    try {
+      history.replaceState(null, '', PREFIX_CADRE + id);
+    } catch (e) { /* contexte file:// ancien : pas bloquant */ }
+  }
+
   return {
     lireFicheId:   lireFicheId,
     ecrireFicheId: ecrireFicheId,
+    lireCadreId:   lireCadreId,
+    ecrireCadreId: ecrireCadreId,
     effacer:       effacer
   };
 })();
@@ -8618,10 +8658,173 @@ CM.Composants = (function() {
     return location.hash.indexOf('#fiche-q=') === 0;
   }
 
-  return { htmlCarte: htmlCarte, rendreFicheHtml: rendreFicheHtml, ouvrirTiroir: ouvrirTiroir, fermerTiroir: fermerTiroir };
+  /* Ouvre le tiroir sur une fiche-cadre (chantier 28, jalon B).
+     Adapter symétrique d'ouvrirTiroir : contenu fourni par CM.FicheCadre
+     (module défini plus bas dans le document — appel au clic, jamais au
+     chargement, l'ordre de déclaration ne contraint donc pas). */
+  function ouvrirTiroirCadre(id) {
+    if (!CM.FicheCadre || !CM.FicheCadre.existe(id)) return;
+    document.getElementById('t-fiche').innerHTML = CM.FicheCadre.htmlFicheCadre(id);
+    document.getElementById('fond-tiroir').classList.add('ouvert');
+    document.getElementById('tiroir').classList.add('ouvert');
+    document.getElementById('tiroir').setAttribute('aria-hidden', 'false');
+    document.getElementById('tiroir').scrollTop = 0;
+    if (!_hashPorteFicheQuestion()) {
+      CM.Hash.ecrireCadreId(id);
+    }
+    setTimeout(function() { var b = document.querySelector('.btn-fermer'); if (b) b.focus(); }, 300);
+  }
+
+  return { htmlCarte: htmlCarte, rendreFicheHtml: rendreFicheHtml, ouvrirTiroir: ouvrirTiroir, ouvrirTiroirCadre: ouvrirTiroirCadre, fermerTiroir: fermerTiroir };
 })();
 </script>
 
+
+<!-- ══ MODULE : CM.FicheCadre — Vue pédagogique par cadre méthodologique ══
+     Chantier 28, jalon B. Contrats : doc-contrats-fiche-cadre.md (fait foi).
+     Patron CM.FicheQuestion : catalogue gelé, composeur pur, adapter HTML.
+     Séparation matière / source canonique (D3 transposée) : label, icône,
+     famille et description restent dans CADRES{} (lus via CM.IndicateursMeta) ;
+     les indicateurs non-signature sont dérivés de META à l'exécution.
+     La zone de données est générée depuis fiche-cadre-source.md par
+     outils/generer-fiches-cadres.js (script strict, module tolérant). -->
+<script>
+window.CM = window.CM || {};
+CM.FicheCadre = (function() {
+  'use strict';
+
+/* CM.FICHE-CADRE-DATA:BEGIN — généré par outils/generer-fiches-cadres.js, ne pas éditer à la main */
+var CATALOGUE_CADRES = Object.freeze({
+  'dora': Object.freeze({
+    statut: 'cadre',
+    origine: 'Né du programme de recherche <span class="traduction">State of DevOps</span> (2014-2019) mené par Nicole Forsgren, Jez Humble et Gene Kim, et synthétisé dans <span class="traduction">Accelerate</span> (2018). C\'est un cas rare dans le monde des cadres : quatre mesures issues d\'une recherche quantitative sur des dizaines de milliers d\'organisations, pas d\'une méthode à vendre. DORA signifie <span class="traduction">DevOps Research and Assessment</span>, l\'équipe de recherche devenue depuis un programme de Google Cloud.',
+    philosophie: 'Le cadre tient dans une découverte contre-intuitive : la vitesse de livraison et la stabilité du service ne s\'opposent pas. Les organisations les plus rapides sont aussi les plus stables, parce que livrer souvent oblige à livrer petit, et que livrer petit rend chaque changement moins risqué et plus facile à réparer.\n\nQuatre mesures suffisent alors à caractériser un système de livraison : deux de <strong>débit</strong> (à quelle fréquence on livre, en combien de temps un changement arrive en production) et deux de <strong>stabilité</strong> (quelle part des changements échoue, en combien de temps on rétablit le service). Le reste, pratiques techniques, culture, architecture, se lit comme des causes de ces quatre effets.',
+    panel: 'Nicole Forsgren, Jez Humble, Gene Kim (Accelerate, rapports State of DevOps) ; Ron Westrum pour le volet culture organisationnelle repris par la recherche.',
+    signatures: ['o1', 'o2', 'o3', 'o4'],
+    lecture: 'Les quatre mesures se lisent ensemble, jamais isolément : c\'est leur équilibre qui dit la santé du système. Une fréquence de déploiement qui monte pendant que le taux d\'échec explose raconte une équipe qui force la cadence sans filet ; un temps de rétablissement excellent avec une fréquence famélique raconte un système qu\'on ne touche plus par peur. La <a href="#fiche=x7">culture générative</a> mesurée par Westrum complète le tableau : la recherche la donne comme prédicteur des quatre autres.',
+    antiPatterns: '<span class="term-def" data-def="Comparaison inter-équipes : classer les équipes sur leurs métriques DORA alors que leurs contextes (legacy, criticité, dépendances) ne sont pas comparables. La recherche compare une équipe à elle-même dans le temps, jamais deux équipes entre elles.">comparaison inter-équipes</span>, <span class="term-def" data-def="Théâtre DORA : afficher les quatre métriques dans un tableau de bord sans changer aucune pratique de livraison. Les chiffres existent, le système qui les produit reste intact.">théâtre DORA</span>, et la poursuite du débit seul : optimiser fréquence et délai en fermant les yeux sur l\'échec de changement et le rétablissement, c\'est précisément la lecture partielle que le cadre existe pour empêcher.',
+    quandChoisir: 'Excellent partout où une équipe livre du logiciel en continu et veut objectiver sa progression : c\'est le point d\'entrée le plus solide et le plus économe. Déçoit hors du delivery : il ne dit rien de la valeur de ce qu\'on livre (un train très fiable peut aller au mauvais endroit), rien du produit, rien des humains au-delà de la culture. Se complète nécessairement d\'indicateurs de valeur et d\'usage.',
+    allerPlusLoin: 'Accelerate (Forsgren, Humble, Kim, 2018) ; les rapports annuels State of DevOps ; The DevOps Handbook (Kim, Humble, Debois, Willis).'
+  })
+});
+/* CM.FICHE-CADRE-DATA:END */
+
+  function listerIds() { return Object.keys(CATALOGUE_CADRES); }
+
+  function existe(id) { return CATALOGUE_CADRES.hasOwnProperty(id); }
+
+  function obtenir(id) {
+    if (!existe(id)) { throw new Error('CM.FicheCadre.obtenir : id inconnu "' + id + '"'); }
+    return CATALOGUE_CADRES[id];
+  }
+
+  /* Composeur pur — testable sans DOM. Résout l'identité depuis la source
+     canonique (CADRES{} via CM.IndicateursMeta) et les signatures depuis
+     le référentiel ; compte les indicateurs non-signature du cadre.
+     Un traducteur formule, il ne post-filtre pas : aucune sélection de
+     pertinence ici, la donnée éditoriale décide. */
+  function composer(id) {
+    var e = obtenir(id);
+    var identite = null;
+    var famille = null;
+    if (e.statut === 'cadre' && CM.IndicateursMeta) {
+      identite = CM.IndicateursMeta.infoCadre(id);
+      if (identite && identite.famille) {
+        famille = CM.IndicateursMeta.infoFamille(identite.famille);
+      }
+    }
+    var signatures = [];
+    for (var i = 0; i < e.signatures.length; i++) {
+      var f = CM.Referentiel.chercher(e.signatures[i]);
+      if (f) signatures.push(f); /* tolérant : id orphelin ignoré, le générateur strict l'aurait refusé en amont */
+    }
+    var autres = 0;
+    if (e.statut === 'cadre' && CM.Referentiel && CM.IndicateursMeta) {
+      var tous = CM.Referentiel.tous();
+      for (var j = 0; j < tous.length; j++) {
+        if (CM.IndicateursMeta.cadresDe(tous[j].id).indexOf(id) !== -1 &&
+            e.signatures.indexOf(tous[j].id) === -1) {
+          autres++;
+        }
+      }
+    }
+    return {
+      id: id, statut: e.statut,
+      identite: identite, famille: famille,
+      origine: e.origine, philosophie: e.philosophie, panel: e.panel,
+      signatures: signatures,
+      autresIndicateurs: { n: autres, cadreId: (e.statut === 'cadre' ? id : null) },
+      lecture: e.lecture, antiPatterns: e.antiPatterns,
+      quandChoisir: e.quandChoisir, allerPlusLoin: e.allerPlusLoin
+    };
+  }
+
+  /* Adapter HTML pur — le consommateur insère via innerHTML.
+     Les cards de signatures réemploient CM.Composants.htmlCarte (pas de
+     rendu parallèle). Le lien « voir ses N indicateurs » porte un
+     data-attribut consommé par la délégation posée au boot (adapter),
+     le module n'appelle pas CM.AccueilUnifie. */
+  function _sectionSi(titre, contenu) {
+    if (!contenu) return '';
+    /* La source markdown sépare les paragraphes par une ligne vide ;
+       le générateur préserve les \n\n, la vue les traduit en <p>. */
+    var paragraphes = contenu.split('\n\n').map(function(x) {
+      return '<p>' + x.replace(/\n/g, ' ') + '</p>';
+    }).join('');
+    return '<div class="fc-section"><h3>' + titre + '</h3><div>' + paragraphes + '</div></div>';
+  }
+
+  function htmlFicheCadre(id) {
+    var c = composer(id);
+    var teinte = c.famille ? c.famille.teinte : '#455a64';
+    var fond   = c.famille ? c.famille.fond : '#eceff1';
+    var titre  = c.identite ? c.identite.label : id;
+    var icone  = c.identite ? c.identite.icone : '📜';
+    var html = [];
+    html.push('<div class="fiche-cadre">');
+    /* En-tête signé par la famille (doc-cadre-visuel : la teinte de famille
+       signe l'en-tête ; variante à valider par mockup, jalon B). */
+    html.push('<div class="fc-entete" style="background:', fond, ';border-left:4px solid ', teinte, '">');
+    html.push('<div class="fc-icone">', icone, '</div>');
+    html.push('<div><div class="fc-titre">', titre, '</div>');
+    if (c.famille) {
+      html.push('<div class="fc-famille" style="color:', teinte, '">', c.famille.label, '</div>');
+    } else {
+      html.push('<div class="fc-famille">Fiche patrimoniale</div>');
+    }
+    html.push('</div></div>');
+    html.push(_sectionSi('D\u2019o\u00f9 vient ce cadre', c.origine));
+    html.push(_sectionSi('Ce qu\u2019il croit du monde', c.philosophie));
+    html.push(_sectionSi('Les voix qui font autorit\u00e9', c.panel));
+    if (c.signatures.length) {
+      html.push('<div class="fc-section"><h3>Ses indicateurs signature</h3><div class="fc-cards">');
+      for (var i = 0; i < c.signatures.length; i++) {
+        html.push(CM.Composants.htmlCarte(c.signatures[i], null, true, false));
+      }
+      html.push('</div></div>');
+    }
+    html.push(_sectionSi('Comment les lire ensemble', c.lecture));
+    html.push(_sectionSi('Ses d\u00e9rives \u00e0 conna\u00eetre', c.antiPatterns));
+    html.push(_sectionSi('Quand le choisir, quand s\u2019en m\u00e9fier', c.quandChoisir));
+    html.push(_sectionSi('Aller plus loin', c.allerPlusLoin));
+    if (c.autresIndicateurs.n > 0) {
+      html.push('<p class="fc-tous"><a href="#" data-fiche-cadre-accueil="', c.autresIndicateurs.cadreId,
+                '">Voir les ', String(c.signatures.length + c.autresIndicateurs.n),
+                ' indicateurs de ce cadre dans le catalogue \u2192</a></p>');
+    }
+    html.push('</div>');
+    return html.join('');
+  }
+
+  return {
+    listerIds: listerIds,
+    existe: existe,
+    obtenir: obtenir,
+    composer: composer,
+    htmlFicheCadre: htmlFicheCadre
+  };
+})();
+</script>
 
 <!-- ══ MODULE : CM.VuePorteMaturite — Emplacement réservé (chantier 14, étape c.4) ══
      La porte « Par ma maturité » est aujourd'hui un stub d'accueil
@@ -11801,6 +12004,27 @@ CM.App = (function() {
     window.addEventListener('hashchange', function() {
       var id = CM.Hash.lireFicheId();
       if (id) CM.Composants.ouvrirTiroir(id);
+      var cadreId = CM.Hash.lireCadreId();
+      if (cadreId) CM.Composants.ouvrirTiroirCadre(cadreId);
+    });
+
+    /* Délégation : lien « voir les N indicateurs » d'une fiche-cadre
+       (chantier 28, jalon B). Adapter de navigation : ferme le tiroir puis
+       active la chip Cadre de l'accueil — même mécanique que le lien
+       cadreRef des fiches-questions. Le module CM.FicheCadre n'appelle
+       jamais CM.AccueilUnifie lui-même (inversion de dépendance). */
+    document.addEventListener('click', function(ev) {
+      var lien = ev.target.closest ? ev.target.closest('[data-fiche-cadre-accueil]') : null;
+      if (!lien) return;
+      ev.preventDefault();
+      var cadreId = lien.getAttribute('data-fiche-cadre-accueil');
+      CM.Composants.fermerTiroir();
+      if (CM.AccueilUnifie && CM.AccueilUnifie.selectionnerChip) {
+        CM.AccueilUnifie.reinitialiserChips();
+        CM.AccueilUnifie.selectionnerChip('cadre', cadreId);
+        CM.AccueilUnifie.ouvrirCartouche('compteur');
+      }
+      window.scrollTo(0, 0);
     });
 
     /* Deep linking au démarrage : si l'URL pointe déjà sur une fiche
@@ -11810,6 +12034,10 @@ CM.App = (function() {
     var idInitial = CM.Hash.lireFicheId();
     if (idInitial) {
       CM.Composants.ouvrirTiroir(idInitial);
+    }
+    var cadreInitial = CM.Hash.lireCadreId();
+    if (cadreInitial) {
+      CM.Composants.ouvrirTiroirCadre(cadreInitial);
     }
 
     /* Chantier 9.B.1 — Abonnement au service panier.
