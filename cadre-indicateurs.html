@@ -4449,8 +4449,11 @@ CM.AccueilUnifie = (function() {
   var abonnesCartouche = [];
 
   function _etatParDefaut() {
+    /* Cartouches ouvertes a l'arrivee (decision Laetitia 12/07/2026) :
+       le visiteur voit d'emblee les deux chemins pour choisir ses
+       indicateurs. L'etat persiste ensuite ses replis via Preferences. */
     return {
-      cartouches: { question: 'ferme', compteur: 'ferme' },
+      cartouches: { question: 'ouvert', compteur: 'ouvert' },
       chips:      { probleme: [], cadre: [], niveau: null, maturite: null }
     };
   }
