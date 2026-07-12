@@ -3514,9 +3514,13 @@ CM.AccueilUnifie = (function() {
     if (CM.AccueilUnifie && CM.AccueilUnifie.reinitialiserChips) {
       CM.AccueilUnifie.reinitialiserChips();
     }
-    if (CM.AccueilUnifie && CM.AccueilUnifie.fermerCartouche) {
-      CM.AccueilUnifie.fermerCartouche('question');
-      CM.AccueilUnifie.fermerCartouche('compteur');
+    /* Etat par defaut post-42c7636 : cartouches OUVERTES a l'arrivee
+       (decision Laetitia 12/07/2026). Le reset restaure ce defaut ;
+       l'ancien fermerCartouche datait de l'ere cartouches fermees et
+       contredisait les tests 2 et 19 recales le meme jour. */
+    if (CM.AccueilUnifie && CM.AccueilUnifie.ouvrirCartouche) {
+      CM.AccueilUnifie.ouvrirCartouche('question');
+      CM.AccueilUnifie.ouvrirCartouche('compteur');
     }
   }
 
