@@ -24,7 +24,7 @@
  *
  * Chemin de validation complet :
  *   1. node outils/lancer-tests-accueil-unifie.js   (régénère + parse)
- *   2. Ouvrir tests-accueil-unifie.html dans Safari → 21/21 verts attendus
+ *   2. Ouvrir tests-accueil-unifie.html dans Safari → 23/23 verts attendus
  *   3. Ouvrir tests-accueil-unifie-sentinelles.html dans Safari → 9/9 verts
  *
  * Usage :
@@ -136,7 +136,7 @@ process.stdout.write('\n');
 process.stdout.write('═══════════════════════════════════════════════════════════\n');
 process.stdout.write('Régénération + parse-check OK sur les deux harnais.\n');
 process.stdout.write('Validation comportementale à faire dans Safari (zéro-dépendance) :\n');
-process.stdout.write('  • tests-accueil-unifie.html             → 21/21 verts attendus\n');
+process.stdout.write('  • tests-accueil-unifie.html             → 23/23 verts attendus\n');
 process.stdout.write('  • tests-accueil-unifie-sentinelles.html →  9/9 verts attendus\n');
 process.stdout.write('═══════════════════════════════════════════════════════════\n');
 process.exit(0);

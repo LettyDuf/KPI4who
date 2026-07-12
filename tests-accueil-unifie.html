@@ -355,7 +355,7 @@ CM.AccueilUnifie = (function() {
        indicateurs. L'etat persiste ensuite ses replis via Preferences. */
     return {
       cartouches: { question: 'ouvert', compteur: 'ouvert' },
-      chips:      { probleme: [], cadre: [], niveau: null, maturite: null }
+      chips:      { probleme: [], cadre: [], niveau: null, maturite: null, type: [] }
     };
   }
 
@@ -387,7 +387,8 @@ CM.AccueilUnifie = (function() {
       probleme: etat.chips.probleme.slice(),
       cadre:    etat.chips.cadre.slice(),
       niveau:   etat.chips.niveau,
-      maturite: etat.chips.maturite
+      maturite: etat.chips.maturite,
+      type:     etat.chips.type.slice()
     };
   }
 
@@ -425,7 +426,12 @@ CM.AccueilUnifie = (function() {
             niveau: (typeof charge.chips.niveau === 'string' && _estValeurConnue('niveau', charge.chips.niveau))
               ? charge.chips.niveau : null,
             maturite: (typeof charge.chips.maturite === 'string' && _estValeurConnue('maturite', charge.chips.maturite))
-              ? charge.chips.maturite : null
+              ? charge.chips.maturite : null,
+            /* Retrocompatibilite 29.1b : une persistance ecrite avant la
+               chip Type n'a pas de cle type — on repart d'un tableau vide. */
+            type: Array.isArray(charge.chips.type)
+              ? charge.chips.type.filter(function(v) { return _estValeurConnue('type', v); })
+              : []
           }
         };
       }
@@ -491,7 +497,8 @@ CM.AccueilUnifie = (function() {
     probleme: { titre: 'Problème', mode: 'multi-sélection' },
     cadre:    { titre: 'Cadre',         mode: 'multi-sélection' },
     niveau:   { titre: 'Niveau',        mode: 'mono-sélection' },
-    maturite: { titre: 'Maturité', mode: 'mono-sélection' }
+    maturite: { titre: 'Maturité', mode: 'mono-sélection' },
+    type:     { titre: "Type d'indicateur", mode: 'multi-sélection' }
   };
 
   function _echappe(s) {
@@ -556,6 +563,39 @@ CM.AccueilUnifie = (function() {
         };
       });
     }
+    if (axe === 'type') {
+      /* Option A retenue par Laetitia 12/07/2026 (mockup-taxonomie-types.html,
+         chantier 29.1 volet b) : toute la pedagogie tient dans le selecteur.
+         Ordre editorial : la chaine IGO -> ICP -> ICC, l'impact en contrepoint,
+         puis les signatures de cadres (ORC, DORA, FLUX). Double acronyme
+         francais / anglais car les deux jeux de sigles circulent selon les
+         organisations. Pastille coloree (TYPES_COULEURS) au lieu d'emoji. */
+      var TYPES_ORDRE = ['IGO', 'ICP', 'ICC', 'II', 'ORC', 'DORA', 'FLUX'];
+      var TYPES_SELECTEUR = {
+        IGO:  { label: 'Objectif global · IGO / KGI',
+                sous:  'Le cap est-il atteint\u00a0? Le résultat final.' },
+        ICP:  { label: 'Performance · ICP / KPI',
+                sous:  'Sommes-nous en route\u00a0? Le résultat d\'un processus.' },
+        ICC:  { label: 'Comportement · ICC / KBI',
+                sous:  'Faisons-nous les bons gestes\u00a0? Ce qui précède le résultat.' },
+        II:   { label: 'Impact · II / KII',
+                sous:  'Qu\'est-ce que ça change vraiment, au-delà du livrable\u00a0?' },
+        ORC:  { label: 'Objectifs & Résultats Clés · ORC / OKR',
+                sous:  'L\'ambition et ses résultats clés.' },
+        DORA: { label: 'Performance DevOps · DORA',
+                sous:  'Les quatre mesures signature du delivery.' },
+        FLUX: { label: 'Flux & Throughput · FLUX',
+                sous:  'Ce qui traverse le système, et à quelle vitesse.' }
+      };
+      return TYPES_ORDRE.map(function(t) {
+        return {
+          id:       t,
+          label:    TYPES_SELECTEUR[t].label,
+          sous:     TYPES_SELECTEUR[t].sous,
+          pastille: t
+        };
+      });
+    }
     if (axe === 'maturite') {
       /* Emojis de CM.Config.MATURITE (🌱 pousse, 🌿 feuille, 🌳 arbre).
          On garde nos libellés courts (Débutant / Intermédiaire / Avancé)
@@ -601,6 +641,13 @@ CM.AccueilUnifie = (function() {
       var iconeHTML = v.icone
         ? '<span class="icone" aria-hidden="true">' + v.icone + '</span> '
         : '';
+      if (v.pastille) {
+        /* Pastille de type coloree (29.1b) — couleurs de CM.Config.TYPES_COULEURS,
+           memes teintes que le chip de titre des cards et le panier. */
+        var cType = (CM.Config && CM.Config.TYPES_COULEURS && CM.Config.TYPES_COULEURS[v.pastille]) || '#546e7a';
+        iconeHTML = '<span class="pastille-type" aria-hidden="true" style="background:' + cType + '18;color:' + cType + '">'
+                  + _echappe(v.pastille) + '</span> ';
+      }
       if (v.sous) {
         /* Variante α — corps en colonne avec titre + sous-titre.
            Le sous-titre vient des sources de vérité internes (CM.Config,
@@ -692,7 +739,7 @@ CM.AccueilUnifie = (function() {
   }
 
   function _rafraichirToutesChips(racine) {
-    var axes = ['probleme', 'cadre', 'niveau', 'maturite'];
+    var axes = ['probleme', 'cadre', 'niveau', 'maturite', 'type'];
     for (var i = 0; i < axes.length; i++) {
       _rafraichirChip(racine, axes[i]);
     }
@@ -727,6 +774,9 @@ CM.AccueilUnifie = (function() {
     if (etat.chips.cadre.length > 0) {
       filtre.cadres = etat.chips.cadre.slice();
     }
+    if (etat.chips.type.length > 0) {
+      filtre.type = etat.chips.type.slice();
+    }
     return filtre;
   }
 
@@ -739,6 +789,7 @@ CM.AccueilUnifie = (function() {
     if (etat.chips.cadre.length > 0)    actifs.push('Cadre');
     if (etat.chips.niveau)              actifs.push('Niveau');
     if (etat.chips.maturite)            actifs.push('Maturité');
+    if (etat.chips.type.length > 0)     actifs.push('Type');
 
     if (actifs.length === 0) {
       return "Aucune lentille active — l'index complet attend.";
@@ -1154,7 +1205,8 @@ CM.AccueilUnifie = (function() {
     return etat.chips.probleme.length === 0 &&
            etat.chips.cadre.length === 0 &&
            etat.chips.niveau === null &&
-           etat.chips.maturite === null;
+           etat.chips.maturite === null &&
+           etat.chips.type.length === 0;
   }
 
   function reinitialiserChips() {
@@ -1544,6 +1596,9 @@ CM.AccueilUnifie = (function() {
 
     test('21. surChangementCartouche : abonné reçoit {id, etat} après ouverture', function() {
       reset();
+      /* Depuis 42c7636 le defaut est ouvert : on ferme d'abord (hors
+         abonnement) pour que l'ouverture observee soit un vrai changement. */
+      CM.AccueilUnifie.fermerCartouche('question');
       var recus = [];
       CM.AccueilUnifie.surChangementCartouche(function(payload) {
         recus.push(payload);
@@ -1552,6 +1607,38 @@ CM.AccueilUnifie = (function() {
       assert(recus.length === 1, 'exactement une notification');
       assertEqual(recus[0].id, 'question', 'payload.id');
       assertEqual(recus[0].etat, 'ouvert', 'payload.etat');
+    });
+
+    /* ─── A.6 chip Type (29.1b, option A — 12/07/2026) ─── */
+
+    test('22. Chip Type : multi-sélection, filtre type transmis, libellé d\'axes en dernier', function() {
+      reset();
+      CM.AccueilUnifie.selectionnerChip('type', 'ICP');
+      CM.AccueilUnifie.selectionnerChip('type', 'ICC');
+      var chips = CM.AccueilUnifie.etatChips();
+      assertDeepEqual(chips.type, ['ICP', 'ICC'], 'multi-sélection : ajout dans l\'ordre');
+      var recu = null;
+      CM.AccueilUnifie.surChangementFiltre(function(payload) { recu = payload; });
+      CM.AccueilUnifie.selectionnerChip('niveau', 'programme');
+      assertDeepEqual(recu.chips.type, ['ICP', 'ICC'], 'payload.chips.type présent');
+      CM.AccueilUnifie.appliquerFiltre();
+      var libelle = lire('.cartouche-libelle .axes-actifs');
+      assertEqual(libelle, 'Lentilles actives — Niveau et Type.',
+                  'Type ferme la liste (ordre éditorial = ordre visuel des chips)');
+      CM.AccueilUnifie.deselectionnerChip('type', 'ICP');
+      assertDeepEqual(CM.AccueilUnifie.etatChips().type, ['ICC'], 'désélection unitaire');
+    });
+
+    test('23. Persistance antérieure sans clé type : restaurée avec type vide (rétrocompatibilité 29.1b)', function() {
+      reset();
+      _prefsStore['accueil-unifie-etat'] = JSON.stringify({
+        cartouches: { question: 'ouvert', compteur: 'ouvert' },
+        chips:      { probleme: [], cadre: ['lean'], niveau: null, maturite: null }
+      });
+      CM.AccueilUnifie.init();
+      var chips = CM.AccueilUnifie.etatChips();
+      assertDeepEqual(chips.cadre, ['lean'], 'les axes connus survivent');
+      assertDeepEqual(chips.type, [], 'axe type absent de la persistance = tableau vide, pas d\'erreur');
     });
 
     /* ─── Affichage des résultats ─── */
