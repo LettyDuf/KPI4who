@@ -20,7 +20,7 @@ que le fichier n'est pas complet : la cohérence est vérifiée en fin de jalon 
 lecture. Le générateur s'appuie sur le champ `categorie` de chaque entrée, pas
 sur eux.
 
-État de remplissage : rayon anti-patterns complet (jalon B.1) : 49 entrées. Rayons cadres, indicateurs, concepts et auteurs à venir (jalons B.2 à B.5).
+État de remplissage : rayon anti-patterns complet (jalon B.1) : 49 entrées ; rayon cadres et méthodes complet (jalon B.2) : 19 entrées. Rayons indicateurs, concepts et auteurs à venir (jalons B.3 à B.5).
 
 
 # Anti-patterns et pièges de mesure
@@ -1033,4 +1033,252 @@ Un board découvre que trois clients pèsent la moitié de son chiffre d'affaire
 **renvois** : iso-31000
 
 **antiPatternLie** : diversification-cosmetique
+
+## nist-csf
+
+**terme** : NIST CSF
+
+**categorie** : cadre
+
+**definition** :
+
+Cadre de cybersécurité publié par le NIST américain, qui structure la sécurité d'une organisation en cinq fonctions à tenir ensemble : identifier ses actifs et ses risques, protéger ce qui compte, détecter les incidents, répondre quand ils surviennent, récupérer ensuite.
+
+Son intérêt n'est pas d'imposer des outils mais de donner un langage commun pour mesurer une posture. Il déplace la question « sommes-nous conformes ? » vers « savons-nous voir vite et nous rétablir vite ? », car l'absence d'incident déclaré est plus souvent un défaut de détection qu'une preuve de sécurité.
+
+**exemple** :
+
+Une organisation certifiée sur le papier découvre, en se notant sur les cinq fonctions, qu'elle protège bien mais ne détecte presque pas : ses tableaux de bord sont verts parce qu'elle ne cherche pas les attaques. Le diagnostic réoriente l'investissement vers la détection et la réponse.
+
+**origine** : National Institute of Standards and Technology (Cybersecurity Framework, 2014).
+
+**renvois** : iso-31000, fair
+
+**antiPatternLie** : rassurance-par-la-moyenne
+
+## iso-31000
+
+**terme** : ISO 31000
+
+**categorie** : cadre
+
+**definition** :
+
+Norme internationale de management du risque. Elle ne prescrit pas de recette mais fournit des principes et un vocabulaire communs pour identifier, évaluer et traiter les risques dans toute organisation, quel que soit son secteur.
+
+Sa logique rejoint celle des autres cadres de risque : un risque se pilote, il ne se subit pas. Une fois identifié et évalué, il peut être accepté, réduit, transféré ou évité, en connaissance de cause plutôt que par défaut.
+
+**exemple** :
+
+Deux équipes d'une même entreprise parlaient du risque avec des mots différents, rendant toute comparaison impossible. En adoptant le vocabulaire d'ISO 31000, elles hiérarchisent enfin leurs risques sur une échelle commune et arbitrent où mettre leurs moyens.
+
+**origine** : Organisation internationale de normalisation (ISO 31000, 2009, révisée 2018).
+
+**renvois** : coso-erm, fair, nist-csf
+
+## fair
+
+**terme** : FAIR
+
+**categorie** : cadre
+
+**definition** :
+
+Méthode de quantification du risque, Factor Analysis of Information Risk, qui traduit un risque en termes financiers plutôt qu'en échelles floues « faible, moyen, élevé ». Elle décompose un risque en deux facteurs : la fréquence probable d'un événement et l'ampleur probable de ses pertes.
+
+Son apport : rendre les risques comparables et arbitrables en monnaie. Un risque « élevé » sur une échelle de couleurs ne dit pas s'il faut y consacrer dix mille ou dix millions ; une perte annualisée estimée en euros, si.
+
+**exemple** :
+
+Un comité hésite entre deux investissements de sécurité. En estimant, via FAIR, la perte annualisée que chacun évite, il découvre que le projet perçu comme urgent réduit un risque à faible impact, tandis qu'un risque discret pesait dix fois plus. La priorité s'inverse.
+
+**origine** : Jack Jones (Factor Analysis of Information Risk).
+
+**renvois** : coso-erm, iso-31000, nist-csf
+
+## flow-metrics
+
+**terme** : Flow Metrics
+
+**categorie** : cadre
+
+**definition** :
+
+Ensemble de métriques de flux au niveau du portefeuille, dérivé du Flow Framework de Mik Kersten et intégré par SAFe dans son corpus officiel : distribution, vélocité, temps et efficacité du flux, plus la charge et la prévisibilité.
+
+Ces mesures partagent une règle de lecture héritée du Flow Framework : elles décrivent la santé d'un système de livraison, pas la performance des équipes qui l'exécutent. À l'échelle du portefeuille, la lenteur vient presque toujours des files d'attente entre équipes, pas de l'effort individuel.
+
+**exemple** :
+
+Un portefeuille SAFe adopte les Flow Metrics et constate une efficacité de flux de 15 % : le travail passe l'essentiel de sa vie à attendre. La conversation se déplace des équipes « trop lentes » vers les comités et validations qui créent les files.
+
+**origine** : Mik Kersten (Flow Framework, 2018), intégré à SAFe v6.
+
+**renvois** : flow-framework, actionable-agile-metrics, theorie-des-contraintes
+
+**antiPatternLie** : usage-en-evaluation-individuelle-ou-par-equipe
+
+## actionable-agile-metrics
+
+**terme** : Actionable Agile Metrics
+
+**categorie** : cadre
+
+**definition** :
+
+Approche de mesure du travail agile centrée sur les distributions plutôt que sur les moyennes, formulée par Daniel Vacanti. Son principe : une moyenne écrase l'information qui permet de décider ; ce qui compte, c'est la dispersion et les valeurs extrêmes.
+
+Elle outille cette idée par des techniques concrètes : le nuage de points du délai de cycle, les percentiles, la simulation de Monte-Carlo pour prévoir sans engager de dates arbitraires. Vacanti résume : une moyenne n'a jamais fait prendre une bonne décision à personne.
+
+**exemple** :
+
+Une équipe promet « deux semaines en moyenne » et déçoit une fois sur trois. En lisant la distribution de ses délais, elle constate que 85 % des items sortent en trois semaines : elle s'engage désormais sur un délai tenu la plupart du temps, au lieu d'une moyenne trompeuse.
+
+**origine** : Daniel Vacanti, Actionable Agile Metrics for Predictability (2015).
+
+**renvois** : flow-framework, flow-metrics
+
+**antiPatternLie** : moyenne-au-lieu-de-mediane-et-p85
+
+## itil-service-operation
+
+**terme** : ITIL Service Operation
+
+**categorie** : cadre
+
+**definition** :
+
+Volet du référentiel ITIL consacré à l'exploitation des services informatiques au quotidien : traiter les incidents, gérer les problèmes récurrents, tenir les engagements de niveau de service. Il ne décrit pas comment construire un logiciel, mais comment le faire vivre dans la durée.
+
+Sa conviction : la valeur d'un système ne se joue pas seulement à sa livraison, mais dans les mois et les années où il rend service. Un service qui tombe souvent, se rétablit lentement ou re-casse pour la même cause détruit la valeur qu'on a mise à le construire.
+
+**exemple** :
+
+Un support affiche un excellent délai de résolution, mais les mêmes pannes reviennent chaque mois. En suivant, comme le recommande ITIL, la récurrence des incidents et pas seulement leur vitesse de traitement, l'équipe s'attaque enfin aux causes profondes.
+
+**origine** : Référentiel ITIL (IT Service Management).
+
+**renvois** : theorie-des-contraintes
+
+## lpm
+
+**terme** : LPM (Lean Portfolio Management)
+
+**categorie** : cadre
+
+**definition** :
+
+Approche de gestion de portefeuille qui applique les principes Lean au niveau où l'on décide quelles initiatives lancer, poursuivre ou arrêter. Elle traite le portefeuille comme un flux de paris à financer par incréments, pas comme une liste de projets validés une fois pour toutes.
+
+Son geste le plus utile est une question de désinvestissement : si cette initiative se présentait aujourd'hui, la lancerait-on ? Si la réponse est non, ce qui a déjà été dépensé ne doit pas dicter la suite. C'est l'antidote au biais du coût irrécupérable.
+
+**exemple** :
+
+Un comité maintient depuis deux ans une initiative devenue coûteuse parce qu'on a déjà trop investi. En posant la question du LPM, il reconnaît qu'il ne la lancerait pas aujourd'hui, et redéploie le budget vers un pari plus prometteur.
+
+**origine** : Scaled Agile (Lean Portfolio Management, SAFe).
+
+**renvois** : theorie-des-contraintes
+
+**antiPatternLie** : acharnement-therapeutique
+
+## predictable-revenue
+
+**terme** : Predictable Revenue
+
+**categorie** : cadre
+
+**definition** :
+
+Méthode d'organisation de la vente qui vise à rendre le revenu prévisible en spécialisant les rôles commerciaux plutôt qu'en confiant tout le cycle à un seul vendeur. Elle sépare la prospection, la qualification, la conclusion et la fidélisation, chaque étape ayant son équipe et ses indicateurs.
+
+Son idée directrice : un revenu régulier ne vient pas de héros commerciaux, mais d'un processus dont chaque maillon est mesurable et améliorable. La prévisibilité naît de la spécialisation et de la mesure de la conversion à chaque étape.
+
+**exemple** :
+
+Une équipe où chaque vendeur faisait tout, de la prospection à la signature, plafonnait faute de temps de prospection. En dédiant une équipe à la seule génération de rendez-vous qualifiés, elle stabilise son flux d'opportunités et rend ses prévisions fiables.
+
+**origine** : Aaron Ross, Predictable Revenue (2011).
+
+**renvois** : sirius-decisions-demand-waterfall, spin-selling
+
+## sales-acceleration-formula
+
+**terme** : Sales Acceleration Formula
+
+**categorie** : cadre
+
+**definition** :
+
+Méthode de construction d'une organisation commerciale fondée sur les données et la reproductibilité, formulée par Mark Roberge chez HubSpot. Elle applique une logique d'ingénieur au recrutement, à la formation et à la génération de demande : définir ce qui marche, le mesurer, puis le répliquer.
+
+Son pari : la performance commerciale n'est pas un art réservé à quelques talents, c'est un système que l'on peut concevoir, mesurer et faire monter en échelle, à condition de standardiser ce qui fonctionne au lieu de compter sur l'intuition.
+
+**exemple** :
+
+Une entreprise recrutait ses commerciaux au feeling, avec des résultats erratiques. En définissant, à la manière de Roberge, le profil corrélé au succès et un parcours de formation standardisé, elle rend la performance de ses recrues bien plus régulière.
+
+**origine** : Mark Roberge, The Sales Acceleration Formula (2015).
+
+**renvois** : predictable-revenue
+
+## sirius-decisions-demand-waterfall
+
+**terme** : SiriusDecisions Demand Waterfall
+
+**categorie** : cadre
+
+**definition** :
+
+Modèle qui décrit la génération de demande commerciale comme un entonnoir en cascade, où les contacts descendent d'une étape à la suivante, de l'intérêt initial jusqu'à l'opportunité qualifiée puis à la vente. Chaque palier a un taux de conversion mesurable.
+
+Son utilité est de rendre visible où se perd la demande : un entonnoir qui fuit à une étape précise indique où concentrer l'effort, plutôt que d'ajouter aveuglément du volume en haut. Il relie marketing et vente autour d'une même lecture chiffrée.
+
+**exemple** :
+
+Une équipe marketing générait toujours plus de contacts sans que les ventes augmentent. La cascade révèle que la fuite se situait au passage du marketing à la vente : les contacts n'étaient jamais rappelés à temps. Le problème n'était pas le volume mais un maillon, corrigé sans dépenser plus en haut.
+
+**origine** : SiriusDecisions (Demand Waterfall).
+
+**renvois** : predictable-revenue, theorie-des-contraintes
+
+## spin-selling
+
+**terme** : SPIN Selling
+
+**categorie** : cadre
+
+**definition** :
+
+Méthode de vente consultative fondée sur une séquence de questions plutôt que sur un argumentaire : questions de Situation, de Problème, d'Implication, puis de bénéfice. Elle amène le client à formuler lui-même son besoin et la valeur d'une solution.
+
+Son fondement est empirique : Neil Rackham l'a tirée de l'observation de milliers d'entretiens de vente réels. Sa découverte contre-intuitive : dans les ventes complexes, ce qui fait signer n'est pas de bien présenter le produit, mais de bien faire mesurer au client le coût de son problème.
+
+**exemple** :
+
+Un commercial qui déroulait les qualités de son produit peinait à conclure. En passant aux questions d'implication, il aide le client à chiffrer ce que son problème lui coûte chaque mois : la valeur de la solution devient évidente pour le client lui-même.
+
+**origine** : Neil Rackham, SPIN Selling (1988).
+
+**renvois** : effortless-experience, predictable-revenue
+
+## effortless-experience
+
+**terme** : Effortless Experience
+
+**categorie** : cadre
+
+**definition** :
+
+Approche de l'expérience client qui renverse une idée reçue : ce qui fidélise n'est pas d'enchanter le client, c'est de lui épargner de l'effort. Matthew Dixon montre, données à l'appui, que réduire la difficulté d'une interaction prédit mieux la loyauté que la dépasser en enchantement.
+
+D'où la métrique associée, le score d'effort client : plutôt que demander « êtes-vous satisfait ? », on demande « à quel point cela vous a-t-il demandé d'effort ? ». Un service sans friction retient mieux qu'un service spectaculaire mais laborieux.
+
+**exemple** :
+
+Un service client investissait dans des gestes commerciaux généreux mais faisait répéter trois fois leur problème aux clients. En mesurant l'effort plutôt que la seule satisfaction, il découvre que la friction, pas le manque de générosité, faisait fuir : simplifier le parcours retient plus que gâter.
+
+**origine** : Matthew Dixon, The Effortless Experience (2013).
+
+**renvois** : spin-selling
 
