@@ -75,3 +75,76 @@ D'où une conviction de mesure : les indicateurs utiles regardent l'adhésion, l
 **quandSeMefier** : Déçoit comme cadre de pilotage permanent : ses indicateurs sont faits pour la traversée, pas pour le régime de croisière ; une fois le changement ancré, ils s'archivent, et les indicateurs de flux et de qualité reprennent la main.
 
 **allerPlusLoin** : Leading Change (Kotter, 1995) ; Managing Transitions (Bridges, 1991) ; ADKAR (Hiatt, 2006).
+
+
+## cd
+
+**statut** : cadre
+
+**origine** : Formalisé par Jez Humble et David Farley dans <span class="traduction">Continuous Delivery</span> (2010), dans le prolongement direct de l'intégration continue de Martin Fowler et Kent Beck. L'idée fondatrice : faire de la mise en production un non-événement, obtenu à la demande par un pipeline automatisé qui construit, teste et déploie chaque changement. Jez Humble est aussi coauteur de la recherche DORA, ce qui fait du Continuous Delivery le socle de pratiques dont DORA mesure les effets.
+
+**philosophie** : Le cadre repose sur une conviction d'ingénierie : la fiabilité vient de la répétition automatisée, pas du soin manuel. Un déploiement rare et redouté concentre le risque ; un déploiement fréquent et automatisé le dissout, parce que chaque livraison est petite, testée de bout en bout et réversible.
+
+D'où un principe de mesure : ce qui compte, c'est la santé du chemin qui mène le code en production, pas le volume de code écrit. Un pipeline rapide, stable et digne de confiance est le vrai actif ; les indicateurs regardent sa vitesse de retour, sa stabilité et sa capacité à attraper les défauts avant l'utilisateur.
+
+**panel** : Jez Humble et David Farley (Continuous Delivery, 2010) ; Martin Fowler et Kent Beck pour l'intégration continue en amont ; filiation directe avec la recherche DORA, dont Humble est coauteur.
+
+**signatures** : ti-p3, ti-p2, o8, ti-p5
+
+**lecture** : Les quatre mesures décrivent la chaîne dans l'ordre où un changement la traverse. Le <a href="#fiche=ti-p3">taux de succès du pipeline</a> dit si la chaîne est fiable ; la <a href="#fiche=ti-p2">durée de build</a> dit si le retour est assez rapide pour rester utile ; la <a href="#fiche=o8">couverture de tests automatisés</a> dit si le filet attrape les défauts avant la production ; le <a href="#fiche=ti-p5">taux d'adoption de l'Infrastructure-as-Code</a> dit si l'environnement est reproductible. Aucune ne suffit seule : un pipeline rapide mais qui échoue une fois sur trois, ou vert mais sans vrais tests, donne une confiance trompeuse.
+
+**antiPatterns** : <span class="term-def" data-def="Pipeline vert vide : afficher un taux de succès élevé en désactivant ou en supprimant les tests qui échouent. La chaîne passe au vert, le filet de sécurité a disparu.">pipeline vert vide</span>, <span class="term-def" data-def="Théâtre de la couverture : viser un pourcentage de couverture élevé avec des tests qui n'assertent rien de significatif. Le chiffre monte, la confiance qu'il est censé mesurer reste fausse.">théâtre de la couverture</span>, et la vitesse au détriment du filet : raccourcir les builds en retirant des étapes de test, c'est échanger la sécurité que le cadre existe pour construire contre une accélération illusoire.
+
+**quandChoisir** : Excellent dès qu'une équipe livre du logiciel régulièrement et veut fiabiliser sa chaîne de livraison : c'est le socle technique concret sous les résultats que DORA mesure au niveau système.
+
+**quandSeMefier** : Déçoit comme mesure de valeur : un pipeline parfait livre vite, mais ne dit rien de l'utilité de ce qu'il déploie. Hors du logiciel, ou pour un produit dont la contrainte est la découverte du besoin plutôt que la livraison, ses indicateurs tournent à vide ; les mesures de valeur et d'usage prennent le relais.
+
+**allerPlusLoin** : Continuous Delivery (Humble, Farley, 2010) ; The DevOps Handbook (Kim, Humble, Debois, Willis) ; Accelerate (Forsgren, Humble, Kim, 2018).
+
+## space
+
+**statut** : cadre
+
+**origine** : Proposé en 2021 par Nicole Forsgren, Margaret-Anne Storey, Chandra Maddila, Thomas Zimmermann, Brian Houck et Jenna Butler dans l'article <span class="traduction">The SPACE of Developer Productivity</span>. C'est une réponse directe à une dérive répandue : réduire la productivité des développeurs à une seule dimension, le plus souvent le volume de code ou de tickets. SPACE est l'acronyme de cinq dimensions à tenir ensemble : satisfaction et bien-être, performance, activité, communication et collaboration, efficacité et flux.
+
+**philosophie** : Le cadre part d'un constat de recherche : la productivité d'un développeur n'est pas une grandeur unique et ne se lit jamais sur une seule métrique. La mesurer honnêtement demande de croiser plusieurs dimensions, dont au moins une qui échappe au comptage, comme la satisfaction.
+
+D'où une règle de méthode : choisir ses indicateurs dans au moins deux ou trois dimensions différentes, et ne jamais utiliser une mesure d'activité isolée pour juger une personne. L'activité seule, en lignes de code ou en tickets, est précisément le piège que SPACE existe pour désamorcer.
+
+**panel** : Nicole Forsgren, Margaret-Anne Storey, Chandra Maddila, Thomas Zimmermann, Brian Houck et Jenna Butler (The SPACE of Developer Productivity, 2021).
+
+**signatures** : ti-d4, x4
+
+**lecture** : Les deux indicateurs relèvent volontairement de dimensions différentes, c'est là tout le principe du cadre. Le <a href="#fiche=ti-d4">délai de revue de code</a> touche la communication et l'efficacité, la fluidité de la collaboration ; l'<a href="#fiche=x4">indice de bien-être de l'équipe</a> touche la satisfaction. Lus ensemble, ils disent à la fois si l'équipe collabore bien et si elle va bien ; l'un sans l'autre trompe, car une revue fluide dans une équipe épuisée n'est pas une bonne nouvelle durable.
+
+**antiPatterns** : <span class="term-def" data-def="Métrique d'activité isolée : juger un développeur sur son seul volume d'activité (lignes de code, commits, tickets fermés). C'est la réduction même que SPACE existe pour empêcher ; l'activité ne dit rien de la valeur ni de la soutenabilité.">métrique d'activité isolée</span>, <span class="term-def" data-def="Usage individuel d'une mesure d'équipe : décliner les indicateurs SPACE au niveau de la personne pour l'évaluer. Le cadre éclaire un système de travail, il ne note pas des individus ; l'usage individuel réintroduit le management par la peur.">usage individuel</span>, et la dimension unique : choisir toutes ses métriques dans la même case, souvent l'activité, vide le cadre de son sens, qui est justement le croisement.
+
+**quandChoisir** : Excellent pour parler de productivité de développement sans la caricaturer, et pour désamorcer les métriques de vanité comme le nombre de lignes ou de commits : il force à croiser plusieurs dimensions, dont le bien-être.
+
+**quandSeMefier** : Déçoit qui cherche un tableau de bord clé en main : SPACE est un cadre de pensée, pas une liste d'indicateurs prêts à l'emploi, et plusieurs de ses dimensions se mesurent par enquête, pas par extraction automatique. Attention aussi à la tentation de l'agréger en un score unique, qui détruirait exactement la pluralité qu'il défend.
+
+**allerPlusLoin** : The SPACE of Developer Productivity (Forsgren, Storey, Maddila, Zimmermann, Houck, Butler, 2021).
+
+## flow
+
+**statut** : cadre
+
+**origine** : Créé par Mik Kersten dans <span class="traduction">Project to Product</span> (2018). Le constat de départ : les organisations pilotent encore par projets (budget, échéance, périmètre) alors que la valeur logicielle se crée en flux continu de produits. Kersten propose de mesurer ce flux directement depuis les outils de delivery, à l'échelle du portefeuille, à travers quatre types de travail exclusifs : fonctionnalités, défauts, dette technique, risque.
+
+**philosophie** : Le cadre repose sur un déplacement du regard : au niveau portefeuille, la vitesse ne dépend presque pas de l'effort des équipes, mais de la structure des files d'attente entre elles. Un <span class="traduction">flow item</span>, l'unité de travail vue du portefeuille, passe le plus clair de sa vie à attendre une décision, une validation ou une ressource rare, pas à être traité.
+
+D'où une conviction de mesure héritée de la Théorie des Contraintes de Goldratt : le goulot d'un portefeuille est presque toujours une file de gouvernance, pas une équipe lente. Les métriques de flux servent à localiser ce goulot et à le rendre discutable, jamais à noter les exécutants.
+
+**panel** : Mik Kersten (Project to Product, 2018) ; Daniel Vacanti (Actionable Agile Metrics) pour la lecture en distribution ; Eliyahu Goldratt (Théorie des Contraintes) en amont. Le corpus rappelle que SAFe v6 a intégré ces métriques de flux dans son référentiel officiel.
+
+**signatures** : fl-1, p5, t4
+
+**lecture** : Les trois mesures composent le tableau de flux du portefeuille. La <a href="#fiche=fl-1">distribution du flux</a> dit sur quoi part réellement la capacité (fonctionnalités, défauts, dette, risque) ; le <a href="#fiche=p5">débit d'initiatives livrées</a>, la vélocité de flux, dit combien le portefeuille produit ; l'<a href="#fiche=t4">efficacité de flux</a> dit quelle part du temps est du traitement plutôt que de l'attente. La distribution révèle les arbitrages réels, la vélocité le rythme, l'efficacité les files qui le brident. Toutes se lisent en distribution, jamais en moyenne unique (Vacanti), et jamais comme une note d'équipe.
+
+**antiPatterns** : <span class="term-def" data-def="Usage en évaluation d'équipe : publier et comparer l'efficacité de flux ou la distribution entre équipes. L'efficacité d'une équipe est déterminée à plus de 90 % par des files qu'elle ne contrôle pas (Deming) ; l'en rendre comptable reproduit le management par la peur.">usage en évaluation d'équipe</span>, <span class="term-def" data-def="Distribution-cible : fixer un pourcentage de fonctionnalités à atteindre. La distribution du flux est un outil d'arbitrage conscient, pas une cible ; en faire un objectif pousse à requalifier les tickets (effet Goodhart) sans rien changer au réel.">distribution-cible</span>, <span class="term-def" data-def="Moyenne trompeuse : restituer l'efficacité de flux en moyenne unique masque la distribution réelle. Un portefeuille à 30 % de moyenne peut mêler des items faciles à 60 % et des items bloqués à 10 %, qui n'appellent pas la même décision.">moyenne trompeuse</span>, et l'optimisation locale : améliorer un segment qui n'est pas le goulot ne produit aucun gain de débit global (Goldratt).
+
+**quandChoisir** : Excellent pour piloter un portefeuille produit et diagnostiquer la gouvernance : il rend visibles les files d'attente structurelles et les arbitrages réels, là où les indicateurs d'équipe ne voient rien.
+
+**quandSeMefier** : Déçoit à l'échelle d'une seule équipe : c'est un cadre de portefeuille, ses mesures perdent leur sens et deviennent injustes si on les décline en indicateurs d'équipe. Il demande aussi une donnée de flux propre, un typage honnête des items et des temps d'attente déclarés ; sans cette hygiène, les chiffres flattent au lieu d'alerter.
+
+**allerPlusLoin** : Project to Product (Kersten, 2018) ; Actionable Agile Metrics for Predictability (Vacanti) ; The Goal (Goldratt).
