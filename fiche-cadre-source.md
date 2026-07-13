@@ -148,3 +148,100 @@ D'où une conviction de mesure héritée de la Théorie des Contraintes de Goldr
 **quandSeMefier** : Déçoit à l'échelle d'une seule équipe : c'est un cadre de portefeuille, ses mesures perdent leur sens et deviennent injustes si on les décline en indicateurs d'équipe. Il demande aussi une donnée de flux propre, un typage honnête des items et des temps d'attente déclarés ; sans cette hygiène, les chiffres flattent au lieu d'alerter.
 
 **allerPlusLoin** : Project to Product (Kersten, 2018) ; Actionable Agile Metrics for Predictability (Vacanti) ; The Goal (Goldratt).
+
+
+## scrum
+
+**statut** : cadre
+
+**origine** : Créé par Ken Schwaber et Jeff Sutherland au début des années 1990, formalisé dans le <span class="traduction">Scrum Guide</span> qu'ils maintiennent depuis. Scrum organise le travail en sprints courts, des cycles de quelques semaines au terme desquels un incrément utilisable est livré, inspecté et adapté. C'est le cadre agile le plus répandu ; ses mesures les plus connues, la vélocité et le burndown, sont nées de la pratique des équipes plus que du guide lui-même.
+
+**philosophie** : Le cadre repose sur l'empirisme : on ne planifie pas tout d'avance, on avance par petits pas, on regarde le résultat réel et on ajuste. Trois piliers soutiennent cette boucle, la transparence, l'inspection et l'adaptation, et le sprint en est le battement.
+
+D'où une nature très particulière de ses mesures : ce sont des aides à la planification de l'équipe, pas des indicateurs de performance. La vélocité sert à l'équipe pour estimer ce qu'elle peut raisonnablement prendre au prochain sprint, rien d'autre ; elle n'a de sens que pour l'équipe qui l'a produite.
+
+**panel** : Ken Schwaber et Jeff Sutherland (Scrum Guide) ; l'organisation Scrum.org qu'ils ont essaimée pour le corpus et sa certification.
+
+**signatures** : ti-d2, x1, x2
+
+**lecture** : Les trois mesures éclairent la même boucle de sprint. Le <a href="#fiche=ti-d2">taux de complétion de sprint</a> dit si l'équipe tient ce qu'elle a planifié ; la <a href="#fiche=x1">vélocité</a> dit combien elle peut raisonnablement prendre la prochaine fois ; le <a href="#fiche=x2">graphe de progression (burndown)</a> montre en cours de sprint si la trajectoire tient. Elles se lisent ensemble et seulement au sein de l'équipe : comparer la vélocité de deux équipes n'a aucun sens, l'unité étant inventée par chacune.
+
+**antiPatterns** : <span class="term-def" data-def="Vélocité comparée entre équipes : classer ou comparer des équipes sur leur vélocité. Le point de complexité est une unité inventée par chaque équipe, non standardisée ; comparer deux vélocités revient à comparer des monnaies sans taux de change.">vélocité comparée</span>, <span class="term-def" data-def="Vélocité-cible : demander à une équipe d'augmenter sa vélocité. La réponse mécanique est l'inflation des estimations, les mêmes tâches valant plus de points ; le chiffre monte, rien ne change (effet Goodhart).">vélocité-cible</span>, et le burndown de surveillance : transformer le graphe de sprint en outil de contrôle managérial plutôt qu'en signal d'auto-régulation de l'équipe.
+
+**quandChoisir** : Excellent pour une équipe qui livre par itérations et veut une cadence d'inspection régulière et une base de prévisibilité : c'est le point d'entrée agile le plus éprouvé.
+
+**quandSeMefier** : Déçoit dès qu'on sort ses mesures de l'équipe : vélocité et complétion de sprint ne sont ni des indicateurs de performance, ni comparables, ni des mesures de valeur (une équipe peut être très prévisible en livrant des choses inutiles). Elles ne disent rien de l'usage réel de ce qui est produit.
+
+**allerPlusLoin** : Le Scrum Guide (Schwaber, Sutherland) ; Software in 30 Days (Schwaber, Sutherland).
+
+## ebm
+
+**statut** : cadre
+
+**origine** : Formalisé par Scrum.org, l'organisation de Ken Schwaber, dans le guide <span class="traduction">Evidence-Based Management</span>. Sa cible : aider les organisations à piloter par la valeur et les résultats plutôt que par le volume produit. EBM structure la mesure autour de quatre domaines de valeur, dont la valeur actuelle (ce que le produit apporte aujourd'hui) et la valeur non réalisée (l'écart qui reste à combler).
+
+**philosophie** : Le cadre part d'un renversement : mesurer ce qui sort d'une organisation, en fonctionnalités livrées, ne dit pas ce qui sert. Une équipe peut produire beaucoup sans rien changer pour ses bénéficiaires. EBM demande donc de mesurer la valeur réellement délivrée et l'usage réel, pas l'activité.
+
+D'où une conviction : les décisions se prennent sur des preuves de résultat, pas sur des promesses de production. Ce que le produit change dans la vie des utilisateurs, et l'écart qui reste, priment sur le décompte de ce qui a été construit.
+
+**panel** : Scrum.org (guide Evidence-Based Management), dans la filiation de Ken Schwaber ; même famille d'idées que la lignée « résultats plutôt que production » portée par Josh Seiden.
+
+**signatures** : ebm-1, ebm-2
+
+**lecture** : Les deux mesures forment un couple présent et futur. L'<a href="#fiche=ebm-1">usage réel par fonctionnalité</a> dit ce que le produit apporte aujourd'hui, en confrontant l'utilisation effective aux attentes qui ont justifié sa construction ; l'<a href="#fiche=ebm-2">écart de satisfaction (valeur non réalisée)</a> dit ce qu'il reste à combler entre l'expérience souhaitée et l'expérience offerte. Livrer beaucoup, avec un usage en hausse, sans réduire l'écart qui compte, signale un effort mal dirigé.
+
+**antiPatterns** : <span class="term-def" data-def="Piloter à l'output : mesurer et célébrer le volume livré (fonctionnalités, story points) comme si c'était de la valeur. EBM existe précisément pour rompre avec ce réflexe : ce qui sort n'est pas ce qui sert.">pilotage à la production</span>, <span class="term-def" data-def="Angle mort de la valeur non réalisée : ne suivre que la valeur actuelle, ce qui marche déjà, et perdre de vue l'écart qui reste. Une organisation aveugle à sa valeur non réalisée croit avoir réussi alors qu'elle a cessé de progresser vers ce qui compte.">angle mort de la valeur non réalisée</span>, et la mesure de valeur sans donnée d'usage réelle, qui ramène subrepticement au déclaratif.
+
+**quandChoisir** : Excellent pour faire basculer une organisation de la production vers le résultat, et pour donner au niveau stratégique un contrepoids aux chiffres de volume.
+
+**quandSeMefier** : Déçoit sans données d'usage et de satisfaction réelles à alimenter : c'est un cadre de mesure de la valeur, pas de la livraison, et il suppose une instrumentation (télémétrie, enquêtes) souvent absente. Il se complète d'indicateurs de flux et de qualité qui, eux, disent comment on produit.
+
+**allerPlusLoin** : Evidence-Based Management Guide (Scrum.org) ; Outcomes over Output (Josh Seiden).
+
+## kanban
+
+**statut** : cadre
+
+**origine** : Formalisé pour le travail intellectuel par David J. Anderson dans <span class="traduction">Kanban</span> (2010), en héritage direct du système Toyota et du Lean. Le principe : visualiser le flux de travail, limiter le nombre de tâches en cours et piloter le système par ce flux plutôt que par des dates. Daniel Vacanti en a prolongé la mesure par les distributions ; la loi de Little (John Little) en fournit le socle mathématique.
+
+**philosophie** : Le cadre repose sur une loi simple et contre-intuitive : commencer moins pour finir plus. Trop de tâches ouvertes en même temps ralentit tout, par les changements de contexte et les files d'attente ; limiter l'encours fluidifie le débit.
+
+D'où des mesures reliées entre elles : l'encours, la durée de cycle et le débit sont liés par la loi de Little et se pilotent ensemble. On ne fixe pas de dates, on rend le flux prévisible.
+
+**panel** : David J. Anderson (Kanban, 2010) ; Daniel Vacanti (Actionable Agile Metrics) pour la mesure en distribution ; la loi de Little (John Little) en socle ; racines Lean et système Toyota (Ohno).
+
+**signatures** : o7, o5, o6, p9
+
+**lecture** : Les quatre mesures décrivent un même flux, reliées par la loi de Little. L'<a href="#fiche=o7">encours de travail (WIP)</a> est le levier : le limiter fait baisser la <a href="#fiche=o5">durée de cycle</a>, le temps qu'un item passe en cours, et stabilise le <a href="#fiche=o6">débit d'équipe</a>, ce qui franchit la ligne d'arrivée par période. Le <a href="#fiche=p9">délai bout-en-bout</a> donne la vue côté client, temps d'attente compris. On les lit en distribution, pas en moyenne, et jamais comme une note individuelle.
+
+**antiPatterns** : <span class="term-def" data-def="Tableau sans limite d'encours : poser un tableau visuel mais ne jamais limiter le nombre de tâches en cours. C'est retirer au Kanban sa seule pratique agissante ; le tableau devient un décor, le flux ne s'améliore pas.">tableau sans limite d'encours</span>, <span class="term-def" data-def="Débit-cible individuel : fixer un nombre d'items à produire par personne. Le débit est une propriété du système, pas de l'individu ; en faire une cible personnelle pousse à découper artificiellement les tâches (effet Goodhart) et détruit la coopération.">débit-cible individuel</span>, et l'optimisation locale d'un poste qui n'est pas le goulot, sans effet sur le débit global (Goldratt).
+
+**quandChoisir** : Excellent pour un flux de travail continu, en support, exploitation, maintenance ou évolutif, où l'on veut de la prévisibilité sans s'enfermer dans des dates ni des itérations fixes.
+
+**quandSeMefier** : Déçoit comme mesure de valeur : un débit élevé d'items sans intérêt reste du gaspillage rapide. Ses chiffres ne valent que si la limite d'encours est réellement tenue ; sans cette discipline, durée de cycle et débit ne mesurent que le bruit d'un système engorgé.
+
+**allerPlusLoin** : Kanban (David J. Anderson, 2010) ; Actionable Agile Metrics for Predictability (Vacanti) ; The Principles of Product Development Flow (Reinertsen).
+
+## safe
+
+**statut** : cadre
+
+**origine** : Créé par Dean Leffingwell, le <span class="traduction">Scaled Agile Framework</span> (SAFe, 2011) applique les principes Lean-Agile à l'échelle de l'entreprise, quand des dizaines d'équipes doivent se coordonner. Il organise le travail en incréments de programme planifiés ensemble et structure trois à quatre niveaux, de l'équipe au portefeuille. Sa version 6 a intégré les métriques de flux du Flow Framework.
+
+**philosophie** : Le cadre part d'un problème d'échelle : les pratiques agiles d'une équipe ne se transposent pas mécaniquement à cent. Il faut une cadence et une synchronisation communes pour aligner beaucoup d'équipes sans les figer, et une gouvernance de portefeuille qui arbitre les grands paris.
+
+D'où des mesures orientées prévisibilité et risque aux niveaux programme et portefeuille : tient-on ce qu'on a promis, où sont les dérives, quelle prise de risque agrégée le portefeuille porte-t-il.
+
+**panel** : Dean Leffingwell et Scaled Agile, Inc. (corpus SAFe) ; le Standish Group pour l'empirie sur la taille des initiatives ; filiation Lean-Agile et Flow Framework (Kersten), intégré en version 6.
+
+**signatures** : p10, p1, t6, t7
+
+**lecture** : Les quatre mesures se lisent aux niveaux programme et portefeuille. La <a href="#fiche=p10">feuille de route engagée vs réalisée</a> dit si le programme tient ses promesses ; le <a href="#fiche=p1">taux d'avancement des jalons</a> dit s'il progresse selon le plan ; le <a href="#fiche=t6">taux d'initiatives en dérive critique</a> déclenche l'arbitrage sur celles qui décrochent ; le <a href="#fiche=t7">profil de taille des initiatives</a> montre la prise de risque agrégée, les grandes initiatives échouant statistiquement plus souvent (Standish Group). Ensemble, elles pilotent la tenue des engagements à grande échelle.
+
+**antiPatterns** : <span class="term-def" data-def="Théâtre SAFe : dérouler les rituels et les niveaux du cadre (planification d'incrément, cérémonies, rôles) sans l'agilité qu'ils sont censés porter. La forme est respectée, la capacité d'adaptation reste nulle ; le cadre devient une bureaucratie de plus.">théâtre SAFe</span>, <span class="term-def" data-def="Imposition descendante : déployer SAFe par le haut comme un standard obligatoire, sans adhésion des équipes. Le cadre prescrit beaucoup ; imposé sans dialogue, il produit de la conformité de façade, pas de l'engagement.">imposition descendante</span>, et la métrique de conformité : suivre l'application des rituels plutôt que les résultats, ce qui récompense la forme au lieu de la valeur.
+
+**quandChoisir** : Excellent pour une grande organisation qui doit coordonner de nombreuses équipes sur une cadence partagée et arbitrer un portefeuille d'initiatives lourdes.
+
+**quandSeMefier** : Déçoit à petite échelle et là où l'agilité vient de l'autonomie : SAFe est lourd, prescriptif, et sa richesse même peut se figer en bureaucratie. Plusieurs critiques y voient un retour du pilotage descendant sous un vocabulaire agile ; ses indicateurs perdent tout sens s'ils mesurent la conformité au cadre plutôt que la valeur livrée.
+
+**allerPlusLoin** : Le corpus SAFe (Scaled Agile) ; Agile Software Requirements (Leffingwell) ; Project to Product (Kersten) pour le volet flux.
