@@ -11115,10 +11115,9 @@ CM.FicheQuestion = (function() {
 
   function _htmlLienSortant(lien) {
     if (lien.cadreRef) {
-      /* Troisième état du contrat (doc compagnon, 02/07/2026) : le lien
-         mène à l'accueil filtré par cadre, via l'API publique de
-         CM.AccueilUnifie (cf. délégation de clic). La vue fiche-cadre
-         pédagogique dédiée est un chantier ouvert au backlog. */
+      /* 28.q1 (câblage jalon D) : le lien ouvre la fiche-cadre pédagogique
+         (tiroir #cadre=), via la délégation de clic sur [data-cadre-lien].
+         Avant le jalon D il menait à l'accueil filtré par cadre. */
       return [
         '<div class="fiche-q-lien-sortant">',
           '<span class="surtitre">Aller plus loin</span>',
@@ -11323,22 +11322,19 @@ CM.VueFicheQuestion = (function() {
       }
       return;
     }
-    /* Lien « Aller plus loin » vers l'accueil filtré par cadre (02/07/2026). */
+    /* Lien « Aller plus loin » vers la fiche-cadre pédagogique (28.q1
+       tranchée oui, câblage jalon D). Ouvre le tiroir cadre par-dessus la
+       fiche-question ; le garde-fou _hashPorteFicheQuestion d'ouvrirTiroirCadre
+       préserve le hash #fiche-q=, donc fermer le tiroir rend la main à la
+       fiche-question. L'accueil filtré reste accessible depuis la fiche-cadre
+       (lien « voir ses N indicateurs »). */
     var lienCadre = t.closest ? t.closest('[data-cadre-lien]') : null;
     if (lienCadre) {
       ev.preventDefault();
       var cadreId = lienCadre.getAttribute('data-cadre-lien');
-      /* Même sortie que le retour à l'accueil, puis activation de la chip
-         Cadre et dépliage de la cartouche compteur. cadreId vient des
-         données du catalogue et doit exister dans VOCAB.cadres (contrat). */
-      CM.Hash.effacer();
-      fermer();
-      if (CM.AccueilUnifie && CM.AccueilUnifie.selectionnerChip) {
-        CM.AccueilUnifie.reinitialiserChips();
-        CM.AccueilUnifie.selectionnerChip('cadre', cadreId);
-        CM.AccueilUnifie.ouvrirCartouche('compteur');
+      if (CM.Composants && CM.Composants.ouvrirTiroirCadre) {
+        CM.Composants.ouvrirTiroirCadre(cadreId);
       }
-      window.scrollTo(0, 0);
       return;
     }
 
