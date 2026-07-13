@@ -299,3 +299,11 @@ Même séance : les cartouches « questions terrain » et « compteur » sont d�
 - **L'ambre est la couleur « attention douce » du projet, pas un signal d'alarme** : cohérent avec la resémantisation du 12/07 qui a banni l'orange alarmiste. La méfiance ici décrit un domaine de validité, jamais un danger.
 - Options A (amorces en gras) et B (sous-titres à puce) écartées : moins de séparation visuelle. Data scindée en deux champs `quandChoisir` / `quandSeMefier` (contrat § 2).
 - **Pas de titre de section** au-dessus des deux encarts : il répéterait mot pour mot les libellés « Quand le choisir » / « Quand s'en méfier » portés par chaque encart (règle « pas de double signal »). Les encarts se suffisent.
+
+
+## Décision du 12/07/2026 (séance 3) — fiabilité à 4 états (voie 2)
+
+- **Passage de 3 à 4 états de fiabilité**, pour séparer deux natures que « Sous conditions » confondait (81 fiches sur 132 y étaient) : le besoin de *conditions* et la *vigilance à l'usage*. Décision de Lætitia, `mockup-fiabilite-4-etats.html`.
+- Les 4 états, du plus sûr au plus risqué : **Fiable** (✅ vert franc #2e7d32, inchangé) / **Sous conditions** (🤝 vert doux #ddebd9 / #b7d3ab / #2f5d33, inchangé — besoin de conditions de collecte : anonymat, timing, complément qualitatif) / **Précaution** (⚠️ orange plein #e8790d texte blanc, NOUVEAU — vigilance à l'usage : facilement détourné ou sur-lu) / **Risque** (⚡ rouge #c62828 — vanité ou piège, à éviter).
+- **L'orange ⚠️ pour « Précaution » ne contredit pas la doctrine anti-orange du 12/07** (celle-ci visait le statut *positif* « Sous conditions », resémantisé en vert) : « Précaution » est un vrai signal d'attention, l'orange y est légitime.
+- Interne : id `vigilance` pour le libellé « Précaution » (le mot `precaution` était déjà pris par « Sous conditions »). `RANG_FIABILITE` à 4 tiers (4>3>2>1). Reclassement des 84 fiches validé lot par lot par Lætitia selon le test « donnée fausse → Sous conditions / comportement distordu → Précaution » : 48 / 14 / 68 / 2.
