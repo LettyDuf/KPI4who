@@ -644,9 +644,10 @@
     .fi-jauge i:nth-child(1) { height: 8px; }
     .fi-jauge i:nth-child(2) { height: 11px; }
     .fi-jauge i:nth-child(3) { height: 14px; }
-    .fi-cadre-item[data-niveau="haute"]   .fi-jauge i                 { background: #2e7d32; }
-    .fi-cadre-item[data-niveau="moyenne"] .fi-jauge i:nth-child(-n+2) { background: #f59e0b; }
-    .fi-cadre-item[data-niveau="faible"]  .fi-jauge i:nth-child(1)    { background: #c62828; }
+    .fi-cadre-item[data-niveau="haute"]      .fi-jauge i                 { background: #2e7d32; }
+    .fi-cadre-item[data-niveau="conditions"] .fi-jauge i:nth-child(-n+2) { background: #2f5d33; }
+    .fi-cadre-item[data-niveau="vigilance"]  .fi-jauge i:nth-child(-n+2) { background: #e8790d; }
+    .fi-cadre-item[data-niveau="faible"]     .fi-jauge i:nth-child(1)    { background: #c62828; }
 
     /* Blocs de contenu : principal vs inline */
     .fi-bloc-principal {
@@ -1671,6 +1672,7 @@
     }
     #impression-onepager .imp-pastille.fiable     { background: #2e7d32; }
     #impression-onepager .imp-pastille.precaution { background: #2f5d33; }
+    #impression-onepager .imp-pastille.vigilance  { background: #e8790d; }
     #impression-onepager .imp-pastille.risque     { background: #c62828; }
     #impression-onepager .imp-nom-ind {
       font-weight: 600; color: #1a1a2e;
@@ -8245,7 +8247,8 @@ CM.FicheViewModel = (function() {
 
   var FIABILITE_VERS_NIVEAU = {
     'fiable':     'haute',
-    'precaution': 'moyenne',
+    'precaution': 'conditions',
+    'vigilance':  'vigilance',
     'risque':     'faible'
   };
 
