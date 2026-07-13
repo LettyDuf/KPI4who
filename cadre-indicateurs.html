@@ -3112,13 +3112,17 @@ CM.Hash = (function() {
     return ID_VALIDE.test(id) ? id : null;
   }
 
-  /* ecrireFicheId(id) : met à jour l'URL sans polluer l'historique
-     (replaceState plutôt que pushState — éviter que chaque ouverture
-     de fiche crée une entrée dans le bouton « retour » du navigateur). */
+  /* ecrireFicheId(id) : empile une entrée d'historique (pushState) pour que
+     le bouton « Précédent » du navigateur revienne à la fiche précédemment
+     consultée (E1, Option A, 12/07/2026 — remplace la doctrine replaceState
+     du 02/07). Garde-fou : ne rien empiler si la cible est déjà le hash
+     courant, sinon le retour navigateur, qui re-déclenche l'ouverture via
+     hashchange, empilerait un doublon et casserait le va-et-vient. */
   function ecrireFicheId(id) {
     if (!id || !ID_VALIDE.test(id)) return;
+    if (location.hash === PREFIX + id) return;
     try {
-      history.replaceState(null, '', PREFIX + id);
+      history.pushState(null, '', PREFIX + id);
     } catch (e) {
       /* Contexte file:// sur certains navigateurs anciens : pas bloquant. */
     }
@@ -3134,7 +3138,7 @@ CM.Hash = (function() {
   }
 
   /* ── Route #cadre= (chantier 28, jalon B) ──
-     Même regex stricte, même doctrine replaceState. Un seul fragment à la
+     Même regex stricte, même doctrine pushState (E1). Un seul fragment à la
      fois : une fiche-cadre et une fiche d'indicateur ne coexistent pas
      dans l'URL, le tiroir n'affiche qu'un contenu. */
   var PREFIX_CADRE = '#cadre=';
@@ -3147,8 +3151,9 @@ CM.Hash = (function() {
 
   function ecrireCadreId(id) {
     if (!id || !ID_VALIDE.test(id)) return;
+    if (location.hash === PREFIX_CADRE + id) return;
     try {
-      history.replaceState(null, '', PREFIX_CADRE + id);
+      history.pushState(null, '', PREFIX_CADRE + id);
     } catch (e) { /* contexte file:// ancien : pas bloquant */ }
   }
 
@@ -12262,13 +12267,22 @@ CM.App = (function() {
          fire, et on re-synchronise la vue.
 
        Idempotence : ouvrirTiroir() est safe à rappeler sur le même id.
-       Pas de boucle : CM.Hash.ecrireFicheId() utilise history.replaceState qui,
-       par spécification, NE déclenche PAS hashchange. */
+       Pas de boucle : CM.Hash.ecrireFicheId() (pushState) ne re-pousse pas si
+       la cible est déjà le hash courant, et pushState comme replaceState ne
+       déclenchent pas hashchange par spécification. */
     window.addEventListener('hashchange', function() {
       var id = CM.Hash.lireFicheId();
-      if (id) CM.Composants.ouvrirTiroir(id);
+      if (id) { CM.Composants.ouvrirTiroir(id); return; }
       var cadreId = CM.Hash.lireCadreId();
-      if (cadreId) CM.Composants.ouvrirTiroirCadre(cadreId);
+      if (cadreId) { CM.Composants.ouvrirTiroirCadre(cadreId); return; }
+      /* Ni fiche ni cadre dans le hash : si le retour navigateur a ramené
+         jusqu'avant l'ouverture (hash vide), refermer le tiroir plutôt que
+         le laisser béant (E1, Option A). On ne touche pas aux hash de
+         fiche-question (#fiche-q=), gérés par leur propre vue. */
+      var tiroir = document.getElementById('tiroir');
+      if (tiroir && tiroir.classList.contains('ouvert') && (!location.hash || location.hash === '#')) {
+        CM.Composants.fermerTiroir();
+      }
     });
 
     /* Délégation : lien « voir les N indicateurs » d'une fiche-cadre
