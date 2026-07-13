@@ -427,6 +427,9 @@
     .carte-chips-cadres { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.4rem; }
     .chip-cadre { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.68rem; font-weight: 600; padding: 0.18rem 0.5rem; border-radius: 12px; background: #f0f1f8; color: #4a5170; border: 1px solid #d8dceb; line-height: 1.2; white-space: nowrap; }
     .chip-cadre .ic { font-size: 0.78rem; }
+    .chip-cadre-lien { cursor: pointer; text-decoration: none; transition: background 0.12s, border-color 0.12s, color 0.12s; }
+    .chip-cadre-lien:hover { background: #e4e7f5; border-color: #b9c0dd; color: #2f3557; }
+    .chip-cadre-lien:focus-visible { outline: 2px solid var(--niv-2); outline-offset: 1px; }
 
     /* ══════════════════════════════════════════════
        CASCADE STRATÉGIQUE
@@ -8278,10 +8281,23 @@ CM.Composants = (function() {
     for (var i = 0; i < keys.length; i++) {
       var info = CM.IndicateursMeta.infoCadre(keys[i]);
       if (!info) continue;
-      html += '<span class="chip-cadre" title="' + info.label + '">'
-           +    '<span class="ic" aria-hidden="true">' + info.icone + '</span>'
-           +    info.label
-           +  '</span>';
+      /* Chip cliquable vers la fiche-cadre si elle existe (chantier 28,
+         câblage jalon D). generique n'a pas de fiche-cadre : reste un span.
+         stopPropagation empêche l'ouverture de la fiche d'indicateur de la
+         carte ; le href #cadre= déclenche le listener hashchange du jalon B. */
+      if (CM.FicheCadre && CM.FicheCadre.existe(keys[i])) {
+        html += '<a class="chip-cadre chip-cadre-lien" href="#cadre=' + keys[i] + '"'
+             +    ' title="Comprendre le cadre ' + info.label + '"'
+             +    ' onclick="event.stopPropagation()">'
+             +    '<span class="ic" aria-hidden="true">' + info.icone + '</span>'
+             +    info.label
+             +  '</a>';
+      } else {
+        html += '<span class="chip-cadre" title="' + info.label + '">'
+             +    '<span class="ic" aria-hidden="true">' + info.icone + '</span>'
+             +    info.label
+             +  '</span>';
+      }
     }
     return html + '</div>';
   }
