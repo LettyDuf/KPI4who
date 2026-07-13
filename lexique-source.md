@@ -878,3 +878,159 @@ Publier un indicateur de flux équipe par équipe, le comparer entre équipes, l
 L'efficacité de flux de chaque équipe est affichée dans la revue trimestrielle de performance, alors qu'elle dépend surtout des dépendances entre équipes.
 
 **renvois** : kpi-individuel, classement-des-equipes
+
+
+# Cadres et méthodes
+
+## balanced-scorecard
+
+**terme** : Balanced Scorecard
+
+**categorie** : cadre
+
+**definition** :
+
+Tableau de bord stratégique qui équilibre quatre perspectives au lieu de piloter par les seuls résultats financiers : les finances, les clients, les processus internes, et l'apprentissage organisationnel. L'idée fondatrice est qu'un résultat financier arrive toujours en retard sur ses causes, et qu'on pilote mieux en surveillant aussi ce qui le produit.
+
+Le cadre relie ces perspectives par une chaîne de cause à effet : des collaborateurs qui montent en compétence améliorent les processus, qui améliorent la satisfaction des clients, qui nourrit la performance financière. Chaque perspective porte quelques objectifs et leurs indicateurs, tous rattachés à la stratégie.
+
+**exemple** :
+
+Une entreprise qui ne suivait que son chiffre d'affaires ajoute trois perspectives : la fidélité de ses clients, le délai de ses processus clés, la rétention de ses talents. Elle découvre que sa croissance reposait sur une base client qui s'érodait, invisible dans les seuls chiffres du trimestre.
+
+**origine** : Robert Kaplan et David Norton (Harvard Business Review, 1992).
+
+**renvois** : management-par-objectifs, liste-strategique-fourre-tout
+
+## management-par-objectifs
+
+**terme** : management par objectifs (MBO)
+
+**categorie** : cadre
+
+**definition** :
+
+Approche de direction où chaque contributeur connaît les objectifs de son unité et de l'entreprise, et fixe les siens en cohérence, plutôt que de recevoir des consignes. Un objectif n'a de valeur que rattaché à la mission de l'organisation.
+
+Peter Drucker, qui l'a formulée, y ajoute une condition souvent oubliée : l'autocontrôle. L'objectif se construit avec celui qui le portera, pas contre lui, et il doit être revu, dans son avancement comme dans sa pertinence. Les OKR en sont une descendance directe.
+
+**exemple** :
+
+Une équipe reçoit chaque année des objectifs descendus par la direction, jamais rediscutés. En passant au MBO, elle les formule elle-même à partir de la mission et les réexamine chaque trimestre : deux d'entre eux, devenus caducs après un changement de marché, sont abandonnés à mi-année.
+
+**origine** : Peter Drucker, The Practice of Management (1954).
+
+**renvois** : balanced-scorecard, cascade-unilaterale-descendante
+
+**antiPatternLie** : objectifs-graves-pour-l-annee
+
+## theorie-des-contraintes
+
+**terme** : Théorie des Contraintes
+
+**categorie** : cadre
+
+**definition** :
+
+Principe de pilotage selon lequel un système est toujours limité par un maillon unique, son goulot, qui détermine le débit de l'ensemble. Tant qu'on n'agit pas sur ce goulot, améliorer n'importe quel autre maillon ne produit aucun gain de débit global, et peut même aggraver la situation en accumulant du stock devant lui.
+
+Eliyahu Goldratt en tire une méthode en cinq étapes : identifier le goulot, l'exploiter au maximum, subordonner tout le reste à son rythme, l'élever si nécessaire, puis recommencer, car le goulot se déplace. La règle cardinale : chercher le goulot avant d'optimiser quoi que ce soit.
+
+**exemple** :
+
+Un programme veut accélérer sa livraison et investit dans l'outillage des équipes de développement. Le débit ne bouge pas : le vrai goulot était le comité d'arbitrage, qui ne se réunissait qu'une fois par trimestre. En le passant en rythme mensuel, le délai se compresse sans toucher aux équipes.
+
+**origine** : Eliyahu Goldratt, The Goal (1984).
+
+**renvois** : flow-framework, six-sigma
+
+**antiPatternLie** : optimisation-locale
+
+## six-sigma
+
+**terme** : Six Sigma
+
+**categorie** : cadre
+
+**definition** :
+
+Démarche de maîtrise de la qualité par la réduction de la variabilité des processus. Son nom vient de son objectif statistique : atteindre un niveau de défauts si bas qu'il tiendrait à six écarts-types de la moyenne, soit quelques défauts par million d'occasions.
+
+Le cœur de la méthode est de traiter la variabilité comme l'ennemie : un processus régulier, même imparfait, est plus pilotable qu'un processus performant en moyenne mais imprévisible. Née chez Motorola dans les années 1980, la démarche s'est fondue avec le Lean pour donner le Lean Six Sigma, qui joint la maîtrise de la qualité à la fluidité du flux.
+
+**exemple** :
+
+Un service de support affiche un délai moyen satisfaisant, mais certains dossiers traînent des semaines. Plutôt que de viser une moyenne encore plus basse, l'équipe s'attaque à la variabilité : elle standardise les cas fréquents et réserve le sur-mesure aux cas rares. La moyenne bouge peu, la dispersion s'effondre, la satisfaction monte.
+
+**origine** : Bill Smith, chez Motorola (années 1980).
+
+**renvois** : theorie-des-contraintes
+
+**antiPatternLie** : moyenne-trompeuse
+
+## flow-framework
+
+**terme** : Flow Framework
+
+**categorie** : cadre
+
+**definition** :
+
+Cadre de pilotage d'un portefeuille produit par le flux de valeur plutôt que par projets, proposé par Mik Kersten. Il mesure directement, depuis les outils de livraison, quatre types de travail exclusifs qui circulent dans le système : les fonctionnalités, les défauts, la dette technique et le risque.
+
+Sa conviction centrale : au niveau du portefeuille, la vitesse ne dépend presque pas de l'effort des équipes, mais de la structure des files d'attente entre elles. Un travail passe le plus clair de sa vie à attendre une décision ou une ressource, pas à être traité. Les métriques de flux servent donc à localiser les goulots de gouvernance, jamais à noter les équipes.
+
+**exemple** :
+
+Une direction annonce un trimestre « innovation ». La distribution du flux mesurée montre que la moitié de la capacité part en correction de défauts. La promesse n'était pas tenable sans traiter d'abord la source des défauts : l'arbitrage réel devient visible, opposable au discours.
+
+**origine** : Mik Kersten, Project to Product (2018).
+
+**renvois** : theorie-des-contraintes, actionable-agile-metrics
+
+**antiPatternLie** : usage-en-evaluation-individuelle-ou-par-equipe
+
+## adkar
+
+**terme** : ADKAR
+
+**categorie** : cadre
+
+**definition** :
+
+Modèle de conduite du changement au niveau de l'individu, structuré en cinq marches séquentielles qu'une personne gravit dans l'ordre pour changer durablement : la conscience du besoin de changer, le désir d'y contribuer, la connaissance du comment, la capacité à l'appliquer, et le renforcement qui ancre le nouveau comportement.
+
+Sa logique : on ne décrète pas un changement, on le fait traverser à des personnes, une par une, et chacune bute sur une marche précise. Diagnostiquer laquelle indique où agir : une adhésion faible faute de conscience n'appelle pas la même réponse qu'une adhésion faible faute de capacité.
+
+**exemple** :
+
+Un nouvel outil est déployé, la formation est faite, mais l'adoption stagne. Le diagnostic ADKAR révèle que la marche bloquante n'est pas la connaissance mais le désir : personne n'a expliqué pourquoi l'ancien outil devait disparaître. La réponse n'est pas plus de formation, mais du sens.
+
+**origine** : Jeff Hiatt, Prosci (2006).
+
+**renvois** : mesure-du-declaratif
+
+**antiPatternLie** : scoring-individuel
+
+## coso-erm
+
+**terme** : COSO ERM
+
+**categorie** : cadre
+
+**definition** :
+
+Référentiel international de gestion des risques d'entreprise, publié par le Committee of Sponsoring Organizations of the Treadway Commission. Il structure la façon dont une organisation identifie, évalue et traite ses risques, en reliant le risque à la stratégie et à la performance plutôt qu'en le cantonnant à une fonction de contrôle.
+
+Son apport de fond : le risque n'est pas seulement une menace à éviter, c'est une donnée d'arbitrage. Face à une concentration critique, une organisation peut l'accepter en documentant ses plans de continuité, la réduire en payant le coût de la diversification, ou la transférer par l'assurance ou le contrat.
+
+**exemple** :
+
+Un board découvre que trois clients pèsent la moitié de son chiffre d'affaires. Plutôt que de subir cette concentration, il l'objective : plan de continuité pour chacun, diversification progressive, clauses contractuelles qui amortissent une rupture. Le risque reste, mais il est piloté.
+
+**origine** : Committee of Sponsoring Organizations of the Treadway Commission (COSO ERM, 2004, révisé 2017).
+
+**renvois** : iso-31000
+
+**antiPatternLie** : diversification-cosmetique
+
