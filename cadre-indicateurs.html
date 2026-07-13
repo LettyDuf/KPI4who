@@ -2700,12 +2700,24 @@ CM.Config = (function() {
       icone:         '🤝',
       desc:          'Mesure précieuse à mettre en place, fiable sous conditions : climat de confiance, lecture collective, jamais d\'évaluation individuelle.'
     },
+    'vigilance': {
+      /* Voie 2 (12/07/2026) : 4e état inséré entre « Sous conditions » et
+         « Risque ». Nomme la vigilance à l'usage — indicateur utile mais
+         facilement détourné ou sur-lu (vélocité, OKR liés à la prime, outputs
+         truquables). id 'vigilance', libellé 'Précaution' : le mot 'precaution'
+         est déjà pris par 'Sous conditions'. Orange plein #e8790d, ⚠️. */
+      label:         'Précaution',
+      label_court:   'Précaution',
+      couleur:       '#e8790d',
+      icone:         '⚠️',
+      desc:          'Indicateur utile mais facilement détourné ou sur-lu. À manier avec vigilance : jamais en évaluation individuelle, jamais comme cible à maximiser, toujours croisé avec un autre signal.'
+    },
     'risque': {
-      label:       'Courant & risque',
+      label:       'Risque',
       label_court: 'Risque',
       couleur:     '#c62828',
       icone:       '⚡',
-      desc:        'Tres repandue mais facilement instrumentalisee. Employer avec grande vigilance.'
+      desc:        'Métrique de vanité ou piège : elle mesure l\'activité plutôt que la valeur, ou devient nuisible dès qu\'on la vise. À éviter ou à remplacer par un indicateur d\'impact.'
     }
   };
 
@@ -4137,7 +4149,7 @@ CM.IndicateursMeta = (function() {
      Mutualisé ici à l'étape (d) du chantier 14 — auparavant dupliqué à l'identique
      dans plusieurs modules diagnostic, désormais retirés au chantier 23.f. */
   // Exemple : rangFiabilite({fiabilite:'fiable'}) → 3
-  var RANG_FIABILITE = { 'fiable': 3, 'precaution': 2, 'risque': 1 };
+  var RANG_FIABILITE = { 'fiable': 4, 'precaution': 3, 'vigilance': 2, 'risque': 1 };
   function rangFiabilite(ind) {
     return RANG_FIABILITE[ind && ind.fiabilite] || 0;
   }
