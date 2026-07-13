@@ -2275,6 +2275,15 @@
       border-color: var(--niv-1);
       background: white;
     }
+    .accueil-unifie .selecteur-options label .option-info {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 15px; height: 15px; border-radius: 50%; margin-left: 0.15rem;
+      font-size: 0.62rem; font-weight: 700; line-height: 1;
+      background: #e0e4f0; color: var(--niv-1); text-decoration: none;
+      transition: var(--trans);
+    }
+    .accueil-unifie .selecteur-options label .option-info:hover { background: var(--niv-1); color: #fff; }
+    .accueil-unifie .selecteur-options label .option-info:focus-visible { outline: 2px solid var(--niv-2); outline-offset: 1px; }
     .accueil-unifie .selecteur-options label.coche {
       border-color: var(--niv-1);
       background: var(--niv-1-clair);
@@ -4954,6 +4963,17 @@ CM.AccueilUnifie = (function() {
       } else {
         /* Variante B — libellé seul (avec emoji optionnel devant). */
         label += ' ' + iconeHTML + _echappe(v.label);
+      }
+      /* Lien discret « comprendre ce cadre » (chantier 28, câblage jalon D) :
+         pastille « ? » qui ouvre la fiche-cadre. Sur l'axe Cadre uniquement,
+         et seulement si une fiche-cadre existe (jamais generique).
+         stopPropagation neutralise le toggle de filtre du label ; le href
+         #cadre= déclenche le listener hashchange du jalon B. */
+      if (axe === 'cadre' && CM.FicheCadre && CM.FicheCadre.existe(v.id)) {
+        label += '<a class="option-info" href="#cadre=' + _echappe(v.id) + '"'
+              +    ' title="Comprendre le cadre ' + _echappe(v.label) + '"'
+              +    ' aria-label="Comprendre le cadre ' + _echappe(v.label) + '"'
+              +    ' onclick="event.stopPropagation()">?</a>';
       }
       label += '</label>';
       html += label;
