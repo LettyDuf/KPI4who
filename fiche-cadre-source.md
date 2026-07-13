@@ -391,3 +391,28 @@ D'où une mesure en deux temps : la vitesse de réaction (détecter, rétablir, 
 **quandSeMefier** : Déçoit réduit à un tableau de conformité : la sécurité vit dans la capacité réelle de détection et de réponse, pas dans les cases cochées. Ses délais s'embellissent en fermant vite le facile, et un indice de maturité auto-évalué flatte si personne ne le challenge.
 
 **allerPlusLoin** : NIST Cybersecurity Framework ; ISO/IEC 27035 (gestion des incidents de sécurité) ; ISO/IEC 27001 (management de la sécurité de l'information).
+
+
+## triangulation
+
+**statut** : patrimonial
+
+**origine** : La triangulation n'est pas un cadre de marque, mais un principe de mesure emprunté aux méthodes de recherche : ne jamais se fier à une source unique, croiser plusieurs mesures indépendantes pour approcher le réel. Appliquée au pilotage, elle répond à un syndrome connu, la <span class="term-def" data-def="Pastèque organisationnelle : un indicateur vert en surface et rouge à l'intérieur. Le chiffre déclaré rassure, la réalité du terrain le dément.">pastèque</span>, un indicateur vert dehors et rouge dedans.
+
+**philosophie** : Le principe part d'une méfiance salutaire : un indicateur déclaratif, ce que l'équipe rapporte d'elle-même, peut être vert sans que la réalité le soit. La complétion de sprint est tenue, mais au prix de défauts qui explosent chez l'utilisateur, ou d'une équipe qui s'épuise.
+
+D'où une règle simple : ne jamais lire un indicateur déclaratif seul. On le croise avec une mesure objective, ce que vit réellement l'utilisateur, et avec un signal humain, l'état réel de l'équipe. Quand les trois divergent, c'est le déclaratif qui ment.
+
+**panel** : Principe de triangulation issu des méthodes de recherche, par croisement de sources indépendantes ; appliqué ici au pilotage pour déjouer le syndrome de la pastèque.
+
+**signatures** : ti-d2, ti-d3, x4
+
+**lecture** : Les trois mesures forment un triangle volontairement dissonant. Le <a href="#fiche=ti-d2">taux de complétion de sprint</a> est l'axe déclaratif, ce que l'équipe dit avoir tenu ; le <a href="#fiche=ti-d3">taux de défauts échappés en production</a> est l'axe objectif, l'écart tel que l'utilisateur le subit ; l'<a href="#fiche=x4">indice de bien-être de l'équipe</a> est l'axe humain, le coût réel de la cadence. Une complétion parfaite, avec des défauts en hausse et une équipe qui décroche, est une pastèque : lus séparément, chacun rassure ; lus ensemble, ils disent la vérité.
+
+**antiPatterns** : <span class="term-def" data-def="Pilotage au seul déclaratif : ne suivre que ce que l'équipe rapporte d'elle-même (complétion, vélocité, avancement) sans jamais le croiser avec une mesure objective ni un signal humain. C'est précisément le terrain où pousse la pastèque.">pilotage au seul déclaratif</span>, <span class="term-def" data-def="Triangle borgne : afficher les trois axes mais n'en regarder qu'un, le plus flatteur. La triangulation ne vaut que si la divergence entre les axes est cherchée, pas masquée.">triangle borgne</span>, et l'usage des trois axes en évaluation individuelle, qui transforme un outil de lucidité en instrument de surveillance et pousse chacun à embellir sa part.
+
+**quandChoisir** : Excellent chaque fois qu'un indicateur clé est déclaratif et sert à rassurer une hiérarchie : la triangulation est le réflexe qui empêche de prendre un tableau vert pour la réalité. Utile à tout niveau, du sprint au portefeuille.
+
+**quandSeMefier** : Déçoit comme tableau de bord permanent : ce n'est pas une batterie d'indicateurs à suivre en continu, mais une méthode de vérification à dégainer quand un chiffre déclaratif prend trop d'importance. En faire un rituel lourd à trois indicateurs figés raterait sa souplesse.
+
+**allerPlusLoin** : Sur le principe, les méthodes mixtes en recherche (croisement de sources) ; sur le syndrome de la pastèque, la littérature agile sur les indicateurs trompeurs.
