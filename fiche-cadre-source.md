@@ -245,3 +245,76 @@ D'où des mesures orientées prévisibilité et risque aux niveaux programme et 
 **quandSeMefier** : Déçoit à petite échelle et là où l'agilité vient de l'autonomie : SAFe est lourd, prescriptif, et sa richesse même peut se figer en bureaucratie. Plusieurs critiques y voient un retour du pilotage descendant sous un vocabulaire agile ; ses indicateurs perdent tout sens s'ils mesurent la conformité au cadre plutôt que la valeur livrée.
 
 **allerPlusLoin** : Le corpus SAFe (Scaled Agile) ; Agile Software Requirements (Leffingwell) ; Project to Product (Kersten) pour le volet flux.
+
+
+## lean
+
+**statut** : cadre
+
+**origine** : Deux traditions fondues en une. Le Lean naît du <span class="traduction">système de production Toyota</span> (Taiichi Ohno, après-guerre) : produire au plus juste, éliminer le gaspillage, améliorer en continu, avec un respect égal pour les personnes qui font le travail. Le Six Sigma naît chez Motorola dans les années 1980 : réduire la variabilité des processus par la statistique jusqu'à un niveau de défauts quasi nul. Le Lean Six Sigma les combine, vitesse du flux et maîtrise de la qualité.
+
+**philosophie** : Le cadre repose sur deux convictions jumelles. La première, côté flux : la valeur avance quand on traque le gaspillage, l'attente et la reprise, pas quand on pousse les gens à aller plus vite. La seconde, côté qualité : ce qui coûte cher n'est pas de bien faire, c'est de mal faire et de devoir corriger ensuite ; la variabilité est l'ennemie.
+
+D'où une double mesure : on regarde à la fois la fluidité (combien de temps un travail met à traverser, combien passe du premier coup) et la variabilité (combien de défauts, à quel coût). Et une règle de Deming en surplomb : la grande majorité des défauts vient du système, pas des personnes.
+
+**panel** : Taiichi Ohno (système de production Toyota) ; W. Edwards Deming (variation, qualité, causes systémiques) ; la tradition Six Sigma née chez Motorola dans les années 1980.
+
+**signatures** : lss-1, af-op2, o5, s11, lss-2
+
+**lecture** : Les cinq mesures tiennent les deux pôles du cadre. Côté qualité : le <a href="#fiche=lss-1">premier passage conforme</a> dit ce qui passe sans retouche, le <a href="#fiche=af-op2">niveau sigma (DPMO)</a> mesure la variabilité du processus, le <a href="#fiche=s11">coût de la non-qualité</a> en donne le prix. Côté flux et culture : la <a href="#fiche=o5">durée de cycle</a> dit la fluidité, le <a href="#fiche=lss-2">taux de signalement volontaire (andon)</a> dit si l'équipe ose arrêter la chaîne pour signaler un problème, cœur du pilier humain de Toyota. Un flux rapide qui cache ses défauts, ou une qualité obtenue par la peur d'arrêter, trahit le cadre.
+
+**antiPatterns** : <span class="term-def" data-def="Lean tourné contre les personnes : traiter les opérateurs comme le gaspillage à éliminer, une réduction d'effectifs présentée comme du Lean. C'est la trahison la plus courante du système Toyota, dont le second pilier est le respect des personnes.">Lean contre les personnes</span>, <span class="term-def" data-def="Optimisation locale : améliorer un poste qui n'est pas le goulot. Le débit global reste inchangé, l'effort est gaspillé, du stock s'accumule avant le goulot (Goldratt).">optimisation locale</span>, et la qualité obtenue par la peur : faire monter les chiffres en punissant ceux qui signalent des problèmes, ce qui tue l'andon et donc l'amélioration.
+
+**quandChoisir** : Excellent pour un processus répétable dont on veut réduire les délais et les défauts en même temps : c'est le cadre le plus outillé pour relier vitesse et qualité, en production comme dans les services.
+
+**quandSeMefier** : Déçoit pour un travail de découverte ou de création, non répétable, où la variabilité est la matière première et non l'ennemie : appliquer la réduction de variabilité à de la recherche ou du design étouffe l'exploration. Et mal compris, son vocabulaire de gaspillage se retourne trop facilement contre les personnes.
+
+**allerPlusLoin** : Le Système de production Toyota (Ohno) ; Lean Thinking (Womack, Jones) ; Out of the Crisis (Deming).
+
+## mbo
+
+**statut** : cadre
+
+**origine** : Formulé par Peter Drucker dans <span class="traduction">The Practice of Management</span> (1954). La direction par objectifs propose que chaque contributeur connaisse les objectifs de son unité et de l'entreprise, et fixe les siens en cohérence, plutôt que de recevoir des consignes. L'idée a essaimé dans tout le management d'après-guerre ; les OKR en sont une descendance directe.
+
+**philosophie** : Le cadre part d'une idée de Drucker : on ne dirige pas des gens, on dirige vers des objectifs, et un objectif n'a de valeur que rattaché à la mission de l'organisation. Mesurer ce qui compte suppose donc d'abord de savoir ce qui compte, c'est-à-dire de relier chaque objectif à la raison d'être.
+
+D'où une exigence double : les objectifs doivent être clairs et mesurables, et ils doivent être revus, dans leur avancement comme dans leur pertinence. Drucker parle de direction par objectifs et autocontrôle : l'objectif se construit avec celui qui le portera, pas contre lui.
+
+**panel** : Peter Drucker (The Practice of Management, 1954), qui formule la direction par objectifs et l'autocontrôle ; filiation directe vers les OKR de John Doerr.
+
+**signatures** : mbo-1, mbo-2, mbo-3, mbo-9
+
+**lecture** : Les quatre mesures suivent la chaîne de la direction par objectifs. La <a href="#fiche=mbo-1">part des objectifs rattachés à la mission</a> vérifie l'ancrage, cœur de Drucker ; la <a href="#fiche=mbo-2">clarté et mesurabilité des objectifs</a> vérifie qu'ils sont pilotables ; la <a href="#fiche=mbo-3">fréquence des points objectifs manager-collaborateur</a> vérifie l'autocontrôle par le dialogue ; la <a href="#fiche=mbo-9">régularité du réexamen stratégique</a> vérifie qu'on interroge les objectifs eux-mêmes, pas seulement leur avancement. Un objectif mesurable mais détaché de la mission, ou jamais réexaminé, manque l'essentiel.
+
+**antiPatterns** : <span class="term-def" data-def="Objectifs déconnectés de la mission : fixer des objectifs mesurables mais sans lien explicite avec la raison d'être de l'organisation. On pilote alors une activité qui tourne sans servir ; Drucker en fait la faute première.">objectifs hors mission</span>, <span class="term-def" data-def="Objectif imposé sans dialogue : descendre les objectifs par le haut sans construction avec ceux qui les portent. Drucker y voit l'inverse de l'autocontrôle : l'engagement meurt, il reste de la conformité.">objectif imposé</span>, et le pilotage de l'avancement sans réexamen de la pertinence : suivre si on atteint les objectifs sans jamais demander s'ils sont encore les bons.
+
+**quandChoisir** : Excellent pour aligner une organisation sur sa mission et donner du sens aux objectifs individuels : c'est le socle historique dont les OKR et bien des systèmes d'objectifs descendent.
+
+**quandSeMefier** : Déçoit s'il devient un rituel administratif de fixation annuelle figée : mal pratiqué, il produit des objectifs posés en début d'année et jamais revus, ou des cascades imposées sans dialogue. Il mesure l'alignement et la clarté, pas la valeur livrée ni la qualité d'exécution.
+
+**allerPlusLoin** : The Practice of Management (Drucker, 1954) ; Measure What Matters (Doerr) pour la descendance OKR.
+
+## meta
+
+**statut** : cadre
+
+**origine** : Ce cadre ne vient pas d'un auteur unique mais d'une préoccupation partagée : gouverner le système de mesure lui-même. Peter Drucker rappelait de mesurer ce qui compte ; Douglas Hubbard (<span class="traduction">How to Measure Anything</span>) a montré que presque tout est mesurable, et à quel coût ; Jerry Muller (<span class="traduction">The Tyranny of Metrics</span>) a documenté les ravages des indicateurs mal employés ; W. Edwards Deming et Donald Wheeler ont posé les bases d'une lecture statistique saine des chiffres.
+
+**philosophie** : Le cadre part d'un constat : une organisation accumule des indicateurs comme elle accumule des objets, sans jamais se demander s'ils servent, s'ils sont lus, s'ils nuisent. La mesure a un coût, une date de péremption et un pouvoir de déformer les comportements (effet Goodhart). Elle mérite donc d'être pilotée comme n'importe quel actif.
+
+D'où une mesure au second degré : au lieu de mesurer le travail, on mesure la qualité du dispositif de mesure. Couvre-t-il les décisions importantes ? Les indicateurs sont-ils réellement utilisés ? Sait-on retirer ceux qui dérivent ?
+
+**panel** : Peter Drucker (mesurer ce qui compte) ; Douglas Hubbard (How to Measure Anything) ; Jerry Muller (The Tyranny of Metrics) ; W. Edwards Deming et Donald Wheeler pour la lecture statistique.
+
+**signatures** : gm-1, gm-2, gm-7
+
+**lecture** : Les trois mesures interrogent le dispositif de bout en bout. La <a href="#fiche=gm-1">couverture du système de mesure</a> demande si les décisions qui comptent sont éclairées par au moins un indicateur ; le <a href="#fiche=gm-2">taux d'usage réel des indicateurs</a> demande si ces indicateurs pèsent vraiment dans les décisions ou dorment dans un tableau de bord ; les <a href="#fiche=gm-7">indicateurs corrigés ou retirés après dérive</a> demandent si l'organisation sait désarmer un indicateur devenu pervers. Ensemble : mesure-t-on ce qu'il faut, s'en sert-on, sait-on s'en défaire.
+
+**antiPatterns** : <span class="term-def" data-def="Prolifération d'indicateurs : accumuler les mesures sans jamais en retirer. Le tableau de bord gonfle, l'attention se dilue, plus personne ne sait lesquels comptent ; mesurer beaucoup n'est pas mesurer bien.">prolifération d'indicateurs</span>, <span class="term-def" data-def="Tableau de bord de vanité : afficher des indicateurs qui rassurent mais n'orientent aucune décision. Ils occupent l'espace et le temps de lecture sans jamais changer une action.">tableau de bord de vanité</span>, et l'aveuglement à l'effet Goodhart : conserver un indicateur devenu une cible manipulée sans jamais constater qu'il a cessé de dire le réel.
+
+**quandChoisir** : Excellent pour une organisation déjà riche en indicateurs qui veut faire le tri, réduire le bruit et se prémunir des effets pervers : c'est le cadre qui met de l'ordre dans les autres.
+
+**quandSeMefier** : Déçoit là où il n'y a presque rien à gouverner : une équipe qui débute sa démarche de mesure a besoin de premiers indicateurs utiles, pas d'une méta-couche qui la surveille. Mal dosé, il ajoute lui-même de la mesure là où il prétend en retirer.
+
+**allerPlusLoin** : How to Measure Anything (Hubbard) ; The Tyranny of Metrics (Muller) ; The Practice of Management (Drucker).
