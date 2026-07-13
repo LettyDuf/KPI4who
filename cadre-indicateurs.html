@@ -1465,6 +1465,7 @@
     }
     .panier-chip-fiab.f-fiable     .panier-chip-fiab-pastille { background: #2e7d32; }
     .panier-chip-fiab.f-precaution .panier-chip-fiab-pastille { background: #2f5d33; } /* vert fonce : la pastille 7px doit rester visible (resemantisation 12/07/2026) */
+    .panier-chip-fiab.f-vigilance  .panier-chip-fiab-pastille { background: #e8790d; }
     .panier-chip-fiab.f-risque     .panier-chip-fiab-pastille { background: #c62828; }
 
     /* Placeholder d'une colonne vide — affiché quand une des deux sections
@@ -12159,6 +12160,7 @@ CM.App = (function() {
        cf. backlog chantier 13. */
     var fiables    = inds.filter(function(i) { return (i.fiabilite || 'fiable') === 'fiable'     && (i.maturite_min || 'debutant') === mat; });
     var precaution = inds.filter(function(i) { return (i.fiabilite || 'fiable') === 'precaution' && (i.maturite_min || 'debutant') === mat; });
+    var vigilance  = inds.filter(function(i) { return (i.fiabilite || 'fiable') === 'vigilance'  && (i.maturite_min || 'debutant') === mat; });
     var risques    = inds.filter(function(i) { return (i.fiabilite || 'fiable') === 'risque'; });
     var prochainNiv = inds.filter(function(i) { return ordMat[i.maturite_min || 'debutant'] > ordMat[mat] && (i.fiabilite || 'fiable') !== 'risque'; });
 
@@ -12217,6 +12219,13 @@ CM.App = (function() {
       precaution.forEach(function(i) { html += CM.Composants.htmlCarte(i, '#2f5d33', false, false); });
       html += '</div></div>';
     }
+    if (vigilance.length) {
+      html += '<div class="section-fiabilite"><div class="titre-fiabilite" style="color:#b45309"><span style="font-size:1.1rem">⚠️</span> Avec précaution (' + vigilance.length + ')</div>'
+        + '<div style="background:#fdf0dd;border-radius:10px;padding:0.75rem 1rem;font-size:0.83rem;margin-bottom:0.9rem;color:#8a4b00;line-height:1.5;">Ces indicateurs sont utiles mais facilement détournés ou sur-lus. Ouvrez la fiche pour la vigilance à tenir.</div>'
+        + '<div class="grille-cartes">';
+      vigilance.forEach(function(i) { html += CM.Composants.htmlCarte(i, '#e8790d', false, false); });
+      html += '</div></div>';
+    }
     if (prochainNiv.length) {
       html += '<div class="section-fiabilite"><div class="titre-fiabilite" style="color:var(--niv-2)"><span style="font-size:1.1rem">🔭</span> À introduire au niveau suivant (' + prochainNiv.length + ')</div>'
         + '<div style="background:var(--niv-2-clair);border-radius:10px;padding:0.75rem 1rem;font-size:0.83rem;margin-bottom:0.9rem;color:var(--niv-2)">Ces indicateurs deviennent pertinents une fois les pratiques de base solidement établies.</div>'
@@ -12225,8 +12234,8 @@ CM.App = (function() {
       html += '</div></div>';
     }
     if (risques.length) {
-      html += '<div class="section-fiabilite"><div class="titre-fiabilite" style="color:#c62828"><span style="font-size:1.1rem">⚡</span> Risquées — employer avec vigilance (' + risques.length + ')</div>'
-        + '<div style="background:#fce4e4;border-radius:10px;padding:0.75rem 1rem;font-size:0.83rem;margin-bottom:0.9rem;color:#7f0000;line-height:1.5;">Ces métriques sont tres repandues mais facilement instrumentalisees. Ouvrez la fiche pour decouvrir l\'alternative recommandee.</div>'
+      html += '<div class="section-fiabilite"><div class="titre-fiabilite" style="color:#c62828"><span style="font-size:1.1rem">⚡</span> Risque — à éviter (' + risques.length + ')</div>'
+        + '<div style="background:#fce4e4;border-radius:10px;padding:0.75rem 1rem;font-size:0.83rem;margin-bottom:0.9rem;color:#7f0000;line-height:1.5;">Ces métriques sont des pièges ou des mesures de vanité. Ouvrez la fiche pour l\'alternative recommandée.</div>'
         + '<div class="grille-cartes">';
       risques.forEach(function(i) { html += CM.Composants.htmlCarte(i, '#c62828', false, false); });
       html += '</div></div>';
