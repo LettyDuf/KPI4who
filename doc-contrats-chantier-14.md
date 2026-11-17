@@ -428,7 +428,7 @@ filtre = {
   cadres?:           Array<CadreId>,         // 17 valeurs : 'dora', 'cd', 'space', 'flow', 'lean', 'okr', 'scrum', 'ebm', 'kanban', 'safe', 'itil', 'securite', 'cx', 'change', 'mbo', 'meta', 'generique' (mise à jour 12/07/2026 — cf. journal §9)
   tags?:             Array<TagId>,           // 7 valeurs : 'valeur', 'qualite', 'flux', 'delais', 'humain', 'risque', 'alignement'
   tagsThematiques?:  Array<TagThematiqueId>, // 14 valeurs verrouillées en §10.2
-  fiabiliteMin?:     FiabiliteId,            // 'fiable' | 'precaution' | 'risque' — seuil ordinal (cf. ci-dessous)
+  fiabiliteMin?:     FiabiliteId,            // 'fiable' | 'precaution' | 'vigilance' | 'risque' — seuil ordinal (cf. ci-dessous)
   maturiteMin?:      MaturiteId,             // 'debutant' | 'intermediaire' | 'avance' — seuil ordinal (cf. ci-dessous, sémantique inversée par rapport à fiabiliteMin)
   limite?:           number                  // entier strictement positif — capping de la liste retournée
 }
@@ -440,7 +440,7 @@ filtre = {
 
 - **Union intra-clause (OR).** `tags: ['flux', 'qualite']` retourne les fiches qui portent `flux` OU `qualite`.
 - **Intersection inter-clauses (AND).** `{niveau: ['operationnel'], tags: ['flux']}` retourne les fiches niveau opérationnel ET portant le tag flux.
-- **Seuil ordinal `fiabiliteMin`.** Ordre `fiable > precaution > risque` (du plus solide au plus instable). `fiabiliteMin: 'precaution'` retourne les fiches de fiabilité `fiable` ou `precaution` — c'est-à-dire « au moins aussi solide que precaution ». Sémantique « borne inférieure de qualité acceptable ».
+- **Seuil ordinal `fiabiliteMin`.** Ordre `fiable > precaution > vigilance > risque` (`vigilance` ajouté le 12/07/2026, commit 5ac13ad) (du plus solide au plus instable). `fiabiliteMin: 'precaution'` retourne les fiches de fiabilité `fiable` ou `precaution` — c'est-à-dire « au moins aussi solide que precaution ». Sémantique « borne inférieure de qualité acceptable ».
 - **Seuil ordinal `maturiteMin`.** Ordre `debutant < intermediaire < avance` (du moins exigeant au plus exigeant en prérequis côté équipe). `maturiteMin: 'intermediaire'` retourne les fiches dont le prérequis `maturite_min` est `debutant` ou `intermediaire` — c'est-à-dire « les fiches utilisables par une équipe dont la maturité est au plus `intermediaire` ». Sémantique « borne supérieure de prérequis acceptable ». **Note** : le sens du `Min` est inversé par rapport à `fiabiliteMin` parce que la donnée source `maturite_min` représente un prérequis (borne inférieure de maturité requise par la fiche), alors que `fiabilite` représente une qualité intrinsèque. Le nom `maturiteMin` reste cohérent avec la donnée source ; un alias `maturiteUtilisateurMax` pourrait être introduit ultérieurement si la confusion s'avère récurrente — décision laissée ouverte au chantier 17 ou plus tard.
 - **`limite`.** Capping appliqué *après* filtrage et *après* application de l'ordre de retour (cf. ci-dessous). Aucun re-tri spécifique au capping.
 - **Sémantique d'absence — distinction obligatoires/optionnels (révision 25/04/2026, ajout post-commit 3).** Tous les champs de fiche ne se comportent pas pareil quand ils sont absents :

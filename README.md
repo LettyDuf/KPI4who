@@ -36,6 +36,8 @@ Plus de cent fiches d'indicateurs, organisées par école de pensée et par axe 
 
 Application monofichier HTML et JavaScript, sans dépendance runtime. Architecture interne hexagonale (séparation référentiel, requêtes, vues), modules nommés `CM.*`. Quelques outils Node.js (`outils/`) servent à la génération de données et à l'exécution de tests automatisés. Voir les documents `doc-contrats-*.md` pour la documentation architecturale détaillée.
 
+Avant de publier : `node outils/verifier-tout.js` lance tous les tests et vérificateurs. GitHub le relance à chaque modification et bloque la publication si un contrôle échoue (voir `DECISIONS.md`, D1).
+
 Les choix éditoriaux et architecturaux suivent une doctrine documentée : pas de jargon non glosé, terminologie française assumée, vocabulaire typographique soigné, séparation stricte matière éditoriale et code applicatif.
 
 ## Droits d'auteur et usage

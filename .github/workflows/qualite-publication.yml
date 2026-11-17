@@ -1,0 +1,72 @@
+name: Qualité et publication
+
+# Filet de sécurité léger (choix de Lætitia du 17/11/2026, sans refonte) :
+#   1. À chaque demande de modification (pull request) et à chaque envoi sur main,
+#      le job « qualite » lance tous les contrôles existants (outils/verifier-tout.js)
+#      et vérifie que les harnais de test committés sont à jour avec le code.
+#   2. La publication ne part QUE depuis main, et SEULEMENT si « qualite » est vert.
+#
+# Limite assumée : l'outil est un fichier HTML unique, sans modules ; il n'y a pas
+# de test automatique d'architecture hexagonale. Les harnais tests-*.html restent
+# à ouvrir dans un navigateur pour le comportement de l'interface.
+#
+# Côté repo (À FAIRE au moment de fusionner) : Settings → Pages → Source :
+# passer de « Deploy from a branch » à « GitHub Actions ».
+# Tant que la source reste la branche, le site publié échappe aux contrôles.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || format('pages-{0}', github.ref) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  qualite:
+    name: Tests et vérificateurs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v6
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Tests et vérificateurs
+        run: node outils/verifier-tout.js
+
+      - name: Harnais de test à jour avec le code
+        run: git diff --exit-code -- 'tests-*.html'
+
+      - name: Préparer le site
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: .
+
+  publication:
+    name: Publication GitHub Pages
+    needs: qualite
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configurer Pages
+        uses: actions/configure-pages@v6
+
+      - name: Publier
+        id: deployment
+        uses: actions/deploy-pages@v5
